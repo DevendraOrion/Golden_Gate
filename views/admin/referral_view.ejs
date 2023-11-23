@@ -1,0 +1,45 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Player ID</th>
+                                    <th>Level</th>
+                                    <th>Bonus Earn (Rs)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i = 1; for (d of data.details) {%>
+                                <tr>
+                                    <td><a target="_blank" href="<%= host%>/user/view/<%= d.id%>"><%= d.numeric_id %></a></td>
+                                    <td><%= d.level %></td>
+                                    <td><small class="label bg-green"><%= d.amount.toFixed(2) %></small></td>
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>

@@ -1,0 +1,677 @@
+<%- include header %>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+
+  <style></style>
+
+  <style>
+    td.details-control {
+      background: url("https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_open.png") no-repeat center center;
+      cursor: pointer;
+    }
+
+    tr.shown td.details-control {
+      background: url("https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_close.png") no-repeat center center;
+    }
+
+    .m20 {
+      margin-top: 20px;
+      margin-bottom: 20px;
+      padding-bottom: 40px;
+    }
+  </style>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box">
+            <!-- /.box-header -->
+            <div class="box-body table-responsive">
+              <div class="text-center m20">
+                <div>
+                  <div class="pull-left">
+                    <button class="btn btn-success" id="accpetSelected" onclick="processMultiple('A')">
+                      Accept selected
+                    </button>
+                    <button class="btn btn-danger" id="rejectSelected" onclick="processMultiple('R')">
+                      Reject selected
+                    </button>
+                    <button class="btn btn-primary" id="exportSelected">
+                      Export selected
+                    </button>
+                  </div>
+
+                  <div class="pull-right">
+                    <select class="col search-user" name="state" style="width:150px;"></select>
+                    <select class="col trans-type" name="filter" style="width:150px;">
+                      <option value="A">All</option>
+                      <option value="B">Bank Transactions</option>
+                      <option value="P">Paytm Transactions</option>
+                      <option value="U">UPI Transactions</option>
+                    </select>
+
+                    <button class="btn btn-primary" id="exportData">
+                      Export All
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+
+              <table id="transTable" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      <input type="checkbox" name="select_all" value="1" id="example-select-all" />
+                    </th>
+                    <th>#</th>
+                    <th>Transaction ID</th>
+                    <th>Player ID</th>
+                    <th>Amount (RS)</th>
+                    <th>Commission (RS)</th>
+                    <th>Requested Amount (RS)</th>
+                    <th>Payment Mode</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% var i=1; for(d of data) {%>
+                    <tr>
+                      <td>
+                        <%= d.id %>
+                      </td>
+                      <td>
+                        <%= i++%>
+                      </td>
+                      <td>
+                        <%= d.request_id %>
+                      </td>
+                      <td>
+                        <a target="_blank" href="/user/view/<%= d.user_id %>">
+                          <%= d.numeric_id %>
+                        </a target="_blank">
+                      </td>
+                      <td>
+                        <%= d.amount %>
+                      </td>
+                      <td>
+                        <%= d.commission %>
+                      </td>
+                      <td>
+                        <%= d.request_amount %>
+                      </td>
+                      <td>
+                        <%= d.payment_method %>
+                      </td>
+                      <td class="time_formateDateandTime2">
+                        <%= d.created_at %>
+                      </td>
+                      <td>
+                        <ul class="list-inline">
+                          <li>
+                            <a href="#"><small class="label bg-blue"
+                                onclick="showData('<%= d.payment_method %>','<%= d.amount %>', '<%= d.acc_name %>', '<%= d.bank_name %>', '<%= d.ifsc %>', '<%= d.mobile %>', '<%= d.upi_id %>', '<%= d.acc_no %>')">View</small></a>
+                          </li>
+                          <li>
+                            <a href="#"><small class="label bg-green"
+                              data-toggle="modal" data-target="#acceptModal"
+                              onclick="openModal('<%= d.id %>')">Accept</small></a>
+                          </li>
+                          <li>
+                            <a href="#" onclick="acceptRequest('<%= d.id %>', 'R')"><small
+                                class="label bg-red">Reject</small></a>
+                          </li>
+                        </ul>
+                      </td>
+
+                    </tr>
+                    <% } %>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- Rejection Modal -->
+  <div class="modal fade" id="acceptModal" tabindex="-1" role="dialog" aria-labelledby="acceptModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="acceptModalLabel">Modal Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="id" id="accepted_id" value="">
+          <div class="form-group">
+            <label for="utr_id">UTR ID:</label>
+            <input type="text" class="form-control" id="utr_id">
+          </div>
+          <!-- <div class="form-group">
+            <label for="remark">Remark:</label>
+            <textarea class="form-control" id="remark"></textarea>
+          </div> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="acceptRequest('','A')">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div id="details" class="modal fade remark" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+          <h4 class="modal-title" id="mode"></h4>
+        </div>
+        <div class="modal-body" id="modal-body-remark"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%- include footer %>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+    <script>
+      var table;
+
+      $(document).ready(function () {
+        var THAT_ID = '';
+        var THAT_FILTER = "";
+
+        let searchSelect = $('.search-user')
+          .select2({
+            allowClear: true,
+            placeholder: 'Search user',
+            ajax: {
+              url: '/admin/find_user',
+              data: function (params) {
+                var query = {
+                  search: params.term,
+                  type: 'public'
+                };
+                // Query parameters will be ?search=[term]&type=public
+                return query;
+              }
+            }
+          })
+          .on('select2:unselecting', function (e) {
+            $(this).data('state', 'unselected');
+          })
+          .on('select2:open', function (e) {
+            if ($(this).data('state') === 'unselected') {
+              $(this).removeData('state');
+
+              var self = $(this);
+              setTimeout(function () {
+                self.select2('close');
+              }, 1);
+            }
+          })
+          .on('select2:select', function (e) {
+            // Do something
+            THAT_ID = e.params.data.id;
+            table.ajax.reload();
+            console.log('THAT_ID', THAT_ID);
+          })
+          .on('select2:clearing', function (e) {
+            console.log('cleared');
+            THAT_ID = '';
+            table.ajax.reload();
+          });
+        // Hello
+
+        let typeFilter = $(".trans-type")
+          .select2({
+            allowClear: true,
+            placeholder: "Filter By Transaction Type"
+          })
+          .on("select2:unselecting", function (e) {
+            $(this).data("filter", "unselected");
+          })
+          .on("select2:open", function (e) {
+            if ($(this).data("filter") === "unselected") {
+              $(this).removeData("filter");
+
+              var self = $(this);
+              setTimeout(function () {
+                self.select2("close");
+              }, 1);
+            }
+          })
+          .on("select2:select", function (e) {
+            // Do something
+            THAT_FILTER = e.params.data.id;
+            table.ajax.reload();
+            console.log("THAT_FILTER", THAT_FILTER);
+          })
+          .on("select2:clearing", function (e) {
+            console.log("cleared");
+            THAT_FILTER = "";
+            table.ajax.reload();
+          });
+
+        table = $('#transTable').DataTable({
+          searching: false,
+          columnDefs: [{
+            targets: 0,
+            searchable: false,
+            orderable: false,
+            className: 'dt-body-center',
+            render: function (data, type, full, meta) {
+              return (
+                '<input type="checkbox" name="id[]" value="' +
+                $('<div/>')
+                  .text(data)
+                  .html() +
+                '">'
+              );
+            }
+          }, {
+            orderable: true,
+            targets: [3, 5]
+          },
+          {
+            orderable: false,
+            targets: [0, 1, 2, 4, 6]
+          }
+          ],
+          destroy: true,
+          dom: 'lBfrtip',
+          lengthMenu: [
+            [10, 25, 100],
+            [10, 25, 100]
+          ],
+          pageLength: 10,
+          buttons: [],
+          responsive: true,
+          processing: true,
+          serverSide: true,
+          ajax: {
+            url: '/withdrawal_ajax',
+            data: function (params) {
+              console.log('PARAMS', params);
+              params.id = THAT_ID;
+              params.filter = THAT_FILTER;
+              return params;
+            }
+          },
+          deferLoading: '<%= total %>',
+          drawCallback: function () {
+            $('.time_formateDateandTime2').each(function () {
+              console.log('ELEM', $(this).text());
+              let dat = formateDateandTime(parseInt($(this).text()));
+              $(this).text(dat);
+            });
+          }
+        });
+        $('#transTable').DataTable().order([5, 'desc']).draw()
+
+        // Handle click on "Select all" control
+        $('#example-select-all').on('click', function () {
+          var rows = table.rows({
+            search: 'applied'
+          }).nodes();
+          $('input[type="checkbox"]', rows).prop('checked', this.checked);
+          show_data();
+        });
+
+        $('#transTable tbody').on('change', 'input[type="checkbox"]', function () {
+          // If checkbox is not checked
+          if (!this.checked) {
+            var el = $('#example-select-all').get(0);
+            // If "Select all" control is checked and has 'indeterminate' property
+            if (el && el.checked && 'indeterminate' in el) {
+              // Set visual state of "Select all" control
+              // as 'indeterminate'
+              el.indeterminate = true;
+            }
+          }
+
+          show_data();
+        });
+
+        function show_data() {
+          let data_ = [];
+
+          table.$('input[type="checkbox"]').each(function () {
+            if (this.checked) {
+              data_.push(this.value);
+            }
+            // }
+          });
+          console.log('DATA', data_);
+        }
+
+        $('#exportData').click(function () {
+          $('#exportData').html('<i class="fa fa-spin fa-circle-o-notch"></i> &nbsp; Exporting data');
+
+          $.ajax({
+            method: 'post',
+            url: '/export_withdrawal_request',
+            success: function (response) {
+              console.log('RES', response);
+
+              if (response.status == 1) {
+                for (const file of response.files) {
+                  let a = document.createElement('a');
+                  var blob = new Blob([file.data], {
+                    type: 'text/csv'
+                  });
+                  a.href = window.URL.createObjectURL(blob);
+                  a.download = file.type + ts() + '.csv';
+
+                  a.click();
+                }
+                $('#exportData').html('Export All');
+              } else {
+                $('#exportData').html('Export All');
+              }
+            }
+          });
+        });
+
+        $('#exportSelected').click(function () {
+          let data_ = [];
+
+          table.$('input[type="checkbox"]').each(function () {
+            if (this.checked) {
+              data_.push(this.value);
+            }
+          });
+
+          if (data_.length > 0) {
+            $('#exportSelected').html('<i class="fa fa-spin fa-circle-o-notch"></i> &nbsp; Exporting data');
+
+            $.ajax({
+              method: 'post',
+              url: '/export_withdrawal_request',
+              data: {
+                data: data_
+              },
+              success: function (response) {
+                console.log('RES', response);
+
+                if (response.status == 1) {
+                  for (const file of response.files) {
+                    let a = document.createElement('a');
+                    var blob = new Blob([file.data], {
+                      type: 'text/csv'
+                    });
+                    a.href = window.URL.createObjectURL(blob);
+
+                    let d = new Date();
+
+                    a.download = file.type + ts() + '.csv';
+                    a.click();
+                  }
+                  $('#exportSelected').html('Export Selected');
+                } else {
+                  $('#exportSelected').html('Export Selected');
+                }
+              }
+            });
+          }
+        });
+      });
+
+      function ts() {
+
+        let d = new Date();
+
+        let date = pad(d.getDate(), 2);
+        let month = pad(d.getMonth() + 1, 2);
+        let year = pad(d.getFullYear().toString().substr(2), 2);
+        let hours = pad(d.getHours(), 2);
+        let minutes = pad(d.getMinutes(), 2);
+        let seconds = pad(d.getSeconds(), 2);
+
+        return date + month + year + hours + minutes + seconds;
+      }
+
+      function pad(str, max) {
+        str = str.toString();
+        return str.length < max ? pad("0" + str, max) : str;
+      }
+
+      function formateDateandTime(date) {
+        // 7/12/2018 12:25PM
+
+        if (!isNaN(date)) console.log('DATA', date);
+        var dat = new Date(parseInt(date));
+        console.log('DATA After', dat);
+        var mon = dat.getMonth() + 1 > 9 ? dat.getMonth() + 1 : '0' + parseInt(dat.getMonth() + parseInt(1));
+
+        var hours = dat.getHours() % 12;
+        hours = hours > 9 ? hours : '0' + hours;
+
+        var minutes = dat.getMinutes();
+        minutes = minutes > 9 ? minutes : '0' + minutes;
+
+        var ap = dat.getHours() >= 12 ? 'PM' : 'AM';
+        var day = dat.getDate() > 9 ? dat.getDate() : '0' + dat.getDate();
+
+        rez = day + '/' + mon + '/' + dat.getFullYear() + ' ' + hours + ':' + minutes + ap;
+
+        return rez;
+      }
+
+      // function showData(mode, amount, acc_name, bank_name, ifsc_code, mobile, upi_id, acc_no) {
+      //   if (mode.toLowerCase() == 'paytm') {
+      //     $('#mode').html(mode);
+      //     $('#modal-body-remark').html('<h4>Mobile Number</h4>' + '<h3>' + mobile + '</h3>');
+      //   } else if (mode.toLowerCase() == 'phonepe') {
+      //     $('#mode').html(mode);
+      //     $('#modal-body-remark').html('<table class="table table-bordered"></td></tr><tr><td>Mobile</td><td>' +
+      //       mobile +
+      //       '</td></tr><tr><td>UPI ID</td><td>' +
+      //       upi_id +
+      //       '</td></tr></table>'
+      //     );
+      //   } else if (mode.toLowerCase() == 'google_pay') {
+      //     $('#mode').html(mode);
+      //     $('#modal-body-remark').html(
+      //       '<table class="table table-bordered"></td></tr><tr><td>Mobile</td><td>' +
+      //       mobile +
+      //       '</td></tr><tr><td>UPI ID</td><td>' +
+      //       upi_id +
+      //       '</td></tr></table>'
+      //     );
+      //   } else {
+      //     $('#mode').html(mode);
+      //     $('#modal-body-remark').html(
+      //       '<table class="table table-bordered"><tr><td>Name</td><td>' +
+      //       acc_name +
+      //       '</td></tr><tr><td>Bank Name</td><td>' +
+      //       bank_name +
+      //       '</td></tr><tr><td>Acc No</td><td>' +
+      //       acc_no +
+      //       '</td></tr><tr><td>IFSC</td><td>' +
+      //       ifsc_code +
+      //       '</td></tr><tr><td>UPI ID</td><td>' +
+      //       upi_id +
+      //       '</td></tr><tr><td>Mobile</td><td>' +
+      //       mobile +
+      //       '</td></tr></table>'
+      //     );
+      //   }
+      //   $('#details').modal('show');
+      // }
+      function openModal(id) {
+        $('#acceptModal input#accepted_id').val(id);
+      }
+      function showData(mode, amount, acc_name, bank_name, ifsc_code, mobile, upi_id, acc_no) {
+        if (mode.toLowerCase() == 'paytm') {
+          $('#mode').html(mode);
+          $('#modal-body-remark').html('<h4>Mobile Number</h4>' + '<h3>' + mobile + '</h3>');
+        } else if (mode.toLowerCase() == 'phonepe') {
+          $('#mode').html(mode);
+          $('#modal-body-remark').html('<table class="table table-bordered"></td></tr><tr><td>Mobile</td><td>' +
+            mobile +
+            '</td></tr><tr><td>UPI ID</td><td>' +
+            upi_id +
+            '</td></tr></table>'
+          );
+        } else if (mode.toLowerCase() == 'google_pay') {
+          $('#mode').html(mode);
+          $('#modal-body-remark').html(
+            '<table class="table table-bordered"></td></tr><tr><td>Mobile</td><td>' +
+            mobile +
+            '</td></tr><tr><td>UPI ID</td><td>' +
+            upi_id +
+            '</td></tr></table>'
+          );
+        } else if (mode.toLowerCase() == "upi") {
+          $('#mode').html(mode);
+          $('#modal-body-remark').html(
+            '<table class="table table-bordered">' +
+            '</td></tr><tr><td>UPI ID</td><td>' +
+            upi_id +
+            '</td><td><button id="copy-button">Copy</button></td></tr></table>'
+
+          );
+        } else {
+          $('#mode').html(mode);
+          $('#modal-body-remark').html(
+            '<table class="table table-bordered"><tr><td>Name</td><td>' +
+            acc_name +
+            '</td></tr><tr><td>Bank Name</td><td>' +
+            bank_name +
+            '</td></tr><tr><td>Acc No</td><td>' +
+            acc_no +
+            '</td></tr><tr><td>IFSC</td><td>' +
+            ifsc_code +
+            '</td></tr><tr><td>Mobile</td><td>' +
+            mobile +
+            '</td></tr></table>'
+          );
+        }
+
+        $('#details').modal('show');
+        $('#copy-button').click(function () {
+          const upiId = upi_id;
+          const tempElement = document.createElement('input');
+          tempElement.value = upiId;
+          document.body.appendChild(tempElement);
+          tempElement.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempElement);
+          alert('UPI ID copied to clipboard');
+        });
+      }
+
+
+      function acceptRequest(id, status) {
+        if(id==''){
+          id = $("#accepted_id").val();
+        }
+        let data = {
+            request_id: id,
+            status: status
+          }
+        if(status=='A'){
+          let utr_id=$('#utr_id').val();
+          // let remark=$('#remark').val();
+          data.utr_id=utr_id;
+          // data.remark=remark;
+        }
+        console.log(data);
+        $.ajax({
+          method: 'post',
+          url: '/admin/withdrawal/request',
+          data: data,
+          success: function (response) {
+            if (response.status == 1) {
+              swal({
+                icon: 'success',
+                title: response.Msg
+              }).then(function () {
+                window.location.reload();
+              });
+            } else {
+              swal({
+                icon: 'error',
+                title: response.Msg
+              });
+            }
+          },
+          error: function (response) {
+            swal({
+              icon: 'error',
+              title: response.Msg
+            });
+          }
+        });
+      }
+
+      function processMultiple(status) {
+        let data_ = [];
+
+        table.$('input[type="checkbox"]').each(function () {
+          if (this.checked) {
+            data_.push(this.value);
+          }
+        });
+
+        if (data_.length > 0) {
+          $.ajax({
+            method: 'post',
+            url: '/admin/withdrawal/request_multiple',
+            data: {
+              data: data_,
+              status: status
+            },
+            success: function (response) {
+              if (response.status == 1) {
+                swal({
+                  icon: 'success',
+                  title: response.Msg
+                }).then(function () {
+                  window.location.reload();
+                });
+              } else {
+                swal({
+                  icon: 'error',
+                  title: response.Msg
+                });
+              }
+            },
+            error: function (response) {
+              swal({
+                icon: 'error',
+                title: response.Msg
+              });
+            }
+          });
+        }
+      }
+    </script>

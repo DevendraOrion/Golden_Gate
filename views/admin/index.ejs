@@ -1,0 +1,344 @@
+<%- include header %>
+    <style>
+        .nomargin {
+            margin: 0px;
+        }
+    </style>
+    <link rel="stylesheet" href="<%= host%>/indicator.css" type="text/css" />
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper <%- (admin.role == 'DASHBOARD') ? 'nomargin' : ''%>">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                <%= title %>
+            </h1>
+            <!-- <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+            <li class="active">Here</li>
+        </ol> -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <!-- Info boxes -->
+            <div class="row">
+                <!-- <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-navy"><i class="ion ion-ios-people-outline"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">All Distributor</span>
+                            <span class="info-box-number">
+                                <span id="userBox"> <%= data.distributor_count %></span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="userUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="userDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">All Users</span>
+                            <span class="info-box-number">
+                                <span id="userBox">
+                                    <%= data.user_count %>
+                                </span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="userUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="userDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-blue"><i class="fa fa-facebook"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Facebook Users</span>
+                            <span class="info-box-number">
+                                <span id="facebookBox">
+                                    <%= data.fb_user_count %>
+                                </span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="facebookUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="facebookDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <!-- fix for small devices only -->
+                <div class="clearfix visible-sm-block"></div>
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-purple"><i class="fa fa-gamepad"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Games</span>
+                            <span class="info-box-number">
+                                <span id="gameBox">
+                                    <%= data.game_count %>
+                                </span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="gameUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="gameDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Today Games</span>
+                            <span class="info-box-number">
+                                <%= data.most_preferred %>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-red"><i class="fa  fa-arrow-down"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Deposit</span>
+                            <span class="info-box-number">
+                                <span id="depositBox">
+                                    <%= data.deposit %>
+                                </span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="depositUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="depositDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-green"><i class="fa  fa-arrow-up"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Withdrawal</span>
+                            <span class="info-box-number">
+                                <span id="withdrawalBox">
+                                    <%= data.withdrawl %>
+                                </span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="withdrawalUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="withdrawalDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
+
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Referral</span>
+                            <span class="info-box-number">
+                                <%= data.referral.toFixed(2) %>
+                            </span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                    <!-- /.info-box -->
+                </div>
+                <!-- /.col -->
+
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-navy"><i class="fa  fa-bolt"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Guest Players</span>
+                        <span class="info-box-number">
+                            <span id="onlineBox"><%= data.guest_count  %></span>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="onlineUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="onlineDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Monthly Statistics</h3>
+                            <small>Game Played</small>
+                        </div>
+                        <div class="box-body no-padding">
+                            <canvas id="myChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Users -->
+                <div class="col-md-4">
+                    <!-- USERS LIST -->
+                    <div class="box ">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Latest Users</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body no-padding">
+                            <ul class="users-list clearfix">
+                                <% for (d of data.latest_user) {%>
+                                    <li>
+                                        <img src="<%= d.profilepic?host+'/'+d.profilepic:host + '/admin-assets/dist/img/avatar5.png'%>" alt="User Image" class="img-responsive"
+                                            style="height: 50px;width: 50px;" />
+                                        <a class="users-list-name" href="<%= host%>/user/view/<%= d.id%>"
+                                            target="_blank">
+                                            <%= d.username%>
+                                        </a>
+                                        <span class="users-list-date time_formateDateandTime">
+                                            <%= d.created_at%>
+                                        </span>
+                                    </li>
+                                    <% } %>
+                            </ul>
+                            <!-- /.users-list -->
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer text-center">
+                            <a href="/user" class="uppercase">View All Users</a>
+                        </div>
+                        <!-- /.box-footer -->
+                    </div>
+                    <!--/.box -->
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <%- include footer %>
+        <script src="https://www.chartjs.org/dist/2.7.3/Chart.bundle.js"></script>
+        <script>
+            $(document).ready(function () {
+                var ctx = document.getElementById("myChart").getContext('2d');
+                var all_data = <%- JSON.stringify(data.graph_data) %>;
+                all_data = JSON.parse(all_data);
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: all_data.legends,
+                        datasets: all_data.data
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+            integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+        <!-- <script src="<%= host%>/live-dashboard.js"></script> -->

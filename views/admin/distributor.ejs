@@ -1,0 +1,213 @@
+<%- include header %>
+<style>
+    .title {
+      margin: 0;
+      font-size: 24px;
+    }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="">
+            <div class="row">
+              <div class="col-md-4">
+                <h1 class="title"> <%= title %> </h1>
+              </div>
+              <div class="col-md-8">
+                <div class="pull-right">
+                    <button id="btnAddDistributor" class="btn btn-primary"><i class="fa fa-plus-square-o">&nbsp;Add</i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table id="distributorsTab" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile</th>
+                                    <th>Wallet</th>
+                                    <th>Reg Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i = 1; for (d of data) {%>
+                                <tr class="gradeX">
+                                    <td><%= d.name %></td>
+                                    <td><%= d.email%></td>
+                                    <td><%= d.mobile %></td>
+                                    <td><%= d.commission_wallet || 0 %></td>
+                                    <td><%= d.created_at%></td>
+                                    <% if (d.is_active) { %>
+                                    <td><small class="label bg-green">Active</small></td>
+                                    <% } else { %>
+                                    <td><small class="label bg-red">Inactive</small></td>
+                                    <% } %>
+                                    <td class="actions text-center">
+                                        <a
+                                            href="<%= host%>/distributor/view/<%= d._id%>"
+                                            target="_blank"
+                                            class="on-editing save-row"
+                                            ><i class="fa fa-eye"></i
+                                        ></a>
+                                    </td>
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script>
+    $(document).ready(function(e) {
+        function formateDateandTime(date) {
+            // 7/12/2018 12:25PM
+            var dat = new Date(date);
+            var mon = dat.getMonth() + 1 > 9 ? dat.getMonth() + 1 : '0' + parseInt(dat.getMonth() + parseInt(1));
+
+            var hours = dat.getHours() % 12;
+            hours = hours > 9 ? hours : '0' + hours;
+
+            var minutes = dat.getMinutes();
+            minutes = minutes > 9 ? minutes : '0' + minutes;
+
+            var ap = dat.getHours() >= 12 ? 'PM' : 'AM';
+            var day = dat.getDate() > 9 ? dat.getDate() : '0' + dat.getDate();
+
+            rez = day + '/' + mon + '/' + dat.getFullYear() + ' ' + hours + ':' + minutes + ap;
+
+            return rez;
+        }
+
+        $('#btnAddDistributor').on('click', (e) => {
+            e.preventDefault();
+            window.location.href = '/distributor/add'
+        });
+
+        $('#distributorsTab').DataTable({
+            destroy: true,
+            dom: 'lBfrtip',
+            lengthMenu: [
+                [10, 25, 100, 500],
+                [10, 25, 100, 500]
+            ],
+            pageLength: 10,
+            buttons: [
+                {
+                    extend: 'excel',
+                    text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        },
+                        format: {
+                            body: function(data, row, column, node) {
+                                if (column === 4) {
+                                    data = formateDateandTime(parseInt(data));
+                                }
+                                if (column === 5) {
+                                    data = data.replace(/<.*?>/gi, '');
+                                }
+                                if (column === 6) {
+                                    data = data.replace(/<.*?>/gi, '');
+                                }
+                                return data;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        },
+                        format: {
+                            body: function(data, row, column, node) {
+                                if (column === 4) {
+                                    data = formateDateandTime(parseInt(data));
+                                }
+                                if (column === 5) {
+                                    data = data.replace(/<.*?>/gi, '');
+                                }
+                                if (column === 6) {
+                                    data = data.replace(/<.*?>/gi, '');
+                                }
+
+                                return data;
+                            }
+                        }
+                    }
+                }
+            ],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: '/distributors_ajax',
+            deferLoading: '<%= total %>',
+            aaSorting: [],
+            sortField: 4,
+            sortOrder: '-1',
+            columnDefs: [
+                {
+                    orderable: true,
+                    targets: [0, 3, 4, 5]
+                },
+                {
+                    orderable: false,
+                    targets: [1, 2, 6]
+                }
+            ],
+            createdRow: function(row, data, dataIndex) {
+                console.log(data[5], dataIndex);
+                var rowData =
+                    '<td>' +
+                    data[0] +
+                    '</td>' +
+                    '<td>' +
+                    data[1] +
+                    '</td>' +
+                    '<td>' +
+                    data[2] +
+                    '</td>' +
+                    '<td>' +
+                    data[3] +
+                    '</td>' +
+                    '<td>' +
+                    formateDateandTime(parseInt(data[4])) +
+                    '</td>' +
+                    '<td>' +
+                    data[5] +
+                    '</td>' +
+                    '<td>' +
+                    data[6] +
+                    '</td>';
+                $(row).html(rowData);
+            }
+        });
+        $('#distributorsTab').DataTable().order([4, 'desc']).draw()
+    });
+</script>

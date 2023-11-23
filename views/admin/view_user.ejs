@@ -1,0 +1,556 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+
+                <!-- Profile Image -->
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <img class="profile-user-img img-responsive img-circle" src="<%= data.profilepic?data.profilepic:host + '/admin-assets/dist/img/avatar5.png' %>"
+                            alt="User profile picture" style="width: 100px;height: 100px;">
+                        <h3 class="profile-username text-center"><%- data.name %> <%- data.last_name %></h3>
+                        <p class="text-muted text-center">Player ID: <%- data.username %></p>
+                        <p class="text-muted text-center">ID: <%- data.numeric_id %></p>
+                        <% if ( data.email ) { %>
+                            <p class="text-muted text-center"><%- data.email %>
+                                <% if ( data.email_verified ) { %>
+                                <i class="fa fa-check-circle text-green" aria-hidden="true"></i>
+                                <% } else { %>
+                                <a href="#" onclick="manuallyVerify('<%- data.id %>')"><i class="fa fa-times text-red" aria-hidden="true"></i></a>
+                                <% } %>
+                            </p>    
+                        <% } %>
+
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Mobile</b>
+                                <a class="pull-right"><%= data.mobile %>
+                                    <% if ( data.otp_verified ) { %>
+                                    <i class="fa fa-check-circle text-green" aria-hidden="true"></i>
+                                    <% } else { %>
+                                    <i class="fa fa-times text-red" aria-hidden="true"></i>
+                                    <% } %>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Status</b>
+                                <% if ( data.is_active ) { %>
+                                <small class="label bg-green pull-right">Active</small>
+                                <% } else { %>
+                                <small class="label bg-red pull-right">Inactive</small>
+                                <% } %>
+                            </li>
+                            <!-- <li class="list-group-item" style="display: none;">
+                                <b>KYC Status</b>
+                                <small class="label <%= ( data.kyc_status=='verified' )?'bg-green':'bg-red'%> pull-right"><%=data.kyc_status%></small>
+                                
+                            </li> -->
+                            <li class="list-group-item">
+                                <b>Verification</b>
+                                <% if (data.email_verified && data.otp_verified) { %>
+                                <small class="label bg-green pull-right">Verified</small>
+                                <% } else { %>
+                                <small class="label bg-red pull-right">Unverified</small>
+                                <% } %>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Main Wallet</b> <a class="pull-right"><%= data.wallet %></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Win Wallet</b> <a class="pull-right"><%= data.win %></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Referred Users</b> <a href="<%= host%>/referral/view/<%= data.id%>"
+                                    class="pull-right"><small
+                                        class="label bg-green"><%= data.referred_users%></small></a>
+                            </li>
+                        </ul>
+
+                        <% if ( data.is_active ) { %>
+                        <button type="button" class="btn btn-danger deactivate btn-block"
+                            data-id="<%= data.id%>">Deactivate</button>
+                        <% } else { %>
+                        <button type="button" class="btn btn-success activate btn-block"
+                            data-id="<%= data.id%>">Activate</button>
+                        <% } %>
+
+                        <a href="#" class="btn btn-info btn-block" data-toggle="modal" data-target="#addmoney">Add
+                            Money</a>
+
+                            <a href="#" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deductmoney">Deduct
+                                Money</a>
+                        <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#userPasswordModal">Change Password</a>
+                        </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+
+                <!-- About Me Box -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Device Info</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <ul class="list-group list-group-unbordered" style="word-break: break-all;">
+                            <li class="list-group-item">
+                                <b>Device Name</b><br> <a><%= data.device_name%></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Device Model</b><br> <a><%= data.device_model%></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>OS</b><br> <a class=""><%= data.device_os%></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>RAM (MB)</b><br> <a><%= data.device_ram%></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Processor</b><br> <a><%= data.device_processor%></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+
+            </div>
+
+            <div class="col-md-9">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Game Played</h3>
+                    </div>
+                    <div class="box-body table-responsive">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Room Code</th>
+                                    <th>Date Time</th>
+                                    <th>Amount (RS)</th>
+                                    <th>Players</th>
+                                    <th>Rank</th>
+                                    <th>Profit/Loss (Rs)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i=1; for (d of data.game_data) {%>
+                                <tr>
+                                    <td><%= i++%></td>
+                                    <td><%= d.room%></td>
+                                    <td class="time_formateDateandTime"><%= d.created_at%></td>
+                                    <td><%= d.room_fee %></td>
+                                    <td><%= d.no_of_players %></td>
+                                    <td><%= d.players[0].rank %></td>
+                                    <% if (d.players[0].pl > 0) { %>
+                                    <td><span class="label label-success"><%= d.players[0].pl %></span></td>
+                                    <% } else { %>
+                                    <td><span class="label label-danger"><%= d.players[0].pl %></span></td>
+                                    <% } %>
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="box box-danger">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Completed Withdrawal</h3>
+                            </div>
+                            <div class="box-body table-responsive">
+                                <table id="withdrawalTabel" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount</th>
+                                            <th>Mode</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% var i=1; for (a of data.withdrawlCompleted) {%>
+                                        <tr>
+                                            <td><%= i++%></td>
+                                            <td><%= a.amount%></td>
+                                            <% if (a.mode == 'paytm') { %>
+                                            <td>PAYTM</td>
+                                            <% } else { %>
+                                            <td>BANK</td>
+                                            <% } %>
+                                            <td class="time_formateDateandTime"><%= a.date%></td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Completed Deposit</h3>
+                            </div>
+                            <div class="box-body table-responsive">
+                                <table id="DepositlTabel" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount</th>
+                                            <th>Mode</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% var i=1; for (a of data.completedDeposite) {%>
+                                        <tr>
+                                            <td><%= i++%></td>
+                                            <td><%= a.amount%></td>
+                                            <% if (a.mode == 'P') { %>
+                                            <td>PAYTM</td>
+                                            <% } else if(a.mode == 'A'){ %>
+                                            <td>ADMIN</td>
+                                            <% } else if(a.mode == 'B'){ %>
+                                            <td>BONUS</td>
+                                            <% } else if(a.mode == 'R'){ %>
+                                            <td>REFUND</td>
+                                            <% } else if(a.mode == 'O'){ %>
+                                            <td>OTHER</td>
+                                            <% } else if(a.mode == 'REF'){ %>
+                                            <td>REFERRAL</td>
+                                            <% } else { %>
+                                            <td>GAME</td>
+                                            <% } %>
+                                            <td class="time_formateDateandTime"><%= a.date%></td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<!-- Modal -->
+<div id="addmoney" class="modal fade remark" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Money</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="frmAddMoney" name="frmAddMoney">
+                    <div class="form-group">
+                        <label for="amount">Amount <small></label>
+                        <input type="text" class="form-control" id="amount" name="amount" data-validation="number">
+                        <input type="hidden" value="<%= data.id %>" name="request_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="bonus">Txn Mode <small></label>
+                        <select type="text" class="form-control" id="txn_mode" name="txn_mode">
+                            <option value="B">Bonus</option>
+                            <option value="A">Admin</option>
+                            <option value="R" selected>Refund</option>
+                            <option value="O">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="remarks">Remarks <small></label>
+                        <input type="text" class="form-control" id="remarks" name="remarks">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Add to</small></label>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="type" id="type1" value="main" checked="">Main wallet</label>
+                            <label>
+                                <input type="radio" name="type" id="type2" value="win">Win wallet</label>
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-success" id="btnAddMoney">Submit</button>
+                    <h4 id="loaderbtn" style="display: none"><i class="fa fa-spinner fa-spin" style="color: #000"></i>
+                        Loading</h4>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="deductmoney" class="modal fade remark" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Deduct Money</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="frmDeductMoney" name="frmAddMoney">
+                    <div class="form-group">
+                        <label for="amount">Amount <small></label>
+                        <input type="text" class="form-control" id="amount" name="amount" data-validation="number">
+                        <input type="hidden" value="<%= data.id %>" name="request_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="remarks">Remarks <small></label>
+                        <input type="text" class="form-control" id="remarks" name="remarks">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Deduct from</small></label>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="type" id="type1" value="main" checked="">Main wallet</label>
+                            <label>
+                                <input type="radio" name="type" id="type2" value="win">Win wallet</label>
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-danger" id="btnDeductMoney">Submit</button>
+                    <h4 id="loaderbtn1" style="display: none"><i class="fa fa-spinner fa-spin" style="color: #000"></i>
+                        Loading</h4>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Password Modal -->
+<div id="userPasswordModal" class="modal fade remark" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Change Password</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="frmChangeUserPassword" name="frmChangeUserPassword">
+                    <div class="form-group">
+                        <label for="password">New Password <small></label>
+                        <input type="password" class="form-control" id="user_password" name="user_password">
+                        <input type="hidden" value="<%= data.id %>" name="user_id">
+                    </div>
+                    <button type="submit" class="btn btn-success" id="btnChangeUserPassword">Update</button>
+                    <h4 id="btnpassloader" style="display: none"><i class="fa fa-spinner fa-spin" style="color: #000"></i>
+                        Loading</h4>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.validate({
+            modules: 'html5, security'
+        });
+
+        $('#withdrawalTabel').DataTable({
+            dom: 'Bfrtip',
+            "aaSorting": [],
+            buttons: [
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5',
+            ]
+        });
+
+        $('#DepositlTabel').DataTable({
+            dom: 'Bfrtip',
+            "aaSorting": [],
+            buttons: [
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5',
+            ]
+        });
+
+        $('#frmAddMoney').on('submit', function (e) {
+            $("#btnAddMoney").hide();
+            $("#loaderbtn").show();
+            e.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                method: 'post',
+                url: '/admin/addmoney',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 1) {
+                        console.log(response);
+                        swal({
+                            icon: 'success',
+                            title: response.Msg
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                        $("#btnAddMoney").show();
+                        $("#loaderbtn").hide();
+                    } else {
+                        console.log(response);
+                        swal({
+                            icon: 'error',
+                            title: response.Msg,
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                        $("#btnAddMoney").show();
+                        $("#loaderbtn").hide();
+                    }
+                }
+            });
+        });
+
+
+        $('#frmDeductMoney').on('submit', function (e) {
+            $("#btnDeductMoney").hide();
+            $("#loaderbtn1").show();
+            e.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                method: 'post',
+                url: '/admin/deductmoney',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 1) {
+                        console.log(response);
+                        swal({
+                            icon: 'success',
+                            title: response.Msg
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                        $("#btnDeductMoney").show();
+                        $("#loaderbtn1").hide();
+                    } else {
+                        console.log(response);
+                        swal({
+                            icon: 'error',
+                            title: response.Msg,
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                        $("#btnDeductMoney").show();
+                        $("#loaderbtn1").hide();
+                    }
+                }
+            });
+        });
+
+        //Change Password
+        $('#frmChangeUserPassword').on('submit', function (e) {
+            $("#btnChangeUserPassword").hide();
+            $("#btnpassloader").show();
+            e.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                method: 'post',
+                url: '/admin/users/changeuserpass',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 1) {
+                        console.log(response);
+                        swal({
+                            icon: 'success',
+                            title: 'Password changed successfully!'
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    } else {
+                        console.log(response);
+                        swal({
+                            icon: 'error',
+                            title: 'Error occurred, Please try again.',
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                        $("#btnChangeUserPassword").show();
+                        $("#btnpassloader").hide();
+                    }
+                }
+            });
+        });
+
+    });
+    function manuallyVerify(id){
+            $.ajax({
+                method: 'post',
+                url: '/admin/users/manually_verify',
+                data: {'id':id},
+            success: function (response) {
+                if (response.status == 1) {
+                // SUCCESS
+                console.log("Email Verify SUCCESSFULLY");
+                swal({
+                icon: 'success',
+                title: "Email verified successfully!",
+                }).then(function(){
+                window.location.reload();
+            });
+            } else {
+            // FAIL
+            swal({
+                    icon: 'error',
+                    title: response.message,
+                    }).then(function(){
+                    window.location.reload();
+                    });
+                }
+            },
+            error: function (err) {
+                swal({
+                icon: 'error',
+                title: "Error occurred, Please try again.",
+                }).then(function(){
+                window.location.reload();
+                });
+            }
+            });
+        }
+</script>

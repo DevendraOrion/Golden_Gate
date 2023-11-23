@@ -1,0 +1,669 @@
+<%- include header %>
+  <style>
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+
+    .card-body {
+      background-color: #f8f9fa;
+      padding: 10px;
+    }
+  </style>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-12 d-flex">
+          <div class="col-md-6 flex-fill">
+            <div class="box box-danger">
+              <div class="box-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>Contact Number</th>
+                    <td>
+                      <input type="text" id="contact_number" class="form-control" value="<%- data.contact_number %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Support</th>
+                    <td>
+                      <input type="text" id="support_link" class="form-control" value="<%- data.support_link %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Facebook Link</th>
+                    <td>
+                      <input type="text" id="facebook_link" class="form-control" value="<%- data.facebook_link %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Youtube Link</th>
+                    <td>
+                      <input type="text" id="youtube_link" class="form-control" value="<%- data.youtube_link %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Telegram Link</th>
+                    <td>
+                      <input type="text" id="telegram_link" class="form-control" value="<%- data.telegram_link %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Instagram Link</th>
+                    <td>
+                      <input type="text" id="instragram_link" class="form-control" value="<%- data.instragram_link %>">
+                    </td>
+                  </tr>
+                  <!-- <tr>
+                    <th>Minimum Balance</th>
+                    <td>
+                      <input type="text" id="minimum_balance" class="form-control" value="<%- data.minimumBalance %>">
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <th>UPI Setting</th>
+                    <td>
+                      <input type="text" id="upi_setting" class="form-control" value="<%- data.upiSetting %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-success" onclick="saveSettings1()">
+                        Save
+                      </button></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 flex-fill">
+            <div class="box box-danger">
+              <div class="box-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>Minimum Deposit Amount</th>
+                    <td>
+                      <input type="text" id="minimum_deposite_balance" class="form-control"
+                        value="<%- data.minimum_deposite_balance %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Maximum Deposit Amount</th>
+                    <td>
+                      <input type="text" id="maximum_deposite_balance" class="form-control"
+                        value="<%- data.maximum_deposite_balance %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Minimum Withdraw Amount</th>
+                    <td>
+                      <input type="text" id="minimum_withdraw_amount" class="form-control"
+                        value="<%- data.minimum_withdraw_amount %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Maximum Withdraw Amount</th>
+                    <td>
+                      <input type="text" id="maximum_withdraw_amount" class="form-control"
+                        value="<%- data.maximum_withdraw_amount %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <!-- <tr>
+                  <th>Private Player</th>
+                  <td>
+                    <input type="checkbox" id="privatePlayer" class="form-check-input" <% if (data.privatePlayer) {
+                      %>checked<% } %>
+                      >
+                  </td>
+                </tr> -->
+                  <tr>
+                    <th>Withdraw Commission</th>
+                    <td>
+                      <input type="text" id="withdraw_commission" class="form-control"
+                        value="<%- data.withdrawCommission %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-success" onclick="saveSettings2()">
+                        Save
+                      </button></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 d-flex">
+          <div class="col-md-6 flex-fill">
+            <div class="box box-danger">
+              <div class="box-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>First Level Refer Bonus</th>
+                    <td>
+                      <input type="text" id="first_level_refer_bonus" class="form-control"
+                        value="<%- data.first_level_refer_bonus %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <!-- <tr>
+                    <th>Deposite Refral Bonus</th>
+                    <td>
+                      <input type="text" id="deposite_refer_bonus" class="form-control"
+                        value="<%- data.deposite_refer_bonus %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <th>Second Level Refer Bonus</th>
+                    <td>
+                      <input type="text" id="second_level_refer_bonus" class="form-control"
+                        value="<%- data.second_level_refer_bonus %>" oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Refer Code Bonus</th>
+                    <td>
+                      <input type="text" id="refer_code_bonus" class="form-control" value="<%- data.refer_code_bonus %>"
+                        oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Welcome Bonus</th>
+                    <td>
+                      <input type="text" id="welcome_bonus" class="form-control" value="<%- data.welcomeBonus%>"
+                        oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Scratch Card Bonus</th>
+                    <td>
+                      <input type="text" id="cardbonus" class="form-control" value="<%- data.cardbonus %>"
+                        oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Commission</th>
+                    <td>
+                      <input type="text" id="commission" class="form-control" value="<%- data.commission %>"
+                        oninput="validateReferBonus(this)">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-success" onclick="saveSettings3()">
+                        Save
+                      </button></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 flex-fill">
+            <div class="box box-danger">
+              <div class="box-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th>Show Online Player</th>
+                    <td>
+                      <input type="checkbox" id="show_online_player" class="form-check-input" <% if
+                        (data.showOnlinePlayer) { %>checked<% } %>>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>2 Player</th>
+                    <td>
+                      <input type="checkbox" id="twoPlayer" class="form-check-input" <% if (data.twoPlayer) { %>checked
+                      <% } %>>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>4 Player</th>
+                    <td>
+                      <input type="checkbox" id="fourPlayer" class="form-check-input" <% if (data.fourPlayer) {
+                        %>checked
+                      <% } %>>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" class="btn btn-success" onclick="saveSettings4()">
+                        Save
+                      </button></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="box box-danger">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Game Version</th>
+                  <td>
+                    <%= data.value %>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Maintenance Mode:</th>
+                  <input type="hidden" id="undermaintenance" value="<%- data.undermaintenance %>">
+                  <td id="undermaintenanceTd">
+                    <% if (data.undermaintenance=='Y' ) { %>
+                      <button type="button" class="btn btn-success" onclick="changeGameMode('N')">
+                        YES
+                      </button>
+                      <% } else { %>
+                        <button type="button" class="btn btn-danger" onclick="changeGameMode('Y')">
+                          NO
+                        </button>
+                        <% } %>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Maintenance Note:</th>
+                  <td>
+                    <textarea id="note" class="form-control"><%- data.note %></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <th>2 Player</th>
+                  <td>
+                    <select id="entryFees2" class="form-control entry-fees" multiple="multiple"
+                      onchange="changeEntryFees('entryFees2')">
+                      <%- selected1 %>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>4 Player</th>
+                  <td>
+                    <select id="entryFees4" class="form-control entry-fees" multiple="multiple"
+                      onchange="changeEntryFees('entryFees4')">
+                      <%- selected2 %>
+                    </select>
+
+                  </td>
+                </tr>
+                <tr>
+                  <th>Private</th>
+                  <td>
+                    <select id="entryFeesPVT" class="form-control entry-fees" multiple="multiple"
+                      onchange="changeEntryFees('entryFeesPVT')">
+                      <%- selected3 %>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Banner Image</th>
+                  <td>
+                    <div style="width:10rem">
+                      <a href="<%= data.banner_url %>" target="_blank" style="width: inherit;">
+                        <img src="<%= data.banner_url %>" alt="" srcset="" style="width:inherit">
+                      </a>
+                    </div>
+                    <div class="mb-3">
+                      <label for="formFile" class="form-label">Select Banner</label>
+                      <input class="form-control" type="file" id="banner" />
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Banner Show:</th>
+                  <input type="hidden" name="banner_status" id="banner_status" value="<%- data.banner_status %>">
+                  <td id="banner_statusTd">
+                    <% if (data.banner_status=='Y' ) { %>
+                      <button type="button" class="btn btn-success" onclick="changeBannerShow('N')">
+                        YES
+                      </button>
+                      <% } else { %>
+                        <button type="button" class="btn btn-danger" onclick="changeBannerShow('Y')">
+                          NO
+                        </button>
+                        <% } %>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button type="button" class="btn btn-success" onclick="saveAll()">
+                      Save
+                    </button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <%- include footer %>
+    <script>
+      function changeGameMode(type) {
+        $("#undermaintenance").val(type);
+        $("#undermaintenanceTd").html('<button type="button" class="btn btn-' + (type == 'N' ? 'danger' : 'success') + '" onclick="changeGameMode(\'' + (type == 'N' ? 'Y' : 'N') + '\')">' + (type == 'N' ? 'No' : 'Yes') + '</button>');
+
+      }
+      function changeBannerShow(type) {
+        $("#banner_status").val(type);
+        $("#banner_statusTd").html('<button type="button" class="btn btn-' + (type == 'N' ? 'danger' : 'success') + '" onclick="changeBannerShow(\'' + (type == 'N' ? 'Y' : 'N') + '\')">' + (type == 'N' ? 'No' : 'Yes') + '</button>');
+      }
+      function saveBanner(element) {
+        data = new FormData();
+        // console.log(document.querySelector("#banner").files[0])
+        // data.append('banner', document.querySelector("#banner").files[0]);
+        console.log(element);
+        data.append('banner', element);
+        console.log(data);
+        $.ajax({
+          method: "post",
+          url: "/admin/add_banner",
+          cache: false,
+          contentType: false,
+          processData: false,
+          data: data,
+          success: function (response) {
+            if (response.status == 1) {
+              swal({
+                icon: "success",
+                title: response.Msg,
+              }).then(function () {
+                window.location.reload();
+              });
+            } else {
+              console.log(response);
+              swal({
+                icon: "error",
+                title: response.Msg,
+              }).then(function () {
+                window.location.reload();
+              });
+            }
+          },
+        });
+      }
+
+      function validateReferBonus(input) {
+        input.value = input.value.replace(/[^0-9.]/g, ""); // Remove non-numeric characters except decimal point
+      }
+      var selectors = $(".entry-fees").select2({
+        tags: true,
+        tokenSeparators: [",", " "],
+        insertTag: function (data, tag) {
+          // Insert the tag at the end of the results
+          data.push(tag);
+        },
+        sorter: function (data) {
+          return data.sort(function (a, b) {
+            return a.text.localeCompare(b.text);
+          });
+        }
+      });
+      function isInArray(value, array) {
+        return array.indexOf(value) > -1;
+      }
+      function changeEntryFees(type) {
+        // selectors.sorter = (data) => data.sort((a, b) => a.text.localeCompare(b.text));
+      }
+      $('.entry-fees').on('select2:select', function () {
+        // Get the select box element
+        var $select = $(this);
+
+        // Get the options
+        var $options = $select.find('option');
+
+        // Sort the options based on numeric value
+        $options.sort(function (a, b) {
+          var aValue = parseInt($(a).val());
+          var bValue = parseInt($(b).val());
+          return aValue - bValue;
+        });
+
+        // Clear the existing options
+        $select.empty();
+
+        // Append the sorted options back to the select box
+        $select.append($options);
+
+        // Trigger the change event to update Select2
+        $select.trigger('change');
+      });
+
+      async function saveSettings1() {
+        const contact_number = $('#contact_number').val();
+        const support_link = $('#support_link').val();
+        const facebook_link = $('#facebook_link').val();
+        const youtube_link = $('#youtube_link').val();
+        const telegram_link = $('#telegram_link').val();
+        const instragram_link = $('#instragram_link').val();
+        const upiSetting = $('#upi_setting').val();
+        try {
+          const response = await $.ajax({
+            method: 'post',
+            url: '/admin/save_settings',
+            data: {
+              contact_number,
+              facebook_link,
+              support_link,
+              youtube_link,
+              telegram_link,
+              instragram_link,
+              upiSetting,
+              form: 1
+            },
+          });
+          if (response.status === 1) {
+            swal({
+              icon: 'success',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          }
+        } catch (error) {
+          console.error('Error saving settings', error);
+          swal({
+            icon: 'error',
+            title: 'Error saving settings',
+          }).then(function () {
+            window.location.reload();
+          });
+        }
+      }
+      async function saveSettings2() {
+        const minimum_deposite_balance = $('#minimum_deposite_balance').val();
+        const maximum_deposite_balance = $('#maximum_deposite_balance').val();
+        const maximum_withdraw_amount = $('#maximum_withdraw_amount').val();
+        const minimum_withdraw_amount = $('#minimum_withdraw_amount').val();
+        const withdrawCommission = $('#withdraw_commission').val();
+        try {
+          const response = await $.ajax({
+            method: 'post',
+            url: '/admin/save_settings',
+            data: {
+              minimum_deposite_balance,
+              maximum_deposite_balance,
+              minimum_withdraw_amount,
+              maximum_withdraw_amount,
+              withdrawCommission,
+              form: 2
+            },
+          });
+          if (response.status === 1) {
+            swal({
+              icon: 'success',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          }
+        } catch (error) {
+          console.error('Error saving settings', error);
+          swal({
+            icon: 'error',
+            title: 'Error saving settings',
+          }).then(function () {
+            window.location.reload();
+          });
+        }
+      }
+      async function saveSettings3() {
+        const first_level_refer_bonus = $('#first_level_refer_bonus').val();
+        const second_level_refer_bonus = $('#second_level_refer_bonus').val();
+        const refer_code_bonus = $('#refer_code_bonus').val();
+        const welcomeBonus = $('#welcome_bonus').val();
+        const cardbonus = $('#cardbonus').val();
+        const commission = $('#commission').val();
+        try {
+          const response = await $.ajax({
+            method: 'post',
+            url: '/admin/save_settings',
+            data: {
+              first_level_refer_bonus,
+              second_level_refer_bonus,
+              refer_code_bonus,
+              welcomeBonus,
+              cardbonus,
+              commission,
+              form: 3
+            },
+          });
+          if (response.status === 1) {
+            swal({
+              icon: 'success',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          }
+        } catch (error) {
+          console.error('Error saving settings', error);
+          swal({
+            icon: 'error',
+            title: 'Error saving settings',
+          }).then(function () {
+            window.location.reload();
+          });
+        }
+      }
+      async function saveSettings4() {
+        const showOnlinePlayer = $('#show_online_player').is(':checked');
+        const twoPlayer = $('#twoPlayer').is(':checked');
+        const fourPlayer = $('#fourPlayer').is(':checked');
+        try {
+          const response = await $.ajax({
+            method: 'post',
+            url: '/admin/save_settings',
+            data: {
+              showOnlinePlayer,
+              twoPlayer,
+              fourPlayer,
+              form: 4
+            },
+          });
+          if (response.status === 1) {
+            swal({
+              icon: 'success',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          } else {
+            swal({
+              icon: 'error',
+              title: response.Msg,
+            }).then(function () {
+              window.location.reload();
+            });
+          }
+        } catch (error) {
+          console.error('Error saving settings', error);
+          swal({
+            icon: 'error',
+            title: 'Error saving settings',
+          }).then(function () {
+            window.location.reload();
+          });
+        }
+      }
+
+
+      function saveAll() {
+        const underMaintenance = $("#undermaintenance").val();
+        const bannerStatus = $("#banner_status").val();
+        const banner = $("#banner")[0].files[0]; // Get the selected file
+        const entryFees2 = getSelectedOptions("entryFees2");
+        const entryFees4 = getSelectedOptions("entryFees4");
+        const entryFeesPVT = getSelectedOptions("entryFeesPVT");
+        const note = $("#note").val();
+
+        const data = new FormData();
+        data.append("underMaintenance", underMaintenance);
+        data.append("bannerStatus", bannerStatus);
+        data.append("banner", banner);
+        data.append("entryFees2", entryFees2);
+        data.append("entryFees4", entryFees4);
+        data.append("entryFeesPVT", entryFeesPVT);
+        data.append("note", note);
+
+        fetch("/admin/save_maintenance", {
+          method: "POST",
+          body: data
+        })
+          .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          });
+      }
+      function getSelectedOptions(elementId) {
+        var selected = [];
+        var element = document.getElementById(elementId);
+
+        for (var option of element.options) {
+          if (option.selected) {
+            selected.push(option.value);
+          }
+        }
+
+        return selected;
+      }
+
+
+    </script>

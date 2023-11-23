@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title><%= process.env.PROJECT_NAME%> - Add Money</title>
+
+	<!-- Bootstrap core CSS -->
+	<link href="<%= host %>/admin-assets/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		.form-error {
+			color: red;
+		}
+	</style>
+
+</head>
+
+<body>
+	<% if (status == 1) { %>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center pt-5">
+				<img src="<%= host %>/images/logo.png" alt="<%= process.env.PROJECT_NAME%> Logo" width="180">
+				<h1 class="mt-5 text-success">Add Money To <%= process.env.PROJECT_NAME%></h1>
+				<div class="col-lg-12 text-left">
+					<form id="form1" method="post" action="#" name="pay">
+						<div class="form-group">
+							<label for="pwd">Name</label>
+							<input type="text" class="form-control" id="name" name="name" disabled="disabled"
+								data-validation="required" value="<%= data.name %>">
+						</div>
+						<div class="form-group">
+							<label for="pwd">Available Balance (&#8377;)</label>
+							<input type="text" class="form-control" id="name" name="name" disabled="disabled"
+								data-validation="required" value="<%= data.main_wallet %>">
+						</div>
+						<div class="form-group">
+							<input type="hidden" title="MID" tabindex="10" name="MID" value='<%= config.MID %>'">
+							<input type="hidden" id="ORDER_ID" tabindex="1" name="ORDER_ID" autocomplete="off"
+								value="<%= data.order_id %>">
+							<input type="hidden" id="CUST_ID" tabindex="2" maxlength="12" size="12" name="CUST_ID"
+								autocomplete="off" value="<%= data.numeric_id %>">
+							<input type="hidden" id="INDUSTRY_TYPE_ID" tabindex="4" maxlength="12" size="12"
+								name="INDUSTRY_TYPE_ID" autocomplete="off" value='<%= config.INDUSTRY_TYPE_ID %>'>
+							<input type="hidden" id="CHANNEL_ID" tabindex="4" maxlength="12" size="12" name="CHANNEL_ID"
+								autocomplete="off" value='<%= config.CHANNEL_ID %>'>
+						</div>
+						<div class="form-group">
+							<label for="pwd">Amount (&#8377;)</label>
+							<input type="text" class="form-control" id="TXN_AMOUNT" name="TXN_AMOUNT"
+								data-validation="number required" data-validation-allowing="range[1;100000]">
+							<input type="hidden" title="WEBSITE" tabindex="10" name="WEBSITE"
+								value='<%= config.WEBSITE %>'>
+							<input type="hidden" name="USERID" value='<%= data.user_id %>'>
+						</div>
+						<button type="submit" id="user-submit" class="btn btn-success btn-block">Add Money</button>
+					</form>
+				</div>
+			</div>
+			<div class="col-lg-12 text-center pt-5">
+				<small class="pt-3">Copyright &copy; 2020 All Rights Reserved</small>
+			</div>
+		</div>
+	</div>
+	<% } else { %>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center pt-5">
+				<img src="<%= host %>/images/logo.png" alt="<%= process.env.PROJECT_NAME%> Logo">
+				<h1 class="mt-5 text-danger">
+					<%= title %>
+				</h1>
+			</div>
+			<div class="col text-center pt-3">
+				<small class="mt-2">Copyright &copy; 2020 All Rights Reserved</small>
+			</div>
+		</div>
+	</div>
+	<% } %>
+	<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+	<script>
+		$.validate({
+			modules: 'html5, security'
+		});
+
+		function closeFrm() {
+			window.location.href = "uniwebview://cancel";
+		}
+	</script>
+</body>
+
+</html>

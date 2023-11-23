@@ -1,0 +1,77 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Notice</td>
+                  <td>
+                    <textarea name="notice" id="notice" class="form-control" placeholder="Enter your notice here....">
+<%=data?.notice??''%></textarea>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rules</td>
+                  <td>
+                    <textarea name="rules" id="rules" class="form-control" placeholder="Enter your rules here....">
+<%=data?.rules??''%></textarea>
+                  </td>
+                </tr>
+                <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" />
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+        const notice = document.getElementById("notice").value;
+        const rules = document.getElementById("rules").value;
+        const id = document.getElementById("notice_id").value;
+
+        fetch("/admin/addNotice", {
+          method: "POST",
+          body: JSON.stringify({ notice, rules, id: id ?? "" }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+      };
+    </script>

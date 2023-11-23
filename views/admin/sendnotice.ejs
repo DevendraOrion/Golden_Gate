@@ -1,0 +1,173 @@
+<%- include header %>
+<style>
+    .nomargin{
+        margin:0px;
+    }
+    </style>
+    
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper <%- (admin.role == 'DASHBOARD') ? 'nomargin' : ''%>">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <!-- Profile Update -->
+           
+
+            <!-- Password Update  -->
+            <div class="col-md-8">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><%= sub2 %></h3>
+                    </div>
+                    <div class="box-body">
+                        <form method="POST" name="adminPassword" id="adminPassword">
+                            <div class="form-group">
+                                <label for="opass">User List:</label>
+                                <select class="col trans-type form-control" name="filter">
+                                    <option value="all">All</option>                                    
+                                    <% var i=1; for (d of data) {%>
+                                    <option value="<%=d.id%>"><%=data.name(d.mobile_no.country_code+"-"+d.mobile_no.number)%></option>
+                                    <%}%>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="npass">New Password:</label>
+                                <input type="password" class="form-control" id="npass" placeholder="Enter New Password"
+                                name="pass_confirmation" data-validation="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="cpass">Confirm Password:</label>
+                                <input type="password" class="form-control" id="cpass" placeholder="Confirm Password"
+                                    name="pass" data-validation="confirmation required">
+                            </div>
+                            <h4 id="passloaderbtn" style="display: none"><i class="fa fa-spinner fa-spin" style="color: #000"></i> Loading</h4>
+                            <button type="submit" class="btn btn-success" id="passBtn">Update</button>
+                        </form>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.validate({
+            modules: 'html5, security'
+        });
+        $('#adminProfile').on('submit', function (e) {
+            $("#profileBtn").hide();
+            $("#loaderbtn").show();
+            e.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                method: 'post',
+                url: '/admin/genprofile',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 1) {
+                       console.log(response);
+                       swal({
+                        icon: 'success',
+                        title: response.Msg
+                      }).then(function(){
+                        window.location.reload();
+                      });
+                       $("#profileBtn").show();
+                        $("#loaderbtn").hide();
+                    } else {
+                       console.log(response);
+                       swal({
+                        icon: 'error',
+                        title: response.Msg,
+                      }).then(function(){
+                        window.location.reload();
+                      });
+                        $("#profileBtn").show();
+                        $("#loaderbtn").hide();
+                    }
+                }
+            });
+        });
+
+        $('#adminPassword').on('submit', function (e) {
+            $("#passBtn").hide();
+            $("#passloaderbtn").show();
+            e.preventDefault();
+            var formdata = new FormData(this);
+            $.ajax({
+                method: 'post',
+                url: '/admin/adminpass',
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.status == 1) {
+                       console.log(response);
+                       swal({
+                        icon: 'success',
+                        title: response.Msg
+                      }).then(function(){
+                        window.location.reload();
+                      });
+                       $("#passBtn").show();
+                        $("#passloaderbtn").hide();
+                    } else {
+                       console.log(response);
+                       swal({
+                        icon: 'error',
+                        title: response.Msg,
+                      }).then(function(){
+                        window.location.reload();
+                      });
+                        $("#passBtn").show();
+                        $("#passloaderbtn").hide();
+                    }
+                }
+            });
+        });
+        let typeFilter = $(".trans-type")
+                    .select2({
+                        allowClear: true,
+                        placeholder: "Select Users"
+                    })
+                    .on("select2:unselecting", function (e) {
+                        $(this).data("filter", "unselected");
+                    })
+                    .on("select2:open", function (e) {
+                        if ($(this).data("filter") === "unselected") {
+                            $(this).removeData("filter");
+                            var self = $(this);
+                            setTimeout(function () {
+                                self.select2("close");
+                            }, 1);
+                        }
+                    })
+                    .on("select2:select", function (e) {
+                        // Do something
+                        THAT_FILTER = e.params.data.id;
+                        table.ajax.reload();
+                        console.log("THAT_FILTER", THAT_FILTER);
+                    })
+                    .on("select2:clearing", function (e) {
+                        console.log("cleared");
+                        THAT_FILTER = "";
+                        table.ajax.reload();
+                    });
+    });
+</script>

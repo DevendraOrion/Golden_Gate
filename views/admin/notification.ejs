@@ -1,0 +1,380 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1><%= title %></h1>
+  </section>
+  <section class="content-header">
+    <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      data-toggle="modal"
+      data-target="#addModal"
+    >
+      Add Notification
+    </button>
+  </section>
+
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <!-- /.box-header -->
+          <div class="row col-md-12">
+            <div id="errorHolder2" class="error" style="display: none">
+              <p style="color: red"></p>
+            </div>
+          </div>
+          <div class="box-body">
+            <table id="usersTab" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Notice Title</th>
+                  <th>Content</th>
+                  <th>Notice Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%/* var i=1; for (d of data) {%>
+                <tr class="gradeX">
+                  <td><%= d.notice_title %></td>
+                  <td><%= d.content %></td>
+                  <td><%= d.notice_date%></td>
+                  <td><%= {
+                    d.status[0].toUpperCase() + d.status.slice(1)
+                  } %></td>
+                  <td>
+                    <% var color = (d.status==='active')?
+                    'btn-success':'btn-danger'%>
+                    <button
+                      type="button"
+                      class="btn btn-warning btn-sm notificationEdit"
+                      data-toggle="modal"
+                      data-target="#addModal"
+                      data-id="<%=d._id%>"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      class="btn btn-sm <%=color%> notificationstatus"
+                      data-id="<%=d._id%>"
+                      data-status="<% (d.status=='active'):'inactive'?'active' %>"
+                    >
+                      <small class="label"><%=d.status%></small>
+                    </button>
+                  </td>
+                </tr>
+                <% }*/%>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.box-body -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+
+<div
+  class="modal fade"
+  id="addModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="myModalLabel"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button
+          type="button"
+          class="close closebtn"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Add Notification</h4>
+      </div>
+      <div class="modal-body">
+        <form action="javascript:void();" method="post" id="addForm">
+          <div class="row col-md-12">
+            <div id="errorHolder" class="error" style="display: none">
+              <p style="color: red"></p>
+            </div>
+          </div>
+          <input type="hidden" class="form-control" id="notice_id" name="id" />
+          <div class="form-group">
+            <label for="notice_title">Notice Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="notice_title"
+              placeholder="Notice Title"
+              name="notice_title"
+            />
+          </div>
+          <div class="form-group">
+            <label for="content">Content</label>
+            <textarea
+              id="content"
+              class="form-control"
+              name="content"
+              rows="3"
+              placeholder="Content"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="notice_date">Notice Date</label>
+            <input
+              type="date"
+              name="notice_date"
+              class="form-control"
+              id="notice_date"
+              placeholder="Notice Date"
+            />
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-default closebtn"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script>
+  $(document).ready(function (e) {
+    function formateDateandTime(date) {
+      // 7/12/2018 12:25PM
+      var dat = new Date(date);
+      var mon =
+        dat.getMonth() + 1 > 9
+          ? dat.getMonth() + 1
+          : "0" + parseInt(dat.getMonth() + parseInt(1));
+
+      var hours = dat.getHours() % 12;
+      hours = hours > 9 ? hours : "0" + hours;
+
+      var minutes = dat.getMinutes();
+      minutes = minutes > 9 ? minutes : "0" + minutes;
+
+      var ap = dat.getHours() >= 12 ? "PM" : "AM";
+      var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+
+      rez =
+        day +
+        "/" +
+        mon +
+        "/" +
+        dat.getFullYear() +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        ap;
+
+      return rez;
+    }
+
+    $("#usersTab").DataTable({
+      destroy: true,
+      dom: "lBfrtip",
+      lengthMenu: [
+        [10, 25, 100, 500],
+        [10, 25, 100, 500],
+      ],
+      pageLength: 10,
+      buttons: [
+        {
+          extend: "excel",
+          text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+          exportOptions: {
+            modifier: {
+              search: "applied",
+              order: "applied",
+            },
+            columns: ':visible:not(:last-child)',
+            format: {
+              body: function (data, row, column, node) {
+                // Strip $ from salary column to make it numeric
+
+                // if (column === 5) {
+                //     data = formateDateandTime(parseInt(data));
+                // }
+                return data;
+              },
+            },
+          },
+        },
+        {
+          extend: "pdf",
+          text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+          exportOptions: {
+            modifier: {
+              search: "applied",
+              order: "applied",
+            },
+            columns: ':visible:not(:last-child)',
+            format: {
+              body: function (data, row, column, node) {
+                // Strip $ from salary column to make it numeric
+
+                // if (column === 5) {
+                //     data = formateDateandTime(parseInt(data));
+                // }
+                return data;
+              },
+            },
+          },
+        },
+      ],
+      responsive: true,
+      processing: true,
+      serverSide: true,
+      ajax: "/notification_ajax",
+      deferLoading: "<%= total %>",
+      // "aoColumnDefs": [{ "bSortable": false, "aTargets": [ 0, 1, 2, 3 ] }],
+      aaSorting: [],
+      sortField: 5,
+      sortOrder: "-1",
+      columnDefs: [
+        {
+          orderable: true,
+          targets: [0, 3, 4],
+        },
+        {
+          orderable: false,
+          targets: [1, 2],
+        },
+      ],
+      createdRow: function (row, data, dataIndex) {
+        var rowData =
+          "<td>" +
+          data[0] +
+          "</td>" +
+          "<td>" +
+          data[1] +
+          "</td>" +
+          "<td>" +
+          data[2] +
+          "</td>" +
+          "<td>" +
+          data[3] +
+          "</td>" +
+          "<td>" +
+          data[4] +
+          "</td>";
+        $(row).html(rowData);
+      },
+    });
+    $("#usersTab").DataTable().order([4, "desc"]).draw();
+
+    $(document).on("submit", "#addForm", function (e) {
+      e.preventDefault();
+      $("#errorHolder").hide();
+
+      console.log("addnotification");
+      var formdata = new FormData(this);
+      $.ajax({
+        method: "post",
+        url: "/add_notification",
+        data: formdata,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+          if (response.status == 1) {
+            // SUCCESS
+            // window.location.href = "/notification";
+            $("#addForm").trigger("reset");
+            document.querySelector("#content").innerHTML = "";
+            $("#addModal").modal("hide");
+            $("#usersTab").DataTable().ajax.reload();
+          } else {
+            // FAIL
+            $("#errorHolder").find("p").html(response.message);
+            $("#errorHolder").show();
+          }
+        },
+        error: function (response) {
+          $("#errorHolder").find("p").html("Something went wrong!");
+          $("#errorHolder").show();
+        },
+      });
+    });
+    $(document).on("click", ".notificationstatus", function (e) {
+      e.preventDefault();
+      var id = $(this).data("id");
+      var status = $(this).data("status");
+      var data = { id: id, status: status };
+      console.log("change status");
+      $("#errorHolder2").hide();
+      $.ajax({
+        method: "post",
+        url: "/notification/change_status_notification",
+        data: data,
+        success: function (response) {
+          if (response.status == 1) {
+            // SUCCESS
+            // window.location.href = "/notification";
+            $("#usersTab").DataTable().ajax.reload();
+          } else {
+            // FAIL
+            $("#errorHolder2").find("p").html(response.message);
+            $("#errorHolder2").show();
+          }
+        },
+        error: function (response) {
+          $("#errorHolder2").find("p").html("Something went wrong!");
+          $("#errorHolder2").show();
+        },
+      });
+    });
+
+    $(document).on("click", ".notificationEdit", function (e) {
+      e.preventDefault();
+      var id = $(this).data("id");
+
+      $.ajax({
+        method: "post",
+        url: "/get_notification",
+        data: { id: id },
+        success: function (response) {
+          if (response.status == 1) {
+            data = response.data;
+            document.querySelector("#notice_id").value = data._id;
+            document.querySelector("#notice_title").value = data.notice_title;
+            document.querySelector("#notice_date").value = data.notice_date;
+            document.querySelector("#content").innerHTML = data.content;
+          } else {
+            // FAIL
+            $("#errorHolder").find("p").html(response.message);
+            $("#errorHolder").show();
+          }
+        },
+        error: function (response) {
+          $("#errorHolder").find("p").html("Something went wrong!");
+          $("#errorHolder").show();
+        },
+      });
+    });
+    $(document).on("click", ".closebtn", function (e) {
+      e.preventDefault();
+      $("#addForm").trigger("reset");
+      document.querySelector("#content").innerHTML = "";
+    });
+  });
+</script>

@@ -1,0 +1,102 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+<!-- <%= host %>/admin-assets/dist/img/avatar5.png -->
+                <!-- Profile Image -->
+                <div class="box box-primary">
+                    <div class="box-body box-profile">
+                        <img class="profile-user-img img-responsive img-circle" src="<%- data.profile_picture %>"
+                            alt="User profile picture" style="width: 100px;height: 100px;">
+                        <h3 class="profile-username text-center"><%- data.name %></h3>
+                        <p class="text-muted text-center"><%- data.email %></p>
+
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>Mobile</b>
+                                <a class="pull-right"><%= data.mobile_no.country_code %> <%= data.mobile_no.number %>
+                                    <!-- <% if ( data.otp_verified ) { %>
+                                    <i class="fa fa-check-circle text-green" aria-hidden="true"></i>
+                                    <% } else { %>
+                                    <i class="fa fa-times text-red" aria-hidden="true"></i>
+                                    <% } %> -->
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Status</b>
+                                <% if ( data.is_active ) { %>
+                                <small class="label bg-green pull-right">Active</small>
+                                <% } else { %>
+                                <small class="label bg-red pull-right">Inactive</small>
+                                <% } %>
+                            </li>
+                            <!-- <li class="list-group-item">
+                                <b>Verification</b>
+                                <% if (data.email_verified && data.otp_verified) { %>
+                                <small class="label bg-green pull-right">Verified</small>
+                                <% } else { %>
+                                <small class="label bg-red pull-right">Unverified</small>
+                                <% } %>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Main Wallet</b> <a class="pull-right"><%= data.wallet %></a>
+                            </li> -->
+                            <li class="list-group-item">
+                                <b>Wallet</b> <a class="pull-right">Rs. <%= data.commission_wallet || 0 %></a>
+                            </li>
+                            <!-- <li class="list-group-item">
+                                <b>Referral Code</b> <a href="#"
+                                    class="pull-right"><small
+                                        class="label bg-green"><%= data.referral_code%></small></a>
+                            </li> -->
+                            <li class="list-group-item">
+                                <b>Referred Agents</b> <a href="#"
+                                    class="pull-right"><small
+                                        class="label bg-green"><%= data.referred_agents%></small></a>
+                            </li>
+                        </ul>
+
+                        <% if ( data.is_active ) { %>
+                        <button type="button" class="btn btn-danger deactivateDist btn-block"
+                            data-id="<%= data._id%>">Deactivate</button>
+                        <% } else { %>
+                        <button type="button" class="btn btn-success activateDist btn-block"
+                            data-id="<%= data._id%>">Activate</button>
+                        <% } %>
+
+<!--                         <a href="#" class="btn btn-info btn-block" data-toggle="modal" data-target="#addmoney">Add
+                            Money</a>
+
+                            <a href="#" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deductmoney">Deduct
+                                Money</a>
+                        <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#userPasswordModal">Change Password</a> -->
+                        </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.validate({
+            modules: 'html5, security'
+        });
+    });
+</script>

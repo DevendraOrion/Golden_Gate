@@ -1,0 +1,168 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table id="referral" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <!-- <th>#</th> -->
+                                    <th>Player ID</th>
+                                    <th>Total Referral</th>
+                                    <th>Bonus Earn (Rs)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i = 1; for (d of data.users) {%>
+                                <tr>
+                                    <td><a href="<%= host%>/user/view/<%= d.id%>" target="_blank"><%= d.numeric_id %></a></td>
+                                    <td><%= d.ref %></td>
+                                    <td><small class="label bg-green"><%= d.amount.toFixed(2) %></small></td>
+                                    <td>
+                                        <ul class="list-inline">
+                                            <li>
+                                                <a href="<%= host%>/referral/view/<%= d.id%>" target="_blank"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script>
+    $(document).ready(function (e) {
+    
+    
+        $('#referral').DataTable({
+            destroy: true,
+            dom: 'lBfrtip',
+            lengthMenu: [[ 10,25, 100, 500], [10,25, 100, 500]],
+            pageLength: 10,
+            buttons: [
+                    {
+                        extend: 'excel',
+                        text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+                        exportOptions: {
+                            modifier: {
+                                search: 'applied',
+                                order: 'applied'
+                            },
+                            format: {
+                                body: function ( data, row, column, node ) {
+                                    // Strip $ from salary column to make it numeric
+                                    if (column === 6) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    if (column === 7) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    
+                                    if (column === 5) {
+                                        data = formateDateandTime(parseInt(data));
+                                    }
+                                    return data;
+                            
+                                }
+                            }
+                        }
+                    }, 
+                    {
+                        extend: 'pdf',
+                        text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+                        exportOptions: {
+                            modifier: {
+                                search: 'applied',
+                                order: 'applied'
+                            },
+                            format: {
+                                body: function ( data, row, column, node ) {
+                                    // Strip $ from salary column to make it numeric
+                                    if (column === 6) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    if (column === 7) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    
+                                    if (column === 5) {
+                                        data = formateDateandTime(parseInt(data));
+                                    }
+                                    return data;
+                            
+                                }
+                            }
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<span class="fa fa-file-csv-o"></span> CSV Export',
+                        exportOptions: {
+                            modifier: {
+                                search: 'applied',
+                                order: 'applied'
+                            },
+                            format: {
+                                body: function ( data, row, column, node ) {
+                                    // Strip $ from salary column to make it numeric
+                                    if (column === 6) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    if (column === 7) {
+                                        data = data.replace(/<.*?>/ig, "");
+                                    }
+                                    
+                                    if (column === 5) {
+                                        data = formateDateandTime(parseInt(data));
+                                    }
+                                    return data;
+                            
+                                }
+                            }
+                        }
+                    },
+                ],
+            "responsive": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": '/referral_ajax',
+            "deferLoading":"<%= data.total %>",
+            columnDefs: [
+                {
+                    orderable: true,
+                    targets: [0,1,2]
+                },
+                {
+                    orderable: false,
+                    targets: [3]
+                }
+            ]
+        });
+
+        $('#referral').DataTable().order([2, 'desc']).draw()
+
+    })
+    </script>

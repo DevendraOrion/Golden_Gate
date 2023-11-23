@@ -1,0 +1,207 @@
+<%- include header %>
+<style>
+  .title {
+    margin: 0;
+    font-size: 24px;
+  }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      <%= title %>
+    </h1>
+  </section>
+
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive">
+            <table id="agentsTab" class="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Player ID</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
+                  <th>Referral Code</th>
+                  <th>Wallet</th>
+                  <th>Reg Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% var i = 1; for (d of data) {%>
+                <tr class="gradeX">
+                  <td><%= d.name %></td>
+                  <td><%= d.username %></td>
+                  <td><%= d.email %></td>
+                  <td><%= d.mobile_no.country_code %>&nbsp;<%= d.mobile_no.number %> </td>
+                  <td><%= d.referral_code %></td>
+                  <td><%= d.commission_wallet || 0 %></td>
+                  <td><%= d.created_at%></td>
+                  <% if (d.is_active) { %>
+                  <td><small class="label bg-green">Active</small></td>
+                  <% } else { %>
+                  <td><small class="label bg-red">Inactive</small></td>
+                  <% } %>
+                  <td class="actions text-center">
+                    <a
+                        href="<%= host%>/agent/view/<%= d._id%>"
+                        target="_blank"
+                        class="on-editing save-row"
+                        ><i class="fa fa-eye"></i
+                    ></a>
+                  </td>
+                </tr>
+                <% }%>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.box-body -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script>
+  $(document).ready(function (e) {
+    function formateDateandTime(date) {
+      // 7/12/2018 12:25PM
+      var dat = new Date(date);
+      var mon = dat.getMonth() + 1 > 9 ? dat.getMonth() + 1 : '0' + parseInt(dat.getMonth() + parseInt(1));
+
+      var hours = dat.getHours() % 12;
+      hours = hours > 9 ? hours : '0' + hours;
+
+      var minutes = dat.getMinutes();
+      minutes = minutes > 9 ? minutes : '0' + minutes;
+
+      var ap = dat.getHours() >= 12 ? 'PM' : 'AM';
+      var day = dat.getDate() > 9 ? dat.getDate() : '0' + dat.getDate();
+
+      rez = day + '/' + mon + '/' + dat.getFullYear() + ' ' + hours + ':' + minutes + ap;
+
+      return rez;
+    }
+
+    $('#agentsTab').DataTable({
+      destroy: true,
+      dom: 'lBfrtip',
+      lengthMenu: [
+        [10, 25, 100, 500],
+        [10, 25, 100, 500]
+      ],
+      pageLength: 10,
+      buttons: [{
+          extend: 'excel',
+          text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+          exportOptions: {
+            modifier: {
+              search: 'applied',
+              order: 'applied'
+            },
+            format: {
+              body: function (data, row, column, node) {
+                if (column === 6) {
+                  data = formateDateandTime(parseInt(data));
+                }
+                if (column === 7) {
+                  data = data.replace(/<.*?>/gi, '');
+                }
+                if (column === 8) {
+                  data = data.replace(/<.*?>/gi, '');
+                }
+                return data;
+              }
+            }
+          }
+        },
+        {
+          extend: 'pdf',
+          text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+          exportOptions: {
+            modifier: {
+              search: 'applied',
+              order: 'applied'
+            },
+            format: {
+              body: function (data, row, column, node) {
+                if (column === 6) {
+                  data = formateDateandTime(parseInt(data));
+                }
+                if (column === 7) {
+                  data = data.replace(/<.*?>/gi, '');
+                }
+                if (column === 8) {
+                  data = data.replace(/<.*?>/gi, '');
+                }
+
+                return data;
+              }
+            }
+          }
+        }
+      ],
+      responsive: true,
+      processing: true,
+      serverSide: true,
+      ajax: '/agents_ajax',
+      deferLoading: '<%= total %>',
+      aaSorting: [],
+      sortField: 6,
+      sortOrder: '-1',
+      columnDefs: [{
+          orderable: true,
+          targets: [0, 1, 6, 7]
+        },
+        {
+          orderable: false,
+          targets: [2, 3, 4, 5, 8]
+        }
+      ],
+      createdRow: function (row, data, dataIndex) {
+        var rowData =
+          '<td>' +
+          data[0] +
+          '</td>' +
+          '<td>' +
+          data[1] +
+          '</td>' +
+          '<td>' +
+          data[2] +
+          '</td>' +
+          '<td>' +
+          data[3] +
+          '</td>' +
+          '<td>' +
+          data[4] +
+          '</td>' +
+          '<td>' +
+          data[5] +
+          '</td>' +
+          '<td>' +
+          formateDateandTime(parseInt(data[6])) +
+          '</td>' +
+          '<td>' +
+          data[7] +
+          '</td>' +
+          '<td>' +
+          data[8] +
+          '</td>';
+        $(row).html(rowData);
+      }
+    });
+    $('#agentsTab').DataTable().order([6, 'desc']).draw();
+
+  });
+</script>

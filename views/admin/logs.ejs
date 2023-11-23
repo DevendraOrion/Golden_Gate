@@ -1,0 +1,129 @@
+<%- include header %>
+<style>
+    .title {
+        margin: 0;
+        font-size: 24px;
+    }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class="title">
+                        <%= title %>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table id="logsTab" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Link (If any)</th>
+                                    <th>Date time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i = 1; for (d of data) {%>
+                                <tr class="gradeX">
+                                    <td><%= d.action %></td>
+                                    <td>
+                                        <% if(d.user_name) { %>
+                                        <a href="<%= host%>/user/view/<%= d.user_id %>" target="_blank"><%= d.user_name %></a>
+                                        <% } %>
+                                    </td>
+                                    <td><%= d.created_at %></td>
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+
+<script>
+    $(document).ready(function(e) {
+        function formateDateandTime(date) {
+            // 7/12/2018 12:25PM
+            var dat = new Date(date);
+            var mon = dat.getMonth() + 1 > 9 ? dat.getMonth() + 1 : '0' + parseInt(dat.getMonth() + parseInt(1));
+
+            var hours = dat.getHours() % 12;
+            hours = hours > 9 ? hours : '0' + hours;
+
+            var minutes = dat.getMinutes();
+            minutes = minutes > 9 ? minutes : '0' + minutes;
+
+            var ap = dat.getHours() >= 12 ? 'PM' : 'AM';
+            var day = dat.getDate() > 9 ? dat.getDate() : '0' + dat.getDate();
+
+            rez = day + '/' + mon + '/' + dat.getFullYear() + ' ' + hours + ':' + minutes + ap;
+
+            return rez;
+        }
+
+        $('#logsTab').DataTable({
+            destroy: true,
+            dom: 'lBfrtip',
+            lengthMenu: [
+                [10, 25, 100, 500],
+                [10, 25, 100, 500]
+            ],
+            pageLength: 10,
+            buttons: [],
+            responsive: true,
+            processing: true,
+            serverSide: true,
+            ajax: '/sub-admins/logs_ajax?id=<%= id%>',
+            deferLoading: '<%= total %>',
+            orderable: false,
+            columnDefs: [
+                {
+                    orderable: true,
+                    targets: [2]
+                },
+                {
+                    orderable: false,
+                    targets: [0,1]
+                }
+            ],
+            createdRow: function(row, data, dataIndex) {
+                var rowData =
+                    '<td>' +
+                    data[0] +
+                    '</td>' +
+                    '<td>' +
+                    data[1] +
+                    '</td>' +
+                    '<td>' +
+                    formateDateandTime(parseInt(data[2])) +
+                    '</td>';
+                $(row).html(rowData);
+            }
+        });
+        $('#logsTab')
+            .DataTable()
+            .order([2, 'desc'])
+            .draw();
+
+    });
+</script>
