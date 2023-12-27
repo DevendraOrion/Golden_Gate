@@ -1,5 +1,6 @@
 const Distributor = require('../models/distributor'),
       Agent = require('../models/agent'),
+      Commission = require('../models/commission'),
       { AccessLog } = require('./../models/accessLog'),
       Service = require('./../service'),
       config = require('./../../config'),
@@ -34,6 +35,40 @@ module.exports = {
       list,
       count
     }
+  },
+  addRankData: async (req, limit) => {
+
+    const roles = {
+        1: "Company",
+        2: "State",
+        3: "District",
+        4: "Zone",
+        5: "Agent",
+        6: "User",
+      };
+      
+      const data = "Company";
+      
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const rolesBelow = Object.keys(roles).filter((key) => {
+        return parseInt(key) > parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+      
+      console.log(rolesBelow[0]);
+      return rolesBelow[0]
+      
+  },
+  commission_management: async (req, limit) => {
+let Company=await Commission.find({type:"Company"})
+let State=await Commission.find({type:"State"})
+let District=await Commission.find({type:"District"})
+let Zone=await Commission.find({type:"Zone"})
+let Agent=await Commission.find({type:"Agent"})
+let User=await Commission.find({type:"User"})
+// console.log(Company[0],State[0],District[0],Zone[0],Agent[0],User[0]);
+
+return {Company,State,District,Zone,Agent,User}
+      
   },
 
   getDistributorsDetails: async (req, res) => {
@@ -263,7 +298,7 @@ module.exports = {
         "country_code": params.mobileCountryCode,
         "number": params.mobileNumber
       },
-      "role": 'ALL',
+      "role": 'Company',
       "commission_wallet": 0,
       "is_active": params.isActive,
       "created_at": new Date().getTime()

@@ -19,7 +19,7 @@
                         <img class="profile-user-img img-responsive img-circle" src="<%= data.profilepic?data.profilepic:host + '/admin-assets/dist/img/avatar5.png' %>"
                             alt="User profile picture" style="width: 100px;height: 100px;">
                         <h3 class="profile-username text-center"><%- data.name %> <%- data.last_name %></h3>
-                        <p class="text-muted text-center">Player ID: <%- data.username %></p>
+                        <!-- <p class="text-muted text-center">Player ID: <%- data.username %></p> -->
                         <p class="text-muted text-center">ID: <%- data.numeric_id %></p>
                         <% if ( data.email ) { %>
                             <p class="text-muted text-center"><%- data.email %>
@@ -32,7 +32,7 @@
                         <% } %>
 
                         <ul class="list-group list-group-unbordered">
-                            <li class="list-group-item">
+                            <!-- <li class="list-group-item">
                                 <b>Mobile</b>
                                 <a class="pull-right"><%= data.mobile %>
                                     <% if ( data.otp_verified ) { %>
@@ -41,7 +41,7 @@
                                     <i class="fa fa-times text-red" aria-hidden="true"></i>
                                     <% } %>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="list-group-item">
                                 <b>Status</b>
                                 <% if ( data.is_active ) { %>
@@ -55,25 +55,25 @@
                                 <small class="label <%= ( data.kyc_status=='verified' )?'bg-green':'bg-red'%> pull-right"><%=data.kyc_status%></small>
                                 
                             </li> -->
-                            <li class="list-group-item">
+                            <!-- <li class="list-group-item">
                                 <b>Verification</b>
                                 <% if (data.email_verified && data.otp_verified) { %>
                                 <small class="label bg-green pull-right">Verified</small>
                                 <% } else { %>
                                 <small class="label bg-red pull-right">Unverified</small>
                                 <% } %>
-                            </li>
+                            </li> -->
                             <li class="list-group-item">
-                                <b>Main Wallet</b> <a class="pull-right"><%= data.wallet %></a>
+                                <b>Main Wallet</b> <a class="pull-right"><%= data.balance %></a>
                             </li>
-                            <li class="list-group-item">
+                            <!-- <li class="list-group-item">
                                 <b>Win Wallet</b> <a class="pull-right"><%= data.win %></a>
-                            </li>
-                            <li class="list-group-item">
+                            </li> -->
+                            <!-- <li class="list-group-item">
                                 <b>Referred Users</b> <a href="<%= host%>/referral/view/<%= data.id%>"
                                     class="pull-right"><small
                                         class="label bg-green"><%= data.referred_users%></small></a>
-                            </li>
+                            </li> -->
                         </ul>
 
                         <% if ( data.is_active ) { %>
@@ -89,7 +89,7 @@
 
                             <a href="#" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deductmoney">Deduct
                                 Money</a>
-                        <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#userPasswordModal">Change Password</a>
+                        <!-- <a href="#" class="btn btn-warning btn-block" data-toggle="modal" data-target="#userPasswordModal">Change Password</a> -->
                         </div>
                     <!-- /.box-body -->
                 </div>
@@ -100,7 +100,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">Device Info</h3>
                     </div>
-                    <!-- /.box-header -->
+              
                     <div class="box-body">
                         <ul class="list-group list-group-unbordered" style="word-break: break-all;">
                             <li class="list-group-item">
@@ -120,9 +120,9 @@
                             </li>
                         </ul>
                     </div>
-                    <!-- /.box-body -->
+             
                 </div>
-                <!-- /.box -->
+     
 
             </div>
 
@@ -140,8 +140,8 @@
                                     <th>Room Code</th>
                                     <th>Date Time</th>
                                     <th>Amount (RS)</th>
-                                    <th>Players</th>
-                                    <th>Rank</th>
+                                    <!-- <th>Players</th> -->
+                                    <!-- <th>Rank</th> -->
                                     <th>Profit/Loss (Rs)</th>
                                 </tr>
                             </thead>
@@ -150,15 +150,10 @@
                                 <tr>
                                     <td><%= i++%></td>
                                     <td><%= d.room%></td>
-                                    <td class="time_formateDateandTime"><%= d.created_at%></td>
+                                    <td><%= d.created_at%></td>
+                                    <td><%= d.amount %></td>
                                     <td><%= d.room_fee %></td>
-                                    <td><%= d.no_of_players %></td>
-                                    <td><%= d.players[0].rank %></td>
-                                    <% if (d.players[0].pl > 0) { %>
-                                    <td><span class="label label-success"><%= d.players[0].pl %></span></td>
-                                    <% } else { %>
-                                    <td><span class="label label-danger"><%= d.players[0].pl %></span></td>
-                                    <% } %>
+                                
                                 </tr>
                                 <% }%>
                             </tbody>
@@ -166,7 +161,7 @@
                     </div>
                     <!-- /.box-body -->
                 </div>
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-md-6">
                         <div class="box box-danger">
                             <div class="box-header with-border">
@@ -244,7 +239,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
@@ -351,9 +346,8 @@
 </div>
 
 <!-- Password Modal -->
-<div id="userPasswordModal" class="modal fade remark" role="dialog">
+<!-- <div id="userPasswordModal" class="modal fade remark" role="dialog">
     <div class="modal-dialog">
-        <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -377,10 +371,30 @@
         </div>
 
     </div>
-</div>
+</div> -->
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-form-validator/2.3.26/jquery.form-validator.min.js"></script>
 <script>
+      function formateDateandTime(date) {
+        console.log("HI");
+        var dat = new Date(date);
+        var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + 1);
+        var hours = dat.getHours() % 12;
+        hours = hours > 9 ? hours : "0" + hours;
+        var minutes = dat.getMinutes();
+        minutes = minutes > 9 ? minutes : "0" + minutes;
+        var ap = dat.getHours() >= 12 ? "PM" : "AM";
+        var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+        return day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
+    }
+
+    // Iterate over elements with class time_formateDateandTime
+    $(".time_formateDateandTime").each(function () {
+        var originalDate = $(this).text(); // Get the original date text
+        var formattedDate = formateDateandTime(originalDate); // Format the date
+        console.log(formattedDate);
+        $(this).text(formattedDate); // Set the formatted date back to the element
+    });
     $(document).ready(function () {
         $.validate({
             modules: 'html5, security'
@@ -480,6 +494,7 @@
                 }
             });
         });
+      
 
         //Change Password
         $('#frmChangeUserPassword').on('submit', function (e) {
@@ -543,6 +558,7 @@
                     });
                 }
             },
+            
             error: function (err) {
                 swal({
                 icon: 'error',

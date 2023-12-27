@@ -8,6 +8,7 @@ var SuperAdmin = require("./../models/superAdmin"),
   Service = require("./../service"),
   config = require("./../../config"),
   { User } = require("./../models/user"),
+   Commission  = require("./../models/commission"),
   { Banners } = require("./../models/banners"),
   { AccessLog } = require("./../models/accessLog"),
   Table = require("./../models/table"),
@@ -26,6 +27,7 @@ var {
 } = require("./../models/DistributorWithdrawalRequest");
 var { AgentWithdrawalRequest } = require("./../models/AgentWithdrawalRequest");
 var { Transaction } = require("./../models/transaction");
+var { JoinGame } = require("./../models/joinGame");
 var { Default } = require("./../models/default");
 var { Notification } = require("./../models/notification");
 const { Parser } = require("json2csv");
@@ -202,19 +204,21 @@ module.exports = {
         let gamePlayedCount = await Table.countDocuments({
           "players.id": u._id,
         });
+        // console.log(u);
         return {
           id: u._id,
-          username: users.name,
+          username: u.name,
           numeric_id: u.numeric_id,
-          mobile: `${u.mobile_no.country_code} ${u.mobile_no.number}`,
+          // mobile: `${u.mobile_no.country_code} ${u.mobile_no.number}`,
+          google_id:u.email,
           game_played: u.gamecount,
           wallet: u.balance,
-          win: u.win_wallet,
+          // win: u.win_wallet,
           is_active: u.is_active,
-          email_verified: u.email_verified,
+          // email_verified: u.email_verified,
           kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
-          otp_verified: u.otp_verified,
-          created_at: name.created_at,
+          // otp_verified: u.otp_verified,
+          created_at: await Service.formateDateandTime(u.created_at),
         };
       })
     );
@@ -228,36 +232,38 @@ module.exports = {
   },
   getUserListAjax: async () => { },
   //Get User Details
-  getUserDetails: async (id, admin_id) => {
+  getUserDetails: async (id,admin_id) => {
+    // console.log(id,admin_id);
     //logger.info('Admin Request for USER DETAILS ::', id)
     var u = await User.findById(id);
-    var gameData = await Table.find(
+    // console.log(u);
+    var gameData = await JoinGame.find(
       {
-        "players.id": id,
-        "players.pl": {
-          $ne: 0,
-        },
+        user_id: u.numeric_id,
+       
       },
-      {
-        room: 1,
-        is_active: 1,
-        room_fee: 1,
-        no_of_players: 1,
-        created_at: 1,
-        "players.$": 1,
-      }
+      // {
+      //   room: 1,
+      //   is_active: 1,
+      //   room_fee: 1,
+      //   no_of_players: 1,
+      //   created_at: 1,
+      //   "players.$": 1,
+      // }
     ).sort({
       created_at: -1,
     });
+    // console.log(gameData);
     //logger.info("Game Records::", gameData);
     var gameDataModify = await Promise.all(
       gameData.map(async (k) => {
         return {
-          no_of_players: k.no_of_players,
-          room_fee: k.room_fee,
-          room: k.room,
-          created_at: k.created_at, //await Service.formateDateandTime(parseInt(k.created_at)),
-          players: k.players,
+          // no_of_players: k.no_of_players,
+          amount:k.amount,
+          room_fee: k.win_amount-k.amount,
+          room: k.room_id,
+          created_at: k.created, //await Service.formateDateandTime(parseInt(k.created_at)),
+          // players: k.players,
         };
       })
     );
@@ -326,9 +332,9 @@ module.exports = {
       last_name: _.capitalize(u.last_name),
       numeric_id: u.numeric_id,
       email: u.email,
-      wallet: u.main_wallet,
+      balance: u.balance,
       win: u.win_wallet,
-      mobile: u.mobile_no.country_code + u.mobile_no.number,
+      // mobile: u.mobile_no.country_code + u.mobile_no.number,
       is_active: u.is_active,
       kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
       referred_users: userReferredCount,
@@ -351,16 +357,24 @@ module.exports = {
     var c = await User.countDocuments({
       is_deleted: false,
     });
+    console.log(c);
     return c;
   },
   //Get Count Of FB User
   getAllFBUserCount: async () => {
     //logger.info('ADMIN FB USER Count REQUEST >> ');
+    const now = new Date();
+now.setHours(0, 0, 0, 0);
+
+// console.log(now);
     var c = await User.countDocuments({
       is_deleted: false,
-      is_guest: {
-        $ne: true,
-      },
+      // is_guest: {
+      //   $ne: true,
+      // },
+      created_at:{
+        $gte:now
+      }
     });
     return c;
   },
@@ -379,18 +393,45 @@ module.exports = {
   getAllGameCount: async () => {
     //logger.info('ADMIN Total Game Count REQUEST >> ');
     // const currentDate = new Date();
-    var c = await Table.countDocuments({
-      $expr: {
-        $gte: [
-          "$created_date",
-          {
-            $size: "$players",
-          },
-        ],
+    // var c = await Table.countDocuments({
+    //   $expr: {
+    //     $gte: [
+    //       "$created_date",
+    //       {
+    //         $size: "$players",
+    //       },
+    //     ],
+    //   },
+    //   // created_date: { $gt: currentDate.setHours(12, 0, 0, 0) },
+    // });
+    // return c;
+    const now = new Date();
+    now.setDate(1);
+    
+    const timestamp = now.getTime();
+    
+    // console.log(timestamp);
+    
+   
+    let depo = await Transaction.aggregate([
+      {
+        $match: {
+          transaction_type: "D",
+          is_status: "S",
+          created_at:{$gte:timestamp.toString()}
+        },
       },
-      // created_date: { $gt: currentDate.setHours(12, 0, 0, 0) },
-    });
-    return c;
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: "$txn_amount",
+          },
+        },
+      },
+    ]);
+    console.log(depo);
+    return depo.length > 0 ? depo[0].total || 0 : 0;
   },
   // getAllGameCount: async () => {
   //   const currentDate = new Date();
@@ -441,9 +482,9 @@ module.exports = {
     var userdata = await Promise.all(
       d.map(async (k) => {
         return {
-          username: k.username,
+          username: k.nickname,
           id: k._id,
-          profilepic: k.profilepic,
+          profilepic: k.profile_pic,
           created_at: k.created_at, //await Service.formateDateandTime(parseInt(k.created_at))
         };
       })
@@ -592,11 +633,18 @@ module.exports = {
   },
   //Get Count Of Total Deposit
   getDepositCount: async () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    
+    const timestamp = now.getTime();
+    
+   
     let depo = await Transaction.aggregate([
       {
         $match: {
-          txn_mode: "P",
+          transaction_type: "D",
           is_status: "S",
+          created_at:{$gte:timestamp.toString()}
         },
       },
       {
@@ -608,6 +656,7 @@ module.exports = {
         },
       },
     ]);
+    console.log(depo);
     return depo.length > 0 ? depo[0].total || 0 : 0;
     // var data = await Transaction.aggregate([
     //     {
@@ -630,17 +679,23 @@ module.exports = {
   },
   //Get Count Of Total WITHDRAWAL
   getWithdrawlCount: async () => {
-    var data = await WithdrawalRequest.aggregate([
+    const now = new Date();
+now.setDate(1);
+
+const timestamp = now.getTime();
+
+    var data = await Transaction.aggregate([
       {
         $match: {
-          is_status: "A",
+          is_status: "S",
+          created_at:{$gte:timestamp.toString()}
         },
       },
       {
         $group: {
           _id: null,
           sum: {
-            $sum: "$amount",
+            $sum: "$txn_amount",
           },
         },
       },
@@ -3529,7 +3584,7 @@ module.exports = {
       "txn_mode",
       "remarks"
     );
-    //logger.info("Add Money Request", params);
+    logger.info("Add Money Request", params);
     if (!params) {
       return res.send({
         status: 0,
@@ -3565,7 +3620,7 @@ module.exports = {
     if (params.type == "win") {
       obj.win_wallet = params.amount;
     } else if (params.type == "main") {
-      obj.main_wallet = params.amount;
+      obj.balance = params.amount;
     } else {
       return res.send({
         status: 0,
@@ -3717,8 +3772,8 @@ module.exports = {
         });
       }
     } else if (params.type == "main") {
-      obj.main_wallet = 0 - params.amount;
-      if (params.amount > user.main_wallet) {
+      obj.balance = 0 - params.amount;
+      if (params.amount > user.balance) {
         return res.send({
           status: 0,
           Msg: localization.notEnoughAmount,
@@ -5823,6 +5878,103 @@ module.exports = {
       });
     }
   },
+  saveAddRankData: async (req, res) => {
+// const saveAddRankData = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+
+    // Check if the email already exists
+    let emails = await SuperAdmin.findOne({ email });
+    if (emails) {
+      return res.send({
+        status: 0,
+        Msg: "Email already exists",
+      });
+    }
+
+    // Check if all required parameters are provided
+    if (!name || !email || !password || !role) {
+      return res.send({
+        status: 0,
+        Msg: "Please provide all parameters",
+      });
+    }
+
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new SuperAdmin instance and set the properties
+    let saveData = new SuperAdmin({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      parent: new ObjectId(req.admin._id),
+    });
+
+    // Save the data to the database
+    await saveData.save();
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+  saveCommissionMgt: async (req, res) => {
+// const saveAddRankData = async (req, res) => {
+  try {
+    const { CarRoullete,Avaitor,Roullete,type } = req.body;
+const user=req.admin
+console.log(CarRoullete,Avaitor,Roullete,type,user._id);
+if(!CarRoullete || !Avaitor || !Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Please provide all parameters",
+  });
+}
+const findData=await Commission.findOne({user:user._id,type:type})
+if(findData){
+  await Commission.findOneAndUpdate({user:user._id,type:type},{
+    CarRoullete:CarRoullete,
+    Avaitor:Avaitor,
+    Roullete:Roullete,
+    type:type
+  })
+  return res.send({
+    status: 1,
+    Msg: localization.success,
+  });
+}else{
+  const data= new Commission()
+  data.CarRoullete=CarRoullete
+  data.Avaitor=Avaitor
+  data.Roullete=Roullete
+  data.type=type
+  data.user=user._id
+  await data.save()
+  return res.send({
+    status: 1,
+    Msg: localization.success,
+  });
+}
+
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+
   bannerList: async (req, limit) => {
     const banners = await Banners.find({})
       .sort({

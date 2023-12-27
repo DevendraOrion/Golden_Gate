@@ -4,6 +4,10 @@
     margin: 0;
     font-size: 24px;
 }
+.dataTables_filter {
+    display: none;
+}
+
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
 <!-- Content Wrapper. Contains page content -->
@@ -30,6 +34,7 @@
                             <option value="R">Withdraw</option>
                             <option value="REF">Referral</option>
                             <option value="O">Other</option>
+                            <option value="Gift">Gift</option>
                             <option value="S">Scratch Card</option>
                         </select>
         
@@ -59,10 +64,10 @@
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Order ID</th>
+                                    <th>S No</th>
                                     <th>Player ID</th>
                                     <th>Txn Amount (RS)</th>
-                                    <th>Win Wallet (RS)</th>
+                                    <!-- <th>Win Wallet (RS)</th> -->
                                     <th>Main Wallet (RS)</th>
                                     <th>Date</th>
                                     <th>Type</th>
@@ -73,7 +78,7 @@
                             <tbody>
                                 <% var i=1; for (d of data) {%>
                                 <tr class="gradeX">
-                                    <td><%= d?.request_id??"" %></td>
+                                    <td><%= i++%></td>
                                     <td><a target="_blank"
                                             href="<%= host %>/user/view/<%= d.user_id%>"><%= d.numeric_id %></a
                                             target="_blank"></td>
@@ -82,8 +87,8 @@
                                     <% } else { %>
                                     <td><span class="label label-danger"><%= d.txn_amount %></span></td>
                                     <% } %>
-                                    <td><%= d.win_wallet %></td>
-                                    <td><%= d.main_wallet %></td>
+                                    <!-- <td><%= d.win_wallet %></td> -->
+                                    <td><%= d.current_balance %></td>
                                     <% 
                                     function formateDateandTime(date) {
                                         // 7/12/2018 12:25PM
@@ -105,13 +110,15 @@
                                     %>
                                     <td><%=d.created_at %></td>
                                     <% if (d.txn_mode == 'P') { %>
-                                    <td>Payment<span><%- (d.payment_mode == 'PA') ? ' - Paytm' : (d.payment_mode == 'N/A') ? '' : ' - '+d.payment_mode%></span></td>
+                                    <td>Payment<span><%- (d.txn_mode == 'PA') ? ' - Paytm' : (d.txn_mode == 'N/A') ? '' : ' - '+d.txn_mode%></span></td>
                                     <% } else if(d.txn_mode == 'A'){ %>
                                     <td>ADMIN</td>
                                     <% } else if(d.txn_mode == 'B'){ %>
                                     <td>BONUS</td>
                                     <% } else if(d.txn_mode == 'R'){ %>
                                     <td>REFUND</td>
+                                    <% } else if(d.txn_mode == 'GIFT'){ %>
+                                        <td>GIFT</td>
                                     <% } else if(d.txn_mode == 'O'){ %>
                                     <td>OTHER</td>
                                     <% } else if(d.txn_mode == 'REF'){ %>
@@ -274,11 +281,11 @@
                                 if (column === 2) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
-                                if (column === 8) {
+                                if (column ===7) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
 
-                                if (column === 5) {
+                                if (column === 4) {
                                     data = formateDateandTime(parseInt(data));
                                 }
                                 return data;
@@ -304,11 +311,11 @@
                                 if (column === 2) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
-                                if (column === 8) {
+                                if (column === 7) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
 
-                                if (column === 5) {
+                                if (column === 4) {
                                     data = formateDateandTime(parseInt(data));
                                 }
                                 return data;
@@ -333,16 +340,16 @@
             },
             "deferLoading": "<%= total %>",
             "createdRow": function (row, data, dataIndex) {
-                console.log(data[5], dataIndex);
+                // console.log("dat",data, dataIndex);
                 var rowData = '<td>' + data[0] + '</td>' +
                     '<td>' + data[1] + '</td>' +
                     '<td>' + data[2] + '</td>' +
                     '<td>' + data[3] + '</td>' +
-                    '<td>' + data[4] + '</td>' +
-                    '<td>' + formateDateandTime(parseInt(data[5])) + '</td>' +
+                    '<td>' + formateDateandTime(parseInt(data[4])) + '</td>' +
+                    '<td>' + data[5] + '</td>' +
                     '<td>' + data[6] + '</td>' +
                     '<td>' + data[7] + '</td>' +
-                    '<td>' + data[8] + '</td>';
+                    // '<td>' + data[8] + '</td>';
                 $(row).html(rowData);
             },
             columnDefs: [{
@@ -351,11 +358,11 @@
                 },
                 {
                     orderable: false,
-                    targets: [1, 6, 7, 8]
+                    targets: [1, 6, 7]
                 }
             ]
         });
-        $('#example1').DataTable().order([5, 'desc']).draw();
+        $('#example1').DataTable().order([4, 'desc']).draw();
 
         $(document).on("click", ".export", function () {
             console.log("fire");

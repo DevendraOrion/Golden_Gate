@@ -1462,14 +1462,15 @@ module.exports = {
                     }).countDocuments();
                     var kyc_status = u.kyc_verified ? u.kyc_verified.status : 'unverified';
                     kyc_status = kyc_status.charAt(0).toUpperCase() + kyc_status.slice(1).toLowerCase();
+                    let created=await Service.formateDateandTime(u.created_at)
                     return [
                         u.numeric_id,
                         `${u.mobile_no?.country_code ?? ''} ${u?.mobile_no?.number??''}`,
-                        u.google_id??'',
+                        u.email??'',
                         gamePlayedCount,
                         u.main_wallet,
                         u.win_wallet,
-                        u?.created_at,
+                        created,
                         `<small class="label bg-${u.email_verified && u.otp_verified ? 'green' : 'red'}">${u.email_verified && u.otp_verified ? 'Verified' : 'Unverified'
                         }</small>`,
                         `<a target="_blank" href="${config.pre + req.headers.host}/user/view/${u._id
@@ -1485,7 +1486,7 @@ module.exports = {
 
             var endTime = new Date();
             utility.logElapsedTime(req, startTime, endTime, 'getUserListAjax');
-
+            // console.log("list");
             return res.status(200).send({
                 data: list,
                 draw: new Date().getTime(),
@@ -1505,7 +1506,7 @@ module.exports = {
 
         try {
             const params = _.pick(req.query, ['search']);
-
+logger.info('Params :: ', params);
             let aggregate_obj = [];
             let condition = {
                 is_deleted: false
@@ -1525,7 +1526,7 @@ module.exports = {
             aggregate_obj.push(
                 {
                     $sort: {
-                        username: 1
+                        numeric_id: 1
                     }
                 },
                 {
@@ -1534,7 +1535,7 @@ module.exports = {
                 {
                     $project: {
                         id: '$_id',
-                        text: '$username'
+                        text: '$numeric_id'
                     }
                 },
                 {

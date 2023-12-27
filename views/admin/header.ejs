@@ -166,7 +166,7 @@
             <!-- <li class="<% if(type=='distributor') {%> active <% } %>"><a href="/distributor/add"><i class="fa fa-user-o"></i>
             <span>Add Distributor</span></a></li> -->
 
-            <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-home"></i>
+            <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
                 <span>Users Management</span></a></li>
             <!-- 
           <li class="treeview <% if(type=='users') {%> active <% } %>">
@@ -186,7 +186,7 @@
             </ul>
           </li> -->
 
-            <% if (admin.role=='ALL' ) { %>
+            <% if (admin.role=='Company' ) { %>
 
               <!-- <li class="<% if(type=='kyc') {%> active <% } %>"><a href="/kycrequest"><i class="fa fa-hourglass-start"></i>
               <span>KYC Management</span></a></li> -->
@@ -213,7 +213,8 @@
 
               <!-- <li class="<% if(type=='blog') {%> active <% } %>"><a href="/blog"><i class="fa fa-compress"></i>
             <span>Blog Management </span></a></li> -->
-              <li class="<% if(type=='referral') {%> active <% } %>"><a href="/referral"><i class="fa fa-compress"></i>
+
+              <li class="<% if(type=='referral') {%> active <% } %>"><a href="/referral"><i class="fa fa-users"></i>
                   <span>Referral List </span></a></li>
               <li class="<% if(type=='transaction') {%> active <% } %>"><a href="/transaction"><i
                     class="fa fa-credit-card"></i>
@@ -298,12 +299,16 @@
               </li>
             </ul>
           </li> -->
-              <li class="<% if(type=='maintenance') {%> active <% } %>"><a href="/maintenance"><i class="fa fa-code"
+              <li class="<% if(type=='maintenance') {%> active <% } %>"><a href="/maintenance"><i class="fa fa-wrench"
                     aria-hidden="true"></i> <span>Maintenance</span></a></li>
-              <li class="<% if(type=='banner') {%> active <% } %>"><a href="/banners"><i class="fa fa-code"
+              <li class="<% if(type=='banner') {%> active <% } %>"><a href="/banners"><i class="fa fa-picture-o"
                     aria-hidden="true"></i><span>Banner Management</span></a></li>
-              <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-code"
+              <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
                     aria-hidden="true"></i><span>Notice</span></a></li>
+              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRank"><i class="fa fa-bell"
+                    aria-hidden="true"></i><span>Add Rank</span></a></li>
+              <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-bell"
+                    aria-hidden="true"></i><span>Commission Management</span></a></li>
               
               <% } %>
           </ul>

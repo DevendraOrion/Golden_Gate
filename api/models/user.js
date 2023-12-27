@@ -4,205 +4,178 @@ var mongoose = require("mongoose"),
 const config = require("./../../config");
 var UserModel = new Schema({
   name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  last_name: {
-    type: String,
-    trim: true,
-  },
-  username: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-  },
-  numeric_id: {
-    type: Number,
-    required: true,
-  },
-  email: {
-    type: String,
-    trim: true,
-  },
-  password: {
-    type: String,
-  },
-  mobile_no: {
-    country_code: {
-      type: String,
-    },
-    number: {
       type: String,
       trim: true,
-    },
+      default: ''
   },
-  profilepic: {
-    type: String,
-    trim: true,
+  email: {
+      type: String,
+      // trim: true,
+      default: ''
+  },
+  profile_pic: {
+      type: String,
+      default: ''
   },
   avatar: {
-    type: Number,
-    enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    default: 0,
+      type: Number,
+      enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      default: 1
   },
-  referral: {
-    referral_code: String,
-    referred_by: String,
-    amount: {
+  numeric_id: {
       type: Number,
-      default: 0,
-    },
-    matches: {
-      type: Number,
-      default: 0,
-    },
-    first_ref: {
+      required: true,
+  },
+  is_guest: {
       type: Boolean,
-      default: false,
-    },
-  },
-  created_at: {
-    type: String,
-  },
-  last_login: {
-    type: String,
-  },
-  main_wallet: {
-    type: Number,
-    default: config.signup_bonus,
-  },
-  win_wallet: {
-    type: Number,
-    default: 0,
-  },
-  app_version: {
-    type: String,
-  },
-  facebook_id: {
-    type: String,
-    default: "",
-  },
-  google_id: {
-    type: String,
-    default: ''
-},
-  device_id: {
-    type: String,
-    trim: true,
-  },
-  device_type: {
-    type: String,
-    enum: ["ios", "android"],
-  },
-  otp: {
-    value: {
-      type: String,
-    },
-    send_attempts: {
-      type: Number,
-      default: 0,
-    },
-    continuous_false_attempts: {
-      type: Number,
-      default: 0,
-    },
-    expired_at: {
-      type: String,
-    },
-  },
-  otp_verified: {
-    type: Boolean,
-    default: false,
-  },
-  email_verified: {
-    type: Boolean,
-    default: false,
-  },
-  email_token: {
-    value: {
-      type: String,
-    },
-    expired_at: {
-      type: String,
-    },
-  },
-  reset_token: {
-    value: {
-      type: String,
-    },
-    expired_at: {
-      type: String,
-    },
-  },
-  password: {
-    type: String,
+      default: false
   },
   is_active: {
-    type: Boolean,
-    default: true,
+      type: Boolean,
+      default: true
   },
   is_deleted: {
-    type: Boolean,
-    default: false,
+      type: Boolean,
+      default: false
   },
-  onesignal_id: {
-    type: String,
-    default: "",
+  device_id: {
+      type: String,
+      // trim: true
   },
-  push_enable: {
-    type: Boolean,
-    default: true,
-  },
-  ref_bonus_passed: {
-    type: Boolean,
-    default: false,
+  device_type: {
+      type: String,
+      enum: ['ios', 'android'],
+      default: 'android'
   },
   user_device: {
-    name: {
-      type: String,
-    },
-    model: {
-      type: String,
-    },
-    os: {
-      type: String,
-    },
-    processor: {
-      type: String,
-    },
-    ram: {
-      type: String,
-    },
+      name: {
+          type: String
+      },
+      model: {
+          type: String
+      },
+      os: {
+          type: String
+      },
+      processor: {
+          type: String
+      },
+      ram: {
+          type: String
+      }
   },
-  tokens: [
-    {
+  level: {
+      type: Number,
+      default: 1
+  },
+  tokens: {
       access: {
-        type: String,
-        required: true,
+          type: String,
+          default: ''
       },
       token: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
-  kyc_verified: {
-    status: {
-      type: String,
-      enum: ["verified", "unverified", "rejected", "pending"],
-      default: "unverified",
-    },
-    reason: {
-      type: String,
-      default: "",
-    },
+          type: String,
+          default: ''
+      }
   },
-  is_google_sign_in: {
-    type: Boolean,
+  nickname: {
+      default: '',
+      type: String
+  },
+  gender: {
+      type: String,
+      enum: ["male", "female", "others"]
+  },
+  user_xp: {
+      default: 0,
+      type: Number
+  },
+  balance: {
+      default: 0,
+      type: Number
+  },
+  win_wallet: {
+      default: 0,
+      type: Number
+  },
+  referral_code: {
+      type: String,
+  },
+  referral_by: {
+      type: String,
+      default: ""
+  },
+  language: {
+      type: String,
+      enum: ["Hindi", "English", "Bangla", "Urdu"],
+      default: "English"
+  },
+  recive_request: {
+      type: Boolean,
+      default: false
+  },
+  created_at: {
+      type: Date,
+      default: Date.now
+  },
+  updated_at: {
+      type: Date,
+      default: Date.now
+  },
+  friends: [{
+      type: String,
+      ref: 'User',
+      default: []
+  }],
+  blocked_user: [{
+      type: String,
+      ref: 'User',
+      default: []
+  }],
+  frames: [{
+      type: String,
+      // ref: 'User',
+      default: []
+  }],
+  dailyLogin: {
+      type: Number,
+      default: 0           //0 = not loged , 1 = loged
+  },
+  gamecount: {
+      type: Number,
+      default: 0
+  },
+  cards: [{
+      cardnumber: {
+          type: Number
+      },
+      cardtype: {
+          type: Number
+      },
+      show: {
+          type: Boolean,
+          default: false
+      },
+      created: {
+          type: String,
+          // default: Date.now()
+      },
+      status: {
+          type: Boolean,
+          default: false
+      },
+      user_id: {
+          type: String,
+          ref: "User",
+          default: ""
+      }
+  }]
+  , likes: {
+      type: Number,
+      default: 0
   }
-});
+})
+
 
 var User = mongoose.model("User", UserModel);
 

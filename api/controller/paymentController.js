@@ -362,11 +362,13 @@ module.exports = {
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
+          console.log();
           return {
             order_id: u.order_id,
-            username: _.capitalize(u.user_id.username),
+            username: _.capitalize(u.user_id.name),
             user_id: u.user_id._id,
             txn_amount: u.txn_amount,
+            current_balance:u.current_balance||0,
             win_wallet: u.txn_win_amount || 0,
             main_wallet: u.txn_main_amount || 0,
             created_at: u.created_at, //await Service.formateDateandTime(parseInt(u.created_at)),
@@ -394,7 +396,7 @@ module.exports = {
     var startTime = new Date();
 
     const params = req.query;
-
+console.log("params", params);
     let matchObj = {};
     if (params.search) {
       if (params.search.value.trim() != "") {
@@ -428,21 +430,23 @@ module.exports = {
     var sortObj = {};
     if (params.order) {
       if (params.order[0]) {
-        if (params.order[0].column == "0") {
-          // SORT BY TXN AMOUNT
-          sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "2") {
+        // console.log(params.order[0]);
+        // if (params.order[0].column == "0") {
+        //   // SORT BY TXN AMOUNT
+        //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
+        // }
+          if (params.order[0].column == "2") {
           // SORT BY TXN AMOUNT
           sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
         } else if (params.order[0].column == "3") {
           // SORT BY WIN WALLET
-          sortObj.txn_win_amount = params.order[0].dir == "asc" ? 1 : -1;
+          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
         } else if (params.order[0].column == "4") {
           // SORT BY MAIN WALLET
-          sortObj.txn_main_amount = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "5") {
-          // SORT BY DATE
           sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "1") {
+          // SORT BY DATE
+          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
         } else {
           sortObj = { created_at: -1 };
         }
@@ -464,6 +468,7 @@ module.exports = {
     }
 
     if (!_.isEmpty(params.type)) {
+      console.log("params.type",matchObj.txn_mode);
       matchObj.txn_mode = params.type;
     }
 
@@ -511,17 +516,19 @@ module.exports = {
     aggregation_obj.push({
       $project: {
         _id: 1,
-        txn_win_amount: 1,
-        txn_main_amount: 1,
+        // no:u++,
+        // txn_win_amount: 1,
+        // txn_main_amount: 1,
         created_at: 1,
+        current_balance:1,
         txn_amount: 1,
         payment_mode: 1,
-        username: "$users.username",
+        username: "$users.name",
         numeric_id: "$users.numeric_id",
         user_id: "$users._id",
         resp_msg: 1,
-        order_id: 1,
-        request_id: 1,
+        // order_id: 1,
+        // request_id: 1,
         is_status: 1,
         txn_mode: 1,
       },
@@ -530,7 +537,7 @@ module.exports = {
     logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-
+// console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -548,15 +555,17 @@ module.exports = {
 
     logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
-
+// console.log(rf,"raaaaaaaaaaaaaaaaaaaaaaaaaaa");
     logger.info("RF", rF);
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
-      list.map(async (u) => {
+      list.map(async (u,index) => {
         //logger.info("User Transaction",u);
         let txn_amount = u.txn_amount;
+        // let txn_mode = u.txn_mode;
+        console.log(txn_amount);
         if (u.txn_amount > 0) {
           txn_amount =
             '<span class="label label-success">' + u.txn_amount + "</span>";
@@ -565,30 +574,37 @@ module.exports = {
             '<span class="label label-danger">' + u.txn_amount + "</span>";
         }
 
-        let payment_mode = u.txn_mode;
+        let txn_mode = u.txn_mode;
         if (u.txn_mode == "G") {
-          payment_mode = "GAME";
+          txn_mode = "GAME";
         } else if (u.txn_mode == "P") {
-          payment_mode = "Payment";
-          console.log("UU", u.payment_mode);
-          if (!u.payment_mode) payment_mode += " - Paytm";
-          else if (u.payment_mode == "PA") payment_mode += " - Paytm";
-          else if (u.payment_mode == "N/A") payment_mode += "";
-          else payment_mode += " - Cashfree " + u.payment_mode;
-        } else if (u.txn_mode == "A") {
-          payment_mode = "ADMIN";
-        } else if (u.txn_mode == "B") {
-          payment_mode = "BONUS";
-        } else if (u.txn_mode == "R") {
-          payment_mode = "WITHDRAW";
-        } else if (u.txn_mode == "A") {
-          payment_mode = "REFERRAL";
-        } else if (u.txn_mode == "O") {
-          payment_mode = "OTHER";
-        } else if (u.txn_mode == "S") {
-          payment_mode = "SCRATCH CARD";
+          txn_mode = "Payment";
+          console.log("UU", u.txn_mode);
+          if (!u.txn_mode) txn_mode += " - Paytm";
+          else if (u.txn_mode == "PA") txn_mode += " - Paytm";
+          else if (u.txn_mode == "N/A") txn_mode += "";
+          else txn_mode += " - Cashfree " + u.txn_mode;
+        } 
+        else if (u.txn_mode == "A") {
+          txn_mode = "ADMIN";
         }
-
+        else if (u.txn_mode == "GIFT") {
+          txn_mode = "GIFT";
+        }
+         else if (u.txn_mode == "B") {
+          txn_mode = "BONUS";
+        } else if (u.txn_mode == "R") {
+          txn_mode = "WITHDRAW";
+        } else if (u.txn_mode == "A") {
+          txn_mode = "REFERRAL";
+        } else if (u.txn_mode == "O") {
+          txn_mode = "OTHER";
+        } else if (u.txn_mode == "S") {
+          txn_mode = "SCRATCH CARD";
+        }else{
+          txn_mode = "GAME";
+        }
+let current_balance= u.current_balance
         let status_ = u.is_status;
 
         if (status_ == "P") {
@@ -598,17 +614,20 @@ module.exports = {
         } else {
           status_ = '<span class="label label-danger">Failed</span>';
         }
-
+let created=await Service.formateDateandTime(u.created_at)
         return [
-          u?.request_id ?? '',
+          ++index,
+          // u?.request_id ?? '',
           `<a target="_blank" href="${config.pre + req.headers.host
           }/user/view/${u.user_id}">${u.numeric_id}</a>`,
           txn_amount,
-          u.txn_win_amount || 0,
-          u.txn_main_amount || 0,
+          // u.txn_win_amount || 0,
+          // u.txn_main_amount || 0,
+        current_balance,
           // `<div class="time_formateDateandTime2">${u.created_at}</div>`,
-          u.created_at,
-          payment_mode,
+          created,
+          txn_mode,
+          // payment_mode,
           u.resp_msg ? u.resp_msg : "No Data Found",
           status_,
         ];

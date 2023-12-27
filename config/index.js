@@ -583,9 +583,15 @@ const config = function () {
     };
 
     this.ADMIN_ROLES = {
-        DASHBOARD: 'DASHBOARD',
-        USER_MANAGEMENT: 'USER_MANAGEMENT',
-        ALL: 'ALL'
+        // DASHBOARD: 'DASHBOARD',
+        // USER_MANAGEMENT: 'USER_MANAGEMENT',
+        // ALL: 'ALL',
+        Company: 'Company',
+        State:"State",
+        District:"District",
+        Zone:"Zone",
+        Agent:"Agent",
+        User:"User"
     };
 
     this.ADMIN_ACCESS = {

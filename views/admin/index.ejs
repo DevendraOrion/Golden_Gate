@@ -53,7 +53,8 @@
                         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">All Users</span>
+                            <span class="info-box-text">Total Users
+                            </span>
                             <span class="info-box-number">
                                 <span id="userBox">
                                     <%= data.user_count %>
@@ -83,7 +84,8 @@
                         <span class="info-box-icon bg-blue"><i class="fa fa-facebook"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Facebook Users</span>
+                            <span class="info-box-text">New User Today
+                            </span>
                             <span class="info-box-number">
                                 <span id="facebookBox">
                                     <%= data.fb_user_count %>
@@ -117,7 +119,8 @@
                         <span class="info-box-icon bg-purple"><i class="fa fa-gamepad"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Total Games</span>
+                            <span class="info-box-text">Current Month Total Deposit
+                            </span>
                             <span class="info-box-number">
                                 <span id="gameBox">
                                     <%= data.game_count %>
@@ -147,7 +150,8 @@
                         <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Today Games</span>
+                            <span class="info-box-text">Total Agent
+                            </span>
                             <span class="info-box-number">
                                 <%= data.most_preferred %>
                             </span>
@@ -162,7 +166,7 @@
                     <div class="info-box">
                         <span class="info-box-icon bg-red"><i class="fa  fa-arrow-down"></i></span>
                         <div class="info-box-content">
-                            <span class="info-box-text">Total Deposit</span>
+                            <span class="info-box-text">Today Total Deposit</span>
                             <span class="info-box-number">
                                 <span id="depositBox">
                                     <%= data.deposit %>
@@ -192,7 +196,8 @@
                         <span class="info-box-icon bg-green"><i class="fa  fa-arrow-up"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Total Withdrawal</span>
+                            <span class="info-box-text">Current Month Total withdrawal
+                            </span>
                             <span class="info-box-number">
                                 <span id="withdrawalBox">
                                     <%= data.withdrawl %>
@@ -222,7 +227,8 @@
                         <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Total Referral</span>
+                            <span class="info-box-text">Total District
+                            </span>
                             <span class="info-box-number">
                                 <%= data.referral.toFixed(2) %>
                             </span>
@@ -238,7 +244,57 @@
                     <span class="info-box-icon bg-navy"><i class="fa  fa-bolt"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Guest Players</span>
+                        <span class="info-box-text">Total Zone
+                        </span>
+                        <span class="info-box-number">
+                            <span id="onlineBox"><%= data.guest_count  %></span>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="onlineUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="onlineDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-navy"><i class="fa  fa-bolt"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total State</span>
+                        <span class="info-box-number">
+                            <span id="onlineBox"><%= data.guest_count  %></span>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="onlineUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="onlineDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-navy"><i class="fa  fa-bolt"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total withdrawal request
+                        </span>
                         <span class="info-box-number">
                             <span id="onlineBox"><%= data.guest_count  %></span>
                             <span class="icon">
@@ -291,10 +347,12 @@
                                         <a class="users-list-name" href="<%= host%>/user/view/<%= d.id%>"
                                             target="_blank">
                                             <%= d.username%>
+                                            
                                         </a>
-                                        <span class="users-list-date time_formateDateandTime">
+                                        
+                                        <!-- <span class="users-list-date time_formateDateandTime">
                                             <%= d.created_at%>
-                                        </span>
+                                        </span> -->
                                     </li>
                                     <% } %>
                             </ul>
@@ -317,6 +375,7 @@
         <script src="https://www.chartjs.org/dist/2.7.3/Chart.bundle.js"></script>
         <script>
             $(document).ready(function () {
+
                 var ctx = document.getElementById("myChart").getContext('2d');
                 var all_data = <%- JSON.stringify(data.graph_data) %>;
                 all_data = JSON.parse(all_data);

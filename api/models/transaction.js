@@ -4,77 +4,57 @@ const config = require("./../../config");
 
 var TransactionModel = new Schema({
   user_id: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "User",
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User'
   },
   txn_amount: {
-    type: Number,
-    required: true,
-    default: 0,
+      type: Number,
+      required: true,
+      default: 0
   },
-  txn_win_amount: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  txn_main_amount: {
-    type: Number,
-    required: true,
-    default: 0,
+  current_balance: {
+      type: Number,
+      required: true,
+      default: 0
   },
   txn_id: {
-    type: String,
-    default: "",
-  },
-  order_id: {
-    type: String,
-    required: true,
-    // unique: true
-  },
-  request_id: {
-    type: String,
-    // required: true,
-    // unique: true
+      type: String,
+      default: ""
   },
   created_at: {
-    type: String,
-  },
-  main_wallet_closing: {
-    type: Number,
-    default: 0,
-  },
-  win_wallet_closing: {
-    type: Number,
-    default: 0,
+      type: String
   },
   transaction_type: {
-    type: String,
-    enum: ["C", "D"], // C = Credit, D = Debit
-    default: "C",
-  },
-  checksum: {
-    type: Schema.Types.Mixed,
+      type: String,
+      enum: ['C', 'D'], // C = Credit, D = Debit
+      default: "C"
   },
   resp_msg: {
-    type: String,
-    default: "",
+      type: String,
+      default: ""
   },
   txn_mode: {
-    type: String,
-    enum: ["G", "P", "A", "B", "R", "O", "REF", "S"], //G = Game, P = Paytm, A = By Admin,  B = Bonus, R = Refund, REF = Referral, O =  Other
+      type: String,
+      enum: ['G', 'P', 'A', 'B', 'R', 'O', 'REF', 'S','GIFT'] //G = Game, P = Paytm, A = By Admin,  B = Bonus, R = Refund, REF = Referral, O =  Other, S='Scratch Card'
   },
   payment_mode: {
-    type: String,
-    enum: Object.values(config.payment_modes),
-    default: config.payment_modes.PA,
-    // PA = Paytm_Old , OTHERS
+      type: String,
+      enum: Object.values(config.payment_modes),
+      default: config.payment_modes.PA
+      // PA = Paytm_Old , OTHERS
   },
   is_status: {
-    type: String,
-    enum: ["P", "S", "F", "C", "FL"], // P = Pending, S = Success, F = Failed, C = Canceled, FL = Flagged suspecious
-    default: "P",
+      type: String,
+      enum: ['P', 'S', 'F', 'C', 'FL'], // P = Pending, S = Success, F = Failed, C = Canceled, FL = Flagged suspecious
+      default: 'S'
   },
+  frame_id: {
+      type: String
+  },
+  spinWinNo: {
+      type: Number
+  }
 });
 TransactionModel.pre("save", function (next) {
   var self = this;

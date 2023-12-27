@@ -8,6 +8,9 @@ var SuperAdminModel = new Schema({
         type: String,
         required: true
     },
+    parent:{
+type:String,
+    },
     email: {
         type: String,
         required: true,
@@ -20,8 +23,13 @@ var SuperAdminModel = new Schema({
         type: Boolean,
         default: true
     },
-    commission_wallet: {
-        type: Number
+    max_commission: {
+        type: Number,
+        default:0
+    },
+    min_commission: {
+        type: Number,
+        default:0
     },
     is_deleted:{
         type: Boolean,

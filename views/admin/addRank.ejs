@@ -1,0 +1,95 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Name</td>
+                  <td>
+                    <input name="name" id="name" class="form-control" placeholder="Enter your notice here....">
+<%=data?.notice??''%></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td>
+                    <input name="email" id="email" class="form-control" placeholder="Enter your rules here....">
+<%=data?.rules??''%></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Password</td>
+                  <td>
+                    <input name="password" id="password" class="form-control" placeholder="Enter your rules here....">
+<%=data?.rules??''%></input>
+                  </td>
+                </tr>
+                <tr>
+                    <td>Role</td>
+                    <td>
+                      <input name="role" id="role" value="<%= data %>" class="form-control" placeholder="Enter your rules here...." readonly>
+                      
+                    </td>
+                  </tr>
+                  
+             
+                
+                <!-- <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" /> -->
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+// console.log(name,email,password,role);
+        fetch("/admin/saveAddRank", {
+          method: "POST",
+          body: JSON.stringify({ name, email, password,role }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+      };
+    </script>

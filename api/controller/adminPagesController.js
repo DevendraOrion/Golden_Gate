@@ -58,6 +58,34 @@ module.exports = {
       data: data,
     });
   },
+  addRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    const data = await distributorController.addRankData(req)
+    res.render("admin/addRank", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  commissionMgt: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    if(req.admin.role=="Company"){
+    const data = await distributorController.commission_management(req)
+    // console.log(req.admin);
+    res.render("admin/commission-mgt", {
+      title: "Commission Management",
+      type: "commission-mgt",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });}
+  },
 
   sendNotice: async (req, res) => {
     try {
@@ -210,6 +238,7 @@ module.exports = {
     });
   },
   userDetail: async (req, res) => {
+    // console.log(req.params);
     const user = await AdminController.getUserDetails(
       req.params.id,
       req.admin._id
@@ -335,6 +364,7 @@ module.exports = {
     }
   },
   allTransactions: async (req, res) => {
+    console.log("================================================");
     const transactions = await paymentController.transactionList(10);
     res.render("admin/transaction", {
       title: "All transactions",
