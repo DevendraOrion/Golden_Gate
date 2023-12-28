@@ -24,39 +24,7 @@
     <section class="content container-fluid">
         <div class="row">
             <div class="col-md-12 d-flex">
-                <div class="col-md-6 flex-fill">
-              <h3>Company</h3>
-            <div class="box box-danger">
-              <div class="box-body">
-                <table class="table table-bordered">
-                  <tr>
-                    <th>Roullete</th>
-                    <td>
-                      <input type="number" id="Roullete" class="form-control" value="<%- data.Company[0].Roullete %>">
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Avaitor</th>
-                    <td>
-                      <input type="number" id="Avaitor" class="form-control" value="<%- data.Company[0].Avaitor %>">
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Car Roulette</th>
-                    <td>
-                      <input type="number" id="CarRoullete" class="form-control" value="<%- data.Company[0].CarRoullete %>">
-                    </td>
-                  </tr>
-               
-                  <tr>
-                    <td><button type="button" id="type" data-type="Company" class="btn btn-success" onclick="saveSettingsCompany()">
-                        Save
-                    </button></td>
-                </tr>
-                </table>
-              </div>
-            </div>
-          </div>
+            
           <div class="col-md-6 flex-fill">
               <h3>State</h3>
             <div class="box box-danger">
@@ -66,21 +34,21 @@
                     <th>Roullete</th>
                     <td>
                       <input type="number" id="stateRoullete" class="form-control"
-                        value="<%- data.State[0].Roullete %>">
+                        value="<%- data?.State[0]?.Roullete %>">
                     </td>
                   </tr>
                   <tr>
                     <th>Avaitor</th>
                     <td>
                       <input type="number" id="stateAvaitor" class="form-control"
-                        value="<%- data.State[0].Avaitor %>">
+                        value="<%- data?.State[0]?.Avaitor %>">
                     </td>
                   </tr>
                   <tr>
-                    <th>Car Roulettes</th>
+                    <th>Car Roulette</th>
                     <td>
                       <input type="number" id="stateCarRoullete" class="form-control"
-                        value="<%- data.State[0].CarRoullete %>">
+                        value="<%- data?.State[0]?.CarRoullete %>">
                     </td>
                   </tr>
                   <tr>
@@ -100,19 +68,19 @@
                   <tr>
                     <th>Roullete</th>
                     <td>
-                      <input type="number" id="districtRoullete" class="form-control" value="<%- data.District[0].Roullete %>">
+                      <input type="number" id="districtRoullete" class="form-control" value="<%- data?.District[0]?.Roullete %>">
                     </td>
                   </tr>
                   <tr>
                     <th>Avaitor</th>
                     <td>
-                      <input type="number" id="districtAvaitor" class="form-control" value="<%- data.District[0].Avaitor %>">
+                      <input type="number" id="districtAvaitor" class="form-control" value="<%- data?.District[0]?.Avaitor %>">
                     </td>
                   </tr>
                   <tr>
                     <th>Car Roulette</th>
                     <td>
-                      <input type="number" id="districtCarRoullete" class="form-control" value="<%- data.District[0].CarRoullete %>">
+                      <input type="number" id="districtCarRoullete" class="form-control" value="<%- data?.District[0]?.CarRoullete %>">
                     </td>
                   </tr>
                   <tr>
@@ -133,21 +101,21 @@
                     <th>Roullete</th>
                     <td>
                       <input type="number" id="zoneRoullete" class="form-control"
-                        value="<%- data.Zone[0].Roullete %>" >
+                        value="<%- data?.Zone[0]?.Roullete %>" >
                     </td>
                   </tr>
                   <tr>
                     <th>Avaitor</th>
                     <td>
                       <input type="number" id="zoneAvaitor" class="form-control"
-                        value="<%- data.Zone[0].Avaitor %>" >
+                        value="<%- data?.Zone[0]?.Avaitor %>" >
                     </td>
                   </tr>
                   <tr>
-                    <th>Car Roulettes</th>
+                    <th>Car Roulette</th>
                     <td>
                       <input type="number" id="zoneCarRoulette" class="form-control"
-                        value="<%- data.Zone[0].CarRoullete %>" >
+                        value="<%- data?.Zone[0]?.CarRoullete %>" >
                     </td>
                   </tr>
                   <tr>
@@ -167,19 +135,19 @@
                   <tr>
                     <th>Roullete</th>
                     <td>
-                      <input type="number" id="agentRoullete" class="form-control" value="<%- data.Agent[0].Roullete %>">
+                      <input type="number" id="agentRoullete" class="form-control" value="<%- data?.Agent[0]?.Roullete %>">
                     </td>
                   </tr>
                   <tr>
                     <th>Avaitor</th>
                     <td>
-                      <input type="number" id="agentAvaitor" class="form-control" value="<%- data.Agent[0].Avaitor %>">
+                      <input type="number" id="agentAvaitor" class="form-control" value="<%- data?.Agent[0]?.Avaitor %>">
                     </td>
                   </tr>
                   <tr>
                     <th>Car Roulette</th>
                     <td>
-                      <input type="number" id="agentCarRoullete" class="form-control" value="<%- data.Agent[0].CarRoullete %>">
+                      <input type="number" id="agentCarRoullete" class="form-control" value="<%- data?.Agent[0]?.CarRoullete %>">
                     </td>
                   </tr>
                   <tr>
@@ -191,41 +159,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 flex-fill">
-              <h3>User</h3>
-            <div class="box box-danger">
-              <div class="box-body">
-                <table class="table table-bordered">
-                  <tr>
-                    <th>Roullete</th>
-                    <td>
-                      <input type="number" id="userRoullete" class="form-control"
-                        value="<%- data.User[0].Roullete %>" >
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Avaitor</th>
-                    <td>
-                      <input type="number" id="userAvaitor" class="form-control"
-                        value="<%- data.User[0].Avaitor %>" >
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>Car Roulettes</th>
-                    <td>
-                      <input type="number" id="userCarRoulette" class="form-control"
-                        value="<%- data.User[0].CarRoullete %>" >
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><button type="button" id="typeUser" data-type="User" class="btn btn-success" onclick="saveSettingsUser()">
-                        Save
-                    </button></td>
-                </tr>
-                </table>
-              </div>
-            </div>
-          </div>
+       
         </div>
        
       </div>

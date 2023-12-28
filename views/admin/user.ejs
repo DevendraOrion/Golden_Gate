@@ -17,7 +17,7 @@
                                 <thead>
                                     <tr>
                                         <th>Player ID</th>
-                                        <!-- <th>Mobile</th> -->
+                                        <th>Rank</th>
                                         <th>Facebook Id</th>
                                         <th>Game Played</th>
                                         <th>Wallet</th>
@@ -35,9 +35,9 @@
                                             <td>
                                                 <%= d.numeric_id %>
                                             </td>
-                                            <!-- <td>
-                                                <%= d?.mobile??'' %>
-                                            </td> -->
+                                            <td>
+                                                <%= d.role ? d.role : 'User' %>
+                                            </td>
                                             <td>
                                                 <%= d?.google_id??'' %>
                                             </td>

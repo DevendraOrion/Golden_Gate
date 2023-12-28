@@ -174,6 +174,28 @@ var UserModel = new Schema({
       type: Number,
       default: 0
   }
+  , role: {
+      type: String,
+      default: "User"
+  }
+  , parent: {
+      type: String,
+    //   default: 0
+  }
+  , password: {
+      type: String,
+    //   default: 0
+  },
+  tokens: [{
+    access: {
+        type: String,
+        required: true
+    },
+    token: {
+        type: String,
+        required: true
+    }
+}],
 })
 
 

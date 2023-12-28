@@ -362,7 +362,6 @@ module.exports = {
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
-          console.log();
           return {
             order_id: u.order_id,
             username: _.capitalize(u.user_id.name),
@@ -396,7 +395,7 @@ module.exports = {
     var startTime = new Date();
 
     const params = req.query;
-console.log("params", params);
+// console.log("params", params);
     let matchObj = {};
     if (params.search) {
       if (params.search.value.trim() != "") {
@@ -468,20 +467,37 @@ console.log("params", params);
     }
 
     if (!_.isEmpty(params.type)) {
-      console.log("params.type",matchObj.txn_mode);
+      // console.log("params.type",matchObj.txn_mode);
       matchObj.txn_mode = params.type;
     }
-
+    if (!_.isEmpty(params.rank)) {
+      matchObj["users.role"] = params.rank;
+      console.log("Match Object:", matchObj);
+    }
+    
+  
+  
     let aggregation_obj = [];
-
-    logger.info("OBJMATCH", matchObj);
+    aggregation_obj.push(
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users",
+        },
+      },
+      {
+        $unwind: "$users",
+      }
+    );
+  
 
     if (matchObj != {})
       aggregation_obj.push({
         $match: matchObj,
       });
 
-    console.log("AGG", aggregation_obj);
     aggregation_obj.push(
       {
         $sort: sortObj,
@@ -499,20 +515,6 @@ console.log("params", params);
       });
     }
 
-    aggregation_obj.push(
-      {
-        $lookup: {
-          from: "users",
-          localField: "user_id",
-          foreignField: "_id",
-          as: "users",
-        },
-      },
-      {
-        $unwind: "$users",
-      }
-    );
-
     aggregation_obj.push({
       $project: {
         _id: 1,
@@ -527,17 +529,17 @@ console.log("params", params);
         numeric_id: "$users.numeric_id",
         user_id: "$users._id",
         resp_msg: 1,
-        // order_id: 1,
+        role: "$users.role",
         // request_id: 1,
         is_status: 1,
         txn_mode: 1,
       },
     });
 
-    logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
+    // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-// console.log(list);
+console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -553,19 +555,19 @@ console.log("params", params);
       },
     });
 
-    logger.info("aggregate_rf", aggregate_rf);
+    // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
-// console.log(rf,"raaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    logger.info("RF", rF);
+
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
       list.map(async (u,index) => {
+        // console.log(list);
         //logger.info("User Transaction",u);
         let txn_amount = u.txn_amount;
         // let txn_mode = u.txn_mode;
-        console.log(txn_amount);
+        // console.log(txn_amount);
         if (u.txn_amount > 0) {
           txn_amount =
             '<span class="label label-success">' + u.txn_amount + "</span>";
@@ -573,13 +575,12 @@ console.log("params", params);
           txn_amount =
             '<span class="label label-danger">' + u.txn_amount + "</span>";
         }
-
         let txn_mode = u.txn_mode;
         if (u.txn_mode == "G") {
           txn_mode = "GAME";
         } else if (u.txn_mode == "P") {
           txn_mode = "Payment";
-          console.log("UU", u.txn_mode);
+          // console.log("UU", u.txn_mode);
           if (!u.txn_mode) txn_mode += " - Paytm";
           else if (u.txn_mode == "PA") txn_mode += " - Paytm";
           else if (u.txn_mode == "N/A") txn_mode += "";
@@ -614,6 +615,22 @@ let current_balance= u.current_balance
         } else {
           status_ = '<span class="label label-danger">Failed</span>';
         }
+
+        let roles=u.role
+// console.log(roles);
+        if (roles == "State") {
+          // console.log("=======sdf=========");
+          roles = 'State';
+        } 
+        else if (roles == "Zone") {
+          roles = 'Zone';
+        }
+        else if (roles == "District") {
+          roles = 'District';
+        }
+        else if (roles == "Agent") {
+          roles = 'Agent';
+        }
 let created=await Service.formateDateandTime(u.created_at)
         return [
           ++index,
@@ -627,15 +644,15 @@ let created=await Service.formateDateandTime(u.created_at)
           // `<div class="time_formateDateandTime2">${u.created_at}</div>`,
           created,
           txn_mode,
-          // payment_mode,
           u.resp_msg ? u.resp_msg : "No Data Found",
           status_,
+          role=u.role,
         ];
       })
     );
 
     var endTime = new Date();
-    utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
+    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
 
     return res.status(200).send({
       data: await list,

@@ -151,22 +151,24 @@ module.exports = {
         else {
             var token = req.session ? (req.session.auth ? req.session.auth : false) : false;
             if (token) {
-                us = await SuperAdmin.findOne({
+                us = await User.findOne({
                     'tokens.token': token
                 });
                 if (us) {
+                    console.log(us);
+
                     if (us.is_active && !us.is_deleted) {
-                        if (config.ADMIN_ACCESS.NONAUTHORIZED_ONLY.indexOf(path) > -1)
-                            return req.method != 'GET'
-                                ? res.send({
-                                      status: 0,
-                                      message: 'Unauthorized access denied',
-                                      data: null
-                                  })
-                                : res.redirect('/');
-                        else if (
-                            us.role === config.ADMIN_ROLES.Company ||
-                            config.ADMIN_ACCESS[us.role].indexOf(path) > -1
+                        if (config.ADMIN_ACCESS.NONAUTHORIZED_ONLY.indexOf(path) > 1)
+                        return req.method != 'GET'
+                    ? res.send({
+                        status: 0,
+                        message: 'Unauthorized access denied',
+                        data: null
+                    })
+                    : res.redirect('/');
+                    else if (
+                        us.role === config.ADMIN_ROLES.Company ||
+                        config.ADMIN_ACCESS[us.role].indexOf(path) > -1
                         ) {
                             req.admin = us;
                             return next();

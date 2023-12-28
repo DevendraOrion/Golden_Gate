@@ -47,7 +47,7 @@ module.exports = {
         6: "User",
       };
       
-      const data = "Company";
+      const data =req.admin.role;
       
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
       const rolesBelow = Object.keys(roles).filter((key) => {

@@ -23,9 +23,9 @@
                 </div>
                 <div class="col-md-8">
                     <div class="pull-right">
-                        <select class="col search-user" name="state" style="width:150px;"></select>
+                        <select class="col search-user" name="state" style="width:152px;"></select>
     
-                        <select class="col select-type" name="type" style="width:250px;">
+                        <select class="col select-type" name="type" style="width:152px;">
                             <option></option>
                             <option value="G">Game</option>
                             <option value="P">Payment</option>
@@ -38,12 +38,27 @@
                             <option value="S">Scratch Card</option>
                         </select>
         
-                        <select class="col select-status" name="status" style="width:250px;">
+                        <select class="col select-status" name="status" style="width:152px;">
                             <option></option>
                             <option value="S">Success</option>
                             <option value="P">Pending</option>
                             <option value="F">Failed</option>
                         </select>
+                        <select class="col select-rank" name="rank" style="width:152px;">
+                            <option></option>
+                            <option value="State">State</option>
+                            <option value="Zone">Zone</option>
+                            <option value="District">District</option>
+                            <option value="Agent">Agent</option>
+                        </select>
+                        <!-- <input class="col select-rank" type="date" id="startdatepicker" name="StartDate" style="width: 152px;
+                        height: 34px;
+                        border-radius: 4px;
+                        border: 1px solid gray;">
+                        <input class="col select-rank" type="date" id="enddatepicker" name="EndDate" style="width: 152px;
+                        height: 34px;
+                        border-radius: 4px;
+                        border: 1px solid gray;"> -->
                         </div>
                 </div>
                 <!-- <div class="row text-center pad-20"> -->
@@ -67,12 +82,12 @@
                                     <th>S No</th>
                                     <th>Player ID</th>
                                     <th>Txn Amount (RS)</th>
-                                    <!-- <th>Win Wallet (RS)</th> -->
                                     <th>Main Wallet (RS)</th>
                                     <th>Date</th>
                                     <th>Type</th>
                                     <th>Remark</th>
                                     <th>Status</th>
+                                    <th>Rank</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -87,7 +102,7 @@
                                     <% } else { %>
                                     <td><span class="label label-danger"><%= d.txn_amount %></span></td>
                                     <% } %>
-                                    <!-- <td><%= d.win_wallet %></td> -->
+                                  
                                     <td><%= d.current_balance %></td>
                                     <% 
                                     function formateDateandTime(date) {
@@ -133,6 +148,8 @@
                                         <button type="button"
                                             class="btn btn-<% if(d.is_status == 'P'){%>warning<%}else if(d.is_status == 'S'){%>success<%}else if(d.is_status == 'F'){%>danger<%}%> label bg-<% if(d.is_status == 'P'){%>orange<%}else if(d.is_status == 'S'){%>green<%}else if(d.is_status == 'F'){%>red<%}%>" data-id="<%= d.id%>"><% if(d.is_status == 'P'){%>Pending<%}else if(d.is_status == 'S'){%>Success<%}else if(d.is_status == 'F'){%>Failed<%}%></button>
                                     </td>
+                                    <td><%= d.role !== undefined ? d.role : "User" %></td>
+
                                 </tr>
                             <% }%>
                             </tbody>
@@ -173,6 +190,7 @@
         var THAT_ID = "";
         var THAT_TYPE = "";
         var THAT_STATUS = "";
+        var THAT_RANK = "";
 
         $('.search-user').select2({
             allowClear: true,
@@ -231,6 +249,20 @@
 
         $(".select-status").on("select2:clearing", function (e) {
             THAT_STATUS = "";
+            table.ajax.reload();
+        });
+        $('.select-rank').select2({
+            allowClear: true,
+            placeholder: 'Rank '
+        });
+
+        $('.select-rank').on('select2:select', function (e) {
+            THAT_RANK = e.params.data.id;
+            table.ajax.reload();
+        });
+
+        $(".select-rank").on("select2:clearing", function (e) {
+            THAT_RANK = "";
             table.ajax.reload();
         });
 
@@ -335,12 +367,12 @@
                     params.id = THAT_ID;
                     params.type = THAT_TYPE;
                     params.status = THAT_STATUS;
+                    params.rank = THAT_RANK;
                     return params;
                 }
             },
             "deferLoading": "<%= total %>",
             "createdRow": function (row, data, dataIndex) {
-                // console.log("dat",data, dataIndex);
                 var rowData = '<td>' + data[0] + '</td>' +
                     '<td>' + data[1] + '</td>' +
                     '<td>' + data[2] + '</td>' +
@@ -349,7 +381,7 @@
                     '<td>' + data[5] + '</td>' +
                     '<td>' + data[6] + '</td>' +
                     '<td>' + data[7] + '</td>' +
-                    // '<td>' + data[8] + '</td>';
+                    '<td>' + data[8] + '</td>';
                 $(row).html(rowData);
             },
             columnDefs: [{

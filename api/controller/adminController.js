@@ -49,9 +49,11 @@ module.exports = {
         .status(200)
         .json(Service.response(0, localization.missingParamErrorAdmin, null));
     }
-    var user = await SuperAdmin.findOne({
+    var user = await User.findOne({
       email: params.email,
     });
+   
+    // console.log(user);
     if (!user)
       return res
         .status(200)
@@ -209,7 +211,7 @@ module.exports = {
           id: u._id,
           username: u.name,
           numeric_id: u.numeric_id,
-          // mobile: `${u.mobile_no.country_code} ${u.mobile_no.number}`,
+          role: u.role,
           google_id:u.email,
           game_played: u.gamecount,
           wallet: u.balance,
@@ -230,6 +232,8 @@ module.exports = {
       count,
     };
   },
+
+
   getUserListAjax: async () => { },
   //Get User Details
   getUserDetails: async (id,admin_id) => {
@@ -5885,7 +5889,7 @@ const timestamp = now.getTime();
 
 
     // Check if the email already exists
-    let emails = await SuperAdmin.findOne({ email });
+    let emails = await User.findOne({ email });
     if (emails) {
       return res.send({
         status: 0,
@@ -5903,9 +5907,21 @@ const timestamp = now.getTime();
 
     // Hash the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
+    var maxNumId = await User.find({}, ['numeric_id'])
+    .sort({
+        numeric_id: -1
+    })
+    .limit(1);
+var numeric_id;
+if (maxNumId.length == 0) numeric_id = 11111;
+else {
+    if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
+    else numeric_id = 11111;
+}
 
     // Create a new SuperAdmin instance and set the properties
-    let saveData = new SuperAdmin({
+    let saveData = new User({
+      numeric_id,
       name,
       email,
       password: hashedPassword,
@@ -5933,7 +5949,42 @@ const timestamp = now.getTime();
   try {
     const { CarRoullete,Avaitor,Roullete,type } = req.body;
 const user=req.admin
-console.log(CarRoullete,Avaitor,Roullete,type,user._id);
+// console.log(CarRoullete,Avaitor,Roullete,type,user._id);
+
+if(type==="State"){
+const compareData=await Commission.findOne({type:"Company"})
+if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="District"){
+const compareData=await Commission.findOne({type:"State"})
+if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="Zone"){
+const compareData=await Commission.findOne({type:"District"})
+if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="Agent"){
+const compareData=await Commission.findOne({type:"Zone"})
+if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+
+
 if(!CarRoullete || !Avaitor || !Roullete){
   return res.send({
     status: 0,
@@ -5942,12 +5993,14 @@ if(!CarRoullete || !Avaitor || !Roullete){
 }
 const findData=await Commission.findOne({user:user._id,type:type})
 if(findData){
-  await Commission.findOneAndUpdate({user:user._id,type:type},{
+  // console.log("==============");
+  let a=await Commission.findOneAndUpdate({user:user._id,type:type},{
     CarRoullete:CarRoullete,
     Avaitor:Avaitor,
     Roullete:Roullete,
     type:type
   })
+  // console.log(a);
   return res.send({
     status: 1,
     Msg: localization.success,
