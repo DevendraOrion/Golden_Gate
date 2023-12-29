@@ -382,6 +382,7 @@ module.exports = {
   },
   gameRecords: async (req, res) => {
     const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
     res.render("admin/game_records", {
       title: "Game Records",
       type: "game",

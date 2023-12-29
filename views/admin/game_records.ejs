@@ -30,16 +30,21 @@
           <div class="pull-right">
             <select class="col search-user" name="state" style="width:150px;"></select>
 
-            <select class="col select-type" name="type" style="width:150px;">
+            <!-- <select class="col select-type" name="type" style="width:150px;">
               <option></option>
               <option value="PVT">Private</option>
               <option value="PUB">Public</option>
-            </select>
+            </select> -->
 
-            <select class="col select-players" name="players" style="width:200px;">
+            <!-- <select class="col select-players" name="players" style="width:200px;">
               <option></option>
               <option value="2">2</option>
               <option value="4">4</option>
+            </select> -->
+            <select class="col select-winLoss" name="players" style="width:200px;">
+              <option></option>
+              <option value="win">Win</option>
+              <option value="loss">Loss</option>
             </select>
 
             <select class="col select-amount" name="amount" style="width:150px;">
@@ -195,29 +200,40 @@
     var THAT_TYPE = "";
     var THAT_PLAYERS = "";
     var THAT_AMOUNT = "";
+    var THAT_WIN_LOSS = "";
 
-    $('.select-type').select2({
+    // $('.select-type').select2({
+    //   allowClear: true,
+    //   placeholder: 'Table type'
+    // }).on('select2:select', function (e) {
+    //   THAT_TYPE = e.params.data.id;
+    //   table.ajax.reload();
+    // }).on("select2:clearing", function (e) {
+    //   THAT_TYPE = "";
+    //   table.ajax.reload();
+    // });
+
+    // $('.select-players').select2({
+    //   allowClear: true,
+    //   placeholder: 'No of players'
+    // }).on('select2:select', function (e) {
+    //   THAT_PLAYERS = e.params.data.id;
+    //   table.ajax.reload();
+    // }).on("select2:clearing", function (e) {
+    //   THAT_PLAYERS = "";
+    //   table.ajax.reload();
+    // });
+    $('.select-winLoss').select2({
       allowClear: true,
-      placeholder: 'Table type'
+      placeholder: 'Win/Loss'
     }).on('select2:select', function (e) {
-      THAT_TYPE = e.params.data.id;
+      THAT_WIN_LOSS = e.params.data.id;
       table.ajax.reload();
     }).on("select2:clearing", function (e) {
-      THAT_TYPE = "";
+      THAT_WIN_LOSS = "";
       table.ajax.reload();
     });
-
-    $('.select-players').select2({
-      allowClear: true,
-      placeholder: 'No of players'
-    }).on('select2:select', function (e) {
-      THAT_PLAYERS = e.params.data.id;
-      table.ajax.reload();
-    }).on("select2:clearing", function (e) {
-      THAT_PLAYERS = "";
-      table.ajax.reload();
-    });
-
+    
     $('.select-amount').select2({
       allowClear: true,
       placeholder: 'Amount'

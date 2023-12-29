@@ -1005,8 +1005,8 @@ let created=await Service.formateDateandTime(u.created_at)
 
     try {
       const params = req.query;
-      logger.info("QUERY", params);
-      logger.info(params.start);
+      // logger.info("QUERY", params);
+      // logger.info(params.start);
 
       let matchObj = {
         $expr: {
@@ -1160,11 +1160,12 @@ let created=await Service.formateDateandTime(u.created_at)
         },
       });
 
-      logger.info("AGGR", agg);
+      // logger.info("AGGR", agg);
 
       const llist = await Table.aggregate(agg).option({
         allowDiskUse: true,
       });
+      // console.log(llist);
       // console.log(llist[0].players);
       var gData = await Promise.all(
         llist.map(async (u) => {
@@ -1209,7 +1210,7 @@ let created=await Service.formateDateandTime(u.created_at)
       // logger.info('Final Returned Data :: ',gData);
       // logger.info("LLIST", llist);
       var endTime = new Date();
-      utility.logElapsedTime(req, startTime, endTime, "listAllAjaxGameRecode");
+      // utility.logElapsedTime(req, startTime, endTime, "listAllAjaxGameRecode");
 
       return res.status(200).send({
         data: gData,

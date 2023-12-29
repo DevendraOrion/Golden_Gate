@@ -4,6 +4,7 @@ var path = require("path");
 const dotenv = require("dotenv");
 var SuperAdmin = require("./../models/superAdmin"),
   Distributor = require("./../models/distributor"),
+  UserCommission = require("./../models/userCommission"),
   Agent = require("./../models/agent"),
   Service = require("./../service"),
   config = require("./../../config"),
@@ -4109,7 +4110,7 @@ const timestamp = now.getTime();
     } else return res.send(Service.response(0, localization.serverError, null));
   },
   generateReport: async (req, res) => {
-    logger.info("GENERATE REPORT STARTED", req.body);
+    // logger.info("GENERATE REPORT STARTED", req.body);
     try {
       let dates = req.body.date.split(" - ");
       let start_date_ = dates[0].split("/").reverse().join("-") + " 00:00:00";
@@ -4124,7 +4125,7 @@ const timestamp = now.getTime();
         .format("x");
       // let start_date = "2019-06-26";
       // let end_date = "2019-07-15";
-      logger.info("BEFORE QUERY", new Date(), start_date, end_date);
+      // logger.info("BEFORE QUERY", new Date(), start_date, end_date);
       // let b = await Table.find({
       //     game_completed_at: {
       //         $ne: '-1'
@@ -4143,7 +4144,7 @@ const timestamp = now.getTime();
           $lte: parseInt(end_date),
         },
       }).countDocuments();
-      logger.info("COUNT", count);
+      // logger.info("COUNT", count);
       let d = await Table.aggregate([
         {
           $match: {
@@ -4203,7 +4204,7 @@ const timestamp = now.getTime();
         },
       ]).allowDiskUse(true);
       // logger.info('DATA', d.length, b.length);
-      logger.info("BEFORE MAP", new Date());
+      // logger.info("BEFORE MAP", new Date());
       var gData = await Promise.all(
         d.map(async (u) => {
           let remark =
@@ -4241,12 +4242,12 @@ const timestamp = now.getTime();
         "Date Time",
         "Remark",
       ];
-      logger.info("BEFORE PARSE", new Date());
+      // logger.info("BEFORE PARSE", new Date());
       const json2csvParser = new Parser({
         fields,
       });
       const csv = json2csvParser.parse(gData);
-      logger.info("AFTER PARSE", new Date());
+      // logger.info("AFTER PARSE", new Date());
       // logger.info(csv);
       return res.send({
         status: 1,
@@ -5889,12 +5890,16 @@ const timestamp = now.getTime();
     }
   },
   saveAddRankData: async (req, res) => {
-// const saveAddRankData = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-
-
-    // Check if the email already exists
+    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete } = req.body;
+    // console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete);
+   if (!name || !email || !password || !role) {
+    return res.send({
+      status: 0,
+      Msg: "Please provide all parameters",
+    });
+  }
+ 
     let emails = await User.findOne({ email });
     if (emails) {
       return res.send({
@@ -5903,15 +5908,44 @@ const timestamp = now.getTime();
       });
     }
 
-    // Check if all required parameters are provided
-    if (!name || !email || !password || !role) {
-      return res.send({
-        status: 0,
-        Msg: "Please provide all parameters",
-      });
-    }
-
-    // Hash the password using bcrypt
+      if(role==="State"){
+      const compareData=await Commission.findOne({type:"Company"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="District"){
+      const compareData=await Commission.findOne({type:"State"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Zone"){
+      const compareData=await Commission.findOne({type:"District"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Agent"){
+      const compareData=await Commission.findOne({type:"Zone"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(balance>req.admin.balance){
+        return res.send({
+          status: 0,
+          Msg: "Insufficient Balance",
+        });
+      }
     const hashedPassword = await bcrypt.hash(password, 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
@@ -5925,19 +5959,53 @@ else {
     else numeric_id = 11111;
 }
 
-    // Create a new SuperAdmin instance and set the properties
     let saveData = new User({
       numeric_id,
       name,
       email,
       password: hashedPassword,
       role,
+      balance,
       parent: new ObjectId(req.admin._id),
     });
 
-    // Save the data to the database
-    await saveData.save();
+    let saveUserData=await saveData.save();
 
+    const adminBalace=req.admin.balance-balance
+    let balanceUpdate = await User.findByIdAndUpdate({_id:req.admin._id}, {balance:adminBalace})
+
+    let newTxnAdmin = new Transaction({
+      user_id: saveUserData._id,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit to ${name}` ,
+      current_balance: adminBalace,
+      is_status: "S",
+      txn_mode: "A",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: req.admin._id,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  "Deposit by Admin",
+      is_status: "S",
+      txn_mode: "A",
+    });
+    let txnres = await newTxn.save();
+
+    let userCommission=new  UserCommission({
+      type:role,
+      parent:req.admin._id,
+      user:saveUserData._id,
+      Roullete,
+      Avaitor,
+      CarRoullete
+    })
+    await userCommission.save();
     return res.send({
       status: 1,
       Msg: localization.success,
