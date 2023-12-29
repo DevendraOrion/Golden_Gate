@@ -35,6 +35,9 @@ module.exports = {
     data.deposit = await AdminController.getDepositCount();
     data.withdrawl = await AdminController.getWithdrawlCount();
     data.referral = await AdminController.getReferralCount();
+    data.total_state = await AdminController.getTotal_state();
+    data.total_district = await AdminController.getTotal_district();
+    data.total_agent = await AdminController.getTotal_agent();
     res.render("admin/index", {
       title: "Dashboard",
       type: "dashboard",

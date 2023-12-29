@@ -361,7 +361,7 @@ module.exports = {
     var c = await User.countDocuments({
       is_deleted: false,
     });
-    console.log(c);
+    // console.log(c);
     return c;
   },
   //Get Count Of FB User
@@ -387,9 +387,31 @@ now.setHours(0, 0, 0, 0);
     //logger.info('ADMIN FB USER Count REQUEST >> ');
     var c = await User.countDocuments({
       is_deleted: false,
-      is_guest: {
-        $ne: false,
-      },
+     role:"Zone"
+    });
+    return c;
+  },
+  getTotal_state: async () => {
+    //logger.info('ADMIN FB USER Count REQUEST >> ');
+    var c = await User.countDocuments({
+      is_deleted: false,
+     role:"State"
+    });
+    return c;
+  },
+  getTotal_district: async () => {
+    //logger.info('ADMIN FB USER Count REQUEST >> ');
+    var c = await User.countDocuments({
+      is_deleted: false,
+     role:"District"
+    });
+    return c;
+  },
+  getTotal_agent: async () => {
+    //logger.info('ADMIN FB USER Count REQUEST >> ');
+    var c = await User.countDocuments({
+      is_deleted: false,
+     role:"Agent"
     });
     return c;
   },
@@ -434,7 +456,7 @@ now.setHours(0, 0, 0, 0);
         },
       },
     ]);
-    console.log(depo);
+    // console.log(depo);
     return depo.length > 0 ? depo[0].total || 0 : 0;
   },
   // getAllGameCount: async () => {
@@ -485,8 +507,9 @@ now.setHours(0, 0, 0, 0);
       .limit(8);
     var userdata = await Promise.all(
       d.map(async (k) => {
+        // console.log(k);
         return {
-          username: k.nickname,
+          username: k.name,
           id: k._id,
           profilepic: k.profile_pic,
           created_at: k.created_at, //await Service.formateDateandTime(parseInt(k.created_at))
@@ -662,24 +685,7 @@ now.setHours(0, 0, 0, 0);
     ]);
     console.log(depo);
     return depo.length > 0 ? depo[0].total || 0 : 0;
-    // var data = await Transaction.aggregate([
-    //     {
-    //         $match: {
-    //             transaction_type: 'C',
-    //             is_status: 'S'
-    //         }
-    //     },
-    //     {
-    //         $group: {
-    //             _id: null,
-    //             sum: {
-    //                 $sum: '$txn_amount'
-    //             }
-    //         }
-    //     }
-    // ]).allowDiskUse(true);
-    // if (data.length > 0) return data[0].sum;
-    // else return 0;
+    
   },
   //Get Count Of Total WITHDRAWAL
   getWithdrawlCount: async () => {

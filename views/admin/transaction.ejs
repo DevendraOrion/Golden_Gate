@@ -51,14 +51,9 @@
                             <option value="District">District</option>
                             <option value="Agent">Agent</option>
                         </select>
-                        <!-- <input class="col select-rank" type="date" id="startdatepicker" name="StartDate" style="width: 152px;
-                        height: 34px;
-                        border-radius: 4px;
-                        border: 1px solid gray;">
-                        <input class="col select-rank" type="date" id="enddatepicker" name="EndDate" style="width: 152px;
-                        height: 34px;
-                        border-radius: 4px;
-                        border: 1px solid gray;"> -->
+                        <input type="date" class="col select-date" id="startdatepicker" name="StartDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
+                        <input type="date" class="col select-date" id="enddatepicker" name="EndDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
+
                         </div>
                 </div>
                 <!-- <div class="row text-center pad-20"> -->
@@ -123,7 +118,7 @@
                                         return rez;
                                     }
                                     %>
-                                    <td><%=d.created_at %></td>
+                                    <td><%=d.created %></td>
                                     <% if (d.txn_mode == 'P') { %>
                                     <td>Payment<span><%- (d.txn_mode == 'PA') ? ' - Paytm' : (d.txn_mode == 'N/A') ? '' : ' - '+d.txn_mode%></span></td>
                                     <% } else if(d.txn_mode == 'A'){ %>
@@ -191,7 +186,8 @@
         var THAT_TYPE = "";
         var THAT_STATUS = "";
         var THAT_RANK = "";
-
+        var START_DATE = "";
+    var END_DATE = "";
         $('.search-user').select2({
             allowClear: true,
             placeholder: 'Search user',
@@ -266,27 +262,13 @@
             table.ajax.reload();
         });
 
-        function formateDateandTime(date) {
-            // 7/12/2018 12:25PM
-            var dat = new Date(date);
-            var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + parseInt(
-                1));
-
-
-            var hours = dat.getHours() % 12;
-            hours = (hours > 9) ? hours : "0" + hours;
-
-            var minutes = dat.getMinutes();
-            minutes = (minutes > 9) ? minutes : "0" + minutes;
-
-            var ap = (dat.getHours() >= 12) ? "PM" : "AM";
-            var day = (dat.getDate() > 9) ? dat.getDate() : "0" + dat.getDate();
-
-            rez = day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
-
-            return rez;
-        }
-
+        $('.select-date').on('change', function () {
+        START_DATE = $('#startdatepicker').val();
+        END_DATE = $('#enddatepicker').val();
+        table.ajax.reload();
+    });
+  
+      
         $('#example1').DataTable().destroy();
         var table = $('#example1').DataTable({
             destroy: true,
@@ -361,23 +343,25 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                'url': '/ajax_transaction',
-                data: function (params) {
-                    console.log("PARAMS", params);
-                    params.id = THAT_ID;
-                    params.type = THAT_TYPE;
-                    params.status = THAT_STATUS;
-                    params.rank = THAT_RANK;
-                    return params;
-                }
-            },
+        'url': '/ajax_transaction',
+        data: function (params) {
+            params.id = THAT_ID;
+            params.type = THAT_TYPE;
+            params.status = THAT_STATUS;
+            params.rank = THAT_RANK;
+            params.startDate = START_DATE;
+            params.endDate = END_DATE;
+            return params;
+        }
+    },
             "deferLoading": "<%= total %>",
             "createdRow": function (row, data, dataIndex) {
                 var rowData = '<td>' + data[0] + '</td>' +
                     '<td>' + data[1] + '</td>' +
                     '<td>' + data[2] + '</td>' +
                     '<td>' + data[3] + '</td>' +
-                    '<td>' + formateDateandTime(parseInt(data[4])) + '</td>' +
+                    // '<td>' + formatCustomDate(parseInt(data[4])) + '</td>' +
+                    '<td>' + data[4] + '</td>' +
                     '<td>' + data[5] + '</td>' +
                     '<td>' + data[6] + '</td>' +
                     '<td>' + data[7] + '</td>' +

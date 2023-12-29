@@ -155,7 +155,7 @@ module.exports = {
                     'tokens.token': token
                 });
                 if (us) {
-                    console.log(us);
+                    // console.log(us);
 
                     if (us.is_active && !us.is_deleted) {
                         if (config.ADMIN_ACCESS.NONAUTHORIZED_ONLY.indexOf(path) > 1)

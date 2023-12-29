@@ -1378,7 +1378,6 @@ module.exports = {
 
     getUserListAjax: async (req, res) => {
         var startTime = new Date();
-
         try {
             const params = req.query;
 
@@ -1456,6 +1455,7 @@ module.exports = {
 
             list = await Promise.all(
                 list.map(async u => {
+                    // console.log(u);
                     //logger.info('Found User :: ', u);
                     let gamePlayedCount = await Table.find({
                         'players.id': u._id

@@ -395,7 +395,7 @@ module.exports = {
     var startTime = new Date();
 
     const params = req.query;
-// console.log("params", params);
+console.log("params", params);
     let matchObj = {};
     if (params.search) {
       if (params.search.value.trim() != "") {
@@ -467,16 +467,64 @@ module.exports = {
     }
 
     if (!_.isEmpty(params.type)) {
-      // console.log("params.type",matchObj.txn_mode);
       matchObj.txn_mode = params.type;
     }
     if (!_.isEmpty(params.rank)) {
       matchObj["users.role"] = params.rank;
       console.log("Match Object:", matchObj);
     }
+    if (!_.isEmpty(params.startDate)) {
+      let sdate = params.startDate;
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+        console.log(timestamp);
+      } else {
+        console.error("Invalid date string");
+      }
+      
+      matchObj.created_at = {
+                $gte: timestamp.toString()
+              }
+    }
+    if (!_.isEmpty(params.endDate)) {
+      let sdate = params.endDate + 'T23:59:59.999Z';
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $lt: timestamp.toString()
+      };
+    }
+    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
+      let startdate = params.startDate ;
+      let endDate = params.endDate + 'T23:59:59.999Z';
+      console.log("==================",startdate,endDate);
+      let timestampstart
+      let timestampsend
+      let dateObjectstart = new Date(startdate);
+      let dateObjectend = new Date(endDate);
+      if (!isNaN(dateObjectstart.getTime())) {
+        timestampstart = dateObjectstart.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+      if (!isNaN(dateObjectend.getTime())) {
+        timestampsend = dateObjectend.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $gte: timestampstart.toString(),
+          $lt: timestampsend.toString()
+      };
+    }
     
-  
-  
     let aggregation_obj = [];
     aggregation_obj.push(
       {
@@ -539,7 +587,7 @@ module.exports = {
     // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-console.log(aggregation_obj);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -563,11 +611,9 @@ console.log(aggregation_obj);
 
     list = await Promise.all(
       list.map(async (u,index) => {
-        // console.log(list);
-        //logger.info("User Transaction",u);
+    
         let txn_amount = u.txn_amount;
-        // let txn_mode = u.txn_mode;
-        // console.log(txn_amount);
+
         if (u.txn_amount > 0) {
           txn_amount =
             '<span class="label label-success">' + u.txn_amount + "</span>";
@@ -617,9 +663,7 @@ let current_balance= u.current_balance
         }
 
         let roles=u.role
-// console.log(roles);
         if (roles == "State") {
-          // console.log("=======sdf=========");
           roles = 'State';
         } 
         else if (roles == "Zone") {
