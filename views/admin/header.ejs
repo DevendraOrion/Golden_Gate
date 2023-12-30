@@ -221,6 +221,7 @@
                   <span>Transactions </span></a></li>
               <li class="<% if(type=='game') {%> active <% } %>"><a href="/game"><i class="fa fa-trophy"
                     aria-hidden="true"></i> <span>Game Records</span></a></li>
+            
 
               <li class="treeview <% if(type=='payout') {%> active <% } %>">
                 <a href="#"><i class="fa fa-calculator"></i> <span>Payout Management</span>
@@ -305,10 +306,12 @@
                     aria-hidden="true"></i><span>Banner Management</span></a></li>
               <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
                     aria-hidden="true"></i><span>Notice</span></a></li>
-              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRank"><i class="fa fa-bell"
+              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRank"><i class="fa fa-star"
                     aria-hidden="true"></i><span>Add Rank</span></a></li>
-              <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-bell"
+              <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Management</span></a></li>
+                    <li class="<% if(type=='Commission') {%> active <% } %>"><a href="/commission"><i class="fa fa-level-down"
+                      aria-hidden="true"></i> <span>Commission Report</span></a></li>
               
               <% } %>
           </ul>

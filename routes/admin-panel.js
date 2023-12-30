@@ -245,6 +245,7 @@ module.exports = function (router, io) {
   router.get("/notice", AdminPagesController.notice);
   router.post("/admin/addNotice", AdminController.saveNoticeData);
   //Add Ranks
+  router.get("/commission", AdminPagesController.Commission);
   router.get("/addRank", AdminPagesController.addRank);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);

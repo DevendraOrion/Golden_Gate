@@ -1,0 +1,448 @@
+<%- include header %>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+<style>
+.title{
+    margin: 0;
+    font-size: 24px;
+}
+  td.details-control {
+    background: url("https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_open.png") no-repeat center center;
+    cursor: pointer;
+  }
+
+  tr.shown td.details-control {
+    background: url("https://cdn.rawgit.com/DataTables/DataTables/6c7ada53ebc228ea9bc28b1b216e793b1825d188/examples/resources/details_close.png") no-repeat center center;
+  }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="">
+      <div class="row">
+        <div class="col-md-4">
+          <h1 class='title'>
+            <%= title %>
+          </h1>
+        </div>
+        <div class="col-md-8">
+          <div class="pull-right">
+            <select class="col search-user" name="state" style="width:150px;"></select>
+
+            <!-- <select class="col select-type" name="type" style="width:150px;">
+              <option></option>
+              <option value="PVT">Private</option>
+              <option value="PUB">Public</option>
+            </select> -->
+
+            <!-- <select class="col select-players" name="players" style="width:200px;">
+              <option></option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+            </select> -->
+            <select class="col select-winLoss" name="players" style="width:200px;">
+              <option></option>
+              <option value="win">Win</option>
+              <option value="loss">Loss</option>
+            </select>
+
+            <select class="col select-amount" name="amount" style="width:150px;">
+              <option></option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="150">150</option>
+              <option value="200">200</option>
+              <option value="300">300</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+            </select>
+
+            <button class="col btn btn-primary" data-toggle="modal" data-target="#exportModal">
+              EXPORT
+            </button>
+
+          </div>
+        </div>
+        <!-- <div class="row text-center pad-20"> -->
+
+        <!-- </div> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box">
+          <!-- /.box-header -->
+          <div class="box-body table-responsive">
+
+            <table id="gameTable"
+              class="display table table-bordered table-striped table-hover display responsive nowrap">
+              <thead>
+                <tr>
+                  <th>S.no</th>
+                  <th>Game</th>
+                  <th>User</th>
+                  <th>Amount</th>
+                  <th>Commission</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (data) { %> <% for (d of data) {%>
+                <tr>
+                  <td><%= d.room%></td>
+                  <% if(d.type == "PUB") {%>
+                  <td><span class="label label-success">Public</span></td>
+                  <% } else {%>
+                  <td><span class="label label-info">Private</span></td>
+                  <% } %>
+                  <td><%= d.players %></td>
+                  <td><%= d.amount %></td>
+                  <td class="time_formateDateandTime2"><%= d.date %></td>
+                  <td>
+                    <table class="table">
+                      <tr class="success">
+                        <th>Player Id</th>
+                        <th>Rank</th>
+                        <th>PL</th>
+                      </tr>
+                      <% var i = 1; for (x of d.pdata) {%>
+                      <tr>
+                        <td>
+                          <a target="_blank" href="/user/view/<%= x.id %>"><%= x.numeric_id %></a target="_blank">
+                        </td>
+                        <td><%= x.rank %></td>
+                        <td><%= x.pl %></td>
+                      </tr>
+                      <% } %>
+                    </table>
+                  </td>
+                </tr>
+                <% }} %>
+              </tbody>
+            </table>
+          </div>
+          <!-- /.box-body -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+<!-- Modal -->
+<div id="details" class="modal fade remark" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+        <h4 class="modal-title" id="mode"></h4>
+      </div>
+      <div class="modal-body" id="modal-body-remark"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="exportModal" class="modal fade remark" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <!-- Modal content-->
+    <form id="exportForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+          <h4 class="modal-title">Export Data</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="date">Select Date Range</label>
+            <input type="text" class="form-control daterange" placeholder="Select date" name="date"
+              value="<%= admin.name %>" data-validation="required" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa fa-circle-o-notch fa-spin" style="display:none"></i>
+            Export Now
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    var THAT_ID = "";
+    var THAT_TYPE = "";
+    var THAT_PLAYERS = "";
+    var THAT_AMOUNT = "";
+    var THAT_WIN_LOSS = "";
+
+    // $('.select-type').select2({
+    //   allowClear: true,
+    //   placeholder: 'Table type'
+    // }).on('select2:select', function (e) {
+    //   THAT_TYPE = e.params.data.id;
+    //   table.ajax.reload();
+    // }).on("select2:clearing", function (e) {
+    //   THAT_TYPE = "";
+    //   table.ajax.reload();
+    // });
+
+    // $('.select-players').select2({
+    //   allowClear: true,
+    //   placeholder: 'No of players'
+    // }).on('select2:select', function (e) {
+    //   THAT_PLAYERS = e.params.data.id;
+    //   table.ajax.reload();
+    // }).on("select2:clearing", function (e) {
+    //   THAT_PLAYERS = "";
+    //   table.ajax.reload();
+    // });
+    $('.select-winLoss').select2({
+      allowClear: true,
+      placeholder: 'Win/Loss'
+    }).on('select2:select', function (e) {
+      THAT_WIN_LOSS = e.params.data.id;
+      table.ajax.reload();
+    }).on("select2:clearing", function (e) {
+      THAT_WIN_LOSS = "";
+      table.ajax.reload();
+    });
+    
+    $('.select-amount').select2({
+      allowClear: true,
+      placeholder: 'Amount'
+    }).on('select2:select', function (e) {
+      THAT_AMOUNT = e.params.data.id;
+      table.ajax.reload();
+    }).on("select2:clearing", function (e) {
+      THAT_AMOUNT = "";
+      table.ajax.reload();
+    });
+
+    $(".daterange").daterangepicker({
+        opens: "bottom",
+        maxDate: new Date(),
+        locale: {
+          format: "DD/MM/YYYY"
+        },
+        maxSpan: {
+          days: 15
+        }
+      },
+      function (start, end, label) {}
+    );
+
+    $("#exportForm").submit(function (e) {
+      e.preventDefault();
+
+      $("#exportModal")
+        .find('button[type="submit"]')
+        .find(".fa-spin")
+        .show();
+      $("#exportModal")
+        .find('button[type="submit"]')
+        .attr("disabled", "disabled");
+
+      $.ajax({
+        method: "post",
+        url: "/generate_report",
+        data: $(this).serialize(),
+        success: function (response) {
+          console.log("RES", response);
+          var a = document.createElement("a");
+          var blob = new Blob([response.data], {
+            type: "text/csv"
+          });
+          a.href = window.URL.createObjectURL(blob);
+          a.download = response.file_name;
+          a.click();
+          $("#exportModal")
+            .find('button[type="submit"]')
+            .find(".fa-spin")
+            .hide();
+          $("#exportModal")
+            .find('button[type="submit"]')
+            .removeAttr("disabled");
+        }
+      });
+    });
+
+    let searchSelect = $(".search-user")
+      .select2({
+        allowClear: true,
+        placeholder: "Search user",
+        ajax: {
+          url: "/admin/find_user",
+          data: function (params) {
+            var query = {
+              search: params.term,
+              type: "public"
+            };
+            // Query parameters will be ?search=[term]&type=public
+            return query;
+          }
+        }
+      })
+      .on("select2:unselecting", function (e) {
+        $(this).data("state", "unselected");
+      })
+      .on("select2:open", function (e) {
+        if ($(this).data("state") === "unselected") {
+          $(this).removeData("state");
+
+          var self = $(this);
+          setTimeout(function () {
+            self.select2("close");
+          }, 1);
+        }
+      })
+      .on("select2:select", function (e) {
+        // Do something
+        THAT_ID = e.params.data.id;
+        table.ajax.reload();
+        console.log("THAT_ID", THAT_ID);
+      })
+      .on("select2:clearing", function (e) {
+        console.log("cleared");
+        THAT_ID = "";
+        table.ajax.reload();
+      });
+
+    function formateDateandTime(date) {
+      // 7/12/2018 12:25PM
+      console.log("DATA", date);
+      var dat = new Date(parseInt(date));
+      console.log("DATA After", dat);
+      var mon =
+        dat.getMonth() + 1 > 9 ?
+        dat.getMonth() + 1 :
+        "0" + parseInt(dat.getMonth() + parseInt(1));
+
+      var hours = dat.getHours() % 12;
+      hours = hours > 9 ? hours : "0" + hours;
+
+      var minutes = dat.getMinutes();
+      minutes = minutes > 9 ? minutes : "0" + minutes;
+
+      var ap = dat.getHours() >= 12 ? "PM" : "AM";
+      var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+
+      rez =
+        day +
+        "/" +
+        mon +
+        "/" +
+        dat.getFullYear() +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        ap;
+
+      return rez;
+    }
+
+    var table = $("#gameTable").DataTable({
+      destroy: true,
+      dom: "lBfrtip",
+      lengthMenu: [
+        [10, 25, 100, 500],
+        [10, 25, 100, 500]
+      ],
+      pageLength: 10,
+      buttons: [],
+      responsive: true,
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "/game_record_ajax",
+        data: function (params) {
+          console.log("PARAMS", params);
+          params.id = THAT_ID;
+          params.type = THAT_TYPE;
+          params.players = THAT_PLAYERS;
+          params.amount = THAT_AMOUNT;
+          return params;
+        }
+      },
+      deferLoading: "<%= total %>",
+      aaSorting: [],
+      // ordering: false,
+      columnDefs: [{
+        orderable: true,
+        targets: [4]
+      }, {
+        orderable: false,
+        targets: [0, 1, 2, 3, 5]
+      }],
+      drawCallback: function () {
+        $(".time_formateDateandTime2").each(function () {
+          console.log("ELEM", $(this).text());
+          let dat = formateDateandTime(parseInt($(this).text()));
+          $(this).text(dat);
+        });
+      }
+    });
+    $('#gameTable').DataTable().order([4, 'desc']).draw();
+
+  });
+
+  function showData(
+    mode,
+    amount,
+    acc_name,
+    bank_name,
+    ifsc_code,
+    mobile,
+    acc_no
+  ) {
+    if (mode == "Paytm") {
+      $("#mode").html(mode);
+      $("#modal-body-remark").html(
+        "<h4>Mobile Number</h4>" + "<h3>" + mobile + "</h3>"
+      );
+    } else {
+      $("#mode").html(mode);
+      $("#modal-body-remark").html(
+        '<table class="table table-bordered"><tr><td>Name</td><td>' +
+        acc_name +
+        "</td></tr><tr><td>Bank Name</td><td>" +
+        bank_name +
+        "</td></tr><tr><td>Acc No</td><td>" +
+        acc_no +
+        "</td></tr><tr><td>IFSC</td><td>" +
+        ifsc_code +
+        "</td></tr><tr><td>Mobile</td><td>" +
+        mobile +
+        "</td></tr></table>"
+      );
+    }
+    $("#details").modal("show");
+  }
+</script>

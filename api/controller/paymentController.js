@@ -370,7 +370,7 @@ module.exports = {
             current_balance:u.current_balance||0,
             win_wallet: u.txn_win_amount || 0,
             main_wallet: u.txn_main_amount || 0,
-            created_at: u.created_at, //await Service.formateDateandTime(parseInt(u.created_at)),
+            created_at: u.created_at, 
             is_status: u.is_status,
             msg: u.resp_msg || "No Data Found",
             txn_mode: u.txn_mode || "G",
@@ -471,7 +471,6 @@ console.log("params", params);
     }
     if (!_.isEmpty(params.rank)) {
       matchObj["users.role"] = params.rank;
-      console.log("Match Object:", matchObj);
     }
     if (!_.isEmpty(params.startDate)) {
       let sdate = params.startDate;
@@ -504,7 +503,6 @@ console.log("params", params);
     if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
       let startdate = params.startDate ;
       let endDate = params.endDate + 'T23:59:59.999Z';
-      console.log("==================",startdate,endDate);
       let timestampstart
       let timestampsend
       let dateObjectstart = new Date(startdate);
@@ -587,7 +585,7 @@ console.log("params", params);
     // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
+    console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {

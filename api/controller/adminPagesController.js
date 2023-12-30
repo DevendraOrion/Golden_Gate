@@ -74,6 +74,34 @@ module.exports = {
       data: data,
     });
   },
+  Commission: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/Commission", {
+      title: "Commission",
+      type: "Commission",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  addRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    const data = await distributorController.addRankData(req)
+    res.render("admin/addRank", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){
@@ -168,7 +196,7 @@ module.exports = {
     });
   },
   users: async (req, res) => {
-    const users = await AdminController.getUsersList(10);
+    const users = await AdminController.getUsersList();
     res.render("admin/user", {
       title: "User List",
       type: "users",
@@ -272,38 +300,38 @@ module.exports = {
 
   maintenance: async (req, res) => {
     var data = {};
-    var options1 = "";
-    var options2 = "";
-    var options3 = "";
+    // var options1 = "";
+    // var options2 = "";
+    // var options3 = "";
 
-    data = await AdminController.getAppVersion();
+    // data = await AdminController.getAppVersion();
 
-    var included = data.fees["2"].split(",").map(Number);
-    var included2 = data.fees["4"].split(",").map(Number);
-    var included3 = data.fees.PVT.split(",").map(Number);
+    // var included = data.fees["2"].split(",").map(Number);
+    // var included2 = data.fees["4"].split(",").map(Number);
+    // var included3 = data.fees.PVT.split(",").map(Number);
 
-    included.sort((a, b) => a - b);
-    included2.sort((a, b) => a - b);
-    included3.sort((a, b) => a - b);
+    // included.sort((a, b) => a - b);
+    // included2.sort((a, b) => a - b);
+    // included3.sort((a, b) => a - b);
 
-    if (included.length > 0) {
-      included.forEach(function (Fees) {
-        options1 +=
-          "<option value='" + Fees + "' selected >" + Fees + " </option>";
-      });
-    }
-    if (included2.length > 0) {
-      included2.forEach(function (Fees) {
-        options2 +=
-          "<option value='" + Fees + "' selected >" + Fees + " </option>";
-      });
-    }
-    if (included3.length > 0) {
-      included3.forEach(function (Fees) {
-        options3 +=
-          "<option value='" + Fees + "' selected >" + Fees + " </option>";
-      });
-    }
+    // if (included.length > 0) {
+    //   included.forEach(function (Fees) {
+    //     options1 +=
+    //       "<option value='" + Fees + "' selected >" + Fees + " </option>";
+    //   });
+    // }
+    // if (included2.length > 0) {
+    //   included2.forEach(function (Fees) {
+    //     options2 +=
+    //       "<option value='" + Fees + "' selected >" + Fees + " </option>";
+    //   });
+    // }
+    // if (included3.length > 0) {
+    //   included3.forEach(function (Fees) {
+    //     options3 +=
+    //       "<option value='" + Fees + "' selected >" + Fees + " </option>";
+    //   });
+    // }
     res.render("admin/maintenance", {
       title: "Maintenance",
       type: "maintenance",
@@ -312,9 +340,12 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
-      selected1: options1,
-      selected2: options2,
-      selected3: options3,
+      // selected1: options1,
+      // selected2: options2,
+      // selected3: options3,
+      selected1: "",
+      selected2: "",
+      selected3: "",
     });
   },
 
@@ -367,7 +398,6 @@ module.exports = {
     }
   },
   allTransactions: async (req, res) => {
-    console.log("================================================");
     const transactions = await paymentController.transactionList(10);
     res.render("admin/transaction", {
       title: "All transactions",
