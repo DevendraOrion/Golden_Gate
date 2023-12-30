@@ -89,6 +89,21 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
+  revenueReport: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
   addRank: async (req, res) => {
     // let data = await noticeData.findOne({});
     const data = await distributorController.addRankData(req)

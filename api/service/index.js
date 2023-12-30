@@ -140,7 +140,7 @@ module.exports = {
         var params = Object.values(req.params || {});
         for (var str of params) {
             path = path.split('/' + str).join('');
-            console.log('PATH PAT', path);
+            console.log('PATH PATH', path);
         }
         console.log('PATH', path);
 

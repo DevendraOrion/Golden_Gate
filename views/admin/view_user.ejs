@@ -242,6 +242,124 @@
                 </div> -->
 
             </div>
+            <div class="col-md-9">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Credit/Debit Amount</h3>
+                    </div>
+                    <div class="box-body table-responsive">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Username</th>
+                                    <th>Amount (RS)</th>
+                                    <th>Commission</th>
+                                    <!-- <th>Players</th> -->
+                                    <!-- <th>Rank</th> -->
+                                    <th>Debit/Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i=1; for (d of data.game_data) {%>
+                                <tr>
+                                    <td><%= i++%></td>
+                                    <td><%= d.room%></td>
+                                    <td><%= d.created_at%></td>
+                                    <td><%= d.amount %></td>
+                                    <td><%= d.room_fee %></td>
+                                
+                                </tr>
+                                <% }%>
+                            </tbody>
+                        </table>
+                        <h5 class="box-title">Total:0</h5>
+                        <button>Pay</button>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <div class="box box-danger">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Completed Withdrawal</h3>
+                            </div>
+                            <div class="box-body table-responsive">
+                                <table id="withdrawalTabel" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount</th>
+                                            <th>Mode</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% var i=1; for (a of data.withdrawlCompleted) {%>
+                                        <tr>
+                                            <td><%= i++%></td>
+                                            <td><%= a.amount%></td>
+                                            <% if (a.mode == 'paytm') { %>
+                                            <td>PAYTM</td>
+                                            <% } else { %>
+                                            <td>BANK</td>
+                                            <% } %>
+                                            <td class="time_formateDateandTime"><%= a.date%></td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="box box-info">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Completed Deposit</h3>
+                            </div>
+                            <div class="box-body table-responsive">
+                                <table id="DepositlTabel" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Amount</th>
+                                            <th>Mode</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% var i=1; for (a of data.completedDeposite) {%>
+                                        <tr>
+                                            <td><%= i++%></td>
+                                            <td><%= a.amount%></td>
+                                            <% if (a.mode == 'P') { %>
+                                            <td>PAYTM</td>
+                                            <% } else if(a.mode == 'A'){ %>
+                                            <td>ADMIN</td>
+                                            <% } else if(a.mode == 'B'){ %>
+                                            <td>BONUS</td>
+                                            <% } else if(a.mode == 'R'){ %>
+                                            <td>REFUND</td>
+                                            <% } else if(a.mode == 'O'){ %>
+                                            <td>OTHER</td>
+                                            <% } else if(a.mode == 'REF'){ %>
+                                            <td>REFERRAL</td>
+                                            <% } else { %>
+                                            <td>GAME</td>
+                                            <% } %>
+                                            <td class="time_formateDateandTime"><%= a.date%></td>
+                                        </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+            </div>
 
         </div>
     </section>
