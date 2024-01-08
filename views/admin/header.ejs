@@ -165,9 +165,23 @@
 
             <!-- <li class="<% if(type=='distributor') {%> active <% } %>"><a href="/distributor/add"><i class="fa fa-user-o"></i>
             <span>Add Distributor</span></a></li> -->
-
+<!-- 
             <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
-                <span>Users Management</span></a></li>
+                <span>Users Management</span></a></li> -->
+
+                <li class="treeview <% if(type=='users') {%> active <% } %>">
+                  <a href="#"><i class="fa fa-calculator"></i> <span>Users Management</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                  </a>
+                  <ul class="treeview-menu">
+                    <li class="<% if(sub2 =='user') {%> active <% } %> "><a href="/user"><i
+                          class="fa fa-check-square-o" aria-hidden="true"></i> Users</a></li>
+                    <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+                  </ul>
+                </li>
             <!-- 
           <li class="treeview <% if(type=='users') {%> active <% } %>">
             <a href="#">
@@ -306,7 +320,7 @@
                 aria-hidden="true"></i><span>Banner Management</span></a></li> -->
               <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
                 aria-hidden="true"></i><span>Notice</span></a></li>
-              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRank"><i class="fa fa-star"
+              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRankCompany"><i class="fa fa-star"
                 aria-hidden="true"></i><span>Add Rank</span></a></li>
               <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                 aria-hidden="true"></i><span>Commission Management</span></a></li>

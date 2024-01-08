@@ -26,6 +26,7 @@
                                         <!-- <th>KYC Status</th> -->
                                         <!-- <th>Verification</th> -->
                                         <th>Action</th>
+                                        <th>Add Users</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,6 +83,12 @@
                                                             <a href="<%= host%>/user/view/<%= d.id%>" target="_blank"
                                                                 class="on-editing save-row">
                                                                 <i class="fa fa-eye"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td class="actions text-center">
+                                                            <a href="<%= host%>/user/addRank/<%= d.id%>" target="_blank"
+                                                                class="on-editing save-row">
+                                                                <i class="fa fa-plus"></i>
                                                             </a>
                                                         </td>
                                         </tr>

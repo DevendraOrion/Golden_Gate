@@ -63,7 +63,13 @@ module.exports = {
   },
   addRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-    const data = await distributorController.addRankData(req)
+    const user = await AdminController.getUserDetails(
+      req.params.id,
+      req.admin._id
+    );
+    // console.log(user);
+    // console.log("========================");
+    const data = await distributorController.addRankData(user)
     res.render("admin/addRank", {
       title: "Add Rank",
       type: "addRank",
@@ -104,10 +110,11 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
-  addRank: async (req, res) => {
+  addRankss: async (req, res) => {
     // let data = await noticeData.findOne({});
-    const data = await distributorController.addRankData(req)
-    res.render("admin/addRank", {
+   
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
       sub: "dashboard",
@@ -214,9 +221,22 @@ module.exports = {
     const users = await AdminController.getUsersList();
     res.render("admin/user", {
       title: "User List",
-      type: "users",
-      sub: "user",
-      sub2: "",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
+  agentsMGT: async (req, res) => {
+    const users = await AdminController.getAgentList();
+    res.render("admin/agentsMGT", {
+      title: "Agents List",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "agents",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: users.list,

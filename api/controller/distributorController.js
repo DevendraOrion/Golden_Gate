@@ -36,8 +36,7 @@ module.exports = {
       count
     }
   },
-  addRankData: async (req, limit) => {
-
+  addRankData: async (user) => {
     const roles = {
         1: "Company",
         2: "State",
@@ -47,17 +46,42 @@ module.exports = {
         6: "User",
       };
       
-      const data =req.admin.role;
+      const data =user.role;
       
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
       const rolesBelow = Object.keys(roles).filter((key) => {
         return parseInt(key) > parseInt(currentRoleKey);
       }).map((key) => roles[key]);
       
-    //   console.log(rolesBelow[0]);
-    const commission=await Commission.findOne({type:rolesBelow[0]})
-    // console.log(commission);
-      return {role:rolesBelow[0],commission}
+      //   console.log(rolesBelow[0]);
+      const commission=await Commission.findOne({type:rolesBelow[0]})
+      // console.log(commission);
+      return {role:rolesBelow,commission,parentData:user}
+      
+  },
+  addRankssData: async (req) => {
+    req=req.admin
+    let user =req
+    const roles = {
+        1: "Company",
+        2: "State",
+        3: "District",
+        4: "Zone",
+        5: "Agent",
+        6: "User",
+      };
+      
+      const data =user.role;
+    //   console.log(data);
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const rolesBelow = Object.keys(roles).filter((key) => {
+        return parseInt(key) > parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+      
+        console.log(rolesBelow[0]);
+      const commission=await Commission.findOne({type:rolesBelow[0]})
+      // console.log(commission);
+      return {role:rolesBelow,commission,parentData:user}
       
   },
   commission_management: async (req, limit) => {

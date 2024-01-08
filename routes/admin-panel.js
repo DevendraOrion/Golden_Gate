@@ -19,6 +19,11 @@ module.exports = function (router, io) {
     Service.authenticateAdmin,
     AdminPagesController.userDetail
   );
+  router.get(
+    "/user/addRank/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.addRank
+  );
 
   //frontend routes
   // router.get("/", FrontController.index);
@@ -75,6 +80,7 @@ module.exports = function (router, io) {
 
   // USER MANAGEMENT
   router.get("/user", AdminPagesController.users);
+  router.get("/agentsMGT", AdminPagesController.agentsMGT);
   router.post("/admin/addmoney", AdminController.addMoneyByAdmin);
   router.post("/admin/users/change_status", UserController.updateStatus);
   router.post(
@@ -249,7 +255,7 @@ module.exports = function (router, io) {
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
-  router.get("/addRank", AdminPagesController.addRank);
+  router.get("/addRankCompany", AdminPagesController.addRankss);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);
