@@ -22,9 +22,11 @@ module.exports = function (router, io) {
 
   //frontend routes
   // router.get("/", FrontController.index);
-  router.get("/", (req,res)=>{
-    res.render("front/home")
-  });
+  //============================When add Static Website please uncomment this=============================
+  // router.get("/", (req,res)=>{
+  //   res.render("front/home")
+  // });
+   //============================When add Static Website please uncomment this=============================
   // router.get("/aboutus", FrontController.about);
   // router.get("/contactus", FrontController.contact);
   // router.get("/services", FrontController.service);
