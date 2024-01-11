@@ -2,6 +2,7 @@ const Distributor = require('../models/distributor'),
       Agent = require('../models/agent'),
       Commission = require('../models/commission'),
       { AccessLog } = require('./../models/accessLog'),
+      { User } = require('./../models/user'),      
       Service = require('./../service'),
       config = require('./../../config'),
       logger = require('./../service/logger'),
@@ -57,7 +58,8 @@ module.exports = {
       return {role:rolesBelow,commission,parentData:user}
       
   },
-  addRankssData: async (req) => {
+  addRankssData: async (req,role) => {
+//   console.log(role);  
     req=req.admin
     let user =req
     const roles = {
@@ -70,16 +72,16 @@ module.exports = {
       };
       
       const data =user.role;
-    //   console.log(data);
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
       const rolesBelow = Object.keys(roles).filter((key) => {
         return parseInt(key) > parseInt(currentRoleKey);
       }).map((key) => roles[key]);
       
         console.log(rolesBelow[0]);
+        let allParentData=await User.find({role:role},{numeric_id:1,_id:0})
+        console.log(allParentData);
       const commission=await Commission.findOne({type:rolesBelow[0]})
-      // console.log(commission);
-      return {role:rolesBelow,commission,parentData:user}
+      return {role:rolesBelow,commission,parentData:user,roles:role}
       
   },
   commission_management: async (req, limit) => {

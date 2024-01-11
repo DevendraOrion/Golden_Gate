@@ -235,7 +235,7 @@ module.exports = {
       count,
     };
   },
-  getAgentList: async (limit) => {
+  getAgentList: async (role) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
     const roles = {
       1: "Company",
@@ -247,12 +247,12 @@ module.exports = {
     };
     const users = await User.find({
       is_deleted: false,
-      role:{$ne:"User"}
+      role:{$eq:role}
     })
       .sort({
         created_at: -1
       })
-      .limit(limit);
+      // .limit(limit);
       // console.log(users)
     const list = await Promise.all(
       users.map(async (u) => {

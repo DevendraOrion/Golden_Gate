@@ -18,6 +18,7 @@
                                     <tr>
                                         <th>Player ID</th>
                                         <th>Rank</th>
+                                        <th>Name</th>
                                         <th>Email Id</th>
                                         <th>Game Played</th>
                                         <th>Wallet</th>
@@ -37,6 +38,9 @@
                                             </td>
                                             <td>
                                                 <%= d.role ? d.role : 'User' %>
+                                            </td>
+                                            <td>
+                                                <%= d?.username??'' %>
                                             </td>
                                             <td>
                                                 <%= d?.google_id??'' %>

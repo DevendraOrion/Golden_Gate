@@ -180,6 +180,14 @@
                           class="fa fa-check-square-o" aria-hidden="true"></i> Users</a></li>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+                    <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
+                    <li class="<% if(sub2 =='district') {%> active <% } %> "><a href="/districtMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> District</a></li>
+                    <li class="<% if(sub2 =='state') {%> active <% } %> "><a href="/stateMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> State</a></li>
+                    <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
                   </ul>
                 </li>
             <!-- 
@@ -320,8 +328,30 @@
                 aria-hidden="true"></i><span>Banner Management</span></a></li> -->
               <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
                 aria-hidden="true"></i><span>Notice</span></a></li>
-              <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRankCompany"><i class="fa fa-star"
-                aria-hidden="true"></i><span>Add Rank</span></a></li>
+              <!-- <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRankCompany"><i class="fa fa-star"
+                aria-hidden="true"></i><span>Add Rank</span></a></li> -->
+
+                <li class="treeview <% if(type=='users') {%> active <% } %>">
+                  <a href="#"><i class="fa fa-calculator"></i> <span>Add Rank</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                  </a>
+                  <ul class="treeview-menu">
+                      <li class="<% if(sub2 =='state') {%> active <% } %> "><a href="/add-rank-state"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> State</a></li>
+                      <li class="<% if(sub2 =='district') {%> active <% } %> "><a href="/add-rank-district"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> District</a></li>
+                      <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/add-rank-zone"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
+                      <li class="<% if(sub2 =='agent') {%> active <% } %> "><a href="/add-rank-agent"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+                    <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
+                  </ul>
+                </li>
+
+
               <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                 aria-hidden="true"></i><span>Commission Management</span></a></li>
               <li class="<% if(type=='Commission') {%> active <% } %>"><a href="/commission"><i class="fa fa-level-down"

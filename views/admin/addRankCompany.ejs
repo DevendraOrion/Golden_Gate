@@ -1,15 +1,9 @@
-<style>
-    .hidden-row {
-      display: none;
-    }
-  </style>
-  
 <%- include header %><!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <%= title %>
+        <%= title %> (<%= data.roles %>)
       </h1>
     </section>
     <!-- Main content -->
@@ -19,19 +13,18 @@
           <div class="box box-danger" style="width: fit-content; min-width: 100%">
             <div class="box-body">
               <table class="table table-bordered">
-                <tr class="hidden-row">
-                    <td>Parent Id</td>
-                    <td>
-                      <input name="name" id="parentId" class="form-control" value="<%=data.parentData.numeric_id%>"  ></input>
-                    </td>
-                  </tr>
-                  <tr class="hidden-row">
-                    <td>Parent Name</td>
-                    <td>
-                      <input name="name" id="parentName" class="form-control" value="<%=data.parentData.name%>"  ></input>
-                    </td>
-                  </tr>
-                  
+                <tr>
+                  <td>Parent Id</td>
+                  <td>
+                    <input name="name" id="parentId" class="form-control" value="<%=data.parentData.numeric_id%>"  ></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Parent Name</td>
+                  <td>
+                    <input name="name" id="parentName" class="form-control" value="<%=data.parentData.name%>"  ></input>
+                  </td>
+                </tr>
                 <tr>
                   <td>Name</td>
                   <td>
@@ -77,7 +70,7 @@
                 <tr>
                     <td>Role</td>
                     <td>
-                      <input name="role" id="role" value="<%= data.role[0] %>" class="form-control" placeholder="Enter your rules here...." readonly>
+                      <input name="role" id="role" value="<%= data.roles %>" class="form-control" placeholder="Enter your rules here...." readonly>
                       
                     </td>
                   </tr>
@@ -144,10 +137,5 @@
               window.location.reload();
             });
           });
-
-          const hiddenRows = document.querySelectorAll('.hidden-row');
-  hiddenRows.forEach(row => {
-    row.style.display = 'none';
-  });
       };
     </script>

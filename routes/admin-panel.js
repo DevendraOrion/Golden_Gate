@@ -86,6 +86,9 @@ module.exports = function (router, io) {
   // USER MANAGEMENT
   router.get("/user", AdminPagesController.users);
   router.get("/agentsMGT", AdminPagesController.agentsMGT);
+  router.get("/zoneMGT", AdminPagesController.zoneMGT);
+  router.get("/districtMGT", AdminPagesController.districtMGT);
+  router.get("/stateMGT", AdminPagesController.stateMGT);
   router.post("/admin/addmoney", AdminController.addMoneyByAdmin);
   router.post("/admin/users/change_status", UserController.updateStatus);
   router.post(
@@ -260,7 +263,10 @@ module.exports = function (router, io) {
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
-  router.get("/addRankCompany", AdminPagesController.addRankss);
+  router.get("/add-rank-state", AdminPagesController.addStateRank);
+  router.get("/add-rank-district", AdminPagesController.addDistrictRank);
+  router.get("/add-rank-zone", AdminPagesController.addZoneRank);
+  router.get("/add-rank-agent", AdminPagesController.addAgentRank);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);

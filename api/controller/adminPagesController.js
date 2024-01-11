@@ -110,15 +110,57 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
-  addRankss: async (req, res) => {
+  addStateRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-   
-    const data = await distributorController.addRankssData(req)
+   let role="State"
+    const data = await distributorController.addRankssData(req,role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
-      sub: "dashboard",
-      sub2: "",
+      sub: "rank",
+      sub2: "state",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  addDistrictRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    let role="District"
+    const data = await distributorController.addRankssData(req,role)
+    res.render("admin/addRankCompany", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "rank",
+      sub2: "district",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  addZoneRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    let role="Zone"
+    const data = await distributorController.addRankssData(req,role)
+    res.render("admin/addRankCompany", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "rank",
+      sub2: "zone",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  addAgentRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    let role="Agent"
+    const data = await distributorController.addRankssData(req,role)
+    res.render("admin/addRankCompany", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "rank",
+      sub2: "agent",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
@@ -231,12 +273,55 @@ module.exports = {
     });
   },
   agentsMGT: async (req, res) => {
-    const users = await AdminController.getAgentList();
+    let role="Agent"
+    const users = await AdminController.getAgentList(role);
     res.render("admin/agentsMGT", {
       title: "Agents List",
       type: "usersMGT",
       sub: "users",
       sub2: "agents",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
+  zoneMGT: async (req, res) => {
+    let role="Zone"
+    const users = await AdminController.getAgentList(role);
+    res.render("admin/agentsMGT", {
+      title: "Agents List",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "zone",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
+  districtMGT: async (req, res) => {
+    let role="District"
+    const users = await AdminController.getAgentList(role);
+    res.render("admin/agentsMGT", {
+      title: "Agents List",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "district",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
+  stateMGT: async (req, res) => {
+    let role="State"
+    const users = await AdminController.getAgentList(role);
+    res.render("admin/agentsMGT", {
+      title: "Agents List",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "state",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: users.list,
