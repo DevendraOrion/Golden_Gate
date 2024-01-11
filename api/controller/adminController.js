@@ -285,6 +285,57 @@ module.exports = {
       count,
     };
   },
+  getChildList: async (id) => {
+    //logger.info('ADMIN USER LIST REQUEST >> ');
+    const roles = {
+      1: "Company",
+      2: "State",
+      3: "District",
+      4: "Zone",
+      5: "Agent",
+      6: "User",
+    };
+    const users = await User.find({
+      is_deleted: false,
+      // role:{$ne:"User"}
+      parent:id
+    })
+      .sort({
+        created_at: -1
+      })
+      // .limit(limit);
+      // console.log(users)
+    const list = await Promise.all(
+      users.map(async (u) => {
+        let gamePlayedCount = await Table.countDocuments({
+          "players.id": u._id,
+        });
+        // console.log(u);
+        return {
+          id: u._id,
+          username: u.name,
+          numeric_id: u.numeric_id,
+          role: u.role,
+          google_id:u.email,
+          game_played: u.gamecount,
+          wallet: u.balance,
+          // win: u.win_wallet,
+          is_active: u.is_active,
+          // email_verified: u.email_verified,
+          kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
+          // otp_verified: u.otp_verified,
+          created_at: await Service.formateDateandTime(u.created_at),
+        };
+      })
+    );
+    let count = await User.find({
+      is_deleted: false,
+    }).countDocuments();
+    return {
+      list,
+      count,
+    };
+  },
 
 
   getUserListAjax: async () => { },

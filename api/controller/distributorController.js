@@ -53,9 +53,7 @@ module.exports = {
         return parseInt(key) > parseInt(currentRoleKey);
       }).map((key) => roles[key]);
       
-      //   console.log(rolesBelow[0]);
       const commission=await Commission.findOne({type:rolesBelow[0]})
-      // console.log(commission);
       return {role:rolesBelow,commission,parentData:user}
       
   },

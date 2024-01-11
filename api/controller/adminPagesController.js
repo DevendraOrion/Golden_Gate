@@ -243,6 +243,21 @@ module.exports = {
       total: users.count,
     });
   },
+  showChild: async (req, res) => {
+    console.log(req.params.id);
+    let id= req.params.id
+    const users = await AdminController.getChildList(id);
+    res.render("admin/agentsMGT", {
+      title: "Child List",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "child",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
   kycRequests: async (req, res) => {
     const wr = await kycController.kycRequest();
     res.render("admin/kyc_view", {

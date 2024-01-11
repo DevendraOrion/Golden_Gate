@@ -24,6 +24,11 @@ module.exports = function (router, io) {
     Service.authenticateAdmin,
     AdminPagesController.addRank
   );
+  router.get(
+    "/user/showChild/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.showChild
+  );
 
   //frontend routes
   // router.get("/", FrontController.index);
