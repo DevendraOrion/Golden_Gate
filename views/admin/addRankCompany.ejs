@@ -30,8 +30,9 @@
                   <td>
                     <select name="parentId" id="parentId" class="form-control">
                       <% data.parentData.forEach((parent) => { %>
-                        <option value="<%= parent.numeric_id %>"><%= parent.numeric_id %></option>
-                      <% }); %>
+                        
+                        <option value="<%= parent.numeric_id %>"><%= parent.search_id %></option>
+                      <% });%>
                     </select>
                   </td>
                 </tr>

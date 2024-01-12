@@ -85,7 +85,7 @@ module.exports = {
         const lastElement = rolesAbove[rolesAbove.length - 1];
         console.log(lastElement);
         
-        let allParentData=await User.find({role:lastElement},{numeric_id:1,_id:0})
+        let allParentData=await User.find({role:lastElement},{numeric_id:1,_id:0 , search_id:1})
       const commission=await Commission.findOne({type:rolesBelow[0]})
       return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
       
