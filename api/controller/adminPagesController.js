@@ -166,6 +166,20 @@ module.exports = {
       data: data,
     });
   },
+  adduserRank: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    let role="User"
+    const data = await distributorController.addRankssData(req,role)
+    res.render("admin/addRankCompany", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "rank",
+      sub2: "user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){

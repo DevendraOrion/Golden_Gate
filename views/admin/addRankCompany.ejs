@@ -49,6 +49,7 @@
                     <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter your Password here...."></input>
                   </td>
                 </tr>
+                <% if (data.roles !== 'User') { %>
                 <tr>
                   <td>Commission Roullete</td>
                   <td>
@@ -67,6 +68,7 @@
                     <input name="comCarRoullete" type="number" value="<%= data.commission.CarRoullete %>" id="comCarRoullete" class="form-control" placeholder="Enter your Commission Car Roulette here...."></input>
                   </td>
                 </tr>
+                <% } %>
                 <tr>
                     <td>Role</td>
                     <td>
