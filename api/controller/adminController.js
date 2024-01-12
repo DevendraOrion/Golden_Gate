@@ -214,6 +214,7 @@ module.exports = {
           id: u._id,
           username: u.name,
           numeric_id: u.numeric_id,
+          search_id: u.search_id,
           role: u.role,
           google_id:u.email,
           game_played: u.gamecount,
@@ -264,6 +265,7 @@ module.exports = {
           id: u._id,
           username: u.name,
           numeric_id: u.numeric_id,
+          search_id: u.search_id,
           role: u.role,
           google_id:u.email,
           game_played: u.gamecount,
@@ -6071,7 +6073,7 @@ const timestamp = now.getTime();
     let searchRole = urole.toLowerCase();
     let twoSearchWord = searchRole.slice(0, 2);
     
-    var maxSearchId = await User.find({}, ['search_id'])
+    var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
       .sort({
         search_id: -1
       })
@@ -6080,16 +6082,23 @@ const timestamp = now.getTime();
     var search_id;
     
     if (maxSearchId.length === 0) {
-      search_id = twoSearchWord + '00001';
+      // If no existing search_id for the role prefix, generate a random 5-digit number
+      const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
+      search_id = twoSearchWord + randomFiveDigits;
     } else {
+      // Increment the number part of the search_id
       const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
       search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
     }
     
+    // Save or use the generated search_id
+    
     console.log(search_id);
     
     
-let parentDataExist=parentData!=null?new ObjectId(parentData._id):null
+    
+    
+let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
       search_id,
       numeric_id,
