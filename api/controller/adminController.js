@@ -5995,8 +5995,8 @@ const timestamp = now.getTime();
   },
   saveAddRankData: async (req, res) => {
   try {
-    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentName,parentId } = req.body;
-    // console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete);
+    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole } = req.body;
+    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({numeric_id:Number(parentId)})
@@ -6006,7 +6006,7 @@ const timestamp = now.getTime();
       status: 0,
       Msg: "Please provide all parameters",
     });
-  }
+     }
  
     let emails = await User.findOne({ email });
     if (emails) {
@@ -6067,8 +6067,23 @@ const timestamp = now.getTime();
         else numeric_id = 11111;
     }
 
-console.log(parentData);
+    let searchRole = urole.toLowerCase();
+    let twoSearchWord=searchRole.slice(0,2)
+
+    var maxSearchId = await User.find({}, ['search_id'])
+    .sort({
+      search_id: -1
+    })
+    .limit(1);
+    var search_id;
+    if (maxSearchId.length == 0) search_id = twoSearchWord+11111;
+    else {
+        if (maxSearchId[0].search_id) search_id = maxSearchId[0].search_id + 1;
+        else search_id = twoSearchWord+11111;
+    }
+console.log(search_id);
     let saveData = new User({
+      search_id,
       numeric_id,
       name,
       email,

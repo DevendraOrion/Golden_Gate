@@ -26,6 +26,10 @@ var UserModel = new Schema({
       type: Number,
       required: true,
   },
+  search_id: {
+      type: String,
+    //   required: true,
+  },
   is_guest: {
       type: Boolean,
       default: false

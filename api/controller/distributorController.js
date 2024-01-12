@@ -72,16 +72,22 @@ module.exports = {
       };
       
       const data =user.role;
-      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === role);
+      
       const rolesBelow = Object.keys(roles).filter((key) => {
         return parseInt(key) > parseInt(currentRoleKey);
       }).map((key) => roles[key]);
-      
-        console.log(rolesBelow[0]);
-        let allParentData=await User.find({role:role},{numeric_id:1,_id:0})
-        console.log(allParentData);
+
+      const rolesAbove = Object.keys(roles).filter((key) => {
+        return parseInt(key) < parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+
+        const lastElement = rolesAbove[rolesAbove.length - 1];
+        console.log(lastElement);
+        
+        let allParentData=await User.find({role:lastElement},{numeric_id:1,_id:0})
       const commission=await Commission.findOne({type:rolesBelow[0]})
-      return {role:rolesBelow,commission,parentData:user,roles:role}
+      return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
       
   },
   commission_management: async (req, limit) => {

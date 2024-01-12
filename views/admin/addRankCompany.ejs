@@ -1,3 +1,8 @@
+<style>
+  .hidden-row {
+    display: none;
+  }
+</style>
 <%- include header %><!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -13,18 +18,25 @@
           <div class="box box-danger" style="width: fit-content; min-width: 100%">
             <div class="box-body">
               <table class="table table-bordered">
+                <tr class="hidden-row">
+                  <td>Universal Role</td>
+                  <td>
+                    <input name="name" id="urole" class="form-control" value="<%=data.roles%>"  ></input>
+                  </td>
+                </tr>
+             
                 <tr>
                   <td>Parent Id</td>
                   <td>
-                    <input name="name" id="parentId" class="form-control" value="<%=data.parentData.numeric_id%>"  ></input>
+                    <select name="parentId" id="parentId" class="form-control">
+                      <% data.parentData.forEach((parent) => { %>
+                        <option value="<%= parent.numeric_id %>"><%= parent.numeric_id %></option>
+                      <% }); %>
+                    </select>
                   </td>
                 </tr>
-                <tr>
-                  <td>Parent Name</td>
-                  <td>
-                    <input name="name" id="parentName" class="form-control" value="<%=data.parentData.name%>"  ></input>
-                  </td>
-                </tr>
+                
+   
                 <tr>
                   <td>Name</td>
                   <td>
@@ -103,8 +115,9 @@
   <%- include footer %>
     <script>
       const saveSettings = () => {
+      
+        const urole = document.getElementById("urole").value;
         const parentId = document.getElementById("parentId").value;
-        const parentName = document.getElementById("parentName").value;
         const name = document.getElementById("name").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
@@ -113,10 +126,9 @@
         const Roullete = document.getElementById("commRoullete").value;
         const Avaitor = document.getElementById("comAvaitor").value;
         const CarRoullete = document.getElementById("comCarRoullete").value;
-// console.log(name,email,password,role);
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentName,parentId }),
+          body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentId,urole }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -137,5 +149,9 @@
               window.location.reload();
             });
           });
-      };
+        };
+        const hiddenRows = document.querySelectorAll('.hidden-row');
+hiddenRows.forEach(row => {
+  row.style.display = 'none';
+});
     </script>
