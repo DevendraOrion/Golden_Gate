@@ -6054,6 +6054,7 @@ const timestamp = now.getTime();
           Msg: "Insufficient Balance",
         });
       }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
@@ -6068,20 +6069,27 @@ const timestamp = now.getTime();
     }
 
     let searchRole = urole.toLowerCase();
-    let twoSearchWord=searchRole.slice(0,2)
-
+    let twoSearchWord = searchRole.slice(0, 2);
+    
     var maxSearchId = await User.find({}, ['search_id'])
-    .sort({
-      search_id: -1
-    })
-    .limit(1);
+      .sort({
+        search_id: -1
+      })
+      .limit(1);
+    
     var search_id;
-    if (maxSearchId.length == 0) search_id = twoSearchWord+11111;
-    else {
-        if (maxSearchId[0].search_id) search_id = maxSearchId[0].search_id + 1;
-        else search_id = twoSearchWord+11111;
+    
+    if (maxSearchId.length === 0) {
+      search_id = twoSearchWord + '00001';
+    } else {
+      const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
+      search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
     }
-console.log(search_id);
+    
+    console.log(search_id);
+    
+    
+let parentDataExist=parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
       search_id,
       numeric_id,
@@ -6090,13 +6098,15 @@ console.log(search_id);
       password: hashedPassword,
       role,
       balance,
-      parent: new ObjectId(parentData._id),
+      parent: parentDataExist,
     });
 
     let saveUserData=await saveData.save();
-
-    const adminBalace=parentData.balance-balance
-    let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+    let adminBalace=0
+if(parentData){
+   adminBalace=parentData.balance-balance
+   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+}
 
     let newTxnAdmin = new Transaction({
       user_id: saveUserData._id,
@@ -6111,7 +6121,7 @@ console.log(search_id);
     let txnAdmin = await newTxnAdmin.save();
 
     var newTxn = new Transaction({
-      user_id: parentData._id,
+      user_id: parentDataExist,
       txn_amount: Number(balance),
       created_at: new Date().getTime(),
       transaction_type: "C",
@@ -6123,7 +6133,7 @@ console.log(search_id);
 
     let userCommission=new  UserCommission({
       type:role,
-      parent:parentData._id,
+      parent:parentDataExist,
       user:saveUserData._id,
       Roullete,
       Avaitor,
