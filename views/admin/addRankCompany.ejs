@@ -125,9 +125,16 @@
         const password = document.getElementById("password").value;
         const role = document.getElementById("role").value;
         const balance = document.getElementById("balance").value;
-        const Roullete = document.getElementById("commRoullete").value;
-        const Avaitor = document.getElementById("comAvaitor").value;
-        const CarRoullete = document.getElementById("comCarRoullete").value;
+        console.log(role)
+         let Roullete ;
+         let Avaitor ;
+         let CarRoullete;
+        if(role!="User"){
+         Roullete = document.getElementById("commRoullete").value;
+         Avaitor = document.getElementById("comAvaitor").value;
+         CarRoullete = document.getElementById("comCarRoullete").value;
+        }
+        
         fetch("/admin/saveAddRank", {
           method: "POST",
           body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentId,urole }),
