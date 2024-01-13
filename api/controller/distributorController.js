@@ -46,7 +46,7 @@ module.exports = {
         5: "Agent",
         6: "User",
       };
-      
+      console.log(user);
       const data =user.role;
       
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);

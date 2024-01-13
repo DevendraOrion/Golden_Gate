@@ -16,7 +16,7 @@
                 <tr>
                   <td>Parent Id</td>
                   <td>
-                    <input name="name" id="parentId" class="form-control" value="<%=data.parentData.numeric_id%>"  readonly></input>
+                    <input name="name" id="parentId" class="form-control" value="<%=data.parentData.search_id%>"  readonly></input>
                   </td>
                 </tr>
                 <tr>
@@ -114,7 +114,7 @@
         const Avaitor = document.getElementById("comAvaitor").value;
         const CarRoullete = document.getElementById("comCarRoullete").value;
 // console.log(name,email,password,role);
-        fetch("/admin/saveAddRank", {
+        fetch("/admin/saveAddRankDataByParent", {
           method: "POST",
           body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentName,parentId }),
           headers: {

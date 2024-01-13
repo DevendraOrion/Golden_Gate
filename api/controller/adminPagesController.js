@@ -67,8 +67,6 @@ module.exports = {
       req.params.id,
       req.admin._id
     );
-    // console.log(user);
-    // console.log("========================");
     const data = await distributorController.addRankData(user)
     res.render("admin/addRank", {
       title: "Add Rank",
