@@ -3693,6 +3693,77 @@ const timestamp = now.getTime();
       });
     }
   },
+  updateAdminSP: async (req, res) => {
+    var params = _.pick(req.body, "CurrentPass", "SPnpass", "SPcpass");
+    //logger.info("Admin Profile Update Request", params);
+     if (!params) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.CurrentPass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.SPnpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.SPcpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (params.SPnpass != params.SPcpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordNotMatchError,
+      });
+    }
+    if (params.SPcpass.length > 5 ||params.SPcpass.length < 3) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordValidationError2,
+      });
+    }
+    var rez1 = await bcrypt.compare(params.CurrentPass, req.admin.password);
+    // console.log(rez1);
+    if (!rez1) {
+      return res.send({
+        status: 0,
+        Msg: localization.invalidOldPassError,
+      });
+    }
+    var hash = bcrypt.hashSync(params.SPcpass);
+    var updateAdmin = await User.findByIdAndUpdate(req.admin._id, {
+      $set: {
+        security_pin: hash,
+      },
+    });
+    if (updateAdmin) {
+      var newLog = new AccessLog({
+        admin: req.admin._id,
+        action: "Changed own password",
+        created_at: new Date().getTime(),
+      });
+      await newLog.save();
+      return res.send({
+        status: 1,
+        Msg: localization.loginSuccess,
+      });
+    } else {
+      return res.send({
+        status: 0,
+        Msg: localization.ServerError,
+      });
+    }
+  },
   addMoneyByAdmin: async (req, res) => {
     var params = _.pick(
       req.body,
@@ -5484,11 +5555,12 @@ const timestamp = now.getTime();
       allGameRecords.map(async (u) => {
         const players = [];
         for (const us of u.players) {
+          // console.log(us);
           if (Service.validateObjectId(us.id)) {
             const user = await User.findById(us.id);
             console.log(user);
             players.push({
-              id: user._id,
+              id: user.id,
               username: user.username,
               numeric_id: user.numeric_id,
               rank: us.rank,

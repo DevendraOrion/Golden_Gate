@@ -26,6 +26,11 @@ var UserModel = new Schema({
       type: Number,
       required: true,
   },
+  security_pin: {
+      type: String,
+    //   required: true,
+    default:1234
+  },
   search_id: {
       type: String,
     //   required: true,

@@ -27,6 +27,7 @@ module.exports = {
 	"mobileValidationError":"Please enter a valid mobile number",
 	"usernameValidationError":"Please enter a valid username",
 	"passwordValidationError":"Password must be 6-12 characters long",
+	"passwordValidationError2":"Security Pin must be 4 characters long",
 	"passwordLengthValidationError":"Please enter a valid password",
 	"emailExistError":"An account already exist with same email address",
 	"mobileExistError":"An account already exist with same mobile number",

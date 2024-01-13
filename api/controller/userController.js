@@ -1299,16 +1299,23 @@ module.exports = {
 
     updateStatus: async function (req, res) {
         var startTime = new Date();
-
+        let  childBlockUserList=[]
         var params = _.pick(req.body, ['id', 'status']);
         //logger.info("PARAMS", params);
+        console.log("===============")
+        console.log(params.id)
+
+
         if (!params) return res.send(Service.response(0, localization.missingParamError, null));
 
         if (!Service.validateObjectId(params.id)) {
             return res.send(Service.response(0, localization.missingParamError, null));
         }
 
-        var rez = await User.findByIdAndUpdate(params.id, {
+         childBlockUserList= await Service.DownLine(params.id)
+         childBlockUserList.push(params.id)
+        console.log(childBlockUserList);
+        var rez = await User.updateMany({_id:{$in:childBlockUserList}}, {
             $set: {
                 is_active: params.status == 'true'
             }

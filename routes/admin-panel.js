@@ -81,6 +81,7 @@ module.exports = function (router, io) {
   router.post("/admin/login", AdminController.login);
   router.post("/admin/genprofile", AdminController.updateAdminProfile);
   router.post("/admin/adminpass", AdminController.updateAdminProfilePass);
+  router.post("/admin/adminSP", AdminController.updateAdminSP);
   router.get("/admin/logout", AdminController.logout);
 
   // USER MANAGEMENT

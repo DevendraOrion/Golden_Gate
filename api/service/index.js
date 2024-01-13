@@ -596,6 +596,32 @@ module.exports = {
 
         return rez;
     },
+    DownLine:async function(userId){
+        let userIDs = [];
+  
+        const condition = {
+          parent: userId
+        };
+      
+        let users = await User.find(condition)
+          .populate({ path: "parent", select: "_id username numeric_id" })
+          .select("_id username numeric_id");
+      
+        let a = users.map(user => user._id);
+        while (users.length > 0) {
+          userIDs=[...userIDs,...a];
+        //   userIDs.push(a);
+          const condition2 = {
+            parent: { $in: a }
+          };
+          users = await User.find(condition2)
+            .populate({ path: "parent", select: "_id username numeric_id" })
+            .select("_id username numeric_id");
+          a = users.map(user => user._id);
+        }
+        return userIDs;
+
+    } ,
 
     randomNumber: async function(length) {
         return Math.floor(
