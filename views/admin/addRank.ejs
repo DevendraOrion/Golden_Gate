@@ -74,6 +74,13 @@
                       
                     </td>
                   </tr>
+                  <tr>
+                    <td>Security Pin</td>
+                    <td>
+                      <input name="securityPin" id="securityPin"  class="form-control" placeholder="Enter Security Pin here...." maxlength="4">
+                      
+                    </td>
+                  </tr>
                   <!-- <tr>
                     <td>Role</td>
                     <td>
@@ -103,6 +110,8 @@
   <%- include footer %>
     <script>
       const saveSettings = () => {
+        const securityPin = document.getElementById("securityPin").value;
+        console.log(securityPin);
         const parentId = document.getElementById("parentId").value;
         const parentName = document.getElementById("parentName").value;
         const name = document.getElementById("name").value;
@@ -116,7 +125,7 @@
 // console.log(name,email,password,role);
         fetch("/admin/saveAddRankDataByParent", {
           method: "POST",
-          body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentName,parentId }),
+          body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentName,parentId,securityPin }),
           headers: {
             "Content-Type": "application/json",
           },

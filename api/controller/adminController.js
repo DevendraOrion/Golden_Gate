@@ -317,6 +317,7 @@ module.exports = {
           id: u._id,
           username: u.name,
           numeric_id: u.numeric_id,
+          search_id: u.search_id,
           role: u.role,
           google_id:u.email,
           game_played: u.gamecount,
@@ -6072,11 +6073,19 @@ const timestamp = now.getTime();
   },
   saveAddRankDataByParent: async (req, res) => {
   try {
-    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole } = req.body;
-    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole);
+    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;
+    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({search_id:parentId})
+    }
+    console.log(parentData);
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
     }
    if (!name || !email || !password || !role) {
     return res.send({
@@ -6143,7 +6152,7 @@ const timestamp = now.getTime();
         if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
         else numeric_id = 11111;
     }
-    console.log(urole,role)
+    // console.log(urole,role)
     let searchRole = role.toLowerCase();
     let twoSearchWord = searchRole.slice(0, 2);
     
@@ -6163,7 +6172,7 @@ const timestamp = now.getTime();
       search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
     }
     
-    console.log(search_id);
+    // console.log(search_id);
     
 let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
@@ -6184,7 +6193,7 @@ if(parentData){
    let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
 }
 
-console.log(parentDataExist);
+// console.log(parentDataExist);
     let newTxnAdmin = new Transaction({
       user_id: saveUserData._id,
       txn_amount: Number(balance),
@@ -6231,11 +6240,26 @@ console.log(parentDataExist);
 },
   saveAddRankData: async (req, res) => {
   try {
-    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole } = req.body;
-    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole);
+    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;
+    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin);
+    console.log(req.admin.security_pin);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({numeric_id:Number(parentId)})
+    }
+    if(!securityPin){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Security Pin",
+      });
+    }
+
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
     }
    if (!name || !email || !password || !role) {
     return res.send({
