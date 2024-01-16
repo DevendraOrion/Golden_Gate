@@ -2,7 +2,15 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var DistributorModel = new Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
+    },
+    dob: {
         type: String,
         required: true
     },
@@ -11,55 +19,40 @@ var DistributorModel = new Schema({
         required: true,
         unique: true
     },
+    phoneNo:{
+        type: Number
+    },
     password:{
         type: String
     },
-    is_active:{
-        type: Boolean,
-        default: true
+    address:{
+        type: String,
+        // default: true
     },
-    is_deleted:{
-        type: Boolean,
+    district:{
+        type: String,
+        // default: true
+    },
+    block:{
+        type: String,
+        // default: true
+    },
+    postalCode:{
+        type: String,
+        // default: true
+    },
+    parentId:{
+        type: String,
+        // default: true
+    },
+    securityPin:{
+        type: Number,
         default: false
     },
-    role:{
-        type: String,
-        required: true
-    },
-    admin_id: {
-        type: Schema.Types.ObjectId
-    },
-    commission_wallet: {
-        type: Number
-    },
-    profile_picture: {
-        type: String,
-        trim: true
-    },
-    mobile_no: {
-        country_code: {
-            type: String,
-            trim: true
-        },
-        number: {
-            type: String,
-            trim: true
-        }
-    },
-	tokens: [{
-		access: {
-			type: String
-		},
-		token: {
-			type: String
-        },
-        password_reset: {
-            type: String,
-			required: false
-        }
-    }],
+
     created_at:{
-        type: Number
+        type: Number,
+        default: Date.now
     }
 }, {
     usePushEach: true

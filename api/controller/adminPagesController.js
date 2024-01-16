@@ -108,6 +108,22 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
+  createDistributor: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    // console.log(req.admin);
+  //  let role="State"
+  //   const data = await distributorController.addRankssData(req,role)
+  const data=req.admin
+    res.render("admin/createDistributor", {
+      title: "Create Distributer",
+      type: "distributer",
+      sub: "distributer",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   addStateRank: async (req, res) => {
     // let data = await noticeData.findOne({});
    let role="State"

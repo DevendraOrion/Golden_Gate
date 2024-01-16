@@ -6071,6 +6071,142 @@ const timestamp = now.getTime();
       });
     }
   },
+  saveCreateAdminData: async (req, res) => {
+  try {
+    const { parentId,firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode,password,confirmPassword,securityPin } = req.body;
+    console.log(parentId,firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode,password,confirmPassword,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    // console.log(parentData);
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+   if (!name || !email || !password || !role) {
+    return res.send({
+      status: 0,
+      Msg: "Please provide all parameters",
+    });
+     }
+ 
+    let emails = await User.findOne({ email });
+      if (emails) {
+        return res.send({
+          status: 0,
+          Msg: "Email already exists",
+        });
+      }
+
+      if(balance>parentId.balance){
+        return res.send({
+          status: 0,
+          Msg: "Insufficient Balance",
+        });
+      }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    var maxNumId = await User.find({}, ['numeric_id'])
+    .sort({
+        numeric_id: -1
+    })
+    .limit(1);
+    var numeric_id;
+    if (maxNumId.length == 0) numeric_id = 11111;
+    else {
+        if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
+        else numeric_id = 11111;
+    }
+    // console.log(urole,role)
+    let searchRole = role.toLowerCase();
+    let twoSearchWord = searchRole.slice(0, 2);
+    
+    var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
+      .sort({
+        search_id: -1
+      })
+      .limit(1);
+    
+    var search_id;
+    
+    if (maxSearchId.length === 0) {
+      const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
+      search_id = twoSearchWord + randomFiveDigits;
+    } else {
+      const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
+      search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
+    }
+    
+    // console.log(search_id);
+    
+let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
+    let saveData = new User({
+      search_id,
+      numeric_id,
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      balance,
+      parent: parentDataExist,
+    });
+
+    let saveUserData=await saveData.save();
+    let adminBalace=0
+if(parentData){
+   adminBalace=parentData.balance-balance
+   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+}
+
+// console.log(parentDataExist);
+    let newTxnAdmin = new Transaction({
+      user_id: saveUserData._id,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit to ${name}` ,
+      current_balance: adminBalace,
+      is_status: "S",
+      txn_mode: "A",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: parentDataExist,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  "Deposit by Admin",
+      is_status: "S",
+      txn_mode: "A",
+    });
+    let txnres = await newTxn.save();
+
+    let userCommission=new  UserCommission({
+      type:role,
+      parent:parentDataExist,
+      user:saveUserData._id,
+      Roullete,
+      Avaitor,
+      CarRoullete
+    })
+    await userCommission.save();
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
   saveAddRankDataByParent: async (req, res) => {
   try {
     const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;

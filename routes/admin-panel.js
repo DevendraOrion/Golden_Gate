@@ -29,6 +29,16 @@ module.exports = function (router, io) {
     Service.authenticateAdmin,
     AdminPagesController.showChild
   );
+  // router.get(
+  //   "/user/createDistributor/:id",
+  //   Service.authenticateAdmin,
+  //   AdminPagesController.createDistributor
+  // );
+  router.get(
+    "/user/createDistributor",
+    Service.authenticateAdmin,
+    AdminPagesController.createDistributor
+  );
 
   //frontend routes
   // router.get("/", FrontController.index);
@@ -273,6 +283,7 @@ module.exports = function (router, io) {
   router.get("/distributerMaster", AdminPagesController.distributerMaster);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
+  router.post("/admin/create-distributor", AdminController.saveCreateAdminData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);
 
