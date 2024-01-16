@@ -6087,7 +6087,13 @@ const timestamp = now.getTime();
         Msg: "Please Enter Correct Security Pin",
       });
     }
-   if (!name || !email || !password || !role) {
+    if(confirmPassword !== password){
+      return res.send({
+        status: 0,
+        Msg: "Confirm Password and Password is not match",
+      });  
+    }
+   if (!firstName || !lastName || !email || !password ) {
     return res.send({
       status: 0,
       Msg: "Please provide all parameters",
@@ -6095,106 +6101,46 @@ const timestamp = now.getTime();
      }
  
     let emails = await User.findOne({ email });
-      if (emails) {
+    let distEmails = await Distributor.findOne({ email:email });
+      if (emails || distEmails) {
         return res.send({
           status: 0,
           Msg: "Email already exists",
         });
       }
-
-      if(balance>parentId.balance){
-        return res.send({
-          status: 0,
-          Msg: "Insufficient Balance",
-        });
-      }
-
+    // securityPin=1234
+    const hashedSecurityPin = await bcrypt.hash("1234", 10);
     const hashedPassword = await bcrypt.hash(password, 10);
-    var maxNumId = await User.find({}, ['numeric_id'])
-    .sort({
-        numeric_id: -1
-    })
-    .limit(1);
-    var numeric_id;
-    if (maxNumId.length == 0) numeric_id = 11111;
-    else {
-        if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
-        else numeric_id = 11111;
-    }
     // console.log(urole,role)
-    let searchRole = role.toLowerCase();
-    let twoSearchWord = searchRole.slice(0, 2);
-    
-    var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
-      .sort({
-        search_id: -1
-      })
-      .limit(1);
-    
+  
+    let twoSearchWord = "du"
+   
     var search_id;
     
-    if (maxSearchId.length === 0) {
-      const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
-      search_id = twoSearchWord + randomFiveDigits;
-    } else {
-      const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
-      search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
-    }
-    
-    // console.log(search_id);
+    const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
+    search_id = twoSearchWord + randomFiveDigits;
     
 let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
-    let saveData = new User({
+    let saveData = new Distributor({
       search_id,
-      numeric_id,
-      name,
+      // numeric_id,
+      firstName,
+      lastName,
+      dob,
+      phoneNo,
+      address,
+      state,
+      district,
+      block,
+      postalCode,
       email,
       password: hashedPassword,
-      role,
-      balance,
       parent: parentDataExist,
+      securityPin: hashedSecurityPin,
     });
 
     let saveUserData=await saveData.save();
-    let adminBalace=0
-if(parentData){
-   adminBalace=parentData.balance-balance
-   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
-}
 
-// console.log(parentDataExist);
-    let newTxnAdmin = new Transaction({
-      user_id: saveUserData._id,
-      txn_amount: Number(balance),
-      created_at: new Date().getTime(),
-      transaction_type: "D",
-      resp_msg:  `Deposit to ${name}` ,
-      current_balance: adminBalace,
-      is_status: "S",
-      txn_mode: "A",
-    })
-    let txnAdmin = await newTxnAdmin.save();
-
-    var newTxn = new Transaction({
-      user_id: parentDataExist,
-      txn_amount: Number(balance),
-      created_at: new Date().getTime(),
-      transaction_type: "C",
-      resp_msg:  "Deposit by Admin",
-      is_status: "S",
-      txn_mode: "A",
-    });
-    let txnres = await newTxn.save();
-
-    let userCommission=new  UserCommission({
-      type:role,
-      parent:parentDataExist,
-      user:saveUserData._id,
-      Roullete,
-      Avaitor,
-      CarRoullete
-    })
-    await userCommission.save();
     return res.send({
       status: 1,
       Msg: localization.success,

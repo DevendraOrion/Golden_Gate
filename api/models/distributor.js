@@ -2,6 +2,10 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var DistributorModel = new Schema({
+    search_id: {
+        type: String,
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -45,8 +49,12 @@ var DistributorModel = new Schema({
         type: String,
         // default: true
     },
+    parent:{
+        type: String,
+        default: false
+    },
     securityPin:{
-        type: Number,
+        type: String,
         default: false
     },
 
