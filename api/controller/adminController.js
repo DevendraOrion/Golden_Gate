@@ -6501,8 +6501,8 @@ const user=req.admin
 // console.log(CarRoullete,Avaitor,Roullete,type,user._id);
 
 if(type==="State"){
-const compareData=await Commission.findOne({type:"Company"})
-if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+// const compareData=await Commission.findOne({type:"Company"})
+if(100<CarRoullete || 100<Avaitor || 100<Roullete){
   return res.send({
     status: 0,
     Msg: "Commission is Higher than above level",
@@ -6557,6 +6557,88 @@ if(findData){
 }else{
   const data= new Commission()
   data.CarRoullete=CarRoullete
+  data.Avaitor=Avaitor
+  data.Roullete=Roullete
+  data.type=type
+  data.user=user._id
+  await data.save()
+  return res.send({
+    status: 1,
+    Msg: localization.success,
+  });
+}
+
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+saveCommissionLimit: async (req, res) => {
+// const saveAddRankData = async (req, res) => {
+  try {
+    const { Avaitor,Roullete,type } = req.body;
+const user=req.admin
+// console.log(CarRoullete,Avaitor,Roullete,type,user._id);
+
+if(type==="State"){
+const compareData=await Commission.findOne({type:"Company"})
+if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="District"){
+const compareData=await Commission.findOne({type:"State"})
+if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="Zone"){
+const compareData=await Commission.findOne({type:"District"})
+if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+if(type==="Agent"){
+const compareData=await Commission.findOne({type:"Zone"})
+if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Commission is Higher than above level",
+  });
+}}
+
+
+if( !Avaitor || !Roullete){
+  return res.send({
+    status: 0,
+    Msg: "Please provide all parameters",
+  });
+}
+const findData=await Commission.findOne({user:user._id,type:type})
+if(findData){
+  // console.log("==============");
+  let a=await Commission.findOneAndUpdate({user:user._id,type:type},{
+    Avaitor:Avaitor,
+    Roullete:Roullete,
+    type:type
+  })
+  // console.log(a);
+  return res.send({
+    status: 1,
+    Msg: localization.success,
+  });
+}else{
+  const data= new Commission()
+  // data.CarRoullete=CarRoullete
   data.Avaitor=Avaitor
   data.Roullete=Roullete
   data.type=type

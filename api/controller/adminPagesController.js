@@ -302,6 +302,21 @@ module.exports = {
       total: users.count,
     });
   },
+  commissionLimit: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    if(req.admin.role=="Company"){
+    const data = await distributorController.commission_management(req)
+    // console.log(req.admin);
+    res.render("admin/commissionLimit", {
+      title: "Commission Limit",
+      type: "commission-limit",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });}
+  },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){

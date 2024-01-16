@@ -290,7 +290,9 @@ module.exports = function (router, io) {
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
   router.post("/admin/create-distributor", AdminController.saveCreateAdminData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
+  router.get("/commission-limit", AdminPagesController.commissionLimit);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);
+  router.post("/admin/saveCommission-limit", AdminController.saveCommissionLimit);
 
   // Banners management
   router.get("/banners", AdminPagesController.bannerList);
