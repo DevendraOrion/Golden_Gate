@@ -178,6 +178,37 @@ module.exports = {
       data: data,
     });
   },
+  rankMaster: async (req, res) => {
+    // let data = await noticeData.findOne({});
+   let role="State"
+   const users = await AdminController.getAgentList(role);
+    res.render("admin/rankMaster", {
+      title: "Rank Master",
+      type: "Rank Management",
+      sub: "rankMgt",
+      sub2: "rankM",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  
+  },
+  distributerMaster: async (req, res) => {
+    // let data = await noticeData.findOne({});
+   let role="State"
+   const users = await AdminController.getAgentList(role);
+    res.render("admin/distributerMaster", {
+      title: "Distributer Master",
+      type: "Rank Management",
+      sub: "rankMgt",
+      sub2: "distM",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){

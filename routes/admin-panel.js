@@ -269,6 +269,8 @@ module.exports = function (router, io) {
   router.get("/add-rank-zone", AdminPagesController.addZoneRank);
   router.get("/add-rank-agent", AdminPagesController.addAgentRank);
   router.get("/add-rank-user", AdminPagesController.adduserRank);
+  router.get("/rankMaster", AdminPagesController.rankMaster);
+  router.get("/distributerMaster", AdminPagesController.distributerMaster);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
