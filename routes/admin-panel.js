@@ -275,6 +275,9 @@ module.exports = function (router, io) {
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
   router.get("/add-rank-state", AdminPagesController.addStateRank);
+  router.get("/comCarRoullat", AdminPagesController.commCarRoullat);
+  router.get("/commRoullete", AdminPagesController.commRoullete);
+  router.get("/commAvatior", AdminPagesController.commAvatior);
   router.get("/add-rank-district", AdminPagesController.addDistrictRank);
   router.get("/add-rank-zone", AdminPagesController.addZoneRank);
   router.get("/add-rank-agent", AdminPagesController.addAgentRank);
