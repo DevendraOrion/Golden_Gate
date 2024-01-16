@@ -57,6 +57,10 @@ var DistributorModel = new Schema({
         type: String,
         default: false
     },
+    // securityPin:{
+    //     type: String,
+    //     default: false
+    // },
 
     created_at:{
         type: Number,

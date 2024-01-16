@@ -109,10 +109,7 @@ module.exports = {
     });
   },
   createDistributor: async (req, res) => {
-    // let data = await noticeData.findOne({});
-    // console.log(req.admin);
-  //  let role="State"
-  //   const data = await distributorController.addRankssData(req,role)
+ 
   const data=req.admin
     res.render("admin/createDistributor", {
       title: "Create Distributer",
@@ -124,53 +121,43 @@ module.exports = {
       data: data,
     });
   },
-  commCarRoullat: async (req, res) => {
-    // let data = await noticeData.findOne({});
-    let comm = "CarRolllatt"
-    // const data = await distributorController.addRankssData(req,role)
-    let data = []
-      res.render("admin/carRoullatCommissionreport", {
-      title: "Car Roullete Report",
-      type: "comission",
-      sub: "commMaster",
-      sub2: "carR",
+  carRoulleteReport: async (req, res) => {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/commissionReport", {
+      title: "Car Roulette",
+      type: "commissionReport",
+      sub: "commissionReport",
+      sub2: "carRoulleteReport",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
     });
   },
-  commRoullete: async (req, res) => {
-    // let data = await noticeData.findOne({});
-     let comm = "Roullete"
-    // const data = await distributorController.addRankssData(req,role)
-    let data = []
-      res.render("admin/carRoullatCommissionreport", {
-      title: "Rolllatt Report",
-      type: "comission",
-      sub: "commMaster",
-      sub2: "roullete",
+  roulleteReport: async (req, res) => {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/commissionReport", {
+      title: "Roullete",
+      type: "commissionReport",
+      sub: "commissionReport",
+      sub2: "roulleteReport",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
     });
   },
-  commAvatior: async (req, res) => {
-    // let data = await noticeData.findOne({});
-   let comm = "Avatior";
-    // const data = await distributorController.addRankssData(req,role)
-    let data = []
-      res.render("admin/carRoullatCommissionreport", {
-      title: "Avatior",
-      type: "comission",
-      sub: "commMaster",
-      sub2: "avatior",
+  avaitorReport: async (req, res) => {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/commissionReport", {
+      title: "Avaitor",
+      type: "commissionReport",
+      sub: "commissionReport",
+      sub2: "avaitorReport",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
     });
   },
   addStateRank: async (req, res) => {
-    // let data = await noticeData.findOne({});
    let role="State"
     const data = await distributorController.addRankssData(req,role)
     res.render("admin/addRankCompany", {

@@ -275,9 +275,6 @@ module.exports = function (router, io) {
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
   router.get("/add-rank-state", AdminPagesController.addStateRank);
-  router.get("/comCarRoullat", AdminPagesController.commCarRoullat);
-  router.get("/commRoullete", AdminPagesController.commRoullete);
-  router.get("/commAvatior", AdminPagesController.commAvatior);
   router.get("/add-rank-district", AdminPagesController.addDistrictRank);
   router.get("/add-rank-zone", AdminPagesController.addZoneRank);
   router.get("/add-rank-agent", AdminPagesController.addAgentRank);
@@ -297,4 +294,9 @@ module.exports = function (router, io) {
   router.post("/banners/add",AdminController.addBanner);
   router.post("/admin/banners/change_status",AdminController.bannerUpdateStatus);
   router.post("/admin/banners/delete",AdminController.bannerDelete);
+
+  //Commission Report
+  router.get("/car-roullete-report", AdminPagesController.carRoulleteReport);
+  router.get("/roullete-report", AdminPagesController.roulleteReport);
+  router.get("/avaitor-report", AdminPagesController.avaitorReport);
 };
