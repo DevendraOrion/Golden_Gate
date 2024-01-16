@@ -413,7 +413,23 @@
                   </ul>
                   </li>
 
-              
+                  <li class="treeview <% if(type=='users') {%> active <% } %>">
+                    <a href="#"><i class="fa fa-plus"></i> <span>Commission Master</span>
+                      <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="<% if(sub2 =='carR') {%> active <% } %> "><a href="/comCarRoullat"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Car Roulette</a></li>
+                        <li class="<% if(sub2 =='roullete') {%> active <% } %> "><a href="/commRoullete"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Roulette</a></li>
+                        <li class="<% if(sub2 =='avatior') {%> active <% } %> "><a href="/commAvatior"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i> Avaitor</a></li>
+                      <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
+                    </ul>
+                  </li>
               <% } %>
           </ul>
           <!-- /.sidebar-menu -->

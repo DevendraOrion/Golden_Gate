@@ -271,6 +271,11 @@ module.exports = function (router, io) {
   // NOTICE
   router.get("/notice", AdminPagesController.notice);
   router.post("/admin/addNotice", AdminController.saveNoticeData);
+
+  // commsion
+  router.get("/comCarRoullat", AdminPagesController.commCarRoullat);
+  router.get("/commRoullete", AdminPagesController.commRoullete);
+  router.get("/commAvatior", AdminPagesController.commAvatior);
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
