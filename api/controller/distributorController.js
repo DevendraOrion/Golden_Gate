@@ -55,7 +55,7 @@ module.exports = {
       }).map((key) => roles[key]);
       
       const commission=await Commission.findOne({type:rolesBelow[0]})
-      return {role:rolesBelow,commission,parentData:user}
+      return {role:rolesBelow,commission,parentData:user ,roles:rolesBelow[0]}
       
   },
   addRankssData: async (req,role) => {

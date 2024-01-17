@@ -277,9 +277,9 @@ module.exports = {
 
     const allGameRecords = await AdminController.allGameRecords(10);
     // let allGameRecords =""
-    res.render("admin/revenue_report", {
-      title: "Revenue Report",
-      type: "revenue-report",
+    res.render("admin/playerMgtSystem", {
+      title: "Player Management System",
+      type: "playerMgtSystem",
       sub: "dashboard",
       sub2: "",
       host: config.pre + req.headers.host,
@@ -290,16 +290,16 @@ module.exports = {
   },
   Distributer: async (req, res) => {
 
-    const allGameRecords = await AdminController.allGameRecords(10);
+    const allGameRecords = await AdminController.distributorData(10);
     // let allGameRecords =""
-    res.render("admin/revenue_report", {
-      title: "Revenue Report",
-      type: "revenue-report",
+    res.render("admin/distributor", {
+      title: "Distributor",
+      type: "distributor",
       sub: "dashboard",
       sub2: "",
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: allGameRecords.list,
+      data: allGameRecords,
       total: allGameRecords.total,
     });
   },

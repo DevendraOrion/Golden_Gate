@@ -49,24 +49,26 @@
                     <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter your Password here...."></input>
                   </td>
                 </tr>
-                <tr>
-                  <td>Commission Roullete</td>
-                  <td>
-                    <input name="commRoullete" type="number" value="<%= data.commission.Roullete %>" id="commRoullete" class="form-control" placeholder="Enter your Commission Roullete here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Commission Avaitor</td>
-                  <td>
-                    <input name="comAvaitor" type="number" value="<%= data.commission.Avaitor %>" id="comAvaitor" class="form-control" placeholder="Enter your Commission Avaitor here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Commission Car Roulette</td>
-                  <td>
-                    <input name="comCarRoullete" type="number" value="<%= data.commission.CarRoullete %>" id="comCarRoullete" class="form-control" placeholder="Enter your Commission Car Roulette here...."></input>
-                  </td>
-                </tr>
+                <% if (data.roles !== 'User') { %>
+                  <tr>
+                    <td>Commission Roullete</td>
+                    <td>
+                      <input name="commRoullete" type="number" value="<%= data.commission.Roullete %>" id="commRoullete" class="form-control" placeholder="Enter your Commission Roullete here...."></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Commission Avaitor</td>
+                    <td>
+                      <input name="comAvaitor" type="number" value="<%= data.commission.Avaitor %>" id="comAvaitor" class="form-control" placeholder="Enter your Commission Avaitor here...."></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Commission Car Roulette</td>
+                    <td>
+                      <input name="comCarRoullete" type="number" value="<%= data.commission.CarRoullete %>" id="comCarRoullete" class="form-control" placeholder="Enter your Commission Car Roulette here...."></input>
+                    </td>
+                  </tr>
+                  <% } %>
                 <tr>
                     <td>Role</td>
                     <td>
@@ -119,9 +121,15 @@
         const password = document.getElementById("password").value;
         const role = document.getElementById("role").value;
         const balance = document.getElementById("balance").value;
-        const Roullete = document.getElementById("commRoullete").value;
-        const Avaitor = document.getElementById("comAvaitor").value;
-        const CarRoullete = document.getElementById("comCarRoullete").value;
+        let Roullete ;
+         let Avaitor ;
+         let CarRoullete;
+        if(role!="User"){
+         Roullete = document.getElementById("commRoullete").value;
+         Avaitor = document.getElementById("comAvaitor").value;
+         CarRoullete = document.getElementById("comCarRoullete").value;
+        }
+        console.log(Roullete,Avaitor,CarRoullete,parentId,parentName,name,email,password,role,balance);
 // console.log(name,email,password,role);
         fetch("/admin/saveAddRankDataByParent", {
           method: "POST",

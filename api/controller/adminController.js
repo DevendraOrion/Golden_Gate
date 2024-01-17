@@ -5535,6 +5535,11 @@ const timestamp = now.getTime();
   },
   /* End Agent Payout Export */
   //All Game records for admin
+  distributorData: async (limit) => {
+const distributor=await Distributor.find({})
+  .limit(limit)
+  return distributor
+  },
   allGameRecords: async (limit) => {
     //var startTime = new Date();
     var allGameRecords = await Table.find({
