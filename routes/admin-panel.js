@@ -276,6 +276,18 @@ module.exports = function (router, io) {
   router.get("/comCarRoullat", AdminPagesController.commCarRoullat);
   router.get("/commRoullete", AdminPagesController.commRoullete);
   router.get("/commAvatior", AdminPagesController.commAvatior);
+  // ADDING
+  router.get("/Distributer", AdminPagesController.Distributer);
+  router.get("/PlayerManagementSystem", AdminPagesController.PlayerManagementSystem);
+  router.get("/PointManagement", AdminPagesController.PointManagement);
+  router.get("/ManualResultForCarRoulete", AdminPagesController.ManualResultCarRoulete);
+  router.get("/GameStatestics", AdminPagesController.GameStatestics);
+  router.get("/RevenueMaster", AdminPagesController.RevenueMaster);
+  router.get("/ProfitPercentMaster", AdminPagesController.ProfitPercentMaster);
+  router.get("/DistributerSecurityPinMgt", AdminPagesController.DistributerSecurityPinMgt);
+  router.get("/Setting", AdminPagesController.Setting);
+  router.get("/BusinessReport", AdminPagesController.BusinessReport);
+
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);

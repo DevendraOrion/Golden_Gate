@@ -153,6 +153,156 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
+  BusinessReport: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  Setting: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  DistributerSecurityPinMgt: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  RevenueMaster: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  ProfitPercentMaster: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  GameStatestics: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  ManualResultCarRoulete: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  PointManagement: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  PlayerManagementSystem: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
+  Distributer: async (req, res) => {
+
+    const allGameRecords = await AdminController.allGameRecords(10);
+    // let allGameRecords =""
+    res.render("admin/revenue_report", {
+      title: "Revenue Report",
+      type: "revenue-report",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: allGameRecords.list,
+      total: allGameRecords.total,
+    });
+  },
   createDistributor: async (req, res) => {
  
   const data=req.admin
