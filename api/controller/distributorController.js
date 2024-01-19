@@ -2,7 +2,8 @@ const Distributor = require('../models/distributor'),
       Agent = require('../models/agent'),
       Commission = require('../models/commission'),
       { AccessLog } = require('./../models/accessLog'),
-      { User } = require('./../models/user'),      
+      { User } = require('./../models/user'), 
+      { Rank_Data } = require("./../models/rankData"),     
       Service = require('./../service'),
       config = require('./../../config'),
       logger = require('./../service/logger'),
@@ -37,6 +38,27 @@ module.exports = {
       count
     }
   },
+  modifyPlayerData: async (user) => {
+    const roles = {
+        1: "Company",
+        2: "State",
+        3: "District",
+        4: "Zone",
+        5: "Agent",
+        6: "User",
+      };
+      const data =user.role;
+      const parent=await User.findOne({_id:user.parent})
+      console.log(user);
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const rolesBelow = Object.keys(roles).filter((key) => {
+        return parseInt(key) > parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+      
+    //   const commission=await Commission.findOne({type:rolesBelow[0]})
+      return {role:rolesBelow,user:user ,roles:rolesBelow[0],parent:parent}
+      
+  },
   addRankData: async (user) => {
     const roles = {
         1: "Company",
@@ -58,7 +80,7 @@ module.exports = {
       return {role:rolesBelow,commission,parentData:user ,roles:rolesBelow[0]}
       
   },
-  addRankssData: async (req,role) => {
+  modifyUserData: async (req,role) => {
 //   console.log(role);  
     req=req.admin
     let user =req
@@ -90,6 +112,46 @@ module.exports = {
       return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
       
   },
+  addRankssData: async (req,role) => {
+//   console.log(role);  
+    req=req.admin
+    let user =req
+    const roles = {
+        1: "Company",
+        2: "State",
+        3: "District",
+        4: "Zone",
+        5: "Agent",
+        6: "User",
+      };
+      
+      const data =user.role;
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === role);
+      
+      const rolesBelow = Object.keys(roles).filter((key) => {
+        return parseInt(key) > parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+
+      const rolesAbove = Object.keys(roles).filter((key) => {
+        return parseInt(key) < parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+
+        const lastElement = rolesAbove[rolesAbove.length - 1];
+        console.log(lastElement);
+        
+        let allParentData=await User.find({role:lastElement},{numeric_id:1,_id:0 , search_id:1})
+      const commission=await Commission.findOne({type:rolesBelow[0]})
+      console.log(rolesBelow[0]);
+      return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
+      
+  },
+  showRankData: async (req) => {
+    let user=req.admin
+    let data=await  Rank_Data.find({})     
+    console.log(data);
+    return ({rankData:data,user})
+  },
+
   commission_management: async (req, limit) => {
 let Company=await Commission.find({type:"Company"})
 let State=await Commission.find({type:"State"})

@@ -29,6 +29,21 @@ module.exports = function (router, io) {
     Service.authenticateAdmin,
     AdminPagesController.showChild
   );
+  router.get(
+    "/user/modify-user/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.modifyUser
+  );
+  router.get(
+    "/user/change-password-user/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.changeUserPass
+  );
+  router.get(
+    "/user/change-security-pin-user/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.changeUserSPin
+  );
   // router.get(
   //   "/user/createDistributor/:id",
   //   Service.authenticateAdmin,
@@ -38,6 +53,11 @@ module.exports = function (router, io) {
     "/user/createDistributor",
     Service.authenticateAdmin,
     AdminPagesController.createDistributor
+  );
+  router.get(
+    "/user/createRank",
+    Service.authenticateAdmin,
+    AdminPagesController.createRank
   );
 
   //frontend routes
@@ -279,7 +299,6 @@ module.exports = function (router, io) {
   // ADDING
   router.get("/Distributer", AdminPagesController.Distributer);
   router.get("/PlayerManagementSystem", AdminPagesController.PlayerManagementSystem);
-  router.get("/PointManagement", AdminPagesController.PointManagement);
   router.get("/ManualResultForCarRoulete", AdminPagesController.ManualResultCarRoulete);
   router.get("/GameStatestics", AdminPagesController.GameStatestics);
   router.get("/RevenueMaster", AdminPagesController.RevenueMaster);
@@ -291,6 +310,7 @@ module.exports = function (router, io) {
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
+  // router.get("/modify-user", AdminPagesController.modifyUser);
   router.get("/add-rank-state", AdminPagesController.addStateRank);
   router.get("/add-rank-district", AdminPagesController.addDistrictRank);
   router.get("/add-rank-zone", AdminPagesController.addZoneRank);
@@ -300,7 +320,10 @@ module.exports = function (router, io) {
   router.get("/distributerMaster", AdminPagesController.distributerMaster);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
+  router.post("/admin/saveModifyPlayerData", AdminController.saveModifyPlayerData);
+  router.post("/admin/modifyPlayerSave", AdminController.modifyPlayerSave);
   router.post("/admin/create-distributor", AdminController.saveCreateAdminData);
+  router.post("/admin/create-rank", AdminController.saveCreateRankData);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.get("/commission-limit", AdminPagesController.commissionLimit);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);

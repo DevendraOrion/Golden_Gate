@@ -1,0 +1,111 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                    <td>Parent Id</td>
+                    <td>
+                      <input name="parentId" id="parentId" class="form-control"  ></input>
+                    </td>
+                  </tr>
+                <tr>
+                  <td>Rank ID</td>
+                  <td>
+                    <input name="rankId" id="rankId" class="form-control"  placeholder="Enter Name here...." ></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rank Name</td>
+                  <td>
+                    <input name="rankName" id="rankName" class="form-control" placeholder="Enter First Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rank Target Per Week</td>
+                  <td>
+                    <input name="rankTargetWeek" id="rankTargetWeek" class="form-control" placeholder="Enter Last Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rank Target Per Month</td>
+                  <td>
+                    <input name="rankTargetMonth" id="rankTargetMonth"  class="form-control" placeholder="Enter D.O.B here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Rank Immediate Joining Limit</td>
+                  <td>
+                    <input name="rankJoining" id="rankJoining" class="form-control" placeholder="Enter Email ID here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                    <td>Security Pin</td>
+                    <td>
+                      <input name="securityPin" id="securityPin"  class="form-control" placeholder="Enter Security Pin here...." maxlength="4">
+                      
+                    </td>
+                  </tr>
+                
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+        const securityPin = document.getElementById("securityPin").value;
+        const parentId = document.getElementById("parentId").value;
+        const rankId = document.getElementById("rankId").value;
+        const rankName = document.getElementById("rankName").value;
+        const rankTargetWeek = document.getElementById("rankTargetWeek").value;
+        const rankTargetMonth = document.getElementById("rankTargetMonth").value;
+        const rankJoining = document.getElementById("rankJoining").value;
+
+        // console.log(name,email,password,role);
+        fetch("/admin/create-rank", {
+          method: "POST",
+          body: JSON.stringify({ parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+      };
+    </script>

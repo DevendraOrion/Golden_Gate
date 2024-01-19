@@ -9,6 +9,7 @@ var SuperAdmin = require("./../models/superAdmin"),
   Service = require("./../service"),
   config = require("./../../config"),
   { User } = require("./../models/user"),
+  { Rank_Data } = require("./../models/rankData"),
    Commission  = require("./../models/commission"),
   { Banners } = require("./../models/banners"),
   { AccessLog } = require("./../models/accessLog"),
@@ -448,6 +449,7 @@ module.exports = {
       win: u.win_wallet,
       // mobile: u.mobile_no.country_code + u.mobile_no.number,
       is_active: u.is_active,
+      parent: u.parent,
       kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
       referred_users: userReferredCount,
       email_verified: u.email_verified,
@@ -5540,6 +5542,51 @@ const distributor=await Distributor.find({})
   .limit(limit)
   return distributor
   },
+
+
+  playerManagementSystem: async (limit) => {
+    const users = await User.find({
+      is_deleted: false,
+      role:"User"
+    })
+      .sort({
+        created_at: -1
+      })
+      .limit(limit);
+      console.log(users)
+    const list = await Promise.all(
+      users.map(async (u) => {
+        let gamePlayedCount = await Table.countDocuments({
+          "players.id": u._id,
+        });
+        // console.log(u);
+        return {
+          id: u._id,
+          username: u.name,
+          numeric_id: u.numeric_id,
+          search_id: u.search_id,
+          role: u.role,
+          google_id:u.email,
+          game_played: u.gamecount,
+          wallet: u.balance,
+          // win: u.win_wallet,
+          is_active: u.is_active,
+          // email_verified: u.email_verified,
+          kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
+          // otp_verified: u.otp_verified,
+          created_at: await Service.formateDateandTime(u.created_at),
+        };
+      })
+    );
+    let count = await User.find({
+      is_deleted: false,
+    }).countDocuments();
+    return {
+      list,
+      count,
+    };
+  },
+
   allGameRecords: async (limit) => {
     //var startTime = new Date();
     var allGameRecords = await Table.find({
@@ -6146,6 +6193,392 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
 
     let saveUserData=await saveData.save();
 
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+saveCreateRankData: async (req, res) => {
+  try {
+    const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin } = req.body;
+    console.log(parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+   
+    if (!rankId || !rankName || !rankTargetWeek || !rankTargetMonth || !rankJoining) {
+      return res.send({
+        status: 0,
+        Msg: "Please Provide Full parameter",
+      });
+    }
+    let dataPresent = await Rank_Data.findOne({ $or: [{ rankId: rankId }, { rankName: rankName }] });
+    if(dataPresent){
+      return res.send({
+        status: 0,
+        Msg: "Rank Id or Rank Name Already Exists",
+      });
+    }
+    const RankDatas=new Rank_Data({
+      parentId:new ObjectId(parentData._id),
+      rankId,
+      rankName,
+      rankTargetWeek,
+      rankTargetMonth,
+      rankJoining
+    })
+
+    const saveData=await RankDatas.save()
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+  modifyPlayerSave: async (req, res) => {
+  try {
+    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;
+    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    console.log(parentData);
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+   if (!name || !email || !password || !role) {
+    return res.send({
+      status: 0,
+      Msg: "Please provide all parameters",
+    });
+     }
+ 
+    let emails = await User.findOne({ email });
+      if (emails) {
+        return res.send({
+          status: 0,
+          Msg: "Email already exists",
+        });
+      }
+      if(role==="State"){
+      const compareData=await Commission.findOne({type:"Company"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="District"){
+      const compareData=await Commission.findOne({type:"State"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Zone"){
+      const compareData=await Commission.findOne({type:"District"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Agent"){
+      const compareData=await Commission.findOne({type:"Zone"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(balance>parentId.balance){
+        return res.send({
+          status: 0,
+          Msg: "Insufficient Balance",
+        });
+      }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    var maxNumId = await User.find({}, ['numeric_id'])
+    .sort({
+        numeric_id: -1
+    })
+    .limit(1);
+    var numeric_id;
+    if (maxNumId.length == 0) numeric_id = 11111;
+    else {
+        if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
+        else numeric_id = 11111;
+    }
+    // console.log(urole,role)
+    let searchRole = role.toLowerCase();
+    let twoSearchWord = searchRole.slice(0, 2);
+    
+    var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
+      .sort({
+        search_id: -1
+      })
+      .limit(1);
+    
+    var search_id;
+    
+    if (maxSearchId.length === 0) {
+      const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
+      search_id = twoSearchWord + randomFiveDigits;
+    } else {
+      const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
+      search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
+    }
+    
+    // console.log(search_id);
+    
+let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
+    let saveData = new User({
+      search_id,
+      numeric_id,
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      balance,
+      parent: parentDataExist,
+    });
+
+    let saveUserData=await saveData.save();
+    let adminBalace=0
+if(parentData){
+   adminBalace=parentData.balance-balance
+   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+}
+
+// console.log(parentDataExist);
+    let newTxnAdmin = new Transaction({
+      user_id: saveUserData._id,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit to ${name}` ,
+      current_balance: adminBalace,
+      is_status: "S",
+      txn_mode: "A",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: parentDataExist,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  "Deposit by Admin",
+      is_status: "S",
+      txn_mode: "A",
+    });
+    let txnres = await newTxn.save();
+
+    let userCommission=new  UserCommission({
+      type:role,
+      parent:parentDataExist,
+      user:saveUserData._id,
+      Roullete,
+      Avaitor,
+      CarRoullete
+    })
+    await userCommission.save();
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+saveModifyPlayerData: async (req, res) => {
+  try {
+    const { name, email,role,parentName,parentId,securityPin } = req.body;
+    console.log(name, email,role,parentName,parentId,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    console.log(parentData);
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+   if (!name || !email || !password || !role) {
+    return res.send({
+      status: 0,
+      Msg: "Please provide all parameters",
+    });
+     }
+ 
+    let emails = await User.findOne({ email });
+      if (emails) {
+        return res.send({
+          status: 0,
+          Msg: "Email already exists",
+        });
+      }
+      if(role==="State"){
+      const compareData=await Commission.findOne({type:"Company"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="District"){
+      const compareData=await Commission.findOne({type:"State"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Zone"){
+      const compareData=await Commission.findOne({type:"District"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(role==="Agent"){
+      const compareData=await Commission.findOne({type:"Zone"})
+      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+        return res.send({
+          status: 0,
+          Msg: "Commission is Higher than above level",
+        });
+      }}
+      if(balance>parentId.balance){
+        return res.send({
+          status: 0,
+          Msg: "Insufficient Balance",
+        });
+      }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    var maxNumId = await User.find({}, ['numeric_id'])
+    .sort({
+        numeric_id: -1
+    })
+    .limit(1);
+    var numeric_id;
+    if (maxNumId.length == 0) numeric_id = 11111;
+    else {
+        if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
+        else numeric_id = 11111;
+    }
+    // console.log(urole,role)
+    let searchRole = role.toLowerCase();
+    let twoSearchWord = searchRole.slice(0, 2);
+    
+    var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
+      .sort({
+        search_id: -1
+      })
+      .limit(1);
+    
+    var search_id;
+    
+    if (maxSearchId.length === 0) {
+      const randomFiveDigits = Math.floor(10000 + Math.random() * 90000);
+      search_id = twoSearchWord + randomFiveDigits;
+    } else {
+      const lastNumber = parseInt(maxSearchId[0].search_id.slice(2)) + 1;
+      search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
+    }
+    
+    // console.log(search_id);
+    
+let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
+    let saveData = new User({
+      search_id,
+      numeric_id,
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      balance,
+      parent: parentDataExist,
+    });
+
+    let saveUserData=await saveData.save();
+    let adminBalace=0
+if(parentData){
+   adminBalace=parentData.balance-balance
+   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+}
+
+// console.log(parentDataExist);
+    let newTxnAdmin = new Transaction({
+      user_id: saveUserData._id,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit to ${name}` ,
+      current_balance: adminBalace,
+      is_status: "S",
+      txn_mode: "A",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: parentDataExist,
+      txn_amount: Number(balance),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  "Deposit by Admin",
+      is_status: "S",
+      txn_mode: "A",
+    });
+    let txnres = await newTxn.save();
+
+    let userCommission=new  UserCommission({
+      type:role,
+      parent:parentDataExist,
+      user:saveUserData._id,
+      Roullete,
+      Avaitor,
+      CarRoullete
+    })
+    await userCommission.save();
     return res.send({
       status: 1,
       Msg: localization.success,

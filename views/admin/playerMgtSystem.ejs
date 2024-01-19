@@ -13,9 +13,9 @@
                         <div class="pull-right">
                     
                             <td class="actions text-center">
-                                <a href="/user/createDistributor" class="on-editing save-row">
+                                <a href="/add-rank-user" class="on-editing save-row">
                                     <button class="col select-rank" name="rank" style="width:152px; margin-top: 26px; background-color: #337ab7;
-                                    color: white;">Create</button>
+                                    color: white;">Add Player</button>
                                 </a>
                             </td>
                             </div>
@@ -34,21 +34,21 @@
                         <!-- /.box-header -->
                         <div class="box-body table-responsive">
                             <table id="example1" class="table table-bordered table-striped">
-                             
                                 <thead>
                                     <tr>
                                         <th>Player ID</th>
                                         <th>Rank</th>
                                         <th>Name</th>
                                         <th>Email Id</th>
-                                        <th>Game Played</th>
+                                        <!-- <th>Game Played</th> -->
                                         <th>Wallet</th>
-                               
+                                        <!-- <th>Win Wallet</th> -->
                                         <th>Reg Date</th>
-                                
-                                        <th>Action</th>
-                                        <th>Add Users</th>
-                                        <th>Show User</th>
+                                        <!-- <th>KYC Status</th> -->
+                                        <!-- <th>Verification</th> -->
+                                        <th>Modify</th>
+                                        <th>Change Password</th>
+                                        <th>Change Security Pin</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,13 +67,15 @@
                                             <td>
                                                 <%= d?.google_id??'' %>
                                             </td>
-                                            <td>
+                                            <!-- <td>
                                                 <%= d.game_played%>
-                                            </td>
+                                            </td> -->
                                             <td>
                                                 <%= d.wallet %>
                                             </td>
-                           
+                                            <!-- <td>
+                                                <%= d.win %>
+                                            </td> -->
                                             <% 
                                             function formateDateandTime(date) {
                                                 // 7/12/2018 12:25PM
@@ -96,36 +98,30 @@
                                             <td>
                                                 <%= d.created_at%>
                                             </td>
-                                       
-                                                        <% if (d.role !== 'User') { %>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/view/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/addRank/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-plus"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/showChild/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-user-circle-o"></i>
-                                                                </a>
-                                                            </td>
-                                                        <% } else { %>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/view/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                               
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                               
-                                                            </td>
-                                                        <% } %>
+                                            <!-- <td><small class="label <% (d.kyc_status=='verified')? 'bg-green':'bg-red'%>"><%=d.kyc_status%>></small></td> -->
+                                            <!-- <% if (d.email_verified && d.otp_verified) { %>
+                                                <td><small class="label bg-green">Verified</small></td>
+                                                <% } else { %>
+                                                    <td><small class="label bg-red">Unverified</small></td>
+                                                    <% } %> -->
+                                                        <td class="actions text-center">
+                                                            <a href="<%= host%>/user/modify-user/<%= d.id%>" 
+                                                                class="on-editing save-row">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td class="actions text-center">
+                                                            <a href="<%= host%>/user/change-password-user/<%= d.id%>" 
+                                                                class="on-editing save-row">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td class="actions text-center">
+                                                            <a href="<%= host%>/user/change-security-pin-user/<%= d.id%>" 
+                                                                class="on-editing save-row">
+                                                                <i class="fa fa-lock"></i>
+                                                            </a>
+                                                        </td>
                                         </tr>
                                         <% }%>
                                 </tbody>

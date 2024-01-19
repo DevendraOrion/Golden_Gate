@@ -258,24 +258,10 @@ module.exports = {
       total: allGameRecords.total,
     });
   },
-  PointManagement: async (req, res) => {
 
-    const allGameRecords = await AdminController.allGameRecords(10);
-    // let allGameRecords =""
-    res.render("admin/revenue_report", {
-      title: "Revenue Report",
-      type: "revenue-report",
-      sub: "dashboard",
-      sub2: "",
-      host: config.pre + req.headers.host,
-      admin: req.admin,
-      data: allGameRecords.list,
-      total: allGameRecords.total,
-    });
-  },
   PlayerManagementSystem: async (req, res) => {
 
-    const allGameRecords = await AdminController.allGameRecords(10);
+    const allGameRecords = await AdminController.playerManagementSystem(10);
     // let allGameRecords =""
     res.render("admin/playerMgtSystem", {
       title: "Player Management System",
@@ -308,6 +294,19 @@ module.exports = {
   const data=req.admin
     res.render("admin/createDistributor", {
       title: "Create Distributer",
+      type: "distributer",
+      sub: "distributer",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  createRank: async (req, res) => {
+    const data = await distributorController.showRankData(req)
+  // const data=req.admin
+    res.render("admin/createRank", {
+      title: "Create Rank",
       type: "distributer",
       sub: "distributer",
       sub2: "",
@@ -421,10 +420,59 @@ module.exports = {
       data: data,
     });
   },
+  modifyUser: async (req, res) => {
+    const user = await AdminController.getUserDetails(
+      req.params.id,
+      req.admin._id
+    );
+    const data = await distributorController.modifyPlayerData(user)
+    res.render("admin/modifyPlayer", {
+      title: "Modify Player",
+      type: "mPlayer",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  changeUserPass: async (req, res) => {
+    const user = await AdminController.getUserDetails(
+      req.params.id,
+      req.admin._id
+    );
+    // console.log(user);
+    const data = await distributorController.modifyPlayerData(user)
+    console.log(data.user.username);
+    res.render("admin/profile", {
+      title: `Change Password (${data.user.name})`,
+      type: "profile",
+      sub: "profile",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  changeUserSPin: async (req, res) => {
+    const user = await AdminController.getUserDetails(
+      req.params.id,
+      req.admin._id
+    );
+    const data = await distributorController.modifyPlayerData(user)
+    res.render("admin/profile", {
+      title: `Change Security Pin (${user.username})`,
+      type: "profile",
+      sub: "profile",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   rankMaster: async (req, res) => {
     // let data = await noticeData.findOne({});
-   let role="State"
-   const users = await AdminController.getAgentList(role);
+    const data = await distributorController.showRankData(req)
     res.render("admin/rankMaster", {
       title: "Rank Master",
       type: "Rank Management",
@@ -432,8 +480,8 @@ module.exports = {
       sub2: "rankM",
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: users.list,
-      total: users.count,
+      data: data,
+      total: data.count,
     });
   
   },

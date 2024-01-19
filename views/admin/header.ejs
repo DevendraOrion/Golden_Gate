@@ -414,8 +414,26 @@
                     aria-hidden="true"></i> <span>Distributer</span></a></li>
                   <li class="<% if(type=='playerMgtSystem') {%> active <% } %>"><a href="/PlayerManagementSystem"><i class="fa fa-user"
                     aria-hidden="true"></i> <span>Player Management System</span></a></li>
-                  <li class="<% if(type=='Point-Management') {%> active <% } %>"><a href="/PointManagement"><i class="fa fa-paint-brush"
-                    aria-hidden="true"></i> <span>Point Management</span></a></li>
+
+
+                    <li class="treeview <% if(type=='users') {%> active <% } %>">
+                      <a href="#"><i class="fa fa-plus"></i> <span>Point Management</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                      </a>
+                      <ul class="treeview-menu">
+                          <li class="<% if(sub2 =='carR') {%> active <% } %> "><a href="/comCarRoullat"><i
+                              class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point to Player</a></li>
+                          <li class="<% if(sub2 =='roullete') {%> active <% } %> "><a href="/commRoullete"><i
+                              class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point To Upper Level</a></li>
+                          <li class="<% if(sub2 =='avatior') {%> active <% } %> "><a href="/commAvatior"><i
+                              class="fa fa-times-circle-o" aria-hidden="true"></i> Point Transaction Report</a></li>
+                      
+                      </ul>
+                    </li>
+
+
                   <li class="<% if(type=='Manual-Result-For-Car-Roulete') {%> active <% } %>"><a href="/ManualResultForCarRoulete"><i class="fa fa-compass"
                     aria-hidden="true"></i> <span>Manual Result For Car Roulete</span></a></li>
                   <li class="<% if(type=='Business-Report') {%> active <% } %>"><a href="/BusinessReport"><i class="fa fa-flag"

@@ -13,7 +13,7 @@
                         <div class="pull-right">
                     
                             <td class="actions text-center">
-                                <a href="/user/createDistributor" class="on-editing save-row">
+                                <a href="/user/createRank" class="on-editing save-row">
                                     <button class="col select-rank" name="rank" style="width:152px; margin-top: 26px; background-color: #337ab7;
                                     color: white;">Create</button>
                                 </a>
@@ -34,7 +34,7 @@
                         <!-- /.box-header -->
                         <div class="box-body table-responsive">
                             <table id="example1" class="table table-bordered table-striped">
-                                <thead>
+                                <!-- <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Rank</th>
@@ -70,101 +70,51 @@
                                         </td>
     
                                     </tr>
-                                </tbody>
-                                <!-- <thead>
+                                </tbody> -->
+                                <thead>
                                     <tr>
-                                        <th>Player ID</th>
+                                       <!-- <th>No</th> -->
+                                       <th>Rank Id</th>
                                         <th>Rank</th>
-                                        <th>Name</th>
-                                        <th>Email Id</th>
-                                        <th>Game Played</th>
-                                        <th>Wallet</th>
-                               
-                                        <th>Reg Date</th>
-                                
-                                        <th>Action</th>
-                                        <th>Add Users</th>
-                                        <th>Show User</th>
+                                        <th>Rank Target Per Week</th>
+                                        <th>Rank Target Per Month</th>
+                                        <th>Rank immediate Joining Limit</th>
+                                        <th>Update</th>
+                                        <th>Delete</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% var i=1; for (d of data) {%>
+                                    <% var i=1; for (d of data.rankData) {%>
                                
                                         <tr class="gradeX">
                                             <td>
-                                                <%= d.search_id %>
+                                                <%= d.rankId %>
                                             </td>
                                             <td>
-                                                <%= d.role ? d.role : 'User' %>
+                                                <%= d.rankName %>
                                             </td>
                                             <td>
-                                                <%= d?.username??'' %>
+                                                <%= d.rankTargetWeek %>
                                             </td>
                                             <td>
-                                                <%= d?.google_id??'' %>
+                                                <%= d.rankTargetMonth %>
                                             </td>
                                             <td>
-                                                <%= d.game_played%>
+                                                <%= d.rankJoining%>
                                             </td>
-                                            <td>
-                                                <%= d.wallet %>
+                                            <td class="actions text-center">
+                                                <a href="/user/createRank/:d.rankId"  class="on-editing save-row">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
                                             </td>
-                           
-                                            <% 
-                                            function formateDateandTime(date) {
-                                                // 7/12/2018 12:25PM
-                                                var dat = new Date(date);
-                                                var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + parseInt(1));
-                                                                
-                                                var hours = dat.getHours() % 12;
-                                                hours = (hours > 9) ? hours : "0" + hours;
-                                    
-                                                var minutes = dat.getMinutes();
-                                                minutes = (minutes > 9) ? minutes : "0" + minutes;
-                                    
-                                                var ap = (dat.getHours() >= 12) ? "PM" : "AM";
-                                                var day = (dat.getDate() > 9) ? dat.getDate() : "0" + dat.getDate();
-                                    
-                                                rez = day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
-                                                return rez;
-                                            }
-                                            %>
-                                            <td>
-                                                <%= d.created_at%>
+                                            <td class="actions text-center">
+                                                <a href="#"  class="on-editing save-row">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
                                             </td>
-                                       
-                                                        <% if (d.role !== 'User') { %>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/view/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/addRank/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-plus"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/showChild/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-user-circle-o"></i>
-                                                                </a>
-                                                            </td>
-                                                        <% } else { %>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/view/<%= d.id%>" target="_blank" class="on-editing save-row">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                               
-                                                            </td>
-                                                            <td class="actions text-center">
-                                                               
-                                                            </td>
-                                                        <% } %>
                                         </tr>
                                         <% }%>
-                                </tbody> -->
+                                </tbody>
                             </table>
                         </div>
                         <!-- /.box-body -->
