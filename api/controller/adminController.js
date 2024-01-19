@@ -6207,8 +6207,8 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
 },
 saveCreateRankData: async (req, res) => {
   try {
-    const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin } = req.body;
-    console.log(parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin);
+    const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData } = req.body;
+    console.log(parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({search_id:parentId})
@@ -6234,6 +6234,7 @@ saveCreateRankData: async (req, res) => {
         Msg: "Rank Id or Rank Name Already Exists",
       });
     }
+   
     const RankDatas=new Rank_Data({
       parentId:new ObjectId(parentData._id),
       rankId,
@@ -6244,6 +6245,85 @@ saveCreateRankData: async (req, res) => {
     })
 
     const saveData=await RankDatas.save()
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+updateRankData: async (req, res) => {
+  try {
+    const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData } = req.body;
+    console.log(parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+    if(updateData){
+      let dataUpdate=await Rank_Data.updateOne({rankId:rankId},{
+        $set:{rankName,rankTargetWeek,rankTargetMonth,rankJoining}
+      })
+      return res.send({
+        status: 1,
+        Msg: localization.success,
+      });
+    }
+    if (!rankId || !rankName || !rankTargetWeek || !rankTargetMonth || !rankJoining) {
+      return res.send({
+        status: 0,
+        Msg: "Please Provide Full parameter",
+      });
+    }
+    let dataPresent = await Rank_Data.findOne({ $or: [{ rankId: rankId }, { rankName: rankName }] });
+    if(dataPresent){
+      return res.send({
+        status: 0,
+        Msg: "Rank Id or Rank Name Already Exists",
+      });
+    }
+   
+    const RankDatas=new Rank_Data({
+      parentId:new ObjectId(parentData._id),
+      rankId,
+      rankName,
+      rankTargetWeek,
+      rankTargetMonth,
+      rankJoining
+    })
+
+    const saveData=await RankDatas.save()
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+deleteRank: async (req, res) => {
+  try {
+
+    let rank_id=req.query.rank_id
+  let deleteData=await Rank_Data.deleteOne({rankId:rank_id})
 
     return res.send({
       status: 1,

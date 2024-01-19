@@ -34,46 +34,9 @@
                         <!-- /.box-header -->
                         <div class="box-body table-responsive">
                             <table id="example1" class="table table-bordered table-striped">
-                                <!-- <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Rank</th>
-                                        <th>Rank Id</th>
-                                        <th>Rank Target Per Month</th>
-                                        <th>Rank Target Per Week</th>
-                                        <th>Rank immediate Joining Limit</th>
-                                        <th>Update</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="gradeX">
-                                        <td>1</td>
-                                        <td>State</td>
-                                      
-                                        <td>st11113</td>
-                                      
-                                        <td>5</td>
-                                    
-                                        <td>2</td>
-                                        <td>1</td>
-
-                                        <td class="actions text-center">
-                                            <a href="#" target="_blank" class="on-editing save-row">
-                                                <i class="fa fa-pencil"></i>
-                                            </a>
-                                        </td>
-                                        <td class="actions text-center">
-                                            <a href="#" target="_blank" class="on-editing save-row">
-                                                <i class="fa fa-trash"></i>
-                                            </a>
-                                        </td>
-    
-                                    </tr>
-                                </tbody> -->
+                             
                                 <thead>
                                     <tr>
-                                       <!-- <th>No</th> -->
                                        <th>Rank Id</th>
                                         <th>Rank</th>
                                         <th>Rank Target Per Week</th>
@@ -103,14 +66,12 @@
                                                 <%= d.rankJoining%>
                                             </td>
                                             <td class="actions text-center">
-                                                <a href="/user/createRank/:d.rankId"  class="on-editing save-row">
+                                                <a href="<%= host%>/user/createRanks/<%= d.rankId%>"  class="on-editing save-row">
                                                     <i class="fa fa-pencil"></i>
                                                 </a>
                                             </td>
                                             <td class="actions text-center">
-                                                <a href="#"  class="on-editing save-row">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
+                                                <button class="col select-rank" onclick="deleteRole('<%= d.rankId %>')" style="background-color: #fff; color: #3c8dbc; border: none;"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
                                         <% }%>
@@ -231,4 +192,28 @@
                 });
                 $("#usersTab").DataTable().order([4, "desc"]).draw();
             });
+
+            const deleteRole = (rankId) => {
+    
+
+            fetch("/user/delete-rank?rank_id=" + rankId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+        .catch(error => {
+            console.error("Error fetching search ids:", error);
+        });
+    };
         </script>

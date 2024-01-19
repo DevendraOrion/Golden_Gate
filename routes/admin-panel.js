@@ -59,6 +59,11 @@ module.exports = function (router, io) {
     Service.authenticateAdmin,
     AdminPagesController.createRank
   );
+  router.get(
+    "/user/createRanks/:rank_id",
+    Service.authenticateAdmin,
+    AdminPagesController.editRank
+  );
 
   //frontend routes
   // router.get("/", FrontController.index);
@@ -324,6 +329,8 @@ module.exports = function (router, io) {
   router.post("/admin/modifyPlayerSave", AdminController.modifyPlayerSave);
   router.post("/admin/create-distributor", AdminController.saveCreateAdminData);
   router.post("/admin/create-rank", AdminController.saveCreateRankData);
+  router.post("/admin/update-rank-data", AdminController.updateRankData);
+  router.get("/user/delete-rank", AdminController.deleteRank);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.get("/commission-limit", AdminPagesController.commissionLimit);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);

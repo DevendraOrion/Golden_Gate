@@ -303,10 +303,31 @@ module.exports = {
     });
   },
   createRank: async (req, res) => {
-    const data = await distributorController.showRankData(req)
+    let rank_id=req.params.rank_id
+    let updated=req.params.updated
+console.log(req.params);
+    const data = await distributorController.editRankData(req,rank_id,updated)
+    // console.log(data);
   // const data=req.admin
     res.render("admin/createRank", {
       title: "Create Rank",
+      type: "distributer",
+      sub: "distributer",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  editRank: async (req, res) => {
+    let rank_id=req.params.rank_id
+    let updated=req.params.updated
+console.log(req.params);
+    const data = await distributorController.editRankData(req,rank_id,updated)
+    // console.log(data);
+  // const data=req.admin
+    res.render("admin/editRank", {
+      title: "Edit Rank",
       type: "distributer",
       sub: "distributer",
       sub2: "",
@@ -487,8 +508,7 @@ module.exports = {
   },
   distributerMaster: async (req, res) => {
     // let data = await noticeData.findOne({});
-   let role="State"
-   const users = await AdminController.getAgentList(role);
+    const allGameRecords = await AdminController.distributorData(10);
     res.render("admin/distributerMaster", {
       title: "Distributer Master",
       type: "Rank Management",
@@ -496,9 +516,10 @@ module.exports = {
       sub2: "distM",
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: users.list,
-      total: users.count,
+      data: allGameRecords,
+      total: allGameRecords.total,
     });
+    
   },
   commissionLimit: async (req, res) => {
     // let data = await noticeData.findOne({});

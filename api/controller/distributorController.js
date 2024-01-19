@@ -146,10 +146,21 @@ module.exports = {
       
   },
   showRankData: async (req) => {
+    
     let user=req.admin
     let data=await  Rank_Data.find({})     
-    console.log(data);
+    // console.log(data);
     return ({rankData:data,user})
+  },
+
+  editRankData: async (req,rank_id,updated) => {
+    let data
+    if (rank_id) {
+    data=await Rank_Data.find({rankId:rank_id})     
+    }
+    let user=req.admin
+
+    return ({editData:data,user,updated})
   },
 
   commission_management: async (req, limit) => {
