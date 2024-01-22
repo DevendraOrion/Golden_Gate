@@ -61,20 +61,31 @@ module.exports = {
       data: data,
     });
   },
-  commCarRoullat: async (req, res) => {
-    // let data = await noticeData.findOne({});
-    let comm = "CarRolllatt"
-    // const data = await distributorController.addRankssData(req,role)
-    let data = []
-      res.render("admin/carRoullatCommissionreport", {
-      title: "Car Roullete Report",
-      type: "comission",
-      sub: "commMaster",
-      sub2: "carR",
+  transferPoint: async (req, res) => {
+    const data = await distributorController.addRankssData(req) 
+      res.render("admin/transferPoint", {
+      title: "Transfer Point To Player",
+      type: "transfer",
+      sub: "transferPoint",
+      sub2: "transferPoint",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
     });
+  },
+  transferReport: async (req, res) => {
+    const transactions = await paymentController.transactionList(10);
+      res.render("admin/transferReport", {
+      title: "Point Transfer Report",
+      type: "pointTransfer",
+      sub: "transferPoint",
+      sub2: "transferPoint",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+    });
+  
   },
   commRoullete: async (req, res) => {
     // let data = await noticeData.findOne({});
@@ -505,6 +516,21 @@ console.log(req.params);
       total: data.count,
     });
   
+  },
+  addRankss: async (req, res) => {
+    // let data = await noticeData.findOne({});
+
+    const data = await distributorController.addRankssData(req)
+    
+    res.render("admin/addRankCompany", {
+      title: "Add Rank",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
   },
   distributerMaster: async (req, res) => {
     // let data = await noticeData.findOne({});

@@ -298,9 +298,12 @@ module.exports = function (router, io) {
   router.post("/admin/addNotice", AdminController.saveNoticeData);
 
   // commsion
-  router.get("/comCarRoullat", AdminPagesController.commCarRoullat);
-  router.get("/commRoullete", AdminPagesController.commRoullete);
-  router.get("/commAvatior", AdminPagesController.commAvatior);
+  router.get("/transferPoint", AdminPagesController.transferPoint);
+  router.post("/admin/saveTransferPoint", AdminController.saveTransferPoint);
+  router.get("/transferPointToUpper", AdminPagesController.commRoullete);
+  router.get("/transferReport", AdminPagesController.transferReport);
+  router.get("/ajax_transferPoint", paymentController.getTransferAjax);
+
   // ADDING
   router.get("/Distributer", AdminPagesController.Distributer);
   router.get("/PlayerManagementSystem", AdminPagesController.PlayerManagementSystem);
@@ -316,12 +319,17 @@ module.exports = function (router, io) {
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
   // router.get("/modify-user", AdminPagesController.modifyUser);
-  router.get("/add-rank-state", AdminPagesController.addStateRank);
-  router.get("/add-rank-district", AdminPagesController.addDistrictRank);
-  router.get("/add-rank-zone", AdminPagesController.addZoneRank);
-  router.get("/add-rank-agent", AdminPagesController.addAgentRank);
-  router.get("/add-rank-user", AdminPagesController.adduserRank);
+  // router.get("/add-rank-state", AdminPagesController.addStateRank);
+  // router.get("/add-rank-district", AdminPagesController.addDistrictRank);
+  // router.get("/add-rank-zone", AdminPagesController.addZoneRank);
+  // router.get("/add-rank-agent", AdminPagesController.addAgentRank);
+  // router.get("/add-rank-user", AdminPagesController.adduserRank);
   router.get("/rankMaster", AdminPagesController.rankMaster);
+  router.get("/addRankCompany", AdminPagesController.addRankss);
+  router.get("/admin/getSearchIds", AdminController.searchId);
+  router.get("/admin/selectedId", AdminController.selectedId);
+  router.get("/admin/getChildIds", AdminController.childIds);
+  router.get("/admin/getParentName", AdminController.getParentName)
   router.get("/distributerMaster", AdminPagesController.distributerMaster);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);

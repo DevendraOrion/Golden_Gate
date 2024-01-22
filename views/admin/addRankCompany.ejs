@@ -1,14 +1,9 @@
-<style>
-  .hidden-row {
-    display: none;
-  }
-</style>
 <%- include header %><!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        <%= title %> (<%= data.roles %>)
+        <%= title %>
       </h1>
     </section>
     <!-- Main content -->
@@ -18,36 +13,86 @@
           <div class="box box-danger" style="width: fit-content; min-width: 100%">
             <div class="box-body">
               <table class="table table-bordered">
+                <tr>
+                  <td>Role</td>
+                  <td>
+                    <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
+                      <option  value="" >Please Select Role</option>
+                      <% data.role.forEach((role) => { %>
+                          <option value="<%= role %>" ><%= role %></option>
+                      <% }); %>
+                  </select>
+                  
+                  </td>
+                </tr>
                 <tr class="hidden-row">
-                  <td>Universal Role</td>
-                  <td>
-                    <input name="name" id="urole" class="form-control" value="<%=data.roles%>"  ></input>
+                    <td>Parent Id</td>
+                    <td>                  
+                      <select name="searchId" id="searchId" class="form-control" onchange="getParentName()" >                                                                 
+                        <option  value="select" >Please Select Parent Id</option>
+                      </select> 
                   </td>
                 </tr>
-             
+                  <tr class="hidden-row">
+                    <td>Parent Name</td>
+                    <td>
+                      <input name="parentName" id="parentName" class="form-control" readonly ></input>
+                    </td>
+                  </tr>
+
+                  <tr class="hidden-row">
+                    <td>Parent Role</td>
+                    <td>
+                      <input name="parentRole" id="parentRole" class="form-control" readonly ></input>
+                    </td>
+                  </tr>
+                  
                 <tr>
-                  <td>Parent Id</td>
+                  <td>First Name</td>
                   <td>
-                    <select name="parentId" id="parentId" class="form-control">
-                      <% data.parentData.forEach((parent) => { %>
-                        
-                        <option value="<%= parent.numeric_id %>"><%= parent.search_id %></option>
-                      <% });%>
-                    </select>
+                    <input name="firstName" id="firstName" class="form-control" placeholder="Enter your Name here...."></input>
                   </td>
                 </tr>
-                
-   
                 <tr>
-                  <td>Name</td>
+                  <td>Last Name</td>
                   <td>
-                    <input name="name" id="name" class="form-control" placeholder="Enter your Name here...."></input>
+                    <input name="lastName" id="lastName" class="form-control" placeholder="Enter your Name here...."></input>
                   </td>
                 </tr>
                 <tr>
                   <td>Email</td>
                   <td>
                     <input name="email" id="email" class="form-control" placeholder="Enter your Email here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>State</td>
+                  <td>
+                    <input name="state" id="state" class="form-control" placeholder="Enter your State here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>District</td>
+                  <td>
+                    <input name="district" id="district" class="form-control" placeholder="Enter your District here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Postal Code</td>
+                  <td>
+                    <input name="postalCode" id="postalCode" class="form-control" placeholder="Enter your Postal Code here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>
+                    <input name="address" id="address" class="form-control" placeholder="Enter your Address here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>
+                    <input name="phone" id="phone" class="form-control" placeholder="Enter your Contact here...."></input>
                   </td>
                 </tr>
                 <tr>
@@ -62,8 +107,7 @@
                     <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter your Password here...."></input>
                   </td>
                 </tr>
-                <% if (data.roles !== 'User') { %>
-                <tr>
+                <!-- <tr >
                   <td>Commission Roullete</td>
                   <td>
                     <input name="commRoullete" type="number" value="<%= data.commission.Roullete %>" id="commRoullete" class="form-control" placeholder="Enter your Commission Roullete here...."></input>
@@ -80,32 +124,20 @@
                   <td>
                     <input name="comCarRoullete" type="number" value="<%= data.commission.CarRoullete %>" id="comCarRoullete" class="form-control" placeholder="Enter your Commission Car Roulette here...."></input>
                   </td>
-                </tr>
-                <% } %>
-                <tr>
-                    <td>Role</td>
-                    <td>
-                      <input name="role" id="role" value="<%= data.roles %>" class="form-control" placeholder="Enter your rules here...." readonly>
-                      
-                    </td>
-                  </tr>
-                <tr>
-                    <td>Security Pin</td>
-                    <td>
-                      <input name="securityPin" id="securityPin"  class="form-control" placeholder="Enter Security Pin here...." maxlength="4">
-                      
-                    </td>
-                  </tr>
-                  <!-- <tr>
-                    <td>Role</td>
-                    <td>
-                        <select name="role" id="role" class="form-control" readonly>
-                            <% data.role.forEach((role) => { %>
-                                <option value="<%= role %>"><%= role %></option>
-                            <% }); %>
-                        </select>
-                    </td>
                 </tr> -->
+                <tr>
+                  <td>Security Pin</td>
+                  <td>
+                    <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                  </td>
+                </tr>
+                <!-- <tr>
+                    <td>Role</td>
+                    <td>
+                      <input name="role" id="role" value="<%= data.role[0] %>" class="form-control" placeholder="Enter your rules here...." readonly>
+                    </td>
+                  </tr> -->
+                 
                 <!-- <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" /> -->
                 <tr>
                   <td>
@@ -125,28 +157,27 @@
   <%- include footer %>
     <script>
       const saveSettings = () => {
-      
+        const parentId = document.getElementById("searchId").value;
+        const parentName = document.getElementById("parentName").value;
         const securityPin = document.getElementById("securityPin").value;
-        const urole = document.getElementById("urole").value;
-        const parentId = document.getElementById("parentId").value;
-        const name = document.getElementById("name").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
         const email = document.getElementById("email").value;
+        const state = document.getElementById("state").value;
+        const district = document.getElementById("district").value;
+        const postalCode = document.getElementById("postalCode").value;
+        const address = document.getElementById("address").value;
+        const phone = document.getElementById("phone").value;
         const password = document.getElementById("password").value;
         const role = document.getElementById("role").value;
         const balance = document.getElementById("balance").value;
-        // console.log(securityPin)
-         let Roullete ;
-         let Avaitor ;
-         let CarRoullete;
-        if(role!="User"){
-         Roullete = document.getElementById("commRoullete").value;
-         Avaitor = document.getElementById("comAvaitor").value;
-         CarRoullete = document.getElementById("comCarRoullete").value;
-        }
-        
+        // const Roullete = document.getElementById("commRoullete").value;
+        // const Avaitor = document.getElementById("comAvaitor").value;
+        // const CarRoullete = document.getElementById("comCarRoullete").value; 
+               
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({ name, email, password,role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin }),
+          body: JSON.stringify({ role , lastName, firstName, email, password,state, district,postalCode,address,phone,balance,parentName,parentId,securityPin }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -167,9 +198,66 @@
               window.location.reload();
             });
           });
-        };
-        const hiddenRows = document.querySelectorAll('.hidden-row');
-hiddenRows.forEach(row => {
-  row.style.display = 'none';
-});
+
+
+      };
     </script>
+   <script>
+    const updateParentDropdown = () => {
+        const selectedRole = document.getElementById("role").value
+
+      
+
+        fetch("/admin/getSearchIds?role=" + selectedRole, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Data from API:", data);
+            const searchIdDropdown = document.getElementById("searchId");
+            searchIdDropdown.innerHTML = "Please Select Search ID"; 
+
+            data.parentIDs.forEach(searchId => {
+                const option = document.createElement("option");
+                // option.value = "Please Select Search ID"
+                option.text = searchId.search_id;
+                searchIdDropdown.add(option);
+            });
+            const parentName = document.getElementById("parentName");          
+            parentName.value = data.parentIDs[0].name
+
+            const parentRole = document.getElementById("parentRole");
+            parentRole.value = data.parentIDs[0].role
+        })
+        .catch(error => {
+            console.error("Error fetching search ids:", error);
+        });
+    };
+
+    const getParentName = () => {
+       const selectedParentId = document.getElementById("searchId").value;
+       console.log(selectedParentId)
+
+       fetch("admin/getParentName?search_id=" + selectedParentId,{
+        method: "GET",
+        headers: {
+                "Content-Type": "application/json",
+            },
+       })
+       .then(response => response.json())
+       .then(response => {
+          console.log("Data" , response);
+          const parentName = document.getElementById("parentName");          
+          parentName.value = response.parentName.name
+
+          const parentRole = document.getElementById("parentRole");
+          parentRole.value = response.parentName.role
+         
+       })
+    }
+</script>
+
+  

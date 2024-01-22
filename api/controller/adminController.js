@@ -6258,6 +6258,80 @@ saveCreateRankData: async (req, res) => {
     });
   }
 },
+getParentName:async(req,res)=>{
+  let searchID =  req.query.search_id
+ 
+  const parentName = await User.findOne({search_id:searchID},{name:1, _id:0, role:1})
+  console.log(searchID)
+  return res.status(200).send({parentName:parentName})
+},
+
+ searchId: async (req, res) => {
+    const roles = {
+      1: "Company",
+      2: "State",
+      3: "District",
+      4: "Zone",
+      5: "Agent",
+      6: "User",
+    };
+
+    
+    let data=req.query.role
+  
+    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+
+    const rolesAbove = Object.keys(roles).filter((key) => {
+      return parseInt(key) < parseInt(currentRoleKey);
+    }).map((key) => roles[key]);
+    const lastElement = rolesAbove[rolesAbove.length - 1];
+    
+    // console.log(lastElement);
+    let parentData= await User.find({role:lastElement},{search_id:1,_id:0, role:1, name:1})
+    // console.log(parentData);
+      return res.status(200).send({parentIDs:parentData})
+  },
+ selectedId: async (req, res) => {
+    const roles = {
+      1: "Company",
+      2: "State",
+      3: "District",
+      4: "Zone",
+      5: "Agent",
+      6: "User",
+    };
+
+    
+    let data=req.query.role
+    let sentData= await User.find({role:data},{search_id:1,_id:0, role:1, name:1})
+    console.log(sentData)
+   return res.status(200).send({mydata:sentData})
+  },
+ childIds: async (req, res) => {
+    const roles = {
+      1: "Company",
+      2: "State",
+      3: "District",
+      4: "Zone",
+      5: "Agent",
+      6: "User",
+    };
+
+    
+    let data=req.query.role
+  
+    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+
+    const rolesAbove = Object.keys(roles).filter((key) => {
+      return parseInt(key) < parseInt(currentRoleKey);
+    }).map((key) => roles[key]);
+    const lastElement = rolesAbove[rolesAbove.length - 1];
+    
+    // console.log(lastElement);
+    let parentData= await User.find({role:data},{search_id:1,_id:0, role:1, name:1})
+    // console.log(parentData);
+      return res.status(200).send({parentIDs:parentData})
+  },
 updateRankData: async (req, res) => {
   try {
     const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData } = req.body;
@@ -6838,14 +6912,79 @@ if(parentData){
     });
   }
 },
+saveTransferPoint: async (req, res) => {
+  try {
+    const { role , userSearchId, username, balance, securityPin } = req.body;
+    console.log(role , userSearchId, username, balance, securityPin);
+    let point=Number(balance)
+ 
+    if(point<=0){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Proper Transaction Amount"
+      });
+    }
+    const user = await User.findOne({ search_id: userSearchId });
+    if (!user) {
+      return res.send({
+        status: 0,
+        Msg: "User not found",
+      });
+    }
+
+    const parentData=req.admin
+    if(parentData<0){
+      return res.send({
+        status: 0,
+        Msg: "Insufficient Balance",
+      });
+    }
+let updateAmountUser= await User.updateOne({ _id: user._id }, { $inc: { cash_balance: point } });
+let updateAmountParent= await User.updateOne({ _id: parentData._id }, { $inc: { cash_balance: -point } });
+let parentAmount=parentData.cash_balance-point
+// console.log(parentData)
+    let newTxnAdmin = new Transaction({
+      user_id: user._id,
+      txn_amount: Number(point),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit to ${username}` ,
+      current_balance: parentAmount,
+      is_status: "S",
+      txn_mode: "A",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: parentData._id,
+      txn_amount: Number(point),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  "Deposit by Admin",
+      is_status: "S",
+      txn_mode: "A",
+    });
+    let txnres = await newTxn.save();
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
   saveAddRankData: async (req, res) => {
   try {
-    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;
-    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin);
-    console.log(req.admin.security_pin);
+    const { role , lastName, firstName, email, password,state, district,postalCode,address,phone,balance,parentName,parentId,securityPin } = req.body;
+    console.log(role , lastName, firstName, email, password,state, district,postalCode,address,phone,balance,parentName,parentId,securityPin);
     let parentData= null
     if(parentId){
-      parentData=await User.findOne({numeric_id:Number(parentId)})
+      parentData=await User.findOne({search_id:parentId})
     }
     if(!securityPin){
       return res.send({
@@ -6861,7 +7000,7 @@ if(parentData){
         Msg: "Please Enter Correct Security Pin",
       });
     }
-   if (!name || !email || !password || !role) {
+   if (!email || !password || !role) {
     return res.send({
       status: 0,
       Msg: "Please provide all parameters",
@@ -6875,39 +7014,39 @@ if(parentData){
           Msg: "Email already exists",
         });
       }
-      if(role==="State"){
-      const compareData=await Commission.findOne({type:"Company"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="District"){
-      const compareData=await Commission.findOne({type:"State"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="Zone"){
-      const compareData=await Commission.findOne({type:"District"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="Agent"){
-      const compareData=await Commission.findOne({type:"Zone"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(balance>parentId.balance){
+      // if(role==="State"){
+      // const compareData=await Commission.findOne({type:"Company"})
+      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+      //   return res.send({
+      //     status: 0,
+      //     Msg: "Commission is Higher than above level",
+      //   });
+      // }}
+      // if(role==="District"){
+      // const compareData=await Commission.findOne({type:"State"})
+      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+      //   return res.send({
+      //     status: 0,
+      //     Msg: "Commission is Higher than above level",
+      //   });
+      // }}
+      // if(role==="Zone"){
+      // const compareData=await Commission.findOne({type:"District"})
+      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+      //   return res.send({
+      //     status: 0,
+      //     Msg: "Commission is Higher than above level",
+      //   });
+      // }}
+      // if(role==="Agent"){
+      // const compareData=await Commission.findOne({type:"Zone"})
+      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+      //   return res.send({
+      //     status: 0,
+      //     Msg: "Commission is Higher than above level",
+      //   });
+      // }}
+      if(balance>parentId.cash_balance){
         return res.send({
           status: 0,
           Msg: "Insufficient Balance",
@@ -6926,8 +7065,7 @@ if(parentData){
         if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
         else numeric_id = 11111;
     }
-    console.log(urole,role)
-    let searchRole = urole.toLowerCase();
+    let searchRole = role.toLowerCase();
     let twoSearchWord = searchRole.slice(0, 2);
     
     var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
@@ -6947,24 +7085,47 @@ if(parentData){
     }
     
     console.log(search_id);
+    function generateRandomString(length) {
+      let result = '';
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+      const digits = '0123456789';
     
+      for (let i = 0; i < length; i++) {
+        if (i < 7) {
+          // Generate random alphabetic character
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        } else {
+          // Generate random numeric digit
+          result += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
+      }
+    
+      return result;
+    }
+
 let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
       search_id,
       numeric_id,
-      name,
+      name:firstName,
+      first_name:firstName,
+      last_name:lastName,
       email,
       password: hashedPassword,
       role,
-      balance,
+      cash_balance:balance,
       parent: parentDataExist,
+      phone,
+      state, district,postalCode,address,
+      device_id:generateRandomString(10)
+
     });
 
     let saveUserData=await saveData.save();
     let adminBalace=0
 if(parentData){
-   adminBalace=parentData.balance-balance
-   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {balance:adminBalace})
+   adminBalace=parentData.cash_balance-balance
+   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {cash_balance:adminBalace})
 }
 
     let newTxnAdmin = new Transaction({
@@ -6972,7 +7133,7 @@ if(parentData){
       txn_amount: Number(balance),
       created_at: new Date().getTime(),
       transaction_type: "D",
-      resp_msg:  `Deposit to ${name}` ,
+      resp_msg:  `Deposit to ${firstName}` ,
       current_balance: adminBalace,
       is_status: "S",
       txn_mode: "A",
@@ -6990,15 +7151,6 @@ if(parentData){
     });
     let txnres = await newTxn.save();
 
-    let userCommission=new  UserCommission({
-      type:role,
-      parent:parentDataExist,
-      user:saveUserData._id,
-      Roullete,
-      Avaitor,
-      CarRoullete
-    })
-    await userCommission.save();
     return res.send({
       status: 1,
       Msg: localization.success,

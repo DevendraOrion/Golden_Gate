@@ -328,10 +328,15 @@
                 aria-hidden="true"></i><span>Banner Management</span></a></li> -->
               <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
                 aria-hidden="true"></i><span>Notice</span></a></li>
-              <!-- <li class="<% if(type=='addRank') {%> active <% } %>"><a href="/addRankCompany"><i class="fa fa-star"
-                aria-hidden="true"></i><span>Add Rank</span></a></li> -->
+                
+                <li class="<% if(type=='addRank') {%> active <% } %>">
+                  <a href="/addRankCompany"
+                    ><i class="fa fa-star" aria-hidden="true"></i
+                    ><span>Add Rank</span></a
+                  >
+                </li>
 
-                <li class="treeview <% if(type=='users') {%> active <% } %>">
+                <!-- <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-plus"></i> <span>Add Rank</span>
                     <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
@@ -348,10 +353,8 @@
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
                           <li class="<% if(sub2 =='user') {%> active <% } %> "><a href="/add-rank-user"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i> Users</a></li>
-                    <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
-                  </ul>
-                </li>
+                   </ul>
+                </li> -->
 
 
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
@@ -366,6 +369,23 @@
                       <li class="<% if(sub2 =='distM') {%> active <% } %> "><a href="/distributerMaster"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Distributer Rank</a></li>
                   </ul>
+                  </li>
+
+                  <li class="treeview <% if(type=='users') {%> active <% } %>">
+                    <a href="#"><i class="fa fa-plus"></i> <span>Point Management</span>
+                      <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li class="<% if(sub2 =='carR') {%> active <% } %> "><a href="/transferPoint"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point to Player</a></li>
+                        <li class="<% if(sub2 =='roullete') {%> active <% } %> "><a href="/commRoullete"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point To Upper Level</a></li>
+                        <li class="<% if(sub2 =='avatior') {%> active <% } %> "><a href="/transferReport"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i> Point Transaction Report</a></li>
+                    
+                    </ul>
                   </li>
 
                   <li class="treeview <% if(type=='commissionReport') {%> active <% } %>">
@@ -416,22 +436,7 @@
                     aria-hidden="true"></i> <span>Player Management System</span></a></li> -->
 
 
-                    <li class="treeview <% if(type=='users') {%> active <% } %>">
-                      <a href="#"><i class="fa fa-plus"></i> <span>Point Management</span>
-                        <span class="pull-right-container">
-                          <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                      </a>
-                      <ul class="treeview-menu">
-                          <li class="<% if(sub2 =='carR') {%> active <% } %> "><a href="/comCarRoullat"><i
-                              class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point to Player</a></li>
-                          <li class="<% if(sub2 =='roullete') {%> active <% } %> "><a href="/commRoullete"><i
-                              class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point To Upper Level</a></li>
-                          <li class="<% if(sub2 =='avatior') {%> active <% } %> "><a href="/commAvatior"><i
-                              class="fa fa-times-circle-o" aria-hidden="true"></i> Point Transaction Report</a></li>
-                      
-                      </ul>
-                    </li>
+                
 
 
                   <li class="<% if(type=='Manual-Result-For-Car-Roulete') {%> active <% } %>"><a href="/ManualResultForCarRoulete"><i class="fa fa-compass"

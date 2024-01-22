@@ -1,0 +1,398 @@
+<%- include header %>
+<style>
+.title{
+    margin: 0;
+    font-size: 24px;
+}
+.dataTables_filter {
+    display: none;
+}
+
+</style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="">
+            <div class="row">
+                <div class="col-md-4">
+                    <h1 class='title'>
+                        <%= title %>
+                    </h1>
+                </div>
+                <div class="col-md-8">
+                    <div class="pull-right">
+                        <select class="col search-user" name="state" style="width:152px;"></select>
+    
+                        <select class="col select-type" name="type" style="width:152px;">
+                            <option></option>
+                            <option value="G">Game</option>
+                            <option value="P">Payment</option>
+                            <option value="A">Admin</option>
+                            <option value="B">Bonus</option>
+                            <option value="R">Withdraw</option>
+                            <option value="REF">Referral</option>
+                            <option value="O">Other</option>
+                            <option value="Gift">Gift</option>
+                            <option value="S">Scratch Card</option>
+                        </select>
+        
+                        <select class="col select-status" name="status" style="width:152px;">
+                            <option></option>
+                            <option value="S">Success</option>
+                            <option value="P">Pending</option>
+                            <option value="F">Failed</option>
+                        </select>
+                        <select class="col select-rank" name="rank" style="width:152px;">
+                            <option></option>
+                            <option value="State">State</option>
+                            <option value="Zone">Zone</option>
+                            <option value="District">District</option>
+                            <option value="Agent">Agent</option>
+                        </select>
+                        <input type="date" class="col select-date" id="startdatepicker" name="StartDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
+                        <input type="date" class="col select-date" id="enddatepicker" name="EndDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
+
+                        </div>
+                </div>
+                <!-- <div class="row text-center pad-20"> -->
+    
+                <!-- </div> -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>S No</th>
+                                    <th>Player ID</th>
+                                    <th>Txn Amount (RS)</th>
+                                    <th>Main Wallet (RS)</th>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Remark</th>
+                                    <th>Status</th>
+                                    <th>Rank</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% var i=1; for (d of data) {%>
+                                <tr class="gradeX">
+                                    <td><%= i++%></td>
+                                    <td><a target="_blank"
+                                            href="<%= host %>/user/view/<%= d.user_id%>"><%= d.numeric_id %></a
+                                            target="_blank"></td>
+                                    <% if (d.txn_amount > 0) { %>
+                                    <td><span class="label label-success"><%= d.txn_amount %></span></td>
+                                    <% } else { %>
+                                    <td><span class="label label-danger"><%= d.txn_amount %></span></td>
+                                    <% } %>
+                                  
+                                    <td><%= d.current_balance %></td>
+                                    <% 
+                                    function formateDateandTime(date) {
+                                        // 7/12/2018 12:25PM
+                                        var dat = new Date(date);
+                                        var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + parseInt(1));
+                                                        
+                                        var hours = dat.getHours() % 12;
+                                        hours = (hours > 9) ? hours : "0" + hours;
+                            
+                                        var minutes = dat.getMinutes();
+                                        minutes = (minutes > 9) ? minutes : "0" + minutes;
+                            
+                                        var ap = (dat.getHours() >= 12) ? "PM" : "AM";
+                                        var day = (dat.getDate() > 9) ? dat.getDate() : "0" + dat.getDate();
+                            
+                                        rez = day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
+                                        return rez;
+                                    }
+                                    %>
+                                    <td><%=d.created %></td>
+                                    <% if (d.txn_mode == 'P') { %>
+                                    <td>Payment<span><%- (d.txn_mode == 'PA') ? ' - Paytm' : (d.txn_mode == 'N/A') ? '' : ' - '+d.txn_mode%></span></td>
+                                    <% } else if(d.txn_mode == 'A'){ %>
+                                    <td>ADMIN</td>
+                                    <% } else if(d.txn_mode == 'B'){ %>
+                                    <td>BONUS</td>
+                                    <% } else if(d.txn_mode == 'R'){ %>
+                                    <td>REFUND</td>
+                                    <% } else if(d.txn_mode == 'GIFT'){ %>
+                                        <td>GIFT</td>
+                                    <% } else if(d.txn_mode == 'O'){ %>
+                                    <td>OTHER</td>
+                                    <% } else if(d.txn_mode == 'REF'){ %>
+                                    <td>REFERRAL</td>
+                                    <% } else { %>
+                                    <td>GAME</td>
+                                    <% } %>
+                                    <td>
+                                        <%= d.msg %>
+                                    </td>
+                                    <td>
+                                        <button type="button"
+                                            class="btn btn-<% if(d.is_status == 'P'){%>warning<%}else if(d.is_status == 'S'){%>success<%}else if(d.is_status == 'F'){%>danger<%}%> label bg-<% if(d.is_status == 'P'){%>orange<%}else if(d.is_status == 'S'){%>green<%}else if(d.is_status == 'F'){%>red<%}%>" data-id="<%= d.id%>"><% if(d.is_status == 'P'){%>Pending<%}else if(d.is_status == 'S'){%>Success<%}else if(d.is_status == 'F'){%>Failed<%}%></button>
+                                    </td>
+                                    <td><%= d.role !== undefined ? d.role : "User" %></td>
+
+                                </tr>
+                            <% }%>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+<!-- Modal -->
+<div id="remark" class="modal fade remark" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Remark</h4>
+            </div>
+            <div class="modal-body" id="modal-body-remark">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<%- include footer %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+<script>
+    $(document).ready(function (e) {
+
+        var THAT_ID = "";
+        var THAT_TYPE = "";
+        var THAT_STATUS = "";
+        var THAT_RANK = "";
+        var START_DATE = "";
+    var END_DATE = "";
+        $('.search-user').select2({
+            allowClear: true,
+            placeholder: 'Search user',
+            ajax: {
+                url: '/admin/find_user',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        type: 'public'
+                    }
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            }
+        });
+
+        $('.search-user').on('select2:select', function (e) {
+            // Do something
+            THAT_ID = e.params.data.id;
+            table.ajax.reload();
+            console.log("THAT_ID", THAT_ID);
+        });
+
+        $(".search-user").on("select2:clearing", function (e) {
+            console.log('cleared');
+            THAT_ID = "";
+            table.ajax.reload();
+        });
+
+
+        $('.select-type').select2({
+            allowClear: true,
+            placeholder: 'Type of transaction'
+        });
+
+        $('.select-type').on('select2:select', function (e) {
+            THAT_TYPE = e.params.data.id;
+            table.ajax.reload();
+        });
+
+        $(".select-type").on("select2:clearing", function (e) {
+            THAT_TYPE = "";
+            table.ajax.reload();
+        });
+
+        $('.select-status').select2({
+            allowClear: true,
+            placeholder: 'Transaction status'
+        });
+
+        $('.select-status').on('select2:select', function (e) {
+            THAT_STATUS = e.params.data.id;
+            table.ajax.reload();
+        });
+
+        $(".select-status").on("select2:clearing", function (e) {
+            THAT_STATUS = "";
+            table.ajax.reload();
+        });
+        $('.select-rank').select2({
+            allowClear: true,
+            placeholder: 'Rank '
+        });
+
+        $('.select-rank').on('select2:select', function (e) {
+            THAT_RANK = e.params.data.id;
+            table.ajax.reload();
+        });
+
+        $(".select-rank").on("select2:clearing", function (e) {
+            THAT_RANK = "";
+            table.ajax.reload();
+        });
+
+        $('.select-date').on('change', function () {
+        START_DATE = $('#startdatepicker').val();
+        END_DATE = $('#enddatepicker').val();
+        table.ajax.reload();
+    });
+  
+      
+        $('#example1').DataTable().destroy();
+        var table = $('#example1').DataTable({
+            destroy: true,
+            dom: 'lBfrtip',
+            lengthMenu: [
+                [10, 25, 100, 500],
+                [10, 25, 100, 500]
+            ],
+            pageLength: 10,
+            buttons: [{
+                    extend: 'excel',
+                    text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        },
+                        format: {
+                            body: function (data, row, column, node) {
+                                // Strip $ from salary column to make it numeric
+                                if (column === 1) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+                                if (column === 2) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+                                if (column ===7) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+
+                                if (column === 4) {
+                                    data = formateDateandTime(parseInt(data));
+                                }
+                                return data;
+
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+                    exportOptions: {
+                        modifier: {
+                            search: 'applied',
+                            order: 'applied'
+                        },
+                        format: {
+                            body: function (data, row, column, node) {
+                                // Strip $ from salary column to make it numeric
+                                if (column === 1) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+                                if (column === 2) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+                                if (column === 7) {
+                                    data = data.replace(/<.*?>/ig, "");
+                                }
+
+                                if (column === 4) {
+                                    data = formateDateandTime(parseInt(data));
+                                }
+                                return data;
+
+                            }
+                        }
+                    }
+                }
+            ],
+            "responsive": true,
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+        'url': '/ajax_transaction',
+        data: function (params) {
+            params.id = THAT_ID;
+            params.type = THAT_TYPE;
+            params.status = THAT_STATUS;
+            params.rank = THAT_RANK;
+            params.startDate = START_DATE;
+            params.endDate = END_DATE;
+            return params;
+        }
+    },
+            "deferLoading": "<%= total %>",
+            "createdRow": function (row, data, dataIndex) {
+                var rowData = '<td>' + data[0] + '</td>' +
+                    '<td>' + data[1] + '</td>' +
+                    '<td>' + data[2] + '</td>' +
+                    '<td>' + data[3] + '</td>' +
+                    // '<td>' + formatCustomDate(parseInt(data[4])) + '</td>' +
+                    '<td>' + data[4] + '</td>' +
+                    '<td>' + data[5] + '</td>' +
+                    '<td>' + data[6] + '</td>' +
+                    '<td>' + data[7] + '</td>' +
+                    '<td>' + data[8] + '</td>';
+                $(row).html(rowData);
+            },
+            columnDefs: [{
+                    orderable: true,
+                    targets: [0, 2, 3, 4, 5]
+                },
+                {
+                    orderable: false,
+                    targets: [1, 6, 7]
+                }
+            ]
+        });
+        $('#example1').DataTable().order([4, 'desc']).draw();
+
+        $(document).on("click", ".export", function () {
+            console.log("fire");
+            var data = table.buttons.exportData();
+        });
+    });
+
+    function openModal(d) {
+        if (d == "") {
+            $("#modal-body-remark").html('No Data Found');
+        } else {
+            $("#modal-body-remark").html(d);
+        }
+
+        $('#remark').modal('show');
+    }
+</script>

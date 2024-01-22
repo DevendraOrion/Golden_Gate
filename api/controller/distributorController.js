@@ -112,10 +112,13 @@ module.exports = {
       return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
       
   },
-  addRankssData: async (req,role) => {
-//   console.log(role);  
-    req=req.admin
-    let user =req
+  addRankssData: async (req) => {
+    console.log("===================");
+
+  let datssa=await User.find({})
+// console.log(datssa);
+    let user =req.admin
+ 
     const roles = {
         1: "Company",
         2: "State",
@@ -125,24 +128,27 @@ module.exports = {
         6: "User",
       };
       
-      const data =user.role;
-      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === role);
+      const data = user.role;
       
-      const rolesBelow = Object.keys(roles).filter((key) => {
-        return parseInt(key) > parseInt(currentRoleKey);
-      }).map((key) => roles[key]);
-
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      
       const rolesAbove = Object.keys(roles).filter((key) => {
         return parseInt(key) < parseInt(currentRoleKey);
       }).map((key) => roles[key]);
-
-        const lastElement = rolesAbove[rolesAbove.length - 1];
-        console.log(lastElement);
-        
-        let allParentData=await User.find({role:lastElement},{numeric_id:1,_id:0 , search_id:1})
+     
+      const rolesBelow = Object.keys(roles).filter((key) => {
+        return parseInt(key) > parseInt(currentRoleKey);
+      }).map((key) => roles[key]);
+      
+      const lastElement = rolesAbove[rolesAbove.length - 1];
+    //   console.log("#########")
+       console.log(lastElement);   
+      let allParentData=await User.find({role:lastElement},{_id:0 , search_id:1, role:1})
+       console.log(allParentData);
+    //   console.log(rolesBelow[0]);
       const commission=await Commission.findOne({type:rolesBelow[0]})
-      console.log(rolesBelow[0]);
-      return {role:rolesBelow,commission,parentData:user,roles:role,parentData:allParentData}
+    //  console.log(commission);
+      return {role:rolesBelow,commission,parentData:user,parentDataSearchId:allParentData}
       
   },
   showRankData: async (req) => {

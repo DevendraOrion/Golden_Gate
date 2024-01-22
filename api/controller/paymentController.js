@@ -325,7 +325,7 @@ module.exports = {
             order_id: u.order_id,
             request_id: u?.request_id,
             username: _.capitalize(u.user_id.username),
-            numeric_id: _.capitalize(u.user_id.numeric_id),
+            numeric_id: _.capitalize(u.user_id.search_id),
             user_id: u.user_id._id,
             txn_amount: u.txn_amount,
             win_wallet: u.txn_win_amount || 0,
@@ -572,7 +572,318 @@ console.log("params", params);
         txn_amount: 1,
         payment_mode: 1,
         username: "$users.name",
-        numeric_id: "$users.numeric_id",
+        numeric_id: "$users.search_id",
+        user_id: "$users._id",
+        resp_msg: 1,
+        role: "$users.role",
+        // request_id: 1,
+        is_status: 1,
+        txn_mode: 1,
+      },
+    });
+
+    // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
+
+    let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
+    console.log(aggregation_obj);
+    let aggregate_rf = [];
+
+    if (matchObj) {
+      aggregate_rf.push({
+        $match: matchObj,
+      });
+    }
+
+    aggregate_rf.push({
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+      },
+    });
+
+    // logger.info("aggregate_rf", aggregate_rf);
+    let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
+
+    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    var recordsTotal = await Transaction.find({}).countDocuments();
+
+    list = await Promise.all(
+      list.map(async (u,index) => {
+    
+        let txn_amount = u.txn_amount;
+
+        if (u.txn_amount > 0) {
+          txn_amount =
+            '<span class="label label-success">' + u.txn_amount + "</span>";
+        } else {
+          txn_amount =
+            '<span class="label label-danger">' + u.txn_amount + "</span>";
+        }
+        let txn_mode = u.txn_mode;
+        if (u.txn_mode == "G") {
+          txn_mode = "GAME";
+        } else if (u.txn_mode == "P") {
+          txn_mode = "Payment";
+          // console.log("UU", u.txn_mode);
+          if (!u.txn_mode) txn_mode += " - Paytm";
+          else if (u.txn_mode == "PA") txn_mode += " - Paytm";
+          else if (u.txn_mode == "N/A") txn_mode += "";
+          else txn_mode += " - Cashfree " + u.txn_mode;
+        } 
+        else if (u.txn_mode == "A") {
+          txn_mode = "ADMIN";
+        }
+        else if (u.txn_mode == "GIFT") {
+          txn_mode = "GIFT";
+        }
+         else if (u.txn_mode == "B") {
+          txn_mode = "BONUS";
+        } else if (u.txn_mode == "R") {
+          txn_mode = "WITHDRAW";
+        } else if (u.txn_mode == "A") {
+          txn_mode = "REFERRAL";
+        } else if (u.txn_mode == "O") {
+          txn_mode = "OTHER";
+        } else if (u.txn_mode == "S") {
+          txn_mode = "SCRATCH CARD";
+        }else{
+          txn_mode = "GAME";
+        }
+let current_balance= u.current_balance
+        let status_ = u.is_status;
+
+        if (status_ == "P") {
+          status_ = '<span class="label label-warning">Pending</span>';
+        } else if (status_ == "S") {
+          status_ = '<span class="label label-success">Success</span>';
+        } else {
+          status_ = '<span class="label label-danger">Failed</span>';
+        }
+
+        let roles=u.role
+        if (roles == "State") {
+          roles = 'State';
+        } 
+        else if (roles == "Zone") {
+          roles = 'Zone';
+        }
+        else if (roles == "District") {
+          roles = 'District';
+        }
+        else if (roles == "Agent") {
+          roles = 'Agent';
+        }
+let created=await Service.formateDateandTime(u.created_at)
+        return [
+          ++index,
+          // u?.request_id ?? '',
+          `<a target="_blank" href="${config.pre + req.headers.host
+          }/user/view/${u.user_id}">${u.numeric_id}</a>`,
+          txn_amount,
+          // u.txn_win_amount || 0,
+          // u.txn_main_amount || 0,
+        current_balance,
+          // `<div class="time_formateDateandTime2">${u.created_at}</div>`,
+          created,
+          txn_mode,
+          u.resp_msg ? u.resp_msg : "No Data Found",
+          status_,
+          role=u.role,
+        ];
+      })
+    );
+
+    var endTime = new Date();
+    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
+
+    return res.status(200).send({
+      data: await list,
+      draw: new Date().getTime(),
+      recordsTotal: recordsTotal,
+      recordsFiltered: recordsFiltered,
+    });
+  },
+  getTransferAjax: async function (req, res) {
+    var startTime = new Date();
+
+    const params = req.query;
+    let matchObj = {};
+    if (params.search) {
+      if (params.search.value.trim() != "") {
+        matchObj["$or"] = [
+          {
+            $expr: {
+              $regexMatch: {
+                input: { $toString: "$users.numeric_id" },
+                regex: params.search.value,
+                options: "i"
+              }
+            }
+          },
+          {
+            request_id: {
+              $regex: params.search.value,
+              $options: "i",
+            },
+          },
+          {
+            resp_msg: {
+              $regex: params.search.value,
+              $options: "i",
+            },
+          },
+
+        ];
+      }
+    }
+
+    var sortObj = {};
+    if (params.order) {
+      if (params.order[0]) {
+        // console.log(params.order[0]);
+        // if (params.order[0].column == "0") {
+        //   // SORT BY TXN AMOUNT
+        //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
+        // }
+          if (params.order[0].column == "2") {
+          // SORT BY TXN AMOUNT
+          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "3") {
+          // SORT BY WIN WALLET
+          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "4") {
+          // SORT BY MAIN WALLET
+          sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "1") {
+          // SORT BY DATE
+          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
+        } else {
+          sortObj = { created_at: -1 };
+        }
+      } else {
+        sortObj = { created_at: -1 };
+      }
+    } else {
+      sortObj = { created_at: -1 };
+    }
+
+    const user_id = params.id || "";
+
+    if (Service.validateObjectId(user_id)) {
+      matchObj.user_id = ObjectId(user_id);
+    }
+
+    if (!_.isEmpty(params.status)) {
+      matchObj.is_status = params.status;
+    }
+
+    if (!_.isEmpty(params.type)) {
+      matchObj.txn_mode = params.type;
+    }
+    if (!_.isEmpty(params.rank)) {
+      matchObj["users.role"] = params.rank;
+    }
+    if (!_.isEmpty(params.startDate)) {
+      let sdate = params.startDate;
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+        console.log(timestamp);
+      } else {
+        console.error("Invalid date string");
+      }
+      
+      matchObj.created_at = {
+                $gte: timestamp.toString()
+              }
+    }
+    if (!_.isEmpty(params.endDate)) {
+      let sdate = params.endDate + 'T23:59:59.999Z';
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $lt: timestamp.toString()
+      };
+    }
+    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
+      let startdate = params.startDate ;
+      let endDate = params.endDate + 'T23:59:59.999Z';
+      let timestampstart
+      let timestampsend
+      let dateObjectstart = new Date(startdate);
+      let dateObjectend = new Date(endDate);
+      if (!isNaN(dateObjectstart.getTime())) {
+        timestampstart = dateObjectstart.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+      if (!isNaN(dateObjectend.getTime())) {
+        timestampsend = dateObjectend.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $gte: timestampstart.toString(),
+          $lt: timestampsend.toString()
+      };
+    }
+    
+    let aggregation_obj = [];
+    aggregation_obj.push(
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users",
+        },
+      },
+      {
+        $unwind: "$users",
+      }
+    );
+  
+
+    if (matchObj != {})
+      aggregation_obj.push({
+        $match: matchObj,
+      });
+
+    aggregation_obj.push(
+      {
+        $sort: sortObj,
+      },
+      {
+        $skip: params.start == "All" ? 0 : parseInt(params.start),
+      }
+      // limit
+      // { $limit: params.length == -1 ? null :  parseInt(params.length) },
+    );
+
+    if (params.length != -1) {
+      aggregation_obj.push({
+        $limit: parseInt(params.length),
+      });
+    }
+
+    aggregation_obj.push({
+      $project: {
+        _id: 1,
+        // no:u++,
+        // txn_win_amount: 1,
+        // txn_main_amount: 1,
+        created_at: 1,
+        current_balance:1,
+        txn_amount: 1,
+        payment_mode: 1,
+        username: "$users.name",
+        numeric_id: "$users.search_id",
         user_id: "$users._id",
         resp_msg: 1,
         role: "$users.role",
