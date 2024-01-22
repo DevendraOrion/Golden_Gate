@@ -69,12 +69,12 @@
                                                 <%= d.dob %>
                                             </td>
                                             <td class="actions text-center">
-                                                <a href="<%= host%>/user/createRanks/<%= d.rankId%>"  class="on-editing save-row">
+                                                <a href="<%= host%>/user/editDistributer/<%= d.search_id%>"  class="on-editing save-row">
                                                     <i class="fa fa-pencil"></i>
                                                 </a>
                                             </td>
                                             <td class="actions text-center">
-                                                <button class="col select-rank" onclick="deleteRole('<%= d.rankId %>')" style="background-color: #fff; color: #3c8dbc; border: none;"><i class="fa fa-trash"></i></button>
+                                                <button class="col select-rank" onclick="deleteRole('<%= d.search_id %>')" style="background-color: #fff; color: #3c8dbc; border: none;"><i class="fa fa-trash"></i></button>
                                             </td>
                                         </tr>
                                         <% }%>
@@ -196,10 +196,10 @@
                 $("#usersTab").DataTable().order([4, "desc"]).draw();
             });
 
-            const deleteRole = (rankId) => {
+const deleteRole = (rankId) => {
     
 
-    fetch("/user/delete-rank?rank_id=" + rankId, {
+    fetch("/user/delete-distributor?rank_id=" + rankId, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",

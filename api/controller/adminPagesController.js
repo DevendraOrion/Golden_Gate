@@ -376,6 +376,23 @@ console.log(req.params);
       data: data,
     });
   },
+  editDistributer: async (req, res) => {
+    let rank_id=req.params.rank_id
+    let updated=req.params.updated
+console.log(req.params);
+    const data = await distributorController.editRankData(req,rank_id,updated)
+    // console.log(data);
+  // const data=req.admin
+    res.render("admin/editDistributer", {
+      title: "Edit Distributer",
+      type: "distributer",
+      sub: "distributer",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   carRoulleteReport: async (req, res) => {
     const data = await distributorController.addRankssData(req)
     res.render("admin/commissionReport", {
@@ -555,7 +572,7 @@ console.log(req.params);
       title: "Add Rank",
       type: "addRank",
       sub: "dashboard",
-      sub2: "",
+      sub2: "addRankCompany",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
@@ -715,7 +732,7 @@ console.log(req.params);
     let role="Zone"
     const users = await AdminController.getAgentList(role);
     res.render("admin/agentsMGT", {
-      title: "Agents List",
+      title: "Zone List",
       type: "usersMGT",
       sub: "users",
       sub2: "zone",
@@ -729,7 +746,7 @@ console.log(req.params);
     let role="District"
     const users = await AdminController.getAgentList(role);
     res.render("admin/agentsMGT", {
-      title: "Agents List",
+      title: "District List",
       type: "usersMGT",
       sub: "users",
       sub2: "district",
@@ -743,7 +760,7 @@ console.log(req.params);
     let role="State"
     const users = await AdminController.getAgentList(role);
     res.render("admin/agentsMGT", {
-      title: "Agents List",
+      title: "State List",
       type: "usersMGT",
       sub: "users",
       sub2: "state",

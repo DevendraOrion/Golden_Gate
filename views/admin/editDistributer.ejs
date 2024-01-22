@@ -1,0 +1,165 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <!-- <%=console.log(data)%> -->
+                <tr>
+                  <td>Parent Id</td>
+                  <td>
+                    <input name="parentId" id="parentId" class="form-control" value="<%=data.parentData.search_id%>"  readonly></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Distributor ID</td>
+                  <td>
+                    <input name="search_id" id="search_id" class="form-control" value="<%=data.data.search_id%>"  readonly></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>First Name</td>
+                  <td>
+                    <input name="firstName" id="firstName" class="form-control" value="<%=data.data.firstName%>" placeholder="Enter First Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Last Name</td>
+                  <td>
+                    <input name="lastName" id="lastName" class="form-control" value="<%=data.data.lastName%>" placeholder="Enter Last Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>D.O.B</td>
+                  <td>
+                    <input name="dob" id="dob" type="date" value="<%=data.data.dob%>" class="form-control" placeholder="Enter D.O.B here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email Id</td>
+                  <td>
+                    <input name="email" id="email" value="<%=data.data.email%>" class="form-control" placeholder="Enter Email ID here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Phone No</td>
+                  <td>
+                    <input name="phoneNo" id="phoneNo" value="<%=data.data.phoneNo%>" type="number" class="form-control" placeholder="Enter Phone No here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>
+                    <input name="address" id="address" value="<%=data.data.address%>" class="form-control" placeholder="Enter Address here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>State</td>
+                  <td>
+                    <input name="state" id="state" value="<%=data.data.state%>" class="form-control" placeholder="Enter State here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>District</td>
+                  <td>
+                    <input name="district" id="district" value="<%=data.data.district%>" class="form-control" placeholder="Enter District here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Block</td>
+                  <td>
+                    <input name="block" id="block"  value="<%=data.data.block%>" class="form-control" placeholder="Enter Block here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Postal Code</td>
+                  <td>
+                    <input name="postalCode" id="postalCode" value="<%=data.data.postalCode%>" class="form-control" placeholder="Enter Postal Code here...."></input>
+                  </td>
+                </tr>
+                <!-- <tr>
+                  <td>Password</td>
+                  <td>
+                    <input name="password" id="password"  class="form-control" placeholder="Enter Password here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Confirm Password</td>
+                  <td>
+                    <input name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Enter Confirm Password here...."></input>
+                  </td>
+                </tr> -->
+                <tr>
+                    <td>Security Pin</td>
+                    <td>
+                      <input name="securityPin" id="securityPin"  class="form-control" placeholder="Enter Security Pin here...." maxlength="4">
+                      
+                    </td>
+                  </tr>
+                
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+        const securityPin = document.getElementById("securityPin").value;
+        const parentId = document.getElementById("parentId").value;
+        const search_id = document.getElementById("search_id").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const dob = document.getElementById("dob").value;
+        const email = document.getElementById("email").value;
+        const phoneNo = document.getElementById("phoneNo").value;
+        const address = document.getElementById("address").value;
+        const state = document.getElementById("state").value;
+        const district = document.getElementById("district").value;
+        const block = document.getElementById("block").value;
+        const postalCode = document.getElementById("postalCode").value;
+
+        fetch("/admin/edit-distributor", {
+          method: "POST",
+          body: JSON.stringify({search_id, parentId,firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode,securityPin }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+      };
+    </script>

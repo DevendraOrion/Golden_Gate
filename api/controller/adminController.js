@@ -37,6 +37,7 @@ var utility = require("./utilityController");
 var fs = require("fs");
 const uniqid = require("uniqid");
 const PAYTM = require("./../service/paytm/index");
+// const { Distributer } = require("./adminPagesController");
 module.exports = {
   login: async function (req, res) {
     var params = _.pick(req.body, "email", "password");
@@ -6345,6 +6346,52 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     });
   }
 },
+saveEditAdminData: async (req, res) => {
+  try {
+    const {search_id, parentId,firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode,securityPin } = req.body;
+    console.log(search_id,parentId,firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+    }
+    // console.log(parentData);
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+  
+   if (!firstName || !lastName || !email  ) {
+    return res.send({
+      status: 0,
+      Msg: "Please provide all parameters",
+    });
+     }
+ 
+    let emails = await User.findOne({ email });
+    let distEmails = await Distributor.findOne({ email:email });
+      
+
+    
+let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
+
+const UpdatedData=await Distributor.updateOne({search_id},{$set:{firstName,lastName,dob,email,phoneNo,address,state,district,block,postalCode}})
+    
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
 saveCreateRankData: async (req, res) => {
   try {
     const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData } = req.body;
@@ -6538,6 +6585,25 @@ deleteRank: async (req, res) => {
 
     let rank_id=req.query.rank_id
   let deleteData=await Rank_Data.deleteOne({rankId:rank_id})
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+deleteDistributor: async (req, res) => {
+  try {
+
+    let rank_id=req.query.rank_id
+    console.log(rank_id);
+  let deleteData=await Distributor.deleteOne({search_id:rank_id})
 
     return res.send({
       status: 1,

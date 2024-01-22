@@ -39,14 +39,23 @@ module.exports = {
     }
   },
   modifyPlayerData: async (user) => {
-    const roles = {
-        1: "Company",
-        2: "State",
-        3: "District",
-        4: "Zone",
-        5: "Agent",
-        6: "User",
-      };
+    // const roles = {
+    //     1: "Company",
+    //     2: "State",
+    //     3: "District",
+    //     4: "Zone",
+    //     5: "Agent",
+    //     6: "User",
+    //   };
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+    
+    rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    
+    roles[1] = "Company";
+    roles[6] = "User";
       const data =user.role;
       const parent=await User.findOne({_id:user.parent})
       console.log(user);
@@ -60,15 +69,24 @@ module.exports = {
       
   },
   addRankData: async (user) => {
-    const roles = {
-        1: "Company",
-        2: "State",
-        3: "District",
-        4: "Zone",
-        5: "Agent",
-        6: "User",
-      };
-      console.log(user);
+    // const roles = {
+    //     1: "Company",
+    //     2: "State",
+    //     3: "District",
+    //     4: "Zone",
+    //     5: "Agent",
+    //     6: "User",
+    //   };
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+    
+    rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    
+    roles[1] = "Company";
+    roles[6] = "User";
+      // console.log(user);
       const data =user.role;
       
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
@@ -84,15 +102,23 @@ module.exports = {
 //   console.log(role);  
     req=req.admin
     let user =req
-    const roles = {
-        1: "Company",
-        2: "State",
-        3: "District",
-        4: "Zone",
-        5: "Agent",
-        6: "User",
-      };
-      
+    // const roles = {
+    //     1: "Company",
+    //     2: "State",
+    //     3: "District",
+    //     4: "Zone",
+    //     5: "Agent",
+    //     6: "User",
+    //   };
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+    
+    rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    
+    roles[1] = "Company";
+    roles[6] = "User";
       const data =user.role;
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === role);
       
@@ -119,15 +145,27 @@ module.exports = {
 // console.log(datssa);
     let user =req.admin
  
-    const roles = {
-        1: "Company",
-        2: "State",
-        3: "District",
-        4: "Zone",
-        5: "Agent",
-        6: "User",
-      };
-      
+    // const roles = {
+    //     1: "Company",
+    //     2: "State",
+    //     3: "District",
+    //     4: "Zone",
+    //     5: "Agent",
+    //     6: "User",
+    //   };
+
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+    
+    rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    
+    roles[1] = "Company";
+    roles[6] = "User";
+    
+    console.log(roles);
+    
       const data = user.role;
       
       const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
@@ -141,10 +179,10 @@ module.exports = {
       }).map((key) => roles[key]);
       
       const lastElement = rolesAbove[rolesAbove.length - 1];
-    //   console.log("#########")
-       console.log(lastElement);   
+      //   console.log("#########")
+      //  console.log(lastElement);   
       let allParentData=await User.find({role:lastElement},{_id:0 , search_id:1, role:1})
-       console.log(allParentData);
+      //  console.log(allParentData);
     //   console.log(rolesBelow[0]);
       const commission=await Commission.findOne({type:rolesBelow[0]})
     //  console.log(commission);
@@ -160,13 +198,16 @@ module.exports = {
   },
 
   editRankData: async (req,rank_id,updated) => {
+    // console.log(req,rank_id,updated);
     let data
     if (rank_id) {
-    data=await Rank_Data.find({rankId:rank_id})     
+    data=await Distributor.findOne({search_id:rank_id})     
     }
+    console.log();
+    let parentData=await User.findOne({_id:data.parent})
     let user=req.admin
 
-    return ({editData:data,user,updated})
+    return ({data,user,updated,parentData})
   },
 
   commission_management: async (req, limit) => {

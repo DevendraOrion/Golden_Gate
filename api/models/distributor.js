@@ -37,6 +37,10 @@ var DistributorModel = new Schema({
         type: String,
         // default: true
     },
+    state:{
+        type: String,
+        // default: true
+    },
     block:{
         type: String,
         // default: true
