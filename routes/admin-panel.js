@@ -307,7 +307,7 @@ module.exports = function (router, io) {
   // commsion
   router.get("/transferPoint", AdminPagesController.transferPoint);
   router.post("/admin/saveTransferPoint", AdminController.saveTransferPoint);
-  router.get("/transferPointToUpper", AdminPagesController.commRoullete);
+  router.get("/transferPointToUpper", AdminPagesController.transferPointToUpper);
   router.get("/transferReport", AdminPagesController.transferReport);
   router.get("/ajax_transferPoint", paymentController.getTransferAjax);
 

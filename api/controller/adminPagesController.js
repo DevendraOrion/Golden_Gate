@@ -73,13 +73,25 @@ module.exports = {
       data: data,
     });
   },
+  transferPointToUpper: async (req, res) => {
+    const data = await distributorController.addRankssData(req) 
+      res.render("admin/transferPoint", {
+      title: "Transfer Point To Player",
+      type: "transfer",
+      sub: "transferPointToUpper",
+      sub2: "transferPointToUpper",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   transferReport: async (req, res) => {
     const transactions = await paymentController.transactionList(10);
       res.render("admin/transferReport", {
       title: "Point Transfer Report",
       type: "pointTransfer",
-      sub: "transferPoint",
-      sub2: "transferPoint",
+      sub: "transferReport",
+      sub2: "transferReport",
       total: transactions.count,
       host: config.pre + req.headers.host,
       admin: req.admin,
