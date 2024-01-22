@@ -771,6 +771,7 @@ let created=await Service.formateDateandTime(u.created_at)
 
     if (Service.validateObjectId(user_id)) {
       matchObj.user_id = ObjectId(user_id);
+      
     }
 
     if (!_.isEmpty(params.status)) {
@@ -893,7 +894,6 @@ let created=await Service.formateDateandTime(u.created_at)
       },
     });
 
-    // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     console.log(aggregation_obj);

@@ -25,7 +25,7 @@
                     <div class="pull-right">
                         <select class="col search-user" name="state" style="width:152px;"></select>
     
-                        <select class="col select-type" name="type" style="width:152px;">
+                        <!-- <select class="col select-type" name="type" style="width:152px;">
                             <option></option>
                             <option value="G">Game</option>
                             <option value="P">Payment</option>
@@ -36,7 +36,7 @@
                             <option value="O">Other</option>
                             <option value="Gift">Gift</option>
                             <option value="S">Scratch Card</option>
-                        </select>
+                        </select> -->
         
                         <select class="col select-status" name="status" style="width:152px;">
                             <option></option>
@@ -343,7 +343,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-        'url': '/ajax_transaction',
+        'url': '/ajax_transferPoint',
         data: function (params) {
             params.id = THAT_ID;
             params.type = THAT_TYPE;

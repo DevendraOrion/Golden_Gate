@@ -1533,7 +1533,7 @@ logger.info('Params :: ', params);
             aggregate_obj.push(
                 {
                     $sort: {
-                        numeric_id: 1
+                        search_id: 1
                     }
                 },
                 {
@@ -1542,7 +1542,7 @@ logger.info('Params :: ', params);
                 {
                     $project: {
                         id: '$_id',
-                        text: '$numeric_id'
+                        text: '$search_id'
                     }
                 },
                 {
