@@ -837,6 +837,9 @@ let created=await Service.formateDateandTime(u.created_at)
     
     let aggregation_obj = [];
     aggregation_obj.push(
+      {$match:{
+        txn_mode:"A"
+      }},
       {
         $lookup: {
           from: "users",

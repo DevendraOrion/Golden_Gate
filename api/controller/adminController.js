@@ -3949,9 +3949,9 @@ const timestamp = now.getTime();
     var checkId = await Service.validateObjectId(params.request_id);
     let obj = {};
     if (params.type == "win") {
-      obj.win_wallet = params.amount;
+      obj.cash_balance = params.amount;
     } else if (params.type == "main") {
-      obj.balance = params.amount;
+      obj.cash_balance = params.amount;
     } else {
       return res.send({
         status: 0,
@@ -4103,8 +4103,9 @@ const timestamp = now.getTime();
         });
       }
     } else if (params.type == "main") {
-      obj.balance = 0 - params.amount;
-      if (params.amount > user.balance) {
+      obj.cash_balance = 0 - params.amount;
+      console.log(params.amount,user.balance);
+      if (params.amount > user.cash_balance) {
         return res.send({
           status: 0,
           Msg: localization.notEnoughAmount,
