@@ -1,6 +1,6 @@
 var mongoose = require("mongoose"),
     Schema = mongoose.Schema;
-
+    var bcrypt = require("bcryptjs");
 const config = require("./../../config");
 var UserModel = new Schema({
     first_name: String,
@@ -26,8 +26,8 @@ var UserModel = new Schema({
     },
     security_pin: {
         type: String,
-        //   required: true,
-        default: 1234
+        default: '1234',
+
     },
     search_id: {
         type: String,

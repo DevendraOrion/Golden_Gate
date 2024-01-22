@@ -117,6 +117,23 @@ module.exports = {
       data: data,
     });
   },
+  changePinPass: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    const user = await AdminController.getUserDetails(
+      req.params.id,
+      req.admin._id
+    );
+    const data = await distributorController.addRankData(user)
+    res.render("admin/changePinPass", {
+      title: "Change Security Pin or Password",
+      type: "pinPass",
+      sub: "pinPass",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   addRank: async (req, res) => {
     // let data = await noticeData.findOne({});
     const user = await AdminController.getUserDetails(

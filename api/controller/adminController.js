@@ -3696,6 +3696,145 @@ const timestamp = now.getTime();
       });
     }
   },
+  updateUserProfilePass: async (req, res) => {
+    var params = _.pick(req.body, "opass", "pass_confirmation", "pass","userName","userId");
+    //logger.info("Admin Profile Update Request", params);
+    // console.log(params);
+    
+    if (!params) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+   
+    if (!params.pass_confirmation || !params.pass || !params.opass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+   
+    if (params.pass_confirmation != params.pass) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordNotMatchError,
+      });
+    }
+    if (
+      params.pass_confirmation.trim().length < 6 ||
+      params.pass_confirmation.trim().length > 12
+    ) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordValidationError,
+      });
+    }
+    let user=await User.findOne({search_id:params.userId})
+    var rez1 = await bcrypt.compare(params.opass, user.password);
+    if (!rez1) {
+      return res.send({
+        status: 0,
+        Msg: localization.invalidOldPassError,
+      });
+    }
+    var hash = bcrypt.hashSync(params.pass_confirmation);
+    var updateUser = await User.findByIdAndUpdate(user._id, {
+      $set: {
+        password: hash,
+      },
+    });
+    if (updateUser) {
+      var newLog = new AccessLog({
+        admin: user._id,
+        action: "Changed password of : "+user._id,
+        created_at: new Date().getTime(),
+      });
+      await newLog.save();
+      return res.send({
+        status: 1,
+        Msg: localization.loginSuccess,
+      });
+    } else {
+      return res.send({
+        status: 0,
+        Msg: localization.ServerError,
+      });
+    }
+  },
+  updateUserSP: async (req, res) => {
+    var params = _.pick(req.body, "CurrentPass", "SPnpass", "SPcpass","userName","userId");
+    console.log(params)
+    //logger.info("Admin Profile Update Request", params);
+     if (!params) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.CurrentPass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.SPnpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (!params.SPcpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.allFiledError,
+      });
+    }
+    if (params.SPnpass != params.SPcpass) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordNotMatchError,
+      });
+    }
+    if (params.SPcpass.length > 5 ||params.SPcpass.length < 3) {
+      return res.send({
+        status: 0,
+        Msg: localization.passwordValidationError2,
+      });
+    }
+    let user=await User.findOne({search_id:params.userId})
+    var rez1 = await bcrypt.compare(params.CurrentPass, user.password);
+    // console.log(rez1);
+    if (!rez1) {
+      return res.send({
+        status: 0,
+        Msg: localization.invalidOldPassError,
+      });
+    }
+    var hash = bcrypt.hashSync(params.SPcpass);
+    var updateAdmin = await User.findByIdAndUpdate(user._id, {
+      $set: {
+        security_pin: hash,
+      },
+    });
+    if (updateAdmin) {
+      var newLog = new AccessLog({
+        admin: user._id,
+        action: "Changed password of :"+user._id,
+        created_at: new Date().getTime(),
+      });
+      await newLog.save();
+      return res.send({
+        status: 1,
+        Msg: localization.loginSuccess,
+      });
+    } else {
+      return res.send({
+        status: 0,
+        Msg: localization.ServerError,
+      });
+    }
+  },
   updateAdminSP: async (req, res) => {
     var params = _.pick(req.body, "CurrentPass", "SPnpass", "SPcpass");
     //logger.info("Admin Profile Update Request", params);
@@ -6747,8 +6886,8 @@ if(parentData){
 },
   saveAddRankDataByParent: async (req, res) => {
   try {
-    const { name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin } = req.body;
-    console.log(name, email, password, role,balance,Roullete,Avaitor,CarRoullete,parentId,urole,securityPin);
+    const { firstName,lastName, email, address,postalCode,phone,state, district,password,role,balance,parentName,parentId,securityPin } = req.body;
+    console.log(firstName,lastName, email, address,postalCode,phone,state, district,password,role,balance,parentName,parentId,securityPin);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({search_id:parentId})
@@ -6761,7 +6900,7 @@ if(parentData){
         Msg: "Please Enter Correct Security Pin",
       });
     }
-   if (!name || !email || !password || !role) {
+   if ( !email || !password || !role) {
     return res.send({
       status: 0,
       Msg: "Please provide all parameters",
@@ -6775,38 +6914,7 @@ if(parentData){
           Msg: "Email already exists",
         });
       }
-      if(role==="State"){
-      const compareData=await Commission.findOne({type:"Company"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="District"){
-      const compareData=await Commission.findOne({type:"State"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="Zone"){
-      const compareData=await Commission.findOne({type:"District"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
-      if(role==="Agent"){
-      const compareData=await Commission.findOne({type:"Zone"})
-      if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-        return res.send({
-          status: 0,
-          Msg: "Commission is Higher than above level",
-        });
-      }}
+
       if(balance>parentId.balance){
         return res.send({
           status: 0,
@@ -6815,6 +6923,7 @@ if(parentData){
       }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPin = await bcrypt.hash("1234", 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
         numeric_id: -1
@@ -6852,12 +6961,18 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
       search_id,
       numeric_id,
-      name,
+      name:firstName,
+      first_name:firstName,
+      last_name:lastName,
       email,
       password: hashedPassword,
       role,
-      balance,
+      cash_balance:balance,
       parent: parentDataExist,
+      phone,
+      state, district,postalCode,address,
+      security_pin:hashedPin
+      // device_id:generateRandomString(10)
     });
 
     let saveUserData=await saveData.save();
@@ -6873,7 +6988,7 @@ if(parentData){
       txn_amount: Number(balance),
       created_at: new Date().getTime(),
       transaction_type: "D",
-      resp_msg:  `Deposit to ${name}` ,
+      resp_msg:  `Deposit by Admin` ,
       current_balance: adminBalace,
       is_status: "S",
       txn_mode: "A",
@@ -6885,21 +7000,13 @@ if(parentData){
       txn_amount: Number(balance),
       created_at: new Date().getTime(),
       transaction_type: "C",
-      resp_msg:  "Deposit by Admin",
+      resp_msg:  "Deposit to ${firstName}",
       is_status: "S",
       txn_mode: "A",
     });
     let txnres = await newTxn.save();
 
-    let userCommission=new  UserCommission({
-      type:role,
-      parent:parentDataExist,
-      user:saveUserData._id,
-      Roullete,
-      Avaitor,
-      CarRoullete
-    })
-    await userCommission.save();
+
     return res.send({
       status: 1,
       Msg: localization.success,
@@ -7054,6 +7161,7 @@ let parentAmount=parentData.cash_balance-point
       }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPin = await bcrypt.hash("1234", 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
         numeric_id: -1
@@ -7117,6 +7225,7 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       parent: parentDataExist,
       phone,
       state, district,postalCode,address,
+      security_pin:hashedPin,
       device_id:generateRandomString(10)
 
     });
