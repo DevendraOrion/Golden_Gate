@@ -168,9 +168,11 @@
 <!-- 
             <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
                 <span>Users Management</span></a></li> -->
+            <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
+                <span>Player Management System</span></a></li> 
 
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
-                  <a href="#"><i class="fa fa-calculator"></i> <span>Player Management System</span>
+                  <a href="#"><i class="fa fa-calculator"></i> <span>Distributer Management</span>
                     <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                     </span>
@@ -184,8 +186,8 @@
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
-                    <li class="<% if(sub2 =='user') {%> active <% } %> "><a href="/user"><i
-                          class="fa fa-check-square-o" aria-hidden="true"></i> Users</a></li>
+                    <!-- <li class="<% if(sub2 =='user') {%> active <% } %> "><a href="/user"><i
+                          class="fa fa-check-square-o" aria-hidden="true"></i> Users</a></li> -->
                     <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
                   </ul>
@@ -241,8 +243,8 @@
               <li class="<% if(type=='transaction') {%> active <% } %>"><a href="/transaction"><i
                     class="fa fa-credit-card"></i>
                   <span>Transactions </span></a></li>
-              <li class="<% if(type=='game') {%> active <% } %>"><a href="/game"><i class="fa fa-trophy"
-                    aria-hidden="true"></i> <span>Game Records</span></a></li>
+              <!-- <li class="<% if(type=='game') {%> active <% } %>"><a href="/game"><i class="fa fa-trophy"
+                    aria-hidden="true"></i> <span>Game Records</span></a></li> -->
             
 
               <li class="treeview <% if(type=='payout') {%> active <% } %>">
@@ -395,12 +397,11 @@
                     aria-hidden="true"></i><span>Commission Management</span></a></li>
                   <li class="<% if(type=='commission-limit') {%> active <% } %>"><a href="/commission-limit"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Limit</span></a></li>
-                  <li class="<% if(type=='Commission') {%> active <% } %>"><a href="/commission"><i class="fa fa-level-down"
+                  <!-- <li class="<% if(type=='Commission') {%> active <% } %>"><a href="/commission"><i class="fa fa-level-down"
                     aria-hidden="true"></i> <span>Commission Report</span></a></li>
                   <li class="<% if(type=='revenue-report') {%> active <% } %>"><a href="/revenue-report"><i class="fa fa-address-book-o"
                     aria-hidden="true"></i> <span>Revenue Report</span></a></li>
-                  <!-- <li class="<% if(type=='distributer') {%> active <% } %>"><a href="/Distributer"><i class="fa fa-file-text-o"
-                    aria-hidden="true"></i> <span>Distributer</span></a></li> -->
+
                
                   <li class="<% if(type=='Manual-Result-For-Car-Roulete') {%> active <% } %>"><a href="/ManualResultForCarRoulete"><i class="fa fa-compass"
                     aria-hidden="true"></i> <span>Manual Result For Car Roulete</span></a></li>
@@ -445,10 +446,8 @@
                                 class="fa fa-times-circle-o" aria-hidden="true"></i>Roulette</a></li>
                             <li class="<% if(sub2 =='avatior') {%> active <% } %> "><a href="/commAvatior"><i
                                 class="fa fa-times-circle-o" aria-hidden="true"></i> Avaitor</a></li>
-                          <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
-                                class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
-                        </ul>
-                      </li>
+                          </ul>
+                      </li> -->
   
           
               <% } %>

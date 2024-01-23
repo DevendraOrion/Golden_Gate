@@ -1,0 +1,165 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <!-- <h1>
+        <%= title %>
+      </h1> -->
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+            <h2>This Panel Is for Lower Rank</h2>
+          <!-- <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Role</td>
+                  <td>
+                    <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
+                      <option  value="" >Please Select Role</option>
+                      <% data.role.forEach((role) => { %>
+                          <option value="<%= role %>" ><%= role %></option>
+                      <% }); %>
+                  </select>
+                  
+                  </td>
+                </tr>
+                <tr class="hidden-row">
+                    <td>User Id</td>
+                    <td>                  
+                      <select name="userSearchId" id="userSearchId" class="form-control" onchange="getParentName()" >                                                                 
+                        <option  value="select" >Please Select Parent Id</option>
+                      </select> 
+                  </td>
+                </tr>
+                  <tr class="hidden-row">
+                    <td>User Name</td>
+                    <td>
+                      <input name="username" id="username" class="form-control" readonly ></input>
+                    </td>
+                  </tr>
+                  
+        
+                <tr>
+                  <td>Transfer Point</td>
+                  <td>
+                    <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter your Password here...."></input>
+                  </td>
+                </tr>
+           
+                <tr>
+                  <td>Security Pin</td>
+                  <td>
+                    <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+     
+        const securityPin = document.getElementById("securityPin").value;
+        const username = document.getElementById("username").value;
+        const role = document.getElementById("role").value;
+        const balance = document.getElementById("balance").value;
+        const userSearchId = document.getElementById("userSearchId").value;
+               
+        fetch("/admin/saveTransferPoint", {
+          method: "POST",
+          body: JSON.stringify({ role , userSearchId, username, balance, securityPin }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+
+
+      };
+    </script>
+   <script>
+    const updateParentDropdown = () => {
+        const selectedRole = document.getElementById("role").value
+
+      
+
+        fetch("/admin/selectedId?role=" + selectedRole, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Data from API:", data);
+            const searchIdDropdown = document.getElementById("userSearchId");
+            searchIdDropdown.innerHTML = "Please Select Search ID"; 
+
+            data.mydata.forEach(searchId => {
+                const option = document.createElement("option");
+                // option.value = "Please Select Search ID"
+                option.text = searchId.search_id;
+                searchIdDropdown.add(option);
+            });
+            const username = document.getElementById("username");          
+            username.value = data.mydata[0].name
+
+         
+        })
+        .catch(error => {
+            console.error("Error fetching search ids:", error);
+        });
+    };
+
+    const getParentName = () => {
+       const selectedParentId = document.getElementById("userSearchId").value;
+       console.log(selectedParentId)
+
+       fetch("admin/getParentName?search_id=" + selectedParentId,{
+        method: "GET",
+        headers: {
+                "Content-Type": "application/json",
+            },
+       })
+       .then(response => response.json())
+       .then(response => {
+          console.log("Data" , response);
+          const username = document.getElementById("username");          
+            username.value = response.parentName.name
+         
+       })
+    }
+</script>
+
+  

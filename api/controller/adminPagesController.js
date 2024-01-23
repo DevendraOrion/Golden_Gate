@@ -75,8 +75,8 @@ module.exports = {
   },
   transferPointToUpper: async (req, res) => {
     const data = await distributorController.addRankssData(req) 
-      res.render("admin/transferPoint", {
-      title: "Transfer Point To Player",
+      res.render("admin/transferPointToUpper", {
+      title: "Transfer Point To Upper Level",
       type: "transfer",
       sub: "transferPointToUpper",
       sub2: "transferPointToUpper",
@@ -346,7 +346,7 @@ module.exports = {
     let rank_id=req.params.rank_id
     let updated=req.params.updated
 console.log(req.params);
-    const data = await distributorController.editRankData(req,rank_id,updated)
+    const data = await distributorController.showRankData(req,rank_id,updated)
     // console.log(data);
   // const data=req.admin
     res.render("admin/createRank", {
@@ -362,7 +362,7 @@ console.log(req.params);
   editRank: async (req, res) => {
     let rank_id=req.params.rank_id
     let updated=req.params.updated
-console.log(req.params);
+// console.log(req.params);
     const data = await distributorController.editRankData(req,rank_id,updated)
     // console.log(data);
   // const data=req.admin
@@ -380,7 +380,7 @@ console.log(req.params);
     let rank_id=req.params.rank_id
     let updated=req.params.updated
 console.log(req.params);
-    const data = await distributorController.editRankData(req,rank_id,updated)
+    const data = await distributorController.editDistributerData(req,rank_id,updated)
     // console.log(data);
   // const data=req.admin
     res.render("admin/editDistributer", {

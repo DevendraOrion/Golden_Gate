@@ -197,17 +197,29 @@ module.exports = {
     return ({rankData:data,user})
   },
 
-  editRankData: async (req,rank_id,updated) => {
+  editDistributerData: async (req,rank_id,updated) => {
     // console.log(req,rank_id,updated);
     let data
     if (rank_id) {
     data=await Distributor.findOne({search_id:rank_id})     
     }
-    console.log();
+    console.log(rank_id);
     let parentData=await User.findOne({_id:data.parent})
     let user=req.admin
 
     return ({data,user,updated,parentData})
+  },
+  editRankData: async (req,rank_id,updated) => {
+    // console.log(req,rank_id,updated);
+    let data
+    if (rank_id) {
+    data=await Rank_Data.findOne({rankId:rank_id})     
+    }
+    // console.log(data);
+    let parentData=await User.findOne({_id:data.parent})
+    let user=req.admin
+
+    return ({data,user})
   },
 
   commission_management: async (req, limit) => {

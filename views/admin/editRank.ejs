@@ -14,7 +14,7 @@
             <div class="box-body">
               <table class="table table-bordered">
                 <tr>
-                    <%console.log(data.user.search_id)%>
+                    <%console.log(data)%>
                     <td>Created By</td>
                     <td>
                       <input name="parentId" id="parentId" class="form-control" value="<%=data.user.search_id%>" readonly></input>
@@ -23,33 +23,33 @@
                 <tr>
                   <td>Rank ID</td>
                   <td>
-                    <input name="rankId" id="rankId" class="form-control" value="<%= data && data.editData && data.editData[0] && data.editData[0].rankId || '' %>" placeholder="Enter Name here...." />
+                    <input name="rankId" id="rankId" class="form-control" value="<%= data.data.rankId %>" placeholder="Enter Name here...." />
 
                   </td>
                 </tr>
                 <tr>
                   <td>Rank Name</td>
                   <td>
-                    <input name="rankName" id="rankName" class="form-control" value="<%=data?.editData? data.editData[0].rankName:''%>" placeholder="Enter First Name here...."></input>
+                    <input name="rankName" id="rankName" class="form-control" value="<%=data.data.rankName%>" placeholder="Enter First Name here...."></input>
                   </td>
                 </tr>
                 <tr>
                   <td>Rank Target Per Week</td>
                   <td>
-                    <input name="rankTargetWeek" id="rankTargetWeek" class="form-control" value="<%= data && data.editData && data.editData[0] && data.editData[0].rankTargetWeek || '' %>" placeholder="Enter Last Name here...." />
+                    <input name="rankTargetWeek" id="rankTargetWeek" class="form-control" value="<%= data.data.rankTargetWeek %>" placeholder="Enter Last Name here...." />
                   </td>
                 </tr>
                 <tr>
                   <td>Rank Target Per Month</td>
                   <td>
-                    <input name="rankTargetMonth" id="rankTargetMonth" class="form-control" value="<%= data && data.editData && data.editData[0] && data.editData[0].rankTargetMonth || '' %>" placeholder="Enter D.O.B here...." />
+                    <input name="rankTargetMonth" id="rankTargetMonth" class="form-control" value="<%= data.data.rankTargetMonth %>" placeholder="Enter D.O.B here...." />
 
                   </td>
                 </tr>
                 <tr>
                   <td>Rank Immediate Joining Limit</td>
                   <td>
-                    <input name="rankJoining" id="rankJoining" class="form-control" value="<%= data && data.editData && data.editData[0] && data.editData[0].rankJoining || '' %>" placeholder="Enter Email ID here...." />
+                    <input name="rankJoining" id="rankJoining" class="form-control" value="<%= data.data.rankJoining %>" placeholder="Enter Email ID here...." />
 
                   </td>
                 </tr>
