@@ -137,6 +137,7 @@ module.exports = function (router, io) {
   router.get("/zoneMGT", AdminPagesController.zoneMGT);
   router.get("/districtMGT", AdminPagesController.districtMGT);
   router.get("/stateMGT", AdminPagesController.stateMGT);
+  router.post("/admin/getRanks", AdminController.getRanks);
   router.post("/admin/addmoney", AdminController.addMoneyByAdmin);
   router.post("/admin/users/change_status", UserController.updateStatus);
   router.post(

@@ -3907,6 +3907,25 @@ const timestamp = now.getTime();
       });
     }
   },
+  getRanks: async (req, res) => {
+   try {
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+
+    rolesData.forEach(role => {
+      roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+
+    const maxIndex = Math.max(...Object.keys(roles).map(Number));
+    roles[1] = "Company";
+    roles[maxIndex + 1] = "User";
+    return ({roles:roles})
+   } catch (error) {
+    console.log(error);
+   }
+  },
+
+  
   addMoneyByAdmin: async (req, res) => {
     var params = _.pick(
       req.body,

@@ -153,7 +153,7 @@
                 <%= admin.name %>
               </p>
               <!-- Status -->
-              <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+              <a href="#"><i class="fa fa-circle text-success"></i>Online</a>
             </div>
           </div>
 
@@ -364,8 +364,8 @@
                   <ul class="treeview-menu">
                       <li class="<% if(sub2 =='rankM') {%> active <% } %> "><a href="/rankMaster"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Rank Master</a></li>
-                      <li class="<% if(sub2 =='distM') {%> active <% } %> "><a href="/distributerMaster"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> Distributer Creation</a></li>
+                      <!-- <li class="<% if(sub2 =='distM') {%> active <% } %> "><a href="/distributerMaster"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Distributer Creation</a></li> -->
                       <li class="<% if(sub2 =='addRankCompany') {%> active <% } %> "><a href="/addRankCompany"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Rank User Creation</a></li>
                   </ul>
@@ -389,9 +389,9 @@
                   </li>
 
                  
-                  <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="#"><i class="fa fa-money"
+                  <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Management</span></a></li>
-                  <li class="<% if(type=='commission-limit') {%> active <% } %>"><a href="#"><i class="fa fa-money"
+                  <li class="<% if(type=='commission-limit') {%> active <% } %>"><a href="/commission-limit"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Limit</span></a></li>
                   <li class="<% if(type=='Commission') {%> active <% } %>"><a href="#"><i class="fa fa-level-down"
                     aria-hidden="true"></i> <span>Commission Report</span></a></li>

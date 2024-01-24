@@ -177,13 +177,11 @@ module.exports = {
     }).map((key) => roles[key]);
 
     const lastElement = rolesAbove[rolesAbove.length - 1];
-    //   console.log("#########")
-    //  console.log(lastElement);   
+   
     let allParentData = await User.find({ role: lastElement }, { _id: 0, search_id: 1, role: 1 })
-    //  console.log(allParentData);
-    //   console.log(rolesBelow[0]);
+
     const commission = await Commission.findOne({ type: rolesBelow[0] })
-    //  console.log(commission);
+
     return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData }
 
   },

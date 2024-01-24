@@ -46,7 +46,7 @@
                                                 <%= d?.google_id??'' %>
                                             </td>
                                             <td>
-                                                <%= d.game_played%>
+                                                <%= d.game_played ?d.game_played:0%>
                                             </td>
                                             <td>
                                                 <%= d.wallet %>
