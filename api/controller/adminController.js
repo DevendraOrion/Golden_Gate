@@ -248,6 +248,38 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       count,
     };
   },
+  getDepositRequest: async (limit) => {
+    const depositRequest = await DepositRequests.aggregate([
+      { $match: { is_status: "P" } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user"
+        }
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          user_id: 1,
+          showDate: 1,
+          txn_amount: 1,
+          current_balance: 1,
+          txn_id: 1,
+          created_at: 1,
+          userId: "$user.search_id" // Corrected projection
+        }
+      }
+    ]);
+    const list = depositRequest;
+    const count = depositRequest.length;
+  
+    return {
+      list,
+      count
+    };
+  },
   getAgentList: async (role) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
     const roles = {
@@ -6661,6 +6693,39 @@ console.log(req.query);
     let active_notice=req.query.active_notice
   
     let saveData=await noticeData.updateOne({noticeId:Number(notice)},{$set:({status:Number(active_notice)})})
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+acceptRequest: async (req, res) => {
+  try {
+console.log(req.query);
+    let id=req.query.rank_id
+    let type=req.query.type
+
+    let findData=await DepositRequests.findOne({txn_id:id})
+    if(type==1){
+
+      console.log(findData);
+      const saveData=await User.updateOne({_id:findData.user_id},{
+        $inc:{cash_balance:findData.txn_amount}
+      })
+      const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"S"})
+    }else{
+      const saveData=await User.updateOne({_id:findData.child_id},{
+        $inc:{cash_balance:findData.txn_amount}
+      })
+      const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"C"})
+    }
 
     return res.send({
       status: 1,

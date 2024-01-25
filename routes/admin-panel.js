@@ -325,6 +325,7 @@ module.exports = function (router, io) {
   // commsion
   router.get("/transferPoint", AdminPagesController.transferPoint);
   router.post("/admin/saveTransferPoint", AdminController.saveTransferPoint);
+  router.get("/depositRequest", AdminPagesController.depositRequest);
   router.get("/transferPointToUpper", AdminPagesController.transferPointToUpper);
   router.get("/transferReport", AdminPagesController.transferReport);
   router.get("/ajax_transferPoint", paymentController.getTransferAjax);
@@ -369,6 +370,7 @@ module.exports = function (router, io) {
   router.get("/user/delete-rank", AdminController.deleteRank);
   router.get("/user/active-notice", AdminController.activeNotice);
   router.get("/user/delete-user", AdminController.deleteUser);
+  router.get("/user/accept-request", AdminController.acceptRequest);
   router.get("/user/delete-distributor", AdminController.deleteDistributor);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.get("/commission-limit", AdminPagesController.commissionLimit);

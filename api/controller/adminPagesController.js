@@ -99,6 +99,20 @@ module.exports = {
       data: data,
     });
   },
+  depositRequest: async (req, res) => {
+    const users = await AdminController.getDepositRequest();
+    // console.log(users.list);
+    res.render("admin/depostRequest", {
+      title: "Deposit Request",
+      type: "pointTransfer",
+      sub: "depositRequest",
+      sub2: "depositRequest",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
   transferReport: async (req, res) => {
     const transactions = await paymentController.transactionList(10);
       res.render("admin/transferReport", {
@@ -520,7 +534,7 @@ console.log(req.params);
     const data = await distributorController.editUserData(req,id)
 
     res.render("admin/editNotice", {
-      title: "Edit Notice",
+      title: "Edit User",
       type: "addRank",
       sub: "dashboard",
       sub2: "create-user",
