@@ -17,7 +17,8 @@
                                 <thead>
                                     <tr>
                                         <th>No</th>
-                                        <th>User Id</th>
+                                        <th>From</th>
+                                        <th>To</th>
                                         <th>Amount</th>
                                         <th>Request Id</th>
                                         <th>Date</th>
@@ -35,8 +36,12 @@
                                                 <%= i++ %>
                                             </td>
                                             <td>
+                                                <%= d.childIds %>
+                                            </td>
+                                            <td>
                                                 <%= d.userId %>
                                             </td>
+                                         
                                             <td>
                                                 <%= d.txn_amount%>
                                             </td>

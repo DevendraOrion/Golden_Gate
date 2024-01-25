@@ -259,7 +259,16 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
           as: "user"
         }
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "child_id",
+          foreignField: "_id",
+          as: "child"
+        }
+      },
       { $unwind: "$user" },
+      { $unwind: "$child" },
       {
         $project: {
           user_id: 1,
@@ -268,13 +277,14 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
           current_balance: 1,
           txn_id: 1,
           created_at: 1,
-          userId: "$user.search_id" // Corrected projection
+          userId: "$user.search_id", // Corrected projection
+          childIds: "$child.search_id", // Corrected projection
         }
       }
     ]);
     const list = depositRequest;
     const count = depositRequest.length;
-  
+  // console.log(list);
     return {
       list,
       count
