@@ -11,6 +11,11 @@ const noticeSchema = new mongoose.Schema({
     // required: true,
     default: '',
   },
+  userList: {
+    type: String,
+    // required: true,
+    default: '',
+  },
   created_at: {
     type: String,
     // required: true,

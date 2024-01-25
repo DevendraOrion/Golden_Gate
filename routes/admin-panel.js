@@ -319,6 +319,8 @@ module.exports = function (router, io) {
   // NOTICE
   router.get("/notice-management", AdminPagesController.noticeManagement);
   router.get("/notice", AdminPagesController.notice);
+  router.get("/noticelist", AdminPagesController.getnoticelist)
+  router.post("/addnoticelist",AdminController.addnoticelist) 
   router.post("/admin/addNotice", AdminController.saveNoticeData);
   router.post("/admin/editNotice", AdminController.editNoticeData);
 

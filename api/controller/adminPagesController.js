@@ -75,6 +75,20 @@ module.exports = {
       data: data,
     });
   },
+  getnoticelist:async (req,res) =>{
+    let data = await User.find({role:"User"},{search_id:1, _id:0});
+
+    res.render("admin/sendNotification", {
+      title: "Send Notification ",
+      type: "notice",
+      sub: "dashboard",
+      sub2: "sendNotification",
+      host: config.pre + req.headers.host,
+      admin: req.admin,      
+      data: data,
+    });
+
+  },
   transferPoint: async (req, res) => {
     const data = await distributorController.addRankssData(req) 
       res.render("admin/transferPoint", {

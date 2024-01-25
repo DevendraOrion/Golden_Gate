@@ -14,7 +14,7 @@
             <div class="box-body">
               <table class="table table-bordered">
                 <tr>
-                  <td>Role</td>
+                  <td>Parent Role</td>
                   <td>
                     <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
                       <option  value="" >Please Select Role</option>
@@ -22,15 +22,15 @@
                           <option value="<%= role %>" ><%= role %></option>
                       <% }); %>
                   </select>
-                  
                   </td>
                 </tr>
                 <tr class="hidden-row">
-                    <td>Parent Id</td>
-                    <td>                  
-                      <select name="searchId" id="searchId" class="form-control" onchange="getParentName()" >                                                                 
-                        <option  value="select" >Please Select Parent Id</option>
-                      </select> 
+                  <td>Parent Id</td>
+                  <td>
+                    <input list="parentIds" name="searchId" id="searchId" class="form-control" oninput="getParentName()">
+                    <datalist id="parentIds">
+                      <!-- Suggestions will be dynamically added here -->
+                    </datalist>
                   </td>
                 </tr>
                   <tr class="hidden-row">
@@ -40,12 +40,12 @@
                     </td>
                   </tr>
 
-                  <tr class="hidden-row">
+                  <!-- <tr class="hidden-row">
                     <td>Parent Role</td>
                     <td>
                       <input name="parentRole" id="parentRole" class="form-control" readonly ></input>
                     </td>
-                  </tr>
+                  </tr> -->
                   
                 <tr>
                   <td>First Name</td>
@@ -114,14 +114,7 @@
                     <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
                   </td>
                 </tr>
-                <!-- <tr>
-                    <td>Role</td>
-                    <td>
-                      <input name="role" id="role" value="<%= data.role[0] %>" class="form-control" placeholder="Enter your rules here...." readonly>
-                    </td>
-                  </tr> -->
-                 
-                <!-- <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" /> -->
+              
                 <tr>
                   <td>
                     <button type="button" class="btn btn-success" onclick="saveSettings()">
@@ -154,9 +147,7 @@
         const password = document.getElementById("password").value;
         const role = document.getElementById("role").value;
         const balance = document.getElementById("balance").value;
-        // const Roullete = document.getElementById("commRoullete").value;
-        // const Avaitor = document.getElementById("comAvaitor").value;
-        // const CarRoullete = document.getElementById("comCarRoullete").value; 
+
                
         fetch("/admin/saveAddRank", {
           method: "POST",
@@ -186,61 +177,54 @@
       };
     </script>
    <script>
-    const updateParentDropdown = () => {
-        const selectedRole = document.getElementById("role").value
+  const updateParentDropdown = () => {
+    const selectedRole = document.getElementById("role").value;
 
-      
+    fetch("/admin/getSearchIds?role=" + selectedRole, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Data from API:", data);
+        const parentIdsDatalist = document.getElementById("parentIds");
+        parentIdsDatalist.innerHTML = ""; // Clear previous suggestions
 
-        fetch("/admin/getSearchIds?role=" + selectedRole, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Data from API:", data);
-            const searchIdDropdown = document.getElementById("searchId");
-            searchIdDropdown.innerHTML = "Please Select Search ID"; 
-
-            data.parentIDs.forEach(searchId => {
-                const option = document.createElement("option");
-                // option.value = "Please Select Search ID"
-                option.text = searchId.search_id;
-                searchIdDropdown.add(option);
-            });
-            const parentName = document.getElementById("parentName");          
-            parentName.value = data.parentIDs[0].name
-
-            const parentRole = document.getElementById("parentRole");
-            parentRole.value = data.parentIDs[0].role
-        })
-        .catch(error => {
-            console.error("Error fetching search ids:", error);
+        data.parentIDs.forEach(searchId => {
+          const option = document.createElement("option");
+          option.value = searchId.search_id;
+          parentIdsDatalist.appendChild(option);
         });
-    };
 
-    const getParentName = () => {
-       const selectedParentId = document.getElementById("searchId").value;
-       console.log(selectedParentId)
+        // ... (existing code) ...
+      })
+      .catch(error => {
+        console.error("Error fetching search ids:", error);
+      });
+  };
 
-       fetch("admin/getParentName?search_id=" + selectedParentId,{
-        method: "GET",
-        headers: {
-                "Content-Type": "application/json",
-            },
-       })
-       .then(response => response.json())
-       .then(response => {
-          console.log("Data" , response);
-          const parentName = document.getElementById("parentName");          
-          parentName.value = response.parentName.name
+  const getParentName = () => {
+    const selectedParentId = document.getElementById("searchId").value;
+    console.log(selectedParentId);
 
-          const parentRole = document.getElementById("parentRole");
-          parentRole.value = response.parentName.role
-         
-       })
-    }
+    fetch("admin/getParentName?search_id=" + selectedParentId, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log("Data", response);
+        const parentName = document.getElementById("parentName");
+        parentName.value = response.parentName.name;
+
+        const parentRole = document.getElementById("parentRole");
+        parentRole.value = response.parentName.role;
+      });
+  };
 </script>
 
   

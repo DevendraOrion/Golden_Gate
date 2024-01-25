@@ -6327,6 +6327,22 @@ console.log(notice, noticeDate, noticeTitle,noticeId)
       });
     }
   },
+  addnoticelist: async(req,res)=>{
+    
+    const {notice, userList, noticeTitle} = req.body
+    console.log(notice)
+
+    const noticelist = new noticeData(
+     {
+       notice,
+       userList,
+       noticeTitle
+     }
+    )
+   const newNoticeList = await noticelist.save()
+   res.status(200).send({"Data": newNoticeList})
+
+ },
   saveNoticeData: async (req, res) => {
     const { notice, noticeDate, noticeTitle,noticeId } = req.body;
 
@@ -6561,18 +6577,16 @@ getParentName:async(req,res)=>{
       6: "User",
     };
 
-    
     let data=req.query.role
   
     const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
-
     const rolesAbove = Object.keys(roles).filter((key) => {
       return parseInt(key) < parseInt(currentRoleKey);
     }).map((key) => roles[key]);
     const lastElement = rolesAbove[rolesAbove.length - 1];
     
-    // console.log(lastElement);
-    let parentData= await User.find({role:lastElement},{search_id:1,_id:0, role:1, name:1})
+    console.log(roles[currentRoleKey]);
+    let parentData= await User.find({role:roles[currentRoleKey]},{search_id:1,_id:0, role:1, name:1})
     // console.log(parentData);
       return res.status(200).send({parentIDs:parentData})
   },

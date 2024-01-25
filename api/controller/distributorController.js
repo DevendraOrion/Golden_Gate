@@ -202,7 +202,7 @@ module.exports = {
     const rolesBelow = Object.keys(roles).filter((key) => {
       return parseInt(key) > parseInt(currentRoleKey);
     }).map((key) => roles[key]);
-
+    rolesBelow.unshift("Company")
     const lastElement = rolesAbove[rolesAbove.length - 1];
    
     let allParentData = await User.find({ role: lastElement }, { _id: 0, search_id: 1, role: 1 })
