@@ -136,6 +136,24 @@ module.exports = {
     return { role: rolesBelow, commission, parentData: user, roles: role, parentData: allParentData }
 
   },
+  addRankUserData: async (req,role,id) => {
+    console.log("===================");
+    let previousData
+    let previousParentData
+    let user = req.admin
+    let editData=null
+    if(id){
+      previousData=await User.findById(id)
+      previousParentData=await User.findById(previousData.parent)
+      editData=previousData
+// console.log(previousData);
+    }
+   
+    let allParentData = await User.find({ role: "Agent" }, { _id: 0, search_id: 1, role: 1 })
+
+    return { role: role, parentData: user, parentDataSearchId: allParentData,editData:previousData,previousParentData }
+
+  },
   addRankssData: async (req) => {
     console.log("===================");
 

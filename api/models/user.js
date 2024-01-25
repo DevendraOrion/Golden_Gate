@@ -62,6 +62,10 @@ var UserModel = new Schema({
         type: String,
         // default: true
     },
+    state:{
+        type: String,
+        // default: true
+    },
     district:{
         type: String,
         // default: true

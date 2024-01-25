@@ -9,6 +9,7 @@ var SuperAdmin = require("./../models/superAdmin"),
   Service = require("./../service"),
   config = require("./../../config"),
   { User } = require("./../models/user"),
+  { DepositRequests } = require("./../models/depositRequest"),
   { Rank_Data } = require("./../models/rankData"),
    Commission  = require("./../models/commission"),
   { Banners } = require("./../models/banners"),
@@ -6617,6 +6618,24 @@ deleteRank: async (req, res) => {
     });
   }
 },
+deleteUser: async (req, res) => {
+  try {
+
+    let rank_id=req.query.rank_id
+  let deleteData=await User.deleteOne({_id:rank_id})
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
 deleteDistributor: async (req, res) => {
   try {
 
@@ -7109,55 +7128,126 @@ saveTransferPoint: async (req, res) => {
   try {
     const { role , userSearchId, username, balance, securityPin } = req.body;
     console.log(role , userSearchId, username, balance, securityPin);
-    let point=Number(balance)
- 
-    if(point<=0){
-      return res.send({
-        status: 0,
-        Msg: "Please Enter Proper Transaction Amount"
-      });
-    }
-    const user = await User.findOne({ search_id: userSearchId });
+    Number(balance)
+    const user = await User.findOne({ search_id: userSearchId })
+    // const admin = await User.findOne({ search_id: req.admin.search_id })
+
     if (!user) {
-      return res.send({
-        status: 0,
-        Msg: "User not found",
-      });
+        return res.json({ response: { status: false, message: 'Invalid User' } });
     }
 
-    const parentData=req.admin
-    if(parentData<0){
-      return res.send({
-        status: 0,
-        Msg: "Insufficient Balance",
-      });
+    if (user.cash_balance < balance) {
+        return res.json({ response: { status: false, message: 'Insufficient Balance' } });
     }
-let updateAmountUser= await User.updateOne({ _id: user._id }, { $inc: { cash_balance: point } });
-let updateAmountParent= await User.updateOne({ _id: parentData._id }, { $inc: { cash_balance: -point } });
-let parentAmount=parentData.cash_balance-point
-// console.log(parentData)
-    let newTxnAdmin = new Transaction({
-      user_id: user._id,
-      txn_amount: Number(point),
-      created_at: new Date().getTime(),
-      transaction_type: "D",
-      resp_msg:  "Deposit by Admin",
-      current_balance: parentAmount,
-      is_status: "S",
-      txn_mode: "A",
-    })
-    let txnAdmin = await newTxnAdmin.save();
 
-    var newTxn = new Transaction({
-      user_id: parentData._id,
-      txn_amount: Number(point),
-      created_at: new Date().getTime(),
-      transaction_type: "C",
-      resp_msg:  `Deposit to ${username}` ,
-      is_status: "S",
-      txn_mode: "A",
+
+
+    let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+    if(transcId.length==0){
+        transcId=0
+    }
+    else{
+        transcId=transcId[0].txn_id
+    }
+    transcId=transcId+1
+    const currentDate = new Date();
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
+    const year = currentDate.getFullYear();
+    
+    const formattedDate = `${day}/${month}/${year}`;
+        var newTxn = new DepositRequests({
+          user_id: req.admin._id,
+          child_id: user._id,
+          txn_amount: Number(balance),
+          created_at: new Date().getTime(),
+          txn_id: transcId,
+          resp_msg:  `Chip by ${user.name}`,
+          is_status: "P",
+          txn_mode: "D",
+          showDate:formattedDate
+        });
+        let txnres = await newTxn.save();
+
+        // return res.status(200).json({status:true,message:'Success'})
+// let updateAmountUser= await User.updateOne({ _id: user._id }, { $inc: { cash_balance: point } });
+// let updateAmountParent= await User.updateOne({ _id: parentData._id }, { $inc: { cash_balance: -point } });
+// let parentAmount=parentData.cash_balance-point
+// // console.log(parentData)
+//     let newTxnAdmin = new Transaction({
+//       user_id: user._id,
+//       txn_amount: Number(point),
+//       created_at: new Date().getTime(),
+//       transaction_type: "D",
+//       resp_msg:  "Deposit by Admin",
+//       current_balance: parentAmount,
+//       is_status: "S",
+//       txn_mode: "A",
+//     })
+//     let txnAdmin = await newTxnAdmin.save();
+
+//     var newTxn = new Transaction({
+//       user_id: parentData._id,
+//       txn_amount: Number(point),
+//       created_at: new Date().getTime(),
+//       transaction_type: "C",
+//       resp_msg:  `Deposit to ${username}` ,
+//       is_status: "S",
+//       txn_mode: "A",
+//     });
+//     let txnres = await newTxn.save();
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
     });
-    let txnres = await newTxn.save();
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+editUserSave: async (req, res) => {
+  try {
+    const { role , lastName, firstName, email,state, district,postalCode,address,phone,parentName,parentId,securityPin } = req.body;
+    console.log(role , lastName, firstName, email,state, district,postalCode,address,phone,parentName,parentId,securityPin);
+    let parentData= null
+    if(parentId){
+      parentData=await User.findOne({search_id:parentId})
+      
+    }
+    if(parentData !== null ){
+      const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
+      const parentChildLength=await User.find({parent:parentData._id})
+      console.log(parentChildLength.length,rankLimit.rankJoining);
+      if(parentChildLength.length>=rankLimit.rankJoining){
+        return res.send({
+          status: 0,
+          Msg: "Limit Reached of Creating User",
+        });
+      }
+      
+    }
+    if(!securityPin){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Security Pin",
+      });
+    }
+
+    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+ 
+    let user = await User.findOne({ email });
+
+    const saveData=await User.updateOne({_id:user._id},{$set:{name:firstName,first_name:firstName,last_name:lastName,phone:phone,state:state,district:district,postalCode:postalCode,address:address}})
 
     return res.send({
       status: 1,
@@ -7178,6 +7268,19 @@ let parentAmount=parentData.cash_balance-point
     let parentData= null
     if(parentId){
       parentData=await User.findOne({search_id:parentId})
+      
+    }
+    if(parentData !== null ){
+      const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
+      const parentChildLength=await User.find({parent:parentData._id})
+      console.log(parentChildLength.length,rankLimit.rankJoining);
+      if(parentChildLength.length>=rankLimit.rankJoining){
+        return res.send({
+          status: 0,
+          Msg: "Limit Reached of Creating User",
+        });
+      }
+      
     }
     if(!securityPin){
       return res.send({
@@ -7207,38 +7310,7 @@ let parentAmount=parentData.cash_balance-point
           Msg: "Email already exists",
         });
       }
-      // if(role==="State"){
-      // const compareData=await Commission.findOne({type:"Company"})
-      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-      //   return res.send({
-      //     status: 0,
-      //     Msg: "Commission is Higher than above level",
-      //   });
-      // }}
-      // if(role==="District"){
-      // const compareData=await Commission.findOne({type:"State"})
-      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-      //   return res.send({
-      //     status: 0,
-      //     Msg: "Commission is Higher than above level",
-      //   });
-      // }}
-      // if(role==="Zone"){
-      // const compareData=await Commission.findOne({type:"District"})
-      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-      //   return res.send({
-      //     status: 0,
-      //     Msg: "Commission is Higher than above level",
-      //   });
-      // }}
-      // if(role==="Agent"){
-      // const compareData=await Commission.findOne({type:"Zone"})
-      // if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-      //   return res.send({
-      //     status: 0,
-      //     Msg: "Commission is Higher than above level",
-      //   });
-      // }}
+   
       if(balance>parentId.cash_balance){
         return res.send({
           status: 0,

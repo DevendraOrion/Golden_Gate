@@ -1,0 +1,223 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Role</td>
+                  <td>
+                    <input name="role" id="role" class="form-control" value="<%=data.role%>" readonly ></input>
+                  </td>
+                </tr>
+                
+                <tr>
+                    <td>Parent Id</td>
+                    <td>
+                      <input name="searchId" id="searchId" class="form-control" value="<%=data.previousParentData.search_id%>" readonly ></input>
+                    </td>
+                  </tr>
+                
+                  <tr class="hidden-row">
+                    <td>Parent Name</td>
+                    <td>
+                      <input name="parentName" id="parentName" class="form-control" value="<%=data.previousParentData.name%>" readonly ></input>
+                    </td>
+                  </tr>
+
+                  <tr class="hidden-row">
+                    <td>Parent Role</td>
+                    <td>
+                      <input name="parentRole" id="parentRole" value="<%=data.previousParentData.role%>" class="form-control" readonly ></input>
+                    </td>
+                  </tr>
+                  
+                <tr>
+                  <td>First Name</td>
+                  <td>
+                    <input name="firstName" id="firstName" class="form-control" value="<%=data.editData.first_name%>" placeholder="Enter your Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Last Name</td>
+                  <td>
+                    <input name="lastName" id="lastName" class="form-control" value="<%=data.editData.last_name%>" placeholder="Enter your Name here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email</td>
+                  <td>
+                    <input name="email" id="email" class="form-control" value="<%=data.editData.email%>"placeholder="Enter your Email here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>State</td>
+                  <td>
+                    <input name="state" id="state" class="form-control" value="<%=data.editData.state%>" placeholder="Enter your State here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>District</td>
+                  <td>
+                    <input name="district" id="district" class="form-control" value="<%=data.editData.district%>" placeholder="Enter your District here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Postal Code</td>
+                  <td>
+                    <input name="postalCode" id="postalCode" class="form-control" value="<%=data.editData.postalCode%>" placeholder="Enter your Postal Code here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Address</td>
+                  <td>
+                    <input name="address" id="address" class="form-control" value="<%=data.editData.address%>" placeholder="Enter your Address here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Phone</td>
+                  <td>
+                    <input name="phone" id="phone" class="form-control" value="<%=data.editData.phone%>" placeholder="Enter your Contact here...."></input>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>Security Pin</td>
+                  <td>
+                    <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                  </td>
+                </tr>
+                <!-- <tr>
+                    <td>Role</td>
+                    <td>
+                      <input name="role" id="role" value="<%= data.role[0] %>" class="form-control" placeholder="Enter your rules here...." readonly>
+                    </td>
+                  </tr> -->
+                 
+                <!-- <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" /> -->
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+      const saveSettings = () => {
+        const parentId = document.getElementById("searchId").value;
+        const parentName = document.getElementById("parentName").value;
+        const securityPin = document.getElementById("securityPin").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const email = document.getElementById("email").value;
+        const state = document.getElementById("state").value;
+        const district = document.getElementById("district").value;
+        const postalCode = document.getElementById("postalCode").value;
+        const address = document.getElementById("address").value;
+        const phone = document.getElementById("phone").value;
+        const role = document.getElementById("role").value;
+
+               
+        fetch("/admin/editUserSave", {
+          method: "POST",
+          body: JSON.stringify({ role , lastName, firstName, email,state, district,postalCode,address,phone,parentName,parentId,securityPin }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+
+      };
+    </script>
+   <script>
+    const updateParentDropdown = () => {
+        const selectedRole = document.getElementById("role").value
+
+      
+
+        fetch("/admin/getSearchIds?role=" + selectedRole, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Data from API:", data);
+            const searchIdDropdown = document.getElementById("searchId");
+            searchIdDropdown.innerHTML = "Please Select Search ID"; 
+
+            data.parentIDs.forEach(searchId => {
+                const option = document.createElement("option");
+                // option.value = "Please Select Search ID"
+                option.text = searchId.search_id;
+                searchIdDropdown.add(option);
+            });
+            const parentName = document.getElementById("parentName");          
+            parentName.value = data.parentIDs[0].name
+
+            const parentRole = document.getElementById("parentRole");
+            parentRole.value = data.parentIDs[0].role
+        })
+        .catch(error => {
+            console.error("Error fetching search ids:", error);
+        });
+    };
+
+    const getParentName = () => {
+       const selectedParentId = document.getElementById("searchId").value;
+       console.log(selectedParentId)
+
+       fetch("admin/getParentName?search_id=" + selectedParentId,{
+        method: "GET",
+        headers: {
+                "Content-Type": "application/json",
+            },
+       })
+       .then(response => response.json())
+       .then(response => {
+          console.log("Data" , response);
+          const parentName = document.getElementById("parentName");          
+          parentName.value = response.parentName.name
+
+          const parentRole = document.getElementById("parentRole");
+          parentRole.value = response.parentName.role
+         
+       })
+    }
+</script>
+
+  

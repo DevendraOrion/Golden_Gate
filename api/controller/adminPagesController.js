@@ -498,6 +498,23 @@ console.log(req.params);
       data: data,
     });
   },
+  editUser: async (req, res) => {
+    role="User"
+    // console.log(req.query)
+    // console.log(req.params)
+    let id=req.params.id
+    const data = await distributorController.addRankUserData(req,role,id)
+
+    res.render("admin/editUser", {
+      title: "Edit User",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "create-user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   modifyUser: async (req, res) => {
     const user = await AdminController.getUserDetails(
       req.params.id,
@@ -562,6 +579,21 @@ console.log(req.params);
       total: data.count,
     });
   
+  },
+  createUser: async (req, res) => {
+    // let data = await noticeData.findOne({});
+role="User"
+    const data = await distributorController.addRankUserData(req,role)
+    
+    res.render("admin/createUserRank", {
+      title: "Add User",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "create-user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
   },
   addRankss: async (req, res) => {
     // let data = await noticeData.findOne({});

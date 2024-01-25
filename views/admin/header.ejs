@@ -168,9 +168,27 @@
 <!-- 
             <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
                 <span>Users Management</span></a></li> -->
-            <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
-                <span>Player Management System</span></a></li> 
 
+            <!-- <li class="<% if(type=='users') {%> active <% } %>"><a href="/user"><i class="fa fa-user"></i>
+                <span>Player Management System</span></a></li>  -->
+
+                <li class="treeview <% if(type=='users') {%> active <% } %>">
+                  <a href="#"><i class="fa fa-calculator"></i> <span>Player Management System</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                  </a>
+                  <ul class="treeview-menu">
+                    <li class="<% if(sub2 =='playerMaster') {%> active <% } %> "><a href="/user"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Player Master</a></li>
+                    <li class="<% if(sub2 =='create-user') {%> active <% } %> "><a href="/create-user"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Player Creation</a></li>
+                    <!-- <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
+                    <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
+                  </ul>
+                </li>
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-calculator"></i> <span>Distributer Management</span>
                     <span class="pull-right-container">
@@ -380,6 +398,8 @@
                     <ul class="treeview-menu">
                         <li class="<% if(sub2 =='transferPoint') {%> active <% } %> "><a href="/transferPoint"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point to Player</a></li>
+                        <li class="<% if(sub2 =='transferPointToUpper') {%> active <% } %> "><a href="/transferPointToUpper"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Deposit Request</a></li>
                         <li class="<% if(sub2 =='transferPointToUpper') {%> active <% } %> "><a href="/transferPointToUpper"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point To Upper Level</a></li>
                         <li class="<% if(sub2 =='transferReport') {%> active <% } %> "><a href="/transferReport"><i

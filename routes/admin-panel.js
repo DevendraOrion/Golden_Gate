@@ -40,6 +40,11 @@ module.exports = function (router, io) {
     AdminPagesController.modifyUser
   );
   router.get(
+    "/user/edit-user/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.editUser
+  );
+  router.get(
     "/user/change-password-user/:id",
     Service.authenticateAdmin,
     AdminPagesController.changeUserPass
@@ -338,12 +343,14 @@ module.exports = function (router, io) {
   // router.get("/add-rank-agent", AdminPagesController.addAgentRank);
   // router.get("/add-rank-user", AdminPagesController.adduserRank);
   router.get("/rankMaster", AdminPagesController.rankMaster);
+  router.get("/create-user", AdminPagesController.createUser);
   router.get("/addRankCompany", AdminPagesController.addRankss);
   router.get("/admin/getSearchIds", AdminController.searchId);
   router.get("/admin/selectedId", AdminController.selectedId);
   router.get("/admin/getChildIds", AdminController.childIds);
   router.get("/admin/getParentName", AdminController.getParentName)
   router.get("/distributerMaster", AdminPagesController.distributerMaster);
+  router.post("/admin/editUserSave", AdminController.editUserSave);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
   router.post("/admin/saveModifyPlayerData", AdminController.saveModifyPlayerData);
@@ -353,6 +360,7 @@ module.exports = function (router, io) {
   router.post("/admin/create-rank", AdminController.saveCreateRankData);
   router.post("/admin/update-rank-data", AdminController.updateRankData);
   router.get("/user/delete-rank", AdminController.deleteRank);
+  router.get("/user/delete-user", AdminController.deleteUser);
   router.get("/user/delete-distributor", AdminController.deleteDistributor);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
   router.get("/commission-limit", AdminPagesController.commissionLimit);
