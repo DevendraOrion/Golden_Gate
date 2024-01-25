@@ -342,9 +342,25 @@
                 aria-hidden="true"></i> <span>Maintenance</span></a></li>
               <!-- <li class="<% if(type=='banner') {%> active <% } %>"><a href="/banners"><i class="fa fa-picture-o"
                 aria-hidden="true"></i><span>Banner Management</span></a></li> -->
-              <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
-                aria-hidden="true"></i><span>Notice</span></a></li>
+
+
+              <!-- <li class="<% if(type=='notice') {%> active <% } %>"><a href="/notice"><i class="fa fa-bell"
+                aria-hidden="true"></i><span>Notice</span></a></li> -->
                 
+               <li class="treeview <% if(type=='notice') {%> active <% } %>">
+                  <a href="#"><i class="fa fa-plus"></i> <span>Notice Management</span>
+                    <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                  </a>
+                  <ul class="treeview-menu">
+                      <li class="<% if(sub2 =='noticeManagement') {%> active <% } %> "><a href="/notice-management"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Notice Management</a></li>
+                      <li class="<% if(sub2 =='sendNotice') {%> active <% } %> "><a href="/add-rank-district"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Send Notification</a></li>
+                   </ul>
+                </li>
+
                 <!-- <li class="<% if(type=='addRank') {%> active <% } %>">
                   <a href="/addRankCompany"
                     ><i class="fa fa-star" aria-hidden="true"></i

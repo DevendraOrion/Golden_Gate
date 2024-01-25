@@ -1,0 +1,248 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h1 class='title'>
+                            <%= title %>
+                        </h1>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="pull-right">
+                    
+                            <td class="actions text-center">
+                                <a href="/notice" class="on-editing save-row">
+                                    <button class="col select-rank" name="rank" style="width:152px; margin-top: 26px; background-color: #337ab7;
+                                    color: white;">Create</button>
+                                </a>
+                            </td>
+                            </div>
+                    </div>
+                    <!-- <div class="row text-center pad-20"> -->
+        
+                    <!-- </div> -->
+                </div>
+            </div>
+        </section>
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Notice Title</th>
+                                        <th>Content</th>
+                                        <th>Notice Date</th>
+                                        <th>Change State</th>
+                                        <th>Edit</th>
+                                        <!-- <th>Action</th> -->
+                                       
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% var i=1; for (d of data) {%>
+                               
+                                        <tr class="gradeX">
+                                            <td>
+                                                <%= i++ %>
+                                            </td>
+                                            <td>
+                                                <%= d.noticeTitle %>
+                                            </td>
+                                            <td>
+                                                <%= d.notice %>
+                                            </td>
+
+                                            <% 
+                                            function formateDateandTime(date) {
+                                                // 7/12/2018 12:25PM
+                                                var dat = new Date(date);
+                                                var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + parseInt(1));
+                                                                
+                                                var hours = dat.getHours() % 12;
+                                                hours = (hours > 9) ? hours : "0" + hours;
+                                    
+                                                var minutes = dat.getMinutes();
+                                                minutes = (minutes > 9) ? minutes : "0" + minutes;
+                                    
+                                                var ap = (dat.getHours() >= 12) ? "PM" : "AM";
+                                                var day = (dat.getDate() > 9) ? dat.getDate() : "0" + dat.getDate();
+                                    
+                                                rez = day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
+                                                return rez;
+                                            }
+                                            %>
+                                            <td>
+                                                <%= d.noticeDate%>
+                                            </td>
+                                            <% if (d.status == 1) { %>
+                                                <td class="actions text-center">
+                                                    <button class="col select-rank" onclick="activeNotice('<%= d.noticeId %>',0)" style="background-color: #fff; color: #3c8dbc; border: none;">Active</button>
+                                                </td>
+                                            <% } else { %>
+                                                <td class="actions text-center">
+                                                    <button class="col select-rank" onclick="activeNotice('<%= d.noticeId %>',1)" style="background-color: #fff; color: #3c8dbc; border: none;">Inactive</button>
+                                                </td>
+                                            <% } %>
+                                            
+                                                        <td class="actions text-center">
+                                                            <a href="<%= host%>/user/edit-notice/<%= d.noticeId%>" 
+                                                                class="on-editing save-row">
+                                                                <i class="fa fa-pencil"></i>
+                                                            </a>
+                                                        </td>
+                           
+                                                  
+                                                        <input type="hidden" name="id" id="notice_id" value="<%=data?.noticeId??''%>" />
+                                        </tr>
+                                        <% }%>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper --><%- include footer %>
+        <script>
+            $(document).ready(function (e) {
+                function formateDateandTime(date) {
+                    // console.log(data);
+                    var dat = new Date(date);
+                    var mon =
+                        dat.getMonth() + 1 > 9
+                            ? dat.getMonth() + 1
+                            : "0" + parseInt(dat.getMonth() + parseInt(1));
+                    var hours = dat.getHours() % 12;
+                    hours = hours > 9 ? hours : "0" + hours;
+                    var minutes = dat.getMinutes();
+                    minutes = minutes > 9 ? minutes : "0" + minutes;
+                    var ap = dat.getHours() >= 12 ? "PM" : "AM";
+                    var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+                    rez =
+                        day +
+                        "/" +
+                        mon +
+                        "/" +
+                        dat.getFullYear() +
+                        " " +
+                        hours +
+                        ":" +
+                        minutes +
+                        ap;
+                    return rez;
+                }
+                // console.log(data);
+                $("#usersTab").DataTable({
+                    destroy: true,
+                    dom: "lBfrtip",
+                    lengthMenu: [
+                        [10, 25, 100, 500],
+                        [10, 25, 100, 500],
+                    ],
+                    pageLength: 10,
+                    buttons: [
+                        {
+                            extend: "excel",
+                            text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+                            exportOptions: {
+                                modifier: { search: "applied", order: "applied" },
+                                format: {
+                                    body: function (data, row, column, node) {
+                                        // if (column === 7) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        // if (column === 8) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        if (column === 4) {
+                                            data = formateDateandTime(parseInt(data));
+                                        }
+                                        return data;
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            extend: "pdf",
+                            text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+                            exportOptions: {
+                                modifier: { search: "applied", order: "applied" },
+                                format: {
+                                    body: function (data, row, column, node) {
+                                        // if (column === 7) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        // if (column === 8) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        if (column === 4) {
+                                            data = formateDateandTime(parseInt(data));
+                                        }
+                                        return data;
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    ajax: "/users_ajax",
+                    deferLoading: "<%= total %>",
+                    aaSorting: [],
+                    sortField: 5,
+                    sortOrder: "-1",
+                    columnDefs: [
+                        { orderable: true, targets: [0, 6, 3, 4] },
+                        { orderable: false, targets: [1, 2, 7, 8] },
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+        console.log(data[5], dataIndex);
+        var rowData =
+            "<td>" + data[0] + "</td>" +
+            "<td>" + data[1] + "</td>" +
+            "<td>" + data[2] + "</td>" +
+            "<td>" + data[3] + "</td>" +
+            "<td>" + (data[4] ? formateDateandTime(parseInt(data[4])) : '') + "</td>";
+        $(row).html(rowData);
+    },
+                });
+                $("#usersTab").DataTable().order([4, "desc"]).draw();
+            });
+
+            const activeNotice = (rankId,status) => {
+    
+
+                // fetch("/user/active-notice?rank_id=" + rankId, {
+                fetch(`/user/active-notice?notice=${rankId}&active_notice=${status}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(response => response.json())
+            .then(response => {
+                const title = response.status == 1 ? "Success" : "Error";
+                swal({
+                icon: response.status == 1 ? "success" : "error",
+                title: response.Msg
+                }).then(() => {
+                window.location.reload();
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching search ids:", error);
+            });
+            };
+        </script>

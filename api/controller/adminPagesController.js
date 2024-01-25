@@ -49,6 +49,20 @@ module.exports = {
     });
   },
 
+  noticeManagement: async (req, res) => {
+    const users = await AdminController.getNoticeData();
+    res.render("admin/noticeManagement", {
+      title: "Rule Management",
+      type: "notice",
+      sub: "notice",
+      sub2: "noticeManagement",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+
+  },
   notice: async (req, res) => {
     let data = await noticeData.findOne({});
     res.render("admin/notice", {
@@ -493,6 +507,23 @@ console.log(req.params);
       type: "addRank",
       sub: "rank",
       sub2: "user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
+  editNotice: async (req, res) => {
+   
+    // console.log(req.query)
+    // console.log(req.params)
+    let id=req.params.id
+    const data = await distributorController.editUserData(req,id)
+
+    res.render("admin/editNotice", {
+      title: "Edit Notice",
+      type: "addRank",
+      sub: "dashboard",
+      sub2: "create-user",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,

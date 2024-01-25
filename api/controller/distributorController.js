@@ -7,6 +7,7 @@ const Distributor = require('../models/distributor'),
   Service = require('./../service'),
   config = require('./../../config'),
   logger = require('./../service/logger'),
+  noticeData = require("./../models/notice-data"),
   localization = require('./../service/localization'),
   utility = require('./utilityController'),
   //   nodemailer = require("nodemailer"),
@@ -134,6 +135,14 @@ module.exports = {
     let allParentData = await User.find({ role: lastElement }, { numeric_id: 1, _id: 0, search_id: 1 })
     const commission = await Commission.findOne({ type: rolesBelow[0] })
     return { role: rolesBelow, commission, parentData: user, roles: role, parentData: allParentData }
+
+  },
+  editUserData: async (req,id) => {
+    console.log("===================");
+  let edit=id
+  let noticeDatas=await noticeData.findOne({noticeId:id})
+
+  return {noticeDatas}
 
   },
   addRankUserData: async (req,role,id) => {

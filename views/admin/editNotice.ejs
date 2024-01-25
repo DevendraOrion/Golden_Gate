@@ -1,0 +1,84 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <td>Notice Title</td>
+                  <td>
+                    <input name="noticeTitle" id="noticeTitle" value="<%=data.noticeDatas.noticeTitle%>" class="form-control" placeholder="Enter Notice Title here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Date</td>
+                  <td>
+                    <input name="noticeDate" id="noticeDate" value="<%=data.noticeDatas.noticeDate%>" type="date" class="form-control" placeholder="Enter Notice Date here...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Notice Content</td>
+                  <td>
+                    <textarea name="notice" id="notice"  class="form-control" placeholder="Enter your notice here...."><%=data.noticeDatas.notice%>
+</textarea>
+                  </td>
+                </tr>
+                <input type="hidden" name="noticeId" id="noticeId" value="<%=data?.noticeDatas.noticeId??''%>" />
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Save
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+    const saveSettings = () => {
+    const notice = document.getElementById("notice").value;
+    const noticeDate = document.getElementById("noticeDate").value;
+    const noticeTitle = document.getElementById("noticeTitle").value;
+    const noticeId = document.getElementById("noticeId").value; // Fixed typo here
+
+    fetch("/admin/editNotice", {
+        method: "POST",
+        body: JSON.stringify({ notice, noticeDate, noticeTitle, noticeId }), // Fixed variable name here
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    .then(response => response.json())
+    .then(response => {
+        const title = response.status == 1 ? "Success" : "Error";
+        swal({
+            icon: response.status == 1 ? "success" : "error",
+            title: response.Msg
+        }).then(() => {
+            window.location.reload();
+        });
+    })
+    .catch((error) => {
+        console.log(error);
+        swal({ icon: "error", title: "An error occurred" }).then(() => {
+            window.location.reload();
+        });
+    });
+};
+
+    </script>

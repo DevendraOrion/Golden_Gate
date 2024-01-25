@@ -1,14 +1,33 @@
 const mongoose = require('mongoose');
 
 const noticeSchema = new mongoose.Schema({
+  noticeId: {
+    type: Number,
+    // required: true,
+    // default: '',
+  },
   notice: {
     type: String,
     // required: true,
     default: '',
   },
-  rules: {
+  created_at: {
     type: String,
-    default: '', // Set a default value (empty string in this case)
+    // required: true,
+    default: Date.now,
+  },
+  noticeDate: {
+    type: String,
+    // required: true,
+    default: '',
+  },
+  noticeTitle: {
+    type: String,
+    default: '', 
+  },
+  status: {
+    type: Number,
+    default: 1, 
   },
   // Other fields in your schema...
 });

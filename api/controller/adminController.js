@@ -196,6 +196,15 @@ module.exports = {
     };
   },
   //Get User List
+  getNoticeData: async (limit) => {
+    //logger.info('ADMIN USER LIST REQUEST >> ');
+let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
+    let count = noticeData.length
+    return {
+      list,
+      count,
+    };
+  },
   getUsersList: async (limit) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
     const users = await User.find({
@@ -6249,33 +6258,60 @@ const distributor=await Distributor.find({})
         .json(Service.response(0, localization.ServerError, err.message));
     }
   },
-  saveNoticeData: async (req, res) => {
-    const { id, notice, rules } = req.body;
-    if (!id) {
+  editNoticeData: async (req, res) => {
+    const { notice, noticeDate, noticeTitle,noticeId } = req.body;
+console.log(notice, noticeDate, noticeTitle,noticeId)
+    try {
+    if(!notice || !noticeDate || !noticeTitle){
       return res.send({
         status: 0,
         Msg: localization.missingParamError,
       });
-    }
-    let saveNotice;
-    if (!id) {
-      saveNotice = await new noticeData({
-        notice,
-        rules: rules || "",
-      });
-    } else {
-      // Update the existing notice if "id" is provided
-      saveNotice = await noticeData.findByIdAndUpdate(id, {
-        notice,
-        rules: rules || "",
-      });
-    }
-    try {
-      await saveNotice.save();
+    }  
+   let updateData=await noticeData.updateOne({noticeId:noticeId},{
+    notice, noticeDate, noticeTitle
+   })
+
+    
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+    } catch (err) {
+      console.error("Error saving notice:", err);
       return res.send({
-        status: 1,
-        Msg: localization.success,
+        status: 0,
+        Msg: localization.ServerError,
       });
+    }
+  },
+  saveNoticeData: async (req, res) => {
+    const { notice, noticeDate, noticeTitle,noticeId } = req.body;
+
+    try {
+    if(!notice || !noticeDate || !noticeTitle){
+      return res.send({
+        status: 0,
+        Msg: localization.missingParamError,
+      });
+    }  
+    let noticeIdCheck=await noticeData.find().sort({created_at:-1}).limit(1)
+    let noticeIds
+    console.log(noticeIdCheck);
+    if(noticeIdCheck.length>0){
+      noticeIds=noticeIdCheck[0].noticeId+1
+    }else{
+      noticeIds=1
+    }
+    let saveData=new noticeData({
+      notice, noticeDate, noticeTitle,noticeId:noticeIds
+    })
+
+    const saveNotice= await saveData.save()
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
     } catch (err) {
       console.error("Error saving notice:", err);
       return res.send({
@@ -6605,6 +6641,26 @@ deleteRank: async (req, res) => {
 
     let rank_id=req.query.rank_id
   let deleteData=await Rank_Data.deleteOne({rankId:rank_id})
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
+activeNotice: async (req, res) => {
+  try {
+console.log(req.query);
+    let notice=req.query.notice
+    let active_notice=req.query.active_notice
+  
+    let saveData=await noticeData.updateOne({noticeId:Number(notice)},{$set:({status:Number(active_notice)})})
 
     return res.send({
       status: 1,

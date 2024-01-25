@@ -45,6 +45,11 @@ module.exports = function (router, io) {
     AdminPagesController.editUser
   );
   router.get(
+    "/user/edit-notice/:id",
+    Service.authenticateAdmin,
+    AdminPagesController.editNotice
+  );
+  router.get(
     "/user/change-password-user/:id",
     Service.authenticateAdmin,
     AdminPagesController.changeUserPass
@@ -312,8 +317,10 @@ module.exports = function (router, io) {
   router.get("/admin/find_agent", AgentController.findAgent);
 
   // NOTICE
+  router.get("/notice-management", AdminPagesController.noticeManagement);
   router.get("/notice", AdminPagesController.notice);
   router.post("/admin/addNotice", AdminController.saveNoticeData);
+  router.post("/admin/editNotice", AdminController.editNoticeData);
 
   // commsion
   router.get("/transferPoint", AdminPagesController.transferPoint);
@@ -360,6 +367,7 @@ module.exports = function (router, io) {
   router.post("/admin/create-rank", AdminController.saveCreateRankData);
   router.post("/admin/update-rank-data", AdminController.updateRankData);
   router.get("/user/delete-rank", AdminController.deleteRank);
+  router.get("/user/active-notice", AdminController.activeNotice);
   router.get("/user/delete-user", AdminController.deleteUser);
   router.get("/user/delete-distributor", AdminController.deleteDistributor);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
