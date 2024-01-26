@@ -1513,14 +1513,14 @@ module.exports = {
 
         try {
             const params = _.pick(req.query, ['search']);
-logger.info('Params :: ', params);
+// logger.info('Params :: ', params);
             let aggregate_obj = [];
             let condition = {
                 is_deleted: false
             };
             if (params.search) {
                 if (params.search.trim() != '') {
-                    condition['username'] = {
+                    condition['search_id'] = {
                         $regex: '^' + params.search,
                         $options: 'i'
                     };
@@ -1553,9 +1553,9 @@ logger.info('Params :: ', params);
             );
 
             let users = await User.aggregate(aggregate_obj).allowDiskUse(true);
-
+// console.log(users);
             var endTime = new Date();
-            utility.logElapsedTime(req, startTime, endTime, 'findUser');
+            // utility.logElapsedTime(req, startTime, endTime, 'findUser');
 
             return res.send({ results: users });
         } catch (err) {

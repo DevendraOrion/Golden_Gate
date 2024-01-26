@@ -23,6 +23,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 var Mailer = require("./../service/email");
 var moment = require("moment-timezone");
 var logger = require("./../service/logger");
+var IndiaState = require("./../../IndiaState.json");
 var bcrypt = require("bcryptjs");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
 var {
@@ -6561,10 +6562,56 @@ saveCreateRankData: async (req, res) => {
 },
 getParentName:async(req,res)=>{
   let searchID =  req.query.search_id
- 
-  const parentName = await User.findOne({search_id:searchID},{name:1, _id:0, role:1})
-  console.log(searchID)
-  return res.status(200).send({parentName:parentName})
+  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1})
+
+
+  const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+  const roles = {};
+
+  rolesData.forEach(role => {
+    roles[parseInt(role.rankId, 10)] = role.rankName;
+  });
+
+  const maxIndex = Math.max(...Object.keys(roles).map(Number));
+  roles[1] = "Company";
+  roles[maxIndex + 1] = "User";
+
+  console.log(roles)
+  const data = parentName.role;
+  
+  const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+
+  const rolesBelow = Object.keys(roles).filter((key) => {
+    return parseInt(key) > parseInt(currentRoleKey);
+  }).map((key) => roles[key]);
+  // rolesBelow.unshift("Company")
+  console.log(rolesBelow);
+
+  return res.status(200).send({parentName:parentName,rolesBelow:rolesBelow})
+},
+
+getIndianDistrict: async (req, res) => {
+  try {
+    const state=req.query.state
+    console.log(state);
+    let allState= IndiaState[state]
+    console.log(allState);
+    return res.status(200).send({district:allState})
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+},
+getIndianStates: async (req, res) => {
+  try {
+
+    let allState=Object.keys(IndiaState);
+
+    return res.status(200).send({states:allState})
+  } catch (error) {
+    console.error('Error fetching data:', error.message);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
 },
 
  searchId: async (req, res) => {
@@ -6584,11 +6631,15 @@ getParentName:async(req,res)=>{
       return parseInt(key) < parseInt(currentRoleKey);
     }).map((key) => roles[key]);
     const lastElement = rolesAbove[rolesAbove.length - 1];
-    
+
+    const rolesBelow = Object.keys(roles).filter((key) => {
+      return parseInt(key) > parseInt(currentRoleKey);
+    }).map((key) => roles[key]);
+
     console.log(roles[currentRoleKey]);
     let parentData= await User.find({role:roles[currentRoleKey]},{search_id:1,_id:0, role:1, name:1})
     // console.log(parentData);
-      return res.status(200).send({parentIDs:parentData})
+      return res.status(200).send({parentIDs:parentData,rolesBelow})
   },
  selectedId: async (req, res) => {
     const roles = {
@@ -7408,25 +7459,25 @@ editUserSave: async (req, res) => {
 },
   saveAddRankData: async (req, res) => {
   try {
-    const { role , lastName, firstName, email, password,state, district,postalCode,address,phone,balance,parentName,parentId,securityPin } = req.body;
-    console.log(role , lastName, firstName, email, password,state, district,postalCode,address,phone,balance,parentName,parentId,securityPin);
+    const { parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
+    console.log(parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
     let parentData= null
     if(parentId){
-      parentData=await User.findOne({search_id:parentId})
+      parentData=await User.findOne({_id:parentId})
       
     }
-    if(parentData !== null ){
-      const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
-      const parentChildLength=await User.find({parent:parentData._id})
-      console.log(parentChildLength.length,rankLimit.rankJoining);
-      if(parentChildLength.length>=rankLimit.rankJoining){
-        return res.send({
-          status: 0,
-          Msg: "Limit Reached of Creating User",
-        });
-      }
+    // if(parentData !== null ){
+    //   const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
+    //   const parentChildLength=await User.find({parent:parentData._id})
+    //   console.log(parentChildLength.length,rankLimit.rankJoining);
+    //   if(parentChildLength.length>=rankLimit.rankJoining){
+    //     return res.send({
+    //       status: 0,
+    //       Msg: "Limit Reached of Creating User",
+    //     });
+    //   }
       
-    }
+    // }
     if(!securityPin){
       return res.send({
         status: 0,
@@ -7434,14 +7485,20 @@ editUserSave: async (req, res) => {
       });
     }
 
-    var rez1 = await bcrypt.compare(securityPin, parentData.security_pin);
+    var rez1 = await bcrypt.compare(securityPin, req.admin.security_pin);
     if(!rez1){
       return res.send({
         status: 0,
         Msg: "Please Enter Correct Security Pin",
       });
     }
-   if (!email || !password || !role) {
+   if (password !== cPassword) {
+    return res.send({
+      status: 0,
+      Msg: "Password is not match",
+    });
+     }
+   if (!email || !password || !userRole) {
     return res.send({
       status: 0,
       Msg: "Please provide all parameters",
@@ -7456,12 +7513,7 @@ editUserSave: async (req, res) => {
         });
       }
    
-      if(balance>parentId.cash_balance){
-        return res.send({
-          status: 0,
-          Msg: "Insufficient Balance",
-        });
-      }
+  
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const hashedPin = await bcrypt.hash("1234", 10);
@@ -7476,7 +7528,7 @@ editUserSave: async (req, res) => {
         if (maxNumId[0].numeric_id) numeric_id = maxNumId[0].numeric_id + 1;
         else numeric_id = 11111;
     }
-    let searchRole = role.toLowerCase();
+    let searchRole = userRole.toLowerCase();
     let twoSearchWord = searchRole.slice(0, 2);
     
     var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
@@ -7495,24 +7547,6 @@ editUserSave: async (req, res) => {
       search_id = twoSearchWord + lastNumber.toString().padStart(5, '0');
     }
     
-    console.log(search_id);
-    function generateRandomString(length) {
-      let result = '';
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-      const digits = '0123456789';
-    
-      for (let i = 0; i < length; i++) {
-        if (i < 7) {
-          // Generate random alphabetic character
-          result += characters.charAt(Math.floor(Math.random() * characters.length));
-        } else {
-          // Generate random numeric digit
-          result += digits.charAt(Math.floor(Math.random() * digits.length));
-        }
-      }
-    
-      return result;
-    }
 
 let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     let saveData = new User({
@@ -7523,45 +7557,49 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       last_name:lastName,
       email,
       password: hashedPassword,
-      role,
-      cash_balance:balance,
+      role:userRole,
+      aadharNumber:aadharNumber,
+      stateAllocated:stateAllocation,
+      districtAllocated:stateAllocation,
       parent: parentDataExist,
       phone,
-      state, district,postalCode,address,
-      security_pin:hashedPin,
-      device_id:generateRandomString(10)
+      state:userState, 
+      district:userDistrict,
+      address,
+      pinCode,
+      security_pin:hashedPin
 
     });
 
     let saveUserData=await saveData.save();
-    let adminBalace=0
-if(parentData){
-   adminBalace=parentData.cash_balance-balance
-   let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {cash_balance:adminBalace})
-}
+//     let adminBalace=0
+// if(parentData){
+//    adminBalace=parentData.cash_balance-balance
+//    let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {cash_balance:adminBalace})
+// }
 
-    let newTxnAdmin = new Transaction({
-      user_id: saveUserData._id,
-      txn_amount: Number(balance),
-      created_at: new Date().getTime(),
-      transaction_type: "D",
-      resp_msg:  `Deposit to ${firstName}` ,
-      current_balance: adminBalace,
-      is_status: "S",
-      txn_mode: "A",
-    })
-    let txnAdmin = await newTxnAdmin.save();
+//     let newTxnAdmin = new Transaction({
+//       user_id: saveUserData._id,
+//       txn_amount: Number(balance),
+//       created_at: new Date().getTime(),
+//       transaction_type: "D",
+//       resp_msg:  `Deposit to ${firstName}` ,
+//       current_balance: adminBalace,
+//       is_status: "S",
+//       txn_mode: "A",
+//     })
+//     let txnAdmin = await newTxnAdmin.save();
 
-    var newTxn = new Transaction({
-      user_id: parentDataExist,
-      txn_amount: Number(balance),
-      created_at: new Date().getTime(),
-      transaction_type: "C",
-      resp_msg:  "Deposit by Admin",
-      is_status: "S",
-      txn_mode: "A",
-    });
-    let txnres = await newTxn.save();
+//     var newTxn = new Transaction({
+//       user_id: parentDataExist,
+//       txn_amount: Number(balance),
+//       created_at: new Date().getTime(),
+//       transaction_type: "C",
+//       resp_msg:  "Deposit by Admin",
+//       is_status: "S",
+//       txn_mode: "A",
+//     });
+//     let txnres = await newTxn.save();
 
     return res.send({
       status: 1,

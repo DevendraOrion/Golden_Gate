@@ -17,6 +17,7 @@ moment = require('moment-timezone'),
   _ = require('lodash'),
   ObjectId = require('mongoose').Types.ObjectId,
   fs = require('fs');
+  var IndiaState = require("./../../IndiaState.json");
 
 module.exports = {
   getDistributorsList: async (req, limit) => {
@@ -168,16 +169,6 @@ module.exports = {
 
     let user = req.admin
 
-    // const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
-    // const roles = {};
-
-    // rolesData.forEach(role => {
-    //     roles[parseInt(role.rankId, 10)] = role.rankName;
-    // });
-
-    // roles[1] = "Company";
-    // roles[6] = "User";
-
     const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
     const roles = {};
 
@@ -209,7 +200,9 @@ module.exports = {
 
     const commission = await Commission.findOne({ type: rolesBelow[0] })
 
-    return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData }
+    let allState=Object.keys(IndiaState);
+
+    return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData,allState }
 
   },
   showRankData: async (req) => {

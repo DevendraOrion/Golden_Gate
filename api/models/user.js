@@ -19,7 +19,26 @@ var UserModel = new Schema({
         type: String,
         default: ''
     },
-
+    aadharNumber: {
+        type: String,
+        // default: ''
+    },
+    stateAllocated: {
+        type: String,
+        // default: ''
+    },
+    districtAllocated: {
+        type: String,
+        // default: ''
+    },
+    aadharNumber: {
+        type: String,
+        // default: ''
+    },
+    pinCode: {
+        type: String,
+        // required: true,
+    },
     numeric_id: {
         type: Number,
         required: true,

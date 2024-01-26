@@ -356,6 +356,8 @@ module.exports = function (router, io) {
   router.get("/create-user", AdminPagesController.createUser);
   router.get("/addRankCompany", AdminPagesController.addRankss);
   router.get("/admin/getSearchIds", AdminController.searchId);
+  router.get("/admin/getIndianStates", AdminController.getIndianStates);
+  router.get("/admin/getIndianDistrict", AdminController.getIndianDistrict);
   router.get("/admin/selectedId", AdminController.selectedId);
   router.get("/admin/getChildIds", AdminController.childIds);
   router.get("/admin/getParentName", AdminController.getParentName)
