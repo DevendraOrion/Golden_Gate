@@ -7460,8 +7460,8 @@ editUserSave: async (req, res) => {
 },
   saveAddRankData: async (req, res) => {
   try {
-    const { parentId, stateAllocation, districtAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
-    console.log(parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
+    const { parentId, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
+    console.log(parentId, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({_id:parentId})
@@ -7562,6 +7562,7 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       aadharNumber:aadharNumber,
       stateAllocated:stateAllocation,
       districtAllocated:districtAllocation,
+      areaAllocation:areaAllocation,
       parent: parentDataExist,
       phone,
       state:userState, 

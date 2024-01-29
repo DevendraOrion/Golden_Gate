@@ -31,6 +31,10 @@ var UserModel = new Schema({
         type: String,
         // default: ''
     },
+    areaAllocation: {
+        type: String,
+        // default: ''
+    },
     aadharNumber: {
         type: String,
         // default: ''

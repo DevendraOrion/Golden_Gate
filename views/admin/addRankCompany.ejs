@@ -44,16 +44,21 @@
               <table class="table table-bordered">
                 <tr class="hidden-row">
                   <td id="stateAllocationLabel">Select State</td>
+                  <td id="areaAllocationLabel" style="display: none;">Enter Area</td>
                   <td>Frist Name</td>
                   <td>Last Name</td>
                 </tr>
                 
                   <tr class="hidden-row">
-                    <td>
+                    <td id="stateHidden" style="width: 259px; ">
                       <select name="stateAllocation" id="stateAllocation" class="form-control" readonly >
                       </select>
                     </td>
-                    <td>
+                    <td id="areaHidden" style="width: 259px; display: none;">
+                      <input name="areaAllocation" id="areaAllocation" class="form-control" placeholder="Enter Area here...." >
+                    </input>
+                    </td>
+                    <td style=" width: 298px;">
                       <input name="firstName" id="firstName" class="form-control" placeholder="Enter Frist Name here...."></input>
                     </td>
                     <td>
@@ -158,12 +163,14 @@
         const parentId = a[0];
         let  districtAllocation=""
         let  stateAllocation = "";
+        let  areaAllocation = "";
         if(districtData==true){
           districtAllocation = document.getElementById("stateAllocation").value;
         }else{
-
           stateAllocation = document.getElementById("stateAllocation").value;
         }
+        areaAllocation = document.getElementById("areaAllocation").value;
+
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const phone = document.getElementById("phone").value;
@@ -181,7 +188,7 @@
                console.log(districtData,districtAllocation);
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({parentId, stateAllocation,districtAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
+          body: JSON.stringify({parentId, stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -234,22 +241,51 @@
     const updateParentDropdown = (parentRole) => {
   const stateAllocationLabel = document.getElementById("stateAllocationLabel");
   const stateAllocation = document.getElementById("stateAllocation");
-// console.log("parentRole",parentRole);
+  const areaAllocationLabel = document.getElementById("areaAllocationLabel");
+  const areaAllocation = document.getElementById("areaAllocation");
+  const areaHidden = document.getElementById("areaHidden");
+  const stateHidden = document.getElementById("stateHidden");
+
   if (parentRole.toLowerCase() === "state") {
     stateAllocationLabel.innerText = "Select District";
-    getDistrictDataForParent(stateAl); 
+    getDistrictDataForParent(stateAl);
     stateAllocation.removeAttribute("readonly");
-    districtData=true 
+    districtData = true;
+    stateHidden.style.display = "block";
+    stateAllocationLabel.style.display = "block";
+    stateAllocation.style.display = "block";
+    areaAllocationLabel.style.display = "none";
+    areaAllocation.style.display = "none";
+    areaHidden.style.display = "none";
   } else if (parentRole.toLowerCase() === "company") {
     stateAllocationLabel.innerText = "Select State";
     stateAllocation.removeAttribute("readonly");
     fetchIndianStates();
+    stateHidden.style.display = "block";
+    stateAllocationLabel.style.display = "block";
+    stateAllocation.style.display = "block";
+    areaAllocationLabel.style.display = "none";
+    areaAllocation.style.display = "none";
+    areaHidden.style.display = "none";
+  } else if (parentRole.toLowerCase() === "district") {
+    // stateAllocationLabel.innerText = "Enter Area";
+    // stateAllocation.setAttribute("readonly", "readonly");
+    stateHidden.style.display = "none";
+    stateAllocationLabel.style.display = "none";
+    stateAllocation.style.display = "none";
+    areaAllocationLabel.style.display = "block";
+    areaAllocation.style.display = "block";
+    areaHidden.style.display = "block";
   } else {
     stateAllocationLabel.innerText = "Select State";
     stateAllocation.innerHTML = '<option value="" selected>Please Select State</option>';
-    stateAllocation.setAttribute("readonly", "readonly"); 
+    stateAllocation.setAttribute("readonly", "readonly");
+    areaAllocationLabel.style.display = "none";
+    areaAllocation.style.display = "none";
+    stateAllocation.style.display = "block";
   }
 };
+
 
 const fetchIndianStates = () => {
       fetch("/admin/getIndianStates", {
@@ -361,7 +397,6 @@ const getDistrictDataForParent = (stateAl) => {
       console.log(response);
 
       let states2 = response.district;
-        // if (Array.isArray(states2) && states2.length > 0) {
           const stateAllocation = document.getElementById("stateAllocation");
           stateAllocation.innerHTML = "";
           states2.map(state => {
@@ -370,9 +405,6 @@ const getDistrictDataForParent = (stateAl) => {
             option.text = state;
             stateAllocation.appendChild(option);
           });
-        // } else {
-        //   console.log("No valid states data received.");
-        // }
     })
     .catch(error => {
       console.error("Error fetching districts:", error);
