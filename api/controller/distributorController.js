@@ -160,8 +160,8 @@ module.exports = {
     }
    
     let allParentData = await User.find({ role: "Agent" }, { _id: 0, search_id: 1, role: 1 })
-    let allState=Object.keys(IndiaState);
-    return { role: role, parentData: user, parentDataSearchId: allParentData,editData:previousData,previousParentData ,allState:allState}
+
+    return { role: role, parentData: user, parentDataSearchId: allParentData,editData:previousData,previousParentData }
 
   },
   addRankssData: async (req) => {
