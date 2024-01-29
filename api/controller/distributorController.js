@@ -149,6 +149,7 @@ module.exports = {
   addRankUserData: async (req,role,id) => {
     console.log("===================");
     let previousData
+
     let previousParentData
     let user = req.admin
     let editData=null
@@ -158,10 +159,14 @@ module.exports = {
       editData=previousData
 // console.log(previousData);
     }
-   
+
+    
+    let allState=Object.keys(IndiaState);
+
+
     let allParentData = await User.find({ role: "Agent" }, { _id: 0, search_id: 1, role: 1 })
 
-    return { role: role, parentData: user, parentDataSearchId: allParentData,editData:previousData,previousParentData }
+    return { role: role, parentData: user, parentDataSearchId: allParentData,editData:previousData,previousParentData ,allState:allState}
 
   },
   addRankssData: async (req) => {
