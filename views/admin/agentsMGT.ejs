@@ -22,14 +22,18 @@
                                         <th>Login Details</th>
                                         <th>Address Details</th>
                                         <th>Balance</th>
+                                        <th>Picture</th>
+                                        <th>Child</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                         <th>Add Users</th>
                                         <th>Change Pin or Password</th>
-                                        <th>Show User</th>
+                                        <!-- <th>Show User</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
+
+                                    <!-- <% console.log(data)%> -->
                                     <% var i=1; for (d of data) {%>
                                
                                         <tr class="gradeX">
@@ -60,6 +64,15 @@
                                                 <p><span style="color: #788ca8;">Cash Balance</span> : <%= d.cash_balance %></p>
                                                 <p><span style="color: rgb(207, 72, 72);">Win Balance</span>: <%= d.winning_balance %></p>
                                             </td>
+                                            <td>
+                                                <%= d?.profile_pic??"no image" %>
+                                            </td>
+                                            <td class="actions text-center">
+                                                <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                    <%= d?.childData ?? 0 %>
+                                                </a>
+                                            </td>
+                                          
                                             <td>
                                                 <%= d.status %>
                                             </td>
@@ -129,11 +142,7 @@
                                                                     <i class="fa fa-pencil"></i>
                                                                 </a>
                                                             </td>
-                                                            <td class="actions text-center">
-                                                                <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
-                                                                    <i class="fa fa-user-circle-o"></i>
-                                                                </a>
-                                                            </td>
+
                                                         <% } else { %>
                                                             <td class="actions text-center">
                                                                 <a href="<%= host%>/user/view/<%= d._id%>"  class="on-editing save-row">
@@ -146,9 +155,7 @@
                                                             <td class="actions text-center">
                                                                
                                                             </td>
-                                                            <td class="actions text-center">
-                                                               
-                                                            </td>
+                                                        
                                                         <% } %>
                                         </tr>
                                         <% }%>

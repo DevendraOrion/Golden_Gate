@@ -309,9 +309,11 @@ const users = await User.aggregate([
 
 let parentData = await Promise.all(users.map(async (a) => {
   let Data = await User.findOne({ _id: a.parent });
+  let childData = await User.find({ parent: a._id });
   return {
     ...a,
-    parentDatas: Data
+    parentDatas: Data,
+    childData: childData.length
   };
 }));
 // console.log(await parentData);
