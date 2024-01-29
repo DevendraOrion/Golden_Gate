@@ -6561,9 +6561,11 @@ saveCreateRankData: async (req, res) => {
   }
 },
 getParentName:async(req,res)=>{
+  let stateAllocated=null;
   let searchID =  req.query.search_id
-  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1})
-
+  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1})
+  stateAllocated=parentName.stateAllocated
+  console.log(parentName);
 
   const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
   const roles = {};
@@ -6585,9 +6587,8 @@ getParentName:async(req,res)=>{
     return parseInt(key) > parseInt(currentRoleKey);
   }).map((key) => roles[key]);
   // rolesBelow.unshift("Company")
-  console.log(rolesBelow);
 
-  return res.status(200).send({parentName:parentName,rolesBelow:rolesBelow})
+  return res.status(200).send({parentName:parentName,rolesBelow:rolesBelow,stateAllocated})
 },
 
 getIndianDistrict: async (req, res) => {

@@ -21,7 +21,7 @@
                 </tr>
                 
                 <tr class="hidden-row">
-                  <td>
+                  <td style="width: 295px;">
                     <select id="searchId" class="form-control search-user" name="state" oninput="getParentName()"></select>
                   </td>
                   <td>
@@ -43,7 +43,7 @@
               <p>New Assign Role</p>
               <table class="table table-bordered">
                 <tr class="hidden-row">
-                  <td>Select State</td>
+                  <td id="stateAllocationLabel">Select State</td>
                   <td>Frist Name</td>
                   <td>Last Name</td>
                 </tr>
@@ -64,7 +64,7 @@
                 <tr class="hidden-row">
                   <td>Phone Number</td>
                   <td>Email Id</td>
-                  <td>Select State</td>
+                  <td>Select User State</td>
                 </tr>
                 
                   <tr class="hidden-row">
@@ -81,11 +81,9 @@
                         <% }); %>
                       </select>
                     </td>
-                    
-                    
                   </tr>
                 <tr class="hidden-row">
-                  <td>Select District</td>
+                  <td>Select User District</td>
                   <td>Full Address</td>
                   <td>Pin Code</td>
                 </tr>
@@ -94,7 +92,7 @@
                     <td>
                       <select name="district" id="district" class="form-control">
                         <option value="">Select District</option>
-                        <!-- Options will be dynamically added here using JavaScript -->
+                      
                       </select>
                     </td>
                     
@@ -153,6 +151,7 @@
   </div>
   <%- include footer %>
     <script>
+      let stateAl;
       let a=[];
     const saveSettings = () => {
         const parentId = a[0];
@@ -163,7 +162,6 @@
         const email = document.getElementById("email").value;
         const userState = document.getElementById("userState").value;
         const userDistrict = document.getElementById("district").value;
-        // const postalCode = document.getElementById("postalCode").value;
         const address = document.getElementById("address").value;
         const pinCode = document.getElementById("pinCode").value;
         const aadharNumber = document.getElementById("aadharNumber").value;
@@ -208,10 +206,11 @@
       })
       .then(response => response.json())
       .then(response => {
-        console.log(response.rolesBelow[0]);
+        // console.log(response);
         const parentName = document.getElementById("parentName");
         parentName.value = response.parentName.name;
-  
+        
+        stateAl=response.parentName.stateAllocated
         const parentRole = document.getElementById("parentRole");
         parentRole.value = response.parentName.role;
   
@@ -225,18 +224,25 @@
     };
   
     const updateParentDropdown = (parentRole) => {
-      const stateAllocation = document.getElementById("stateAllocation");
-      
-      if (parentRole.toLowerCase() === "company") {
-        fetchIndianStates();
-        stateAllocation.removeAttribute("readonly"); // Show the dropdown
-      } else {
-        stateAllocation.innerHTML = '<option value="" selected>Please Select State</option>';
-        stateAllocation.setAttribute("readonly", "readonly"); // Hide the dropdown
-      }
-    };
-  
-    const fetchIndianStates = () => {
+  const stateAllocationLabel = document.getElementById("stateAllocationLabel");
+  const stateAllocation = document.getElementById("stateAllocation");
+// console.log("parentRole",parentRole);
+  if (parentRole.toLowerCase() === "state") {
+    stateAllocationLabel.innerText = "Select District";
+    getDistrictDataForParent(stateAl); 
+    stateAllocation.removeAttribute("readonly"); 
+  } else if (parentRole.toLowerCase() === "company") {
+    stateAllocationLabel.innerText = "Select State";
+    stateAllocation.removeAttribute("readonly");
+    fetchIndianStates();
+  } else {
+    stateAllocationLabel.innerText = "Select State";
+    stateAllocation.innerHTML = '<option value="" selected>Please Select State</option>';
+    stateAllocation.setAttribute("readonly", "readonly"); 
+  }
+};
+
+const fetchIndianStates = () => {
       fetch("/admin/getIndianStates", {
         method: "GET",
         headers: {
@@ -263,12 +269,13 @@
         console.error("Error fetching Indian states:", error);
       });
     };
+
   
     var table = $('#example').DataTable();
   
     $('.search-user').select2({
       allowClear: true,
-      placeholder: 'Search user',
+      placeholder: 'Search Parent',
       ajax: {
         url: '/admin/find_user',
         data: function (params) {
@@ -299,9 +306,9 @@
   <script>
 const getDistrictData = () => {
   const selectedState = document.getElementById("userState").value;
-  console.log("Selected State:", selectedState);
+  // console.log("Selected State:", selectedState,district);
 
-  fetch("/admin/getIndianDistrict?state=" + selectedState, {
+  fetch("/admin/getIndianDistrict?state=" + selectedState , {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -311,21 +318,16 @@ const getDistrictData = () => {
     .then(response => {
       console.log(response);
 
-      // Assuming response.districts is an array of district names
       const districts = response.district;
 
-      // Get the dropdown element
       const districtDropdown = document.getElementById("district");
 
-      // Clear existing options
       districtDropdown.innerHTML = "";
 
-      // Add default option
       const defaultOption = document.createElement("option");
       defaultOption.text = "Select District";
       districtDropdown.add(defaultOption);
 
-      // Add options for each district
       districts.forEach(district => {
         const option = document.createElement("option");
         option.value = district;
@@ -337,7 +339,36 @@ const getDistrictData = () => {
       console.error("Error fetching districts:", error);
     });
 };
+const getDistrictDataForParent = (stateAl) => {
 
+  fetch("/admin/getIndianDistrict?state=" + stateAl , {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+
+      let states2 = response.district;
+        // if (Array.isArray(states2) && states2.length > 0) {
+          const stateAllocation = document.getElementById("stateAllocation");
+          stateAllocation.innerHTML = "";
+          states2.map(state => {
+            const option = document.createElement("option");
+            option.value = state;
+            option.text = state;
+            stateAllocation.appendChild(option);
+          });
+        // } else {
+        //   console.log("No valid states data received.");
+        // }
+    })
+    .catch(error => {
+      console.error("Error fetching districts:", error);
+    });
+};
 
   </script>
   

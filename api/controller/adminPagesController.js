@@ -660,7 +660,7 @@ role="User"
     const data = await distributorController.addRankssData(req)
     
     res.render("admin/addRankCompany", {
-      title: "Add Rank",
+      title: "Add Distributer",
       type: "addRank",
       sub: "dashboard",
       sub2: "addRankCompany",
