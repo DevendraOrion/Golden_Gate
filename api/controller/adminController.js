@@ -293,47 +293,39 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
   },
   getAgentList: async (role) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
-    const roles = {
-      1: "Company",
-      2: "State",
-      3: "District",
-      4: "Zone",
-      5: "Agent",
-      6: "User",
-    };
-    const users = await User.find({
+
+    // const users = await User.find({
+    //   is_deleted: false,
+    //   role:{$eq:role}
+    // })
+    //   .sort({
+    //     created_at: -1
+    //   })
+
+const users = await User.aggregate([
+  {
+    $match: {
       is_deleted: false,
-      role:{$eq:role}
-    })
-      .sort({
-        created_at: -1
-      })
-      // .limit(limit);
-      // console.log(users)
-    const list = await Promise.all(
-      users.map(async (u) => {
-        let gamePlayedCount = await Table.countDocuments({
-          "players.id": u._id,
-        });
-        // console.log(u);
-        return {
-          id: u._id,
-          username: u.name,
-          numeric_id: u.numeric_id,
-          search_id: u.search_id,
-          role: u.role,
-          google_id:u.email,
-          game_played: u.gamecount,
-          wallet: u.balance,
-          // win: u.win_wallet,
-          is_active: u.is_active,
-          // email_verified: u.email_verified,
-          kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
-          // otp_verified: u.otp_verified,
-          created_at: await Service.formateDateandTime(u.created_at),
-        };
-      })
-    );
+      role: { $eq: role }
+    }
+  },
+  {
+    $sort: {
+      created_at: -1
+    }
+  }
+]);
+
+let parentData = await Promise.all(users.map(async (a) => {
+  let Data = await User.findOne({ _id: a.parent });
+  return {
+    ...a,
+    parentDatas: Data
+  };
+}));
+// console.log(await parentData);
+const list=await parentData
+
     let count = await User.find({
       is_deleted: false,
     }).countDocuments();
@@ -343,49 +335,30 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
     };
   },
   getChildList: async (id) => {
-    //logger.info('ADMIN USER LIST REQUEST >> ');
-    const roles = {
-      1: "Company",
-      2: "State",
-      3: "District",
-      4: "Zone",
-      5: "Agent",
-      6: "User",
-    };
-    const users = await User.find({
-      is_deleted: false,
-      // role:{$ne:"User"}
-      parent:id
-    })
-      .sort({
-        created_at: -1
-      })
-      // .limit(limit);
-      // console.log(users)
-    const list = await Promise.all(
-      users.map(async (u) => {
-        let gamePlayedCount = await Table.countDocuments({
-          "players.id": u._id,
-        });
-        // console.log(u);
+
+      const users = await User.aggregate([
+        {
+          $match: {
+            is_deleted: false,
+            parent:id
+          }
+        },
+        {
+          $sort: {
+            created_at: -1
+          }
+        }
+      ]);
+      let parentData = await Promise.all(users.map(async (a) => {
+        let Data = await User.findOne({ _id: a.parent });
         return {
-          id: u._id,
-          username: u.name,
-          numeric_id: u.numeric_id,
-          search_id: u.search_id,
-          role: u.role,
-          google_id:u.email,
-          game_played: u.gamecount,
-          wallet: u.balance,
-          // win: u.win_wallet,
-          is_active: u.is_active,
-          // email_verified: u.email_verified,
-          kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
-          // otp_verified: u.otp_verified,
-          created_at: await Service.formateDateandTime(u.created_at),
+          ...a,
+          parentDatas: Data
         };
-      })
-    );
+      }));
+      console.log(await parentData);
+      const list=await parentData
+   
     let count = await User.find({
       is_deleted: false,
     }).countDocuments();
