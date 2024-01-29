@@ -31,6 +31,16 @@
                     <input name="parentRole" id="parentRole" class="form-control" readonly></input>
                   </td>
                 </tr>
+                <tr class="hidden-row">
+               
+                  <td>Allocation</td>
+                </tr>
+                
+                <tr class="hidden-row">
+                  <td>
+                    <input name="parentAllocation" id="parentAllocation" class="form-control" readonly></input>
+                  </td>
+                </tr>
                 
                 <!-- </tr> -->
               </table>
@@ -50,7 +60,7 @@
                 </tr>
                 
                   <tr class="hidden-row">
-                    <td id="stateHidden" style=" ">
+                    <td id="stateHidden" >
                       <select name="stateAllocation" id="stateAllocation" class="form-control" readonly >
                       </select>
                     </td>
@@ -129,11 +139,15 @@
                 <tr>
                 <tr class="hidden-row">
                   <td>User Role</td>
+                  <td>User Security Pin</td>
                   <td>Security Pin</td>
                 </tr>
                   <tr class="hidden-row">
                     <td>
                       <input name="userRole"   id="userRole" class="form-control" placeholder="User Role" readonly></input>
+                    </td>
+                    <td>
+                      <input name="userSecurityPin" type="number"  id="userSecurityPin" class="form-control" placeholder="Enter Security Pin "></input>
                     </td>
                     <td>
                       <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
@@ -184,12 +198,13 @@
         const password = document.getElementById("password").value;
         const cPassword = document.getElementById("cPassword").value;
         const securityPin = document.getElementById("securityPin").value;
+        const userSecurityPin = document.getElementById("userSecurityPin").value;
         const userRole = document.getElementById("userRole").value;
 
                console.log(districtData,districtAllocation);
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({parentId, stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
+          body: JSON.stringify({parentId, userSecurityPin,stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -222,7 +237,18 @@
       })
       .then(response => response.json())
       .then(response => {
-        // console.log(response);
+        console.log(response);
+        const allocation=document.getElementById("parentAllocation")
+        if(response.parentName.role==="State"){
+          allocation.value=response.parentName.stateAllocated
+        }
+        if(response.parentName.role==="District"){
+          allocation.value=response.parentName.districtAllocated
+        }
+        else if(response.parentName.role==="Zone"){
+          allocation.value=response.parentName.areaAllocation
+        }
+
         const parentName = document.getElementById("parentName");
         parentName.value = response.parentName.name;
         

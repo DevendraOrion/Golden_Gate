@@ -1537,7 +1537,7 @@ module.exports = {
                     }
                 },
                 {
-                    $limit: 30
+                    $limit: 10
                 },
                 {
                     $project: {

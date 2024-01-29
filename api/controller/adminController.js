@@ -208,39 +208,30 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
   },
   getUsersList: async (limit) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
-    const users = await User.find({
-      is_deleted: false,
-      role:"User"
-    })
-      .sort({
-        created_at: -1
-      })
-      .limit(limit);
-      console.log(users)
-    const list = await Promise.all(
-      users.map(async (u) => {
-        let gamePlayedCount = await Table.countDocuments({
-          "players.id": u._id,
-        });
-        // console.log(u);
-        return {
-          id: u._id,
-          username: u.name,
-          numeric_id: u.numeric_id,
-          search_id: u.search_id,
-          role: u.role,
-          google_id:u.email,
-          game_played: u.gamecount,
-          wallet: u.balance,
-          // win: u.win_wallet,
-          is_active: u.is_active,
-          // email_verified: u.email_verified,
-          kyc_status: u.kyc_verified ? u.kyc_verified.status : "unverified",
-          // otp_verified: u.otp_verified,
-          created_at: await Service.formateDateandTime(u.created_at),
-        };
-      })
-    );
+    const users = await User.aggregate([
+      {
+        $match: {
+          is_deleted: false,
+          role: "User"
+        }
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
+      }
+    ]);
+    
+    let parentData = await Promise.all(users.map(async (a) => {
+      let Data = await User.findOne({ _id: a.parent });
+      return {
+        ...a,
+        parentDatas: Data
+      };
+    }));
+    // console.log(await parentData);
+    const list=await parentData
+ 
     let count = await User.find({
       is_deleted: false,
     }).countDocuments();
@@ -6536,7 +6527,7 @@ saveCreateRankData: async (req, res) => {
 getParentName:async(req,res)=>{
   let stateAllocated=null;
   let searchID =  req.query.search_id
-  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1})
+  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1,districtAllocated:1,areaAllocation:1})
   stateAllocated=parentName.stateAllocated
   console.log(parentName);
 
@@ -7433,8 +7424,8 @@ editUserSave: async (req, res) => {
 },
   saveAddRankData: async (req, res) => {
   try {
-    const { parentId, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
-    console.log(parentId, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
+    const { parentId,userSecurityPin, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
+    console.log(parentId, userSecurityPin,stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
     let parentData= null
     if(parentId){
       parentData=await User.findOne({_id:parentId})
@@ -7490,7 +7481,7 @@ editUserSave: async (req, res) => {
   
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const hashedPin = await bcrypt.hash("1234", 10);
+    // const hashedPin = await bcrypt.hash("1234", 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
         numeric_id: -1
@@ -7542,39 +7533,12 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       district:userDistrict,
       address,
       pinCode,
-      security_pin:hashedPin
+      security_pin:userSecurityPin
 
     });
 
     let saveUserData=await saveData.save();
-//     let adminBalace=0
-// if(parentData){
-//    adminBalace=parentData.cash_balance-balance
-//    let balanceUpdate = await User.findByIdAndUpdate({_id:parentData._id}, {cash_balance:adminBalace})
-// }
 
-//     let newTxnAdmin = new Transaction({
-//       user_id: saveUserData._id,
-//       txn_amount: Number(balance),
-//       created_at: new Date().getTime(),
-//       transaction_type: "D",
-//       resp_msg:  `Deposit to ${firstName}` ,
-//       current_balance: adminBalace,
-//       is_status: "S",
-//       txn_mode: "A",
-//     })
-//     let txnAdmin = await newTxnAdmin.save();
-
-//     var newTxn = new Transaction({
-//       user_id: parentDataExist,
-//       txn_amount: Number(balance),
-//       created_at: new Date().getTime(),
-//       transaction_type: "C",
-//       resp_msg:  "Deposit by Admin",
-//       is_status: "S",
-//       txn_mode: "A",
-//     });
-//     let txnres = await newTxn.save();
 
     return res.send({
       status: 1,
