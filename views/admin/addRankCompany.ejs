@@ -50,18 +50,19 @@
                 </tr>
                 
                   <tr class="hidden-row">
-                    <td id="stateHidden" style="width: 259px; ">
+                    <td id="stateHidden" style=" ">
                       <select name="stateAllocation" id="stateAllocation" class="form-control" readonly >
                       </select>
                     </td>
-                    <td id="areaHidden" style="width: 259px; display: none;">
+                    <td id="areaHidden" style=" display: none;">
                       <input name="areaAllocation" id="areaAllocation" class="form-control" placeholder="Enter Area here...." >
                     </input>
                     </td>
-                    <td style=" width: 298px;">
+                    <td style="     width: 274px;
+                    ">
                       <input name="firstName" id="firstName" class="form-control" placeholder="Enter Frist Name here...."></input>
                     </td>
-                    <td>
+                    <td style="    width: 311px;">
                       <input name="lastName" id="lastName" class="form-control" placeholder="Enter Last Name here...."></input>
                     </td>
                   </tr>
@@ -267,7 +268,8 @@
     areaAllocationLabel.style.display = "none";
     areaAllocation.style.display = "none";
     areaHidden.style.display = "none";
-  } else if (parentRole.toLowerCase() === "district") {
+  } 
+  else if (parentRole.toLowerCase() === "district" ||parentRole.toLowerCase() === "zone") {
     // stateAllocationLabel.innerText = "Enter Area";
     // stateAllocation.setAttribute("readonly", "readonly");
     stateHidden.style.display = "none";
@@ -276,7 +278,18 @@
     areaAllocationLabel.style.display = "block";
     areaAllocation.style.display = "block";
     areaHidden.style.display = "block";
-  } else {
+  }
+  else if (parentRole.toLowerCase() === "agent") {
+    // stateAllocationLabel.innerText = "Enter Area";
+    // stateAllocation.setAttribute("readonly", "readonly");
+    stateHidden.style.display = "none";
+    stateAllocationLabel.style.display = "none";
+    stateAllocation.style.display = "none";
+    areaAllocationLabel.style.display = "none";
+    areaAllocation.style.display = "none";
+    areaHidden.style.display = "none";
+  }
+   else {
     stateAllocationLabel.innerText = "Select State";
     stateAllocation.innerHTML = '<option value="" selected>Please Select State</option>';
     stateAllocation.setAttribute("readonly", "readonly");
@@ -342,7 +355,7 @@ const fetchIndianStates = () => {
     });
   
     $(".search-user").on("select2:clearing", function (e) {
-      console.log('cleared');
+      // console.log('cleared');
       THAT_ID = "";
       table.ajax.reload();
     });
@@ -361,7 +374,7 @@ const getDistrictData = () => {
   })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
+      // console.log(response);
 
       const districts = response.district;
 
@@ -394,7 +407,7 @@ const getDistrictDataForParent = (stateAl) => {
   })
     .then(response => response.json())
     .then(response => {
-      console.log(response);
+      // console.log(response);
 
       let states2 = response.district;
           const stateAllocation = document.getElementById("stateAllocation");
