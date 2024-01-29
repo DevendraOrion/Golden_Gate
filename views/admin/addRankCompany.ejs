@@ -153,9 +153,17 @@
     <script>
       let stateAl;
       let a=[];
+      let districtData;
     const saveSettings = () => {
         const parentId = a[0];
-        const stateAllocation = document.getElementById("stateAllocation").value;
+        let  districtAllocation=""
+        let  stateAllocation = "";
+        if(districtData==true){
+          districtAllocation = document.getElementById("stateAllocation").value;
+        }else{
+
+          stateAllocation = document.getElementById("stateAllocation").value;
+        }
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const phone = document.getElementById("phone").value;
@@ -170,10 +178,10 @@
         const securityPin = document.getElementById("securityPin").value;
         const userRole = document.getElementById("userRole").value;
 
-               console.log(a);
+               console.log(districtData,districtAllocation);
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
+          body: JSON.stringify({parentId, stateAllocation,districtAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -230,7 +238,8 @@
   if (parentRole.toLowerCase() === "state") {
     stateAllocationLabel.innerText = "Select District";
     getDistrictDataForParent(stateAl); 
-    stateAllocation.removeAttribute("readonly"); 
+    stateAllocation.removeAttribute("readonly");
+    districtData=true 
   } else if (parentRole.toLowerCase() === "company") {
     stateAllocationLabel.innerText = "Select State";
     stateAllocation.removeAttribute("readonly");

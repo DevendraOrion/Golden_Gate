@@ -7460,7 +7460,7 @@ editUserSave: async (req, res) => {
 },
   saveAddRankData: async (req, res) => {
   try {
-    const { parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
+    const { parentId, stateAllocation, districtAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
     console.log(parentId, stateAllocation, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
     let parentData= null
     if(parentId){
@@ -7561,7 +7561,7 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       role:userRole,
       aadharNumber:aadharNumber,
       stateAllocated:stateAllocation,
-      districtAllocated:stateAllocation,
+      districtAllocated:districtAllocation,
       parent: parentDataExist,
       phone,
       state:userState, 
