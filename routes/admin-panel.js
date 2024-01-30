@@ -313,6 +313,7 @@ module.exports = function (router, io) {
   router.get("/admin/401", AdminPagesController.Unauthorized);
 
   router.get("/admin/find_user", UserController.findUser);
+  router.get("/admin/find_userByRole", UserController.findUserByRole);
   router.get("/admin/find_distributor", DistributorController.findDistributor);
   router.get("/admin/find_agent", AgentController.findAgent);
 

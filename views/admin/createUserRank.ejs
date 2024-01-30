@@ -128,7 +128,7 @@
                       <input name="parentName" id="parentName" class="form-control" value="User" readonly></input>
                     </td>
                     <td>
-                      <input name="usersecurityPin" type="number"  id="usersecurityPin" class="form-control" placeholder="Enter User Security Pin "></input>
+                      <input name="userSecurityPin" type="number"  id="userSecurityPin" class="form-control" placeholder="Enter User Security Pin "></input>
                     </td>
                   </tr>
                 <tr>
@@ -164,7 +164,7 @@
         let  districtAllocation=""
         let  stateAllocation = "";
         let  areaAllocation = "";
-
+        const userSecurityPin = document.getElementById("userSecurityPin").value;
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const phone = document.getElementById("phone").value;
@@ -179,10 +179,10 @@
         const securityPin = document.getElementById("securityPin").value;
         const userRole = "User"
         
-        console.log({parentId,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole})
+        // console.log({parentId,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole})
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({parentId, stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
+          body: JSON.stringify({parentId, stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole,userSecurityPin}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -224,7 +224,7 @@
         parentRole.value = response.parentName.role;
         
         const parentArea = document.getElementById("parentarea");
-        parentArea.value = "hell";
+        parentArea.value = response.parentName.areaAllocation
         
         const userRole=document.getElementById("userRole");
         userRole.value=response.rolesBelow[0]
@@ -237,19 +237,21 @@
     var table = $('#example').DataTable();
   
     $('.search-user').select2({
-      allowClear: true,
-      placeholder: 'Search Parent',
-      ajax: {
-        url: '/admin/find_user',
-        data: function (params) {
-          var query = {
-            search: params.term,
-            type: 'public'
-          }
-          return query;
-        }
-      }
-    });
+            allowClear: true,
+            placeholder: 'Search user',
+            ajax: {
+                url: '/admin/find_userByRole',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        type: 'public',
+                        role: "Agent"
+                    }
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            }
+        });
   
     $('.search-user').on('select2:select', function (e) {
       THAT_ID = e.params.data.id;

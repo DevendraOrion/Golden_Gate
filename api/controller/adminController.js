@@ -6529,7 +6529,7 @@ saveCreateRankData: async (req, res) => {
 getParentName:async(req,res)=>{
   let stateAllocated=null;
   let searchID =  req.query.search_id
-  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1,districtAllocated:1,areaAllocation:1})
+  const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1,districtAllocated:1,areaAllocation:1,cash_balance:1,winning_balance:1})
   stateAllocated=parentName.stateAllocated
   console.log(parentName);
 
@@ -7289,76 +7289,57 @@ if(parentData){
 },
 saveTransferPoint: async (req, res) => {
   try {
-    const { role , userSearchId, username, balance, securityPin } = req.body;
-    console.log(role , userSearchId, username, balance, securityPin);
-    Number(balance)
-    const user = await User.findOne({ search_id: userSearchId })
-    // const admin = await User.findOne({ search_id: req.admin.search_id })
-
+    const { role , userSearchId, securityPin, balance, walletType, debitCredit } = req.body;
+    console.log(role , userSearchId, securityPin, balance, walletType, debitCredit);
+    if(!role || !userSearchId || !securityPin || !balance || !walletType || !debitCredit){
+      return res.send({
+        status: 0,
+        Msg: "Please provide all parameters",
+      });
+    }
+    const user = await User.findOne({ _id: userSearchId })
     if (!user) {
         return res.json({ response: { status: false, message: 'Invalid User' } });
     }
 
-    if (user.cash_balance < balance) {
-        return res.json({ response: { status: false, message: 'Insufficient Balance' } });
-    }
+    if(debitCredit==="Credit"){
+      Number(balance)
+  
+      if (user.cash_balance < balance) {
+          return res.json({ response: { status: false, message: 'Insufficient Balance' } });
+      }
+      let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+      if(transcId.length==0){
+          transcId=0
+      }
+      else{
+          transcId=transcId[0].txn_id
+      }
+      transcId=transcId+1
+      const currentDate = new Date();
+      const day = currentDate.getDate().toString().padStart(2, '0');
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
+      const year = currentDate.getFullYear();
+      
+      const formattedDate = `${day}/${month}/${year}`;
+          var newTxn = new DepositRequests({
+            user_id: req.admin._id,
+            child_id: user._id,
+            txn_amount: Number(balance),
+            created_at: new Date().getTime(),
+            txn_id: transcId,
+            resp_msg:  `Chip by ${user.name}`,
+            is_status: "P",
+            txn_mode: "D",
+            showDate:formattedDate
+          });
+          let txnres = await newTxn.save();
+  
+    }else{
 
-
-
-    let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
-    if(transcId.length==0){
-        transcId=0
     }
-    else{
-        transcId=transcId[0].txn_id
-    }
-    transcId=transcId+1
-    const currentDate = new Date();
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); 
-    const year = currentDate.getFullYear();
     
-    const formattedDate = `${day}/${month}/${year}`;
-        var newTxn = new DepositRequests({
-          user_id: req.admin._id,
-          child_id: user._id,
-          txn_amount: Number(balance),
-          created_at: new Date().getTime(),
-          txn_id: transcId,
-          resp_msg:  `Chip by ${user.name}`,
-          is_status: "P",
-          txn_mode: "D",
-          showDate:formattedDate
-        });
-        let txnres = await newTxn.save();
-
-        // return res.status(200).json({status:true,message:'Success'})
-// let updateAmountUser= await User.updateOne({ _id: user._id }, { $inc: { cash_balance: point } });
-// let updateAmountParent= await User.updateOne({ _id: parentData._id }, { $inc: { cash_balance: -point } });
-// let parentAmount=parentData.cash_balance-point
-// // console.log(parentData)
-//     let newTxnAdmin = new Transaction({
-//       user_id: user._id,
-//       txn_amount: Number(point),
-//       created_at: new Date().getTime(),
-//       transaction_type: "D",
-//       resp_msg:  "Deposit by Admin",
-//       current_balance: parentAmount,
-//       is_status: "S",
-//       txn_mode: "A",
-//     })
-//     let txnAdmin = await newTxnAdmin.save();
-
-//     var newTxn = new Transaction({
-//       user_id: parentData._id,
-//       txn_amount: Number(point),
-//       created_at: new Date().getTime(),
-//       transaction_type: "C",
-//       resp_msg:  `Deposit to ${username}` ,
-//       is_status: "S",
-//       txn_mode: "A",
-//     });
-//     let txnres = await newTxn.save();
+      
 
     return res.send({
       status: 1,
@@ -7483,7 +7464,7 @@ editUserSave: async (req, res) => {
   
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    // const hashedPin = await bcrypt.hash("1234", 10);
+    const hashedPin = await bcrypt.hash(userSecurityPin, 10);
     var maxNumId = await User.find({}, ['numeric_id'])
     .sort({
         numeric_id: -1
@@ -7535,7 +7516,7 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
       district:userDistrict,
       address,
       pinCode,
-      security_pin:userSecurityPin
+      security_pin:hashedPin
 
     });
 
