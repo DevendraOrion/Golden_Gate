@@ -850,6 +850,7 @@ role="User"
   stateMGT: async (req, res) => {
     let role="State"
     const users = await AdminController.getAgentList(role);
+    // console.log(users.list);
     res.render("admin/agentsMGT", {
       title: "State List",
       type: "usersMGT",
