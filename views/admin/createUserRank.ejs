@@ -194,7 +194,10 @@
               icon: response.status == 1 ? "success" : "error",
               title: response.Msg
             }).then(() => {
-              window.location.reload();
+              if(response.status==1){
+                  // console.log("hi");
+                window.location.reload();
+              }
             });
           })
           .catch((error) => {
