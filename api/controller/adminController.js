@@ -7619,89 +7619,66 @@ let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
     });
   }
 },
-  saveCommissionMgt: async (req, res) => {
-// const saveAddRankData = async (req, res) => {
+saveCommissionMgt: async (req, res) => {
   try {
-    const { CarRoullete,Avaitor,Roullete,type } = req.body;
-const user=req.admin
-// console.log(CarRoullete,Avaitor,Roullete,type,user._id);
+    const { gameType, rowData } = req.body;
+    const user = req.admin;
 
-if(type==="State"){
-// const compareData=await Commission.findOne({type:"Company"})
-if(100<CarRoullete || 100<Avaitor || 100<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="District"){
-const compareData=await Commission.findOne({type:"State"})
-if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="Zone"){
-const compareData=await Commission.findOne({type:"District"})
-if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="Agent"){
-const compareData=await Commission.findOne({type:"Zone"})
-if(compareData.CarRoullete<CarRoullete || compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
+    console.log(rowData);
 
+    // Sort rowData array by rankId in ascending order
+    const sortedData = rowData.sort((a, b) => parseInt(a.rankId) - parseInt(b.rankId));
 
-if(!CarRoullete || !Avaitor || !Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Please provide all parameters",
-  });
-}
-const findData=await Commission.findOne({user:user._id,type:type})
-if(findData){
-  // console.log("==============");
-  let a=await Commission.findOneAndUpdate({user:user._id,type:type},{
-    CarRoullete:CarRoullete,
-    Avaitor:Avaitor,
-    Roullete:Roullete,
-    type:type
-  })
-  // console.log(a);
-  return res.send({
-    status: 1,
-    Msg: localization.success,
-  });
-}else{
-  const data= new Commission()
-  data.CarRoullete=CarRoullete
-  data.Avaitor=Avaitor
-  data.Roullete=Roullete
-  data.type=type
-  data.user=user._id
-  await data.save()
-  return res.send({
-    status: 1,
-    Msg: localization.success,
-  });
-}
+    for (let i = 1; i < sortedData.length; i++) {
+      const currentRank = sortedData[i];
+      const previousRank = sortedData[i - 1];
 
-  } catch (err) {
-    console.error("Error saving data:", err);
-    return res.send({
+      const currentAvailableCommission = parseInt(currentRank.availableCommission);
+      const previousDownline = parseInt(previousRank.downline);
+      const currentOwnCommission = parseInt(currentRank.ownCommission);
+      const currentMinCommission = parseInt(currentRank.minCommission);
+
+      if (currentAvailableCommission > previousDownline) {
+        return res.status(400).json({
+          status: 0,
+          Msg: `Available Commission for Rank ${currentRank.rankName} cannot be higher than Downline of Rank ${previousRank.rankName}.`
+        });
+      }
+
+      if (currentOwnCommission < currentMinCommission) {
+        return res.status(400).json({
+          status: 0,
+          Msg: `Own Commission for Rank ${currentRank.rankName} cannot be less than Minimum Commission.`
+        });
+      }
+    }
+
+    // All checks passed, update the database
+    const commissionUpdates = sortedData.map(async (com) => {
+      await Commission.updateOne(
+        { gameType: gameType, rankId: com.rankId },
+        { $set: com },
+        { upsert: true }
+      );
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(commissionUpdates);
+
+    res.status(200).json({
+      status: 1,
+      Msg: "Commission data saved successfully."
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
       status: 0,
-      Msg: localization.ServerError,
+      Msg: "Internal server error."
     });
   }
-},
+}
+
+,
 saveCommissionLimit: async (req, res) => {
 // const saveAddRankData = async (req, res) => {
   try {

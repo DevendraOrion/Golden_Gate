@@ -4,24 +4,34 @@ var mongoose = require('mongoose'),
 var config = require('./../../config');
 
 var Commission = new Schema({
-    type: {
+    gameType: {
         type: String,
         required: true
     },
-    user:{
+    rankId:{
         type:String,
     },
-    CarRoullete: {
-        type: Number,
-        default:0
+    rankName:{
+        type:String,
     },
-    Avaitor:{
-        type: Number,
-        default:0
+    userId:{
+        type:String,
     },
-    Roullete:{
+    availableCommission: {
         type: Number,
-        default:0
+        // default:0
+    },
+    downline:{
+        type: Number,
+        // default:0
+    },
+    ownCommission:{
+        type: Number,
+        // default:0
+    },
+    minCommission:{
+        type: Number,
+        // default:0
     },
    
 });

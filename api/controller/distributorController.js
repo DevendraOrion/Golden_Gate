@@ -183,9 +183,9 @@ module.exports = {
 
     const maxIndex = Math.max(...Object.keys(roles).map(Number));
     roles[1] = "Company";
-    roles[maxIndex + 1] = "User";
+    // roles[maxIndex + 1] = "User";
 
-    console.log(roles);
+    // console.log(roles);
 
     const data = user.role;
 
@@ -244,15 +244,23 @@ module.exports = {
   },
 
   commission_management: async (req, limit) => {
-    let Company = await Commission.find({ type: "Company" })
-    let State = await Commission.find({ type: "State" })
-    let District = await Commission.find({ type: "District" })
-    let Zone = await Commission.find({ type: "Zone" })
-    let Agent = await Commission.find({ type: "Agent" })
-    let User = await Commission.find({ type: "User" })
-    // console.log(Company[0],State[0],District[0],Zone[0],Agent[0],User[0]);
-
-    return { Company, State, District, Zone, Agent, User }
+    // const RankData=await Rank_Data.find({}).sort({rankId:1})
+    const RankData=await Rank_Data.aggregate([
+      {
+        $lookup: {
+          from: "commissions",
+          localField: "rankId",
+          foreignField: "rankId",
+          as: "commissionData",
+        },
+      },{
+        $unwind: "$commissionData"
+      },{
+        $sort:{rankId:1}
+      }
+    ])
+    // console.log(RankData);
+    return { RankData }
 
   },
 
