@@ -245,7 +245,7 @@ module.exports = {
 
   commission_management: async (req, limit) => {
     // const RankData=await Rank_Data.find({}).sort({rankId:1})
-    const RankData=await Rank_Data.aggregate([
+    const RoulleteData=await Rank_Data.aggregate([
       {
         $lookup: {
           from: "commissions",
@@ -253,14 +253,64 @@ module.exports = {
           foreignField: "rankId",
           as: "commissionData",
         },
-      },{
+      },
+      {
         $unwind: "$commissionData"
-      },{
+      },
+      {
+        $match:{
+          "commissionData.gameType":"Roulette"
+        }
+      },
+      {
         $sort:{rankId:1}
       }
     ])
-    // console.log(RankData);
-    return { RankData }
+    const CardRoulleteData=await Rank_Data.aggregate([
+      {
+        $lookup: {
+          from: "commissions",
+          localField: "rankId",
+          foreignField: "rankId",
+          as: "commissionData",
+        },
+      },
+      {
+        $unwind: "$commissionData"
+      },
+      {
+        $match:{
+          "commissionData.gameType":"CardRoulette"
+        }
+      },
+      {
+        $sort:{rankId:1}
+      }
+    ])
+    const AvaitorData=await Rank_Data.aggregate([
+      {
+        $lookup: {
+          from: "commissions",
+          localField: "rankId",
+          foreignField: "rankId",
+          as: "commissionData",
+        },
+      },
+      {
+        $unwind: "$commissionData"
+      },
+      {
+        $match:{
+          "commissionData.gameType":"Aviator"
+        }
+      },
+      {
+        $sort:{rankId:1}
+      }
+    ])
+
+    console.log(RoulleteData.length,AvaitorData.length,CardRoulleteData.length);
+    return { RoulleteData,AvaitorData,CardRoulleteData }
 
   },
 

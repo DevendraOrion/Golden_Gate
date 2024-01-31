@@ -37,32 +37,131 @@
                   <th>Own Commission</th>
                   <th>Minimum Commission</th>
                 </tr>
-                <% for (const d of data.RankData) { %>
-                  <tr data-rank-id="<%= d.rankId %>">
-                    <input type="hidden" id="gameType" class="form-control" value="Roulette" readonly>
+                <% for (const d of data.RoulleteData) { %>
+                  <tr data-rank-id="<%= d.rankId %>" data-game-type="Roulette">
+                    <input type="hidden" id="gameTypeRoulette" class="form-control" value="Roulette" readonly>
                     <td>
-                      <input type="number" id="rankId<%= d.rankId %>" class="form-control" value="<%= d.rankId %>" readonly>
+                      <input type="number" id="rankIdRoulette<%= d.rankId %>" class="form-control" value="<%= d.rankId %>" readonly>
                     </td>
                     <td>
-                      <input id="rankName<%= d.rankId %>" class="form-control" value="<%= d.rankName %>" readonly>
+                      <input id="rankNameRoulette<%= d.rankId %>" class="form-control" value="<%= d.rankName %>" readonly>
                     </td>
                     <td>
-                      <input id="availableCommission<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission(<%= d.rankId %>)">
+                      <input id="availableCommissionRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission('Roulette', <%= d.rankId %>)">
                     </td>
                     <td>
-                      <input id="downline<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.downline ?? 0 %>" oninput="updateOwnCommission(<%= d.rankId %>)">
+                      <input id="downlineRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.downline ?? 0 %>" oninput="updateOwnCommission('Roulette', <%= d.rankId %>)">
                     </td>
                     <td>
-                      <input id="ownCommission<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.ownCommission ?? 0 %>" readonly>
+                      <input id="ownCommissionRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.ownCommission ?? 0 %>" readonly>
                     </td>
                     <td>
-                      <input id="minCommission<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.minCommission ?? 0 %>" >
+                      <input id="minCommissionRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.minCommission ?? 0 %>" >
                     </td>
                   </tr>
                 <% } %>
                 <tr>
                   <td>
-                    <button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="saveCommission()">
+                    <button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="saveCommission('Roulette')">
+                      Save
+                    </button>
+                    
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 d-flex">
+        <div class="col-md-12 flex-fill">
+          <h3>Avaitor</h3>
+          <div class="box box-danger">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Rank Id</th>
+                  <th>Rank Name</th>
+                  <th>Available</th>
+                  <th>DownLine</th>
+                  <th>Own Commission</th>
+                  <th>Minimum Commission</th>
+                </tr>
+                <% for (const d of data.AvaitorData) { %>
+                  <tr data-rank-id="<%= d.rankId %>" data-game-type="Aviator">
+                    <input type="hidden" id="gameTypeAviator" class="form-control" value="Aviator" readonly>
+                    <td>
+                      <input type="number" id="rankIdAviator<%= d.rankId %>" class="form-control" value="<%= d.rankId %>" readonly>
+                    </td>
+                    <td>
+                      <input id="rankNameAviator<%= d.rankId %>" class="form-control" value="<%= d.rankName %>" readonly>
+                    </td>
+                    <td>
+                      <input id="availableCommissionAviator<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission('Aviator', <%= d.rankId %>)">
+                    </td>
+                    <td>
+                      <input id="downlineAviator<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.downline ?? 0 %>" oninput="updateOwnCommission('Aviator', <%= d.rankId %>)">
+                    </td>
+                    <td>
+                      <input id="ownCommissionAviator<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.ownCommission ?? 0 %>" readonly>
+                    </td>
+                    <td>
+                      <input id="minCommissionAviator<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.minCommission ?? 0 %>" >
+                    </td>
+                  </tr>
+                <% } %>
+                <tr>
+                  <td>
+                    <button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="saveCommission('Aviator')">
+                      Save
+                    </button>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 d-flex">
+        <div class="col-md-12 flex-fill">
+          <h3>Card Roulette</h3>
+          <div class="box box-danger">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <tr>
+                  <th>Rank Id</th>
+                  <th>Rank Name</th>
+                  <th>Available</th>
+                  <th>DownLine</th>
+                  <th>Own Commission</th>
+                  <th>Minimum Commission</th>
+                </tr>
+                <% for (const d of data.CardRoulleteData) { %>
+                  <tr data-rank-id="<%= d.rankId %>" data-game-type="CardRoulette">
+                    <input type="hidden" id="gameTypeCardRoulette" class="form-control" value="CardRoulette" readonly>
+                    <td>
+                      <input type="number" id="rankIdCardRoulette<%= d.rankId %>" class="form-control" value="<%= d.rankId %>" readonly>
+                    </td>
+                    <td>
+                      <input id="rankNameCardRoulette<%= d.rankId %>" class="form-control" value="<%= d.rankName %>" readonly>
+                    </td>
+                    <td>
+                      <input id="availableCommissionCardRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission('CardRoulette', <%= d.rankId %>)">
+                    </td>
+                    <td>
+                      <input id="downlineCardRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.downline ?? 0 %>" oninput="updateOwnCommission('CardRoulette', <%= d.rankId %>)">
+                    </td>
+                    <td>
+                      <input id="ownCommissionCardRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.ownCommission ?? 0 %>" readonly>
+                    </td>
+                    <td>
+                      <input id="minCommissionCardRoulette<%= d.rankId %>" class="form-control" value="<%= d?.commissionData.minCommission ?? 0 %>" >
+                    </td>
+                  </tr>
+                <% } %>
+                <tr>
+                  <td>
+                    <button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="saveCommission('CardRoulette')">
                       Save
                     </button>
                   </td>
@@ -79,46 +178,45 @@
 <!-- /.content-wrapper -->
 <%- include footer %>
 <script>
-  const updateOwnCommission = (rankId) => {
-    const availableValue = parseFloat(document.getElementById(`availableCommission${rankId}`).value) || 0;
-    const downlineValue = parseFloat(document.getElementById(`downline${rankId}`).value) || 0;
-    const ownCommissionElement = document.getElementById(`ownCommission${rankId}`);
-    const ownCommissionValue = availableValue - downlineValue;
+const updateOwnCommission = (gameType, rankId) => {
+  const availableValue = parseFloat(document.getElementById(`availableCommission${gameType}${rankId}`).value) || 0;
+  const downlineValue = parseFloat(document.getElementById(`downline${gameType}${rankId}`).value) || 0;
+  const ownCommissionElement = document.getElementById(`ownCommission${gameType}${rankId}`);
+  const ownCommissionValue = availableValue - downlineValue;
 
-    ownCommissionElement.value = ownCommissionValue;
-  };
+  ownCommissionElement.value = ownCommissionValue;
+};
 
-  const saveCommission = () => {
-    const gameType = document.getElementById("gameType").value;
-    const dataRows = document.querySelectorAll('tr[data-rank-id]');
-    const rowData = [];
+const saveCommission = (gameType) => {
+  const dataRows = document.querySelectorAll(`tr[data-rank-id][data-game-type="${gameType}"]`);
+const rowData = [];
 
-    dataRows.forEach(row => {
-      const rankId = row.getAttribute('data-rank-id');
-      const rankName = document.getElementById(`rankName${rankId}`).value;
-      const availableCommission = document.getElementById(`availableCommission${rankId}`).value;
-      const downline = document.getElementById(`downline${rankId}`).value;
-      const ownCommission = document.getElementById(`ownCommission${rankId}`).value;
-      const minCommission = document.getElementById(`minCommission${rankId}`).value;
+dataRows.forEach((row) => {
+  const rankId = row.getAttribute("data-rank-id");
+  const rankName = document.getElementById(`rankName${gameType}${rankId}`).value;
+  const availableCommission = document.getElementById(`availableCommission${gameType}${rankId}`).value;
+  const downline = document.getElementById(`downline${gameType}${rankId}`).value;
+  const ownCommission = document.getElementById(`ownCommission${gameType}${rankId}`).value;
+  const minCommission = document.getElementById(`minCommission${gameType}${rankId}`).value;
 
-      rowData.push({ rankId, rankName, availableCommission, downline, ownCommission, minCommission });
-    });
+  rowData.push({ rankId, rankName, availableCommission, downline, ownCommission, minCommission });
+});
 
-    fetch("/admin/saveCommission-mgt", {
-      method: "POST",
-      body: JSON.stringify({ gameType, rowData }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(response => response.json())
-    .then(response => {
+  fetch("/admin/saveCommission-mgt", {
+    method: "POST",
+    body: JSON.stringify({ gameType, rowData }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((response) => {
       const title = response.status == 1 ? "Success" : "Error";
       swal({
         icon: response.status == 1 ? "success" : "error",
-        title: response.Msg
+        title: response.Msg,
       }).then(() => {
-        if(response.status == 1){
+        if (response.status == 1) {
           window.location.reload();
         }
       });
@@ -129,5 +227,7 @@
         window.location.reload();
       });
     });
-  };
+};
+
+
 </script>

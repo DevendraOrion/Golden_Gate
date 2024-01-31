@@ -7624,9 +7624,8 @@ saveCommissionMgt: async (req, res) => {
     const { gameType, rowData } = req.body;
     const user = req.admin;
 
-    console.log(rowData);
+    console.log(rowData.length);
 
-    // Sort rowData array by rankId in ascending order
     const sortedData = rowData.sort((a, b) => parseInt(a.rankId) - parseInt(b.rankId));
 
     for (let i = 1; i < sortedData.length; i++) {
