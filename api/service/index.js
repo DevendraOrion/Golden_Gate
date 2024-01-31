@@ -168,7 +168,10 @@ module.exports = {
                     : res.redirect('/');
                     else if (
                         us.role === config.ADMIN_ROLES.Company ||
-                        config.ADMIN_ACCESS[us.role].indexOf(path) > -1
+                        us.role === config.ADMIN_ROLES.State ||
+                        us.role === config.ADMIN_ROLES.District ||
+                        us.role === config.ADMIN_ROLES.Zone ||
+                        us.role === config.ADMIN_ROLES.Agent
                         ) {
                             req.admin = us;
                             return next();

@@ -196,6 +196,8 @@
                     </span>
                   </a>
                   <ul class="treeview-menu">
+                    <% if (admin.role=='Company') { %>
+                 
                     <li class="<% if(sub2 =='state') {%> active <% } %> "><a href="/stateMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> State</a></li>
                     <li class="<% if(sub2 =='district') {%> active <% } %> "><a href="/districtMGT"><i
@@ -204,6 +206,7 @@
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+                          <% } %>
                   </ul>
                 </li>
             <!-- 
@@ -224,7 +227,7 @@
             </ul>
           </li> -->
 
-            <% if (admin.role=='Company' ) { %>
+            <% if (admin.role=='Company'||admin.role=='State' ) { %>
 
               <!-- <li class="<% if(type=='kyc') {%> active <% } %>"><a href="/kycrequest"><i class="fa fa-hourglass-start"></i>
               <span>KYC Management</span></a></li> -->
