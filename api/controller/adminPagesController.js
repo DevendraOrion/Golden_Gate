@@ -687,11 +687,11 @@ role="User"
   commissionLimit: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){
-    const data = await distributorController.commission_management(req)
+    const data = await distributorController.profitPercent(req)
     // console.log(req.admin);
-    res.render("admin/commissionLimit", {
-      title: "Commission Limit",
-      type: "commission-limit",
+    res.render("admin/profit-management", {
+      title: "Profit Percentage Management",
+      type: "profit-management",
       sub: "dashboard",
       sub2: "",
       host: config.pre + req.headers.host,

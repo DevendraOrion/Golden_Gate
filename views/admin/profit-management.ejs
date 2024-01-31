@@ -1,0 +1,130 @@
+<%- include header %>
+  <style>
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+    }
+
+    .card-body {
+      background-color: #f8f9fa;
+      padding: 10px;
+    }
+  </style>
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="row">
+            <div class="col-md-12 d-flex">
+            
+          <div class="col-md-6 flex-fill">
+
+            <div class="box box-danger">
+              <div class="box-body">
+                <table class="table table-bordered">
+                  <%console.log(data)%>
+                  <tr>
+                    <th>Card Roullete</th>
+                    <td>
+                      <input type="hidden" id="ctype" class="form-control" value="Card Roullete">
+                      <input  id="cardRoullete" class="form-control" value="<%= data?.cardRoulletedata.gamePercent ?? 0 %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Avaitor</th>
+                    <td>
+                      <input type="hidden" id="atype" class="form-control" value="Avaitor">
+                      <input  id="avaitor" class="form-control" value="<%= data?.Avaitordata.gamePercent ?? 0 %>">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="saveSettingsCompany()">
+                        Save
+                    </button></td>
+                </tr>
+                </table>
+              </div>
+            </div>
+          </div> 
+        </div>
+       
+      </div>
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <%- include footer %>
+  <script>
+    const saveSettingsCompany = () => {
+     
+      const atype = document.getElementById("atype").value;
+      const ctype = document.getElementById("ctype").value;
+      const cardRoullete = document.getElementById("cardRoullete").value;
+      const avaitor = document.getElementById("avaitor").value;
+      // const type = document.getElementById("type").getAttribute("data-type"); 
+      console.log(atype, ctype, cardRoullete, avaitor);
+      fetch("/admin/save-profit-percent", {
+        method: "POST",
+        body: JSON.stringify({ atype,ctype, cardRoullete, avaitor }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(response => response.json())
+        .then(response => {
+          const title = response.status == 1 ? "Success" : "Error";
+          swal({
+            icon: response.status == 1 ? "success" : "error",
+            title: response.Msg
+          }).then(() => {
+            window.location.reload();
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          swal({ icon: "error", title: "An error occurred" }).then(() => {
+            window.location.reload();
+          });
+        });
+    };
+    const saveSettingsState = () => {
+
+      const Roullete = document.getElementById("stateRoullete").value;
+      const Avaitor = document.getElementById("stateAvaitor").value;
+ 
+      const type = document.getElementById("typeState").getAttribute("data-type"); 
+      fetch("/admin/saveCommission-limit", {
+        method: "POST",
+        body: JSON.stringify({  Avaitor, Roullete,type }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(response => response.json())
+        .then(response => {
+          const title = response.status == 1 ? "Success" : "Error";
+          swal({
+            icon: response.status == 1 ? "success" : "error",
+            title: response.Msg
+          }).then(() => {
+            window.location.reload();
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          swal({ icon: "error", title: "An error occurred" }).then(() => {
+            window.location.reload();
+          });
+        });
+    };
+  
+  </script>

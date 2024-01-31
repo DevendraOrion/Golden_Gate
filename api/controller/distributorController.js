@@ -4,6 +4,7 @@ const Distributor = require('../models/distributor'),
   { AccessLog } = require('./../models/accessLog'),
   { User } = require('./../models/user'),
   { Rank_Data } = require("./../models/rankData"),
+  { ProfitPercent } = require("./../models/profitPercent"),
   Service = require('./../service'),
   config = require('./../../config'),
   logger = require('./../service/logger'),
@@ -243,6 +244,13 @@ module.exports = {
     return ({ data, user })
   },
 
+  profitPercent: async (req, limit) => {
+const Avaitordata=await ProfitPercent.findOne({gameType: 'Avaitor'})
+const cardRoulletedata=await ProfitPercent.findOne({gameType: 'Card Roullete'})
+// console.log(data);
+return {Avaitordata,cardRoulletedata}
+
+  },
   commission_management: async (req, limit) => {
     // const RankData=await Rank_Data.find({}).sort({rankId:1})
     const RoulleteData=await Rank_Data.aggregate([
@@ -309,7 +317,7 @@ module.exports = {
       }
     ])
 
-    console.log(RoulleteData.length,AvaitorData.length,CardRoulleteData.length);
+    // console.log(RoulleteData.length,AvaitorData.length,CardRoulleteData.length);
     return { RoulleteData,AvaitorData,CardRoulleteData }
 
   },

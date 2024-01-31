@@ -14,6 +14,7 @@ var SuperAdmin = require("./../models/superAdmin"),
    Commission  = require("./../models/commission"),
   { Banners } = require("./../models/banners"),
   { AccessLog } = require("./../models/accessLog"),
+  { ProfitPercent } = require("./../models/profitPercent"),
   Table = require("./../models/table"),
   Admin = require("./../models/superAdmin"),
   noticeData = require("./../models/notice-data"),
@@ -7624,7 +7625,7 @@ saveCommissionMgt: async (req, res) => {
     const { gameType, rowData } = req.body;
     const user = req.admin;
 
-    console.log(rowData.length);
+    // console.log(rowData.length);
 
     const sortedData = rowData.sort((a, b) => parseInt(a.rankId) - parseInt(b.rankId));
 
@@ -7681,76 +7682,20 @@ saveCommissionMgt: async (req, res) => {
 saveCommissionLimit: async (req, res) => {
 // const saveAddRankData = async (req, res) => {
   try {
-    const { Avaitor,Roullete,type } = req.body;
-const user=req.admin
-// console.log(CarRoullete,Avaitor,Roullete,type,user._id);
-
-if(type==="State"){
-const compareData=await Commission.findOne({type:"Company"})
-if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
+    const { atype,ctype, cardRoullete, avaitor } = req.body;
+    const user=req.admin
+if(!atype || !ctype || !cardRoullete || !avaitor){
   return res.send({
     status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="District"){
-const compareData=await Commission.findOne({type:"State"})
-if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="Zone"){
-const compareData=await Commission.findOne({type:"District"})
-if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-if(type==="Agent"){
-const compareData=await Commission.findOne({type:"Zone"})
-if( compareData.Avaitor<Avaitor || compareData.Roullete<Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Commission is Higher than above level",
-  });
-}}
-
-
-if( !Avaitor || !Roullete){
-  return res.send({
-    status: 0,
-    Msg: "Please provide all parameters",
+    Msg: "Please Provide full parameter",
   });
 }
-const findData=await Commission.findOne({user:user._id,type:type})
-if(findData){
-  // console.log("==============");
-  let a=await Commission.findOneAndUpdate({user:user._id,type:type},{
-    Avaitor:Avaitor,
-    Roullete:Roullete,
-    type:type
-  })
-  // console.log(a);
-  return res.send({
-    status: 1,
-    Msg: localization.success,
-  });
-}else{
-  const data= new Commission()
-  // data.CarRoullete=CarRoullete
-  data.Avaitor=Avaitor
-  data.Roullete=Roullete
-  data.type=type
-  data.user=user._id
-  await data.save()
-  return res.send({
-    status: 1,
-    Msg: localization.success,
-  });
-}
+    const updateDataAvaitor=await ProfitPercent.updateOne({gameType:atype},{$set:{gamePercent:avaitor}},{upsert:true})
+    const updateDataRoullete=await ProfitPercent.updateOne({gameType:ctype},{$set:{gamePercent:cardRoullete}},{upsert:true})
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
 
   } catch (err) {
     console.error("Error saving data:", err);

@@ -378,9 +378,9 @@ module.exports = function (router, io) {
   router.get("/user/accept-request", AdminController.acceptRequest);
   router.get("/user/delete-distributor", AdminController.deleteDistributor);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
-  router.get("/commission-limit", AdminPagesController.commissionLimit);
+  router.get("/profit-management", AdminPagesController.commissionLimit);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);
-  router.post("/admin/saveCommission-limit", AdminController.saveCommissionLimit);
+  router.post("/admin/save-profit-percent", AdminController.saveCommissionLimit);
 
   // Banners management
   router.get("/banners", AdminPagesController.bannerList);
