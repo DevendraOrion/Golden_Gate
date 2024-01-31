@@ -7323,6 +7323,13 @@ saveTransferPoint: async (req, res) => {
         Msg: "Please provide all parameters",
       });
     }
+    var rez1 = await bcrypt.compare(securityPin, req.admin.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
     const user = await User.findOne({ _id: userSearchId })
     // console.log(user)
     if (!user) {
