@@ -7530,11 +7530,11 @@ editUserSave: async (req, res) => {
     });
      }
  
-    let emails = await User.findOne({ email });
+    let emails = await User.findOne({ phone });
       if (emails) {
         return res.send({
           status: 0,
-          Msg: "Email already exists",
+          Msg: "Phone No. already exists",
         });
       }
    
