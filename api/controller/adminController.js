@@ -293,7 +293,7 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
     };
   },
   getAgentList: async (role,adminData) => {
-
+if(adminData.role==="Company"){
 // console.log("User",user)
 const users = await User.aggregate([
   {
@@ -360,6 +360,75 @@ const list=await parentData
       list,
       count,
     };
+}else{
+  console.log("++++++++++++++++++++",adminData._id)
+const users = await User.aggregate([
+  {
+    $match: {
+      is_deleted: false,
+      // role: { $eq: role },
+      parent:adminData._id
+    }
+  },
+  {
+    $sort: {
+      created_at: -1
+    }
+  }
+]);
+
+let parentData = await Promise.all(users.map(async (a) => {
+  let state=0
+  let district=0
+  let zone=0
+  let agent=0
+  let user=0
+  let Data = await User.findOne({ _id: a.parent });
+  let childData = await User.find({ parent: a._id });
+  if(childData){
+    childData.map((child)=>{
+      // console.log(child)
+      if(child.role==="District"){
+        state++
+      }
+      if(child.role==="District"){
+        district++
+      }
+      if(child.role==="Zone"){
+        zone++
+      }
+      if(child.role==="Agent"){
+        agent++
+      }
+      if(child.role==="User"){
+        user++
+      }
+    })
+  }
+  return {
+    ...a,
+    parentDatas: Data,
+    childData: childData,
+    stateCount:state,
+    districtCount:district,
+    zoneCount:zone,
+    agentCount:agent,
+    userCount:user,
+  };
+}));
+// console.log(parentData);
+
+const list=await parentData
+
+    let count = await User.find({
+      is_deleted: false,
+    }).countDocuments();
+    return {
+      list,
+      count,
+    };
+}
+
   },
 
 
@@ -7719,18 +7788,10 @@ saveCommissionMgt: async (req, res) => {
       const previousRank = sortedData[i - 1];
 
       const currentAvailableCommission = parseInt(currentRank.availableCommission);
-      const previousDownline = parseInt(previousRank.downline);
-      const currentOwnCommission = parseInt(currentRank.ownCommission);
+
       const currentMinCommission = parseInt(currentRank.minCommission);
 
-      if (currentAvailableCommission > previousDownline) {
-        return res.status(400).json({
-          status: 0,
-          Msg: `Available Commission for Rank ${currentRank.rankName} cannot be higher than Downline of Rank ${previousRank.rankName}.`
-        });
-      }
-
-      if (currentOwnCommission < currentMinCommission) {
+      if (currentAvailableCommission < currentMinCommission) {
         return res.status(400).json({
           status: 0,
           Msg: `Own Commission for Rank ${currentRank.rankName} cannot be less than Minimum Commission.`

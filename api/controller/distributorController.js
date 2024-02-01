@@ -268,6 +268,9 @@ return {Avaitordata,cardRoulletedata}
     // const RankData=await Rank_Data.find({}).sort({rankId:1})
     const RoulleteData=await Rank_Data.aggregate([
       {
+        $match:{rankName:{$ne:"User"}}
+      },
+      {
         $lookup: {
           from: "commissions",
           localField: "rankId",
@@ -289,6 +292,9 @@ return {Avaitordata,cardRoulletedata}
     ])
     const CardRoulleteData=await Rank_Data.aggregate([
       {
+        $match:{rankName:{$ne:"User"}}
+      },
+      {
         $lookup: {
           from: "commissions",
           localField: "rankId",
@@ -309,6 +315,9 @@ return {Avaitordata,cardRoulletedata}
       }
     ])
     const AvaitorData=await Rank_Data.aggregate([
+      {
+        $match:{rankName:{$ne:"User"}}
+      },
       {
         $lookup: {
           from: "commissions",
