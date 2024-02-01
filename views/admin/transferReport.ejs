@@ -119,22 +119,14 @@
                                     }
                                     %>
                                     <td><%=d.created %></td>
-                                    <% if (d.txn_mode == 'P') { %>
-                                    <td>Payment<span><%- (d.txn_mode == 'PA') ? ' - Paytm' : (d.txn_mode == 'N/A') ? '' : ' - '+d.txn_mode%></span></td>
-                                    <% } else if(d.txn_mode == 'A'){ %>
-                                    <td>ADMIN</td>
-                                    <% } else if(d.txn_mode == 'B'){ %>
-                                    <td>BONUS</td>
-                                    <% } else if(d.txn_mode == 'R'){ %>
-                                    <td>REFUND</td>
-                                    <% } else if(d.txn_mode == 'GIFT'){ %>
-                                        <td>GIFT</td>
-                                    <% } else if(d.txn_mode == 'O'){ %>
-                                    <td>OTHER</td>
-                                    <% } else if(d.txn_mode == 'REF'){ %>
-                                    <td>REFERRAL</td>
+                                    <% if (d.transaction_type === "C") { %>
+                                       <td>
+                                           <span class="label label-success">Credit</span>
+                                       </td>
                                     <% } else { %>
-                                    <td>GAME</td>
+                                       <td>
+                                           <span class="label label-danger">Debit</span>
+                                       </td>
                                     <% } %>
                                     <td>
                                         <%= d.msg %>

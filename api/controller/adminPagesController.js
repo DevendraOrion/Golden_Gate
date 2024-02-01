@@ -129,7 +129,9 @@ module.exports = {
     });
   },
   transferReport: async (req, res) => {
-    const transactions = await paymentController.transactionList(10);
+    let admin=req.admin
+    const transactions = await paymentController.transferPoint(admin);
+    console.log(transactions.list.length);
       res.render("admin/transferReport", {
       title: "Point Transfer Report",
       type: "pointTransfer",

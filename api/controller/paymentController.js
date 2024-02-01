@@ -310,6 +310,44 @@ module.exports = {
       .json(Service.response(1, localization.TransactionsHistory, userHistory));
   },
 
+  transferPoint: async (admin) => {
+    const transaction = await Transaction.find({refUser:admin._id})
+      .populate("user_id")
+      .sort({
+        created_at: -1,
+      })
+      // .limit(limit);
+
+    let list = await Promise.all(
+      transaction.map(async (u) => {
+        if (u.user_id) {
+          return {
+            order_id: u.order_id,
+            transaction_type: u.transaction_type,
+            request_id: u?.request_id,
+            username: _.capitalize(u.user_id.username),
+            numeric_id: _.capitalize(u.user_id.search_id),
+            user_id: u.user_id._id,
+            txn_amount: u.txn_amount,
+            win_wallet: u.txn_win_amount || 0,
+            main_wallet: u.txn_main_amount || 0,
+            created_at: u.created_at, //await Service.formateDateandTime(parseInt(u.created_at)),
+            is_status: u.is_status,
+            msg: u.resp_msg || "No Data Found",
+            txn_mode: u.txn_mode || "G",
+          };
+        } else {
+          return false;
+        }
+      })
+    );
+
+    let count = list.length
+    return {
+      list: list.filter((d) => d),
+      count: count,
+    };
+  },
   transactionList: async (limit) => {
     const transaction = await Transaction.find({})
       .populate("user_id")
@@ -323,6 +361,7 @@ module.exports = {
         if (u.user_id) {
           return {
             order_id: u.order_id,
+            transaction_type: u.transaction_type,
             request_id: u?.request_id,
             username: _.capitalize(u.user_id.username),
             numeric_id: _.capitalize(u.user_id.search_id),
@@ -839,7 +878,7 @@ let created=await Service.formateDateandTime(u.created_at)
     aggregation_obj.push(
       {$match:{
         txn_mode:"T",
-        // $or:{}
+        refUser:req.admin._id
       }},
       {
         $lookup: {
@@ -880,19 +919,16 @@ let created=await Service.formateDateandTime(u.created_at)
     aggregation_obj.push({
       $project: {
         _id: 1,
-        // no:u++,
-        // txn_win_amount: 1,
-        // txn_main_amount: 1,
         created_at: 1,
         current_balance:1,
         txn_amount: 1,
         payment_mode: 1,
         username: "$users.name",
+        transaction_type:1,
         numeric_id: "$users.search_id",
         user_id: "$users._id",
         resp_msg: 1,
         role: "$users.role",
-        // request_id: 1,
         is_status: 1,
         txn_mode: 1,
       },
@@ -900,7 +936,7 @@ let created=await Service.formateDateandTime(u.created_at)
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(aggregation_obj);
+    // console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -933,11 +969,16 @@ let created=await Service.formateDateandTime(u.created_at)
           txn_amount =
             '<span class="label label-danger">' + u.txn_amount + "</span>";
         }
-        let txn_mode = u.txn_mode;
-        if (u.txn_mode == "T") {
-          txn_mode = "Transfer Point";
+        let txn_mode = u.transaction_type;
+        // console.log(u.transaction_type === "C");
+        if (u.transaction_type === "C") {
+          txn_mode = '<span class="label label-success">Credit</span>'
         } 
-let current_balance= u.current_balance
+        if(u.transaction_type === "D"){
+          txn_mode = '<span class="label label-danger">Debit</span>'
+        }
+
+        let current_balance= u.current_balance
         let status_ = u.is_status;
 
         if (status_ == "P") {
@@ -961,7 +1002,7 @@ let current_balance= u.current_balance
         else if (roles == "Agent") {
           roles = 'Agent';
         }
-let created=await Service.formateDateandTime(u.created_at)
+        let created=await Service.formateDateandTime(u.created_at)
         return [
           ++index,
           // u?.request_id ?? '',
