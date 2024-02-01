@@ -36,7 +36,7 @@ var TransactionModel = new Schema({
   },
   txn_mode: {
       type: String,
-      enum: ['G', 'P', 'A', 'B', 'R', 'O', 'REF', 'S','GIFT'] //G = Game, P = Paytm, A = By Admin,  B = Bonus, R = Refund, REF = Referral, O =  Other, S='Scratch Card'
+      enum: ['G', 'P', 'A', 'B', 'R', 'O', 'REF', 'S','GIFT',"T"] //T=Transfer Point,G = Game, P = Paytm, A = By Admin,  B = Bonus, R = Refund, REF = Referral, O =  Other, S='Scratch Card'
   },
   payment_mode: {
       type: String,

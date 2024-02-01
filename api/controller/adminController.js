@@ -7317,8 +7317,9 @@ if(parentData){
 },
 saveTransferPoint: async (req, res) => {
   try {
-    const { role , userSearchId, securityPin, balance, debitCredit } = req.body;
-    console.log(role , userSearchId, securityPin, balance, debitCredit);
+    const { role , userSearchId, securityPin, balance, debitCredit,adminBalance } = req.body;
+  //  console.log(req.admin);
+   let admin=req.admin
     if(!role || !userSearchId || !securityPin || !balance  || !debitCredit){
       return res.send({
         status: 0,
@@ -7333,99 +7334,138 @@ saveTransferPoint: async (req, res) => {
       });
     }
     const user = await User.findOne({ _id: userSearchId })
-    // console.log(user)
     if (!user) {
         return res.json({ response: { status: false, message: 'Invalid User' } });
     }
 
-    if(debitCredit==="Debit"){
-
+    if(admin.role==="Company"){
+      if(debitCredit==="Debit"){
         let point = Number(balance)
-        if(user.cash_balance > point){
-          return res.send({
-            status: 0,
-            Msg: "Insuffiecent Amount",
-          });
-        }
-        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
-  
-        if(transcId.length==0){
-            transcId=0
-        }
-        else{
-            transcId=transcId[0].txn_id
-        }
-        transcId=transcId+1
-  // console.log(req.admin._id,user._id)
-        const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:point}})
-        const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:-point}})
-
-        var userTxnHistry = new Transaction({
-          user_id: user._id,
-          txn_amount: point,
-          current_balance:user.cash_balance- point,
-          created_at: new Date().getTime(),
-          transaction_type: "D",
-          resp_msg:  "Debited by Company",
-          is_status: "S",
-          txn_mode: "A",
-          txn_id:transcId
-        });
-            let txnres = await userTxnHistry.save();
-
-        var adminTxnHistory = new Transaction({
-          user_id: req.admin._id,
-          txn_amount: point,
-          current_balance:req.admin.cash_balance+ point,
-          created_at: new Date().getTime(),
-          transaction_type: "C",
-          resp_msg: `Credit To ${user.first_name} ${user.last_name}`,
-          is_status: "S",
-          txn_mode: "A",
-          txn_id:transcId+1
-        });
-            let txnresadmin = await adminTxnHistory.save();
-    }else{
-        let point = Number(balance)
-        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
-  
-        if(transcId.length==0){
-            transcId=0
-        }
-        else{
-            transcId=transcId[0].txn_id
-        }
-        transcId=transcId+1
-        const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:-point}})
-        const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:point}})
-
-        var userTxnHistry = new Transaction({
-          user_id: user._id,
-          txn_amount: point,
-          current_balance:user.cash_balance- point,
-          created_at: new Date().getTime(),
-          transaction_type: "C",
-          resp_msg:  "Deposit by Company",
-          is_status: "S",
-          txn_mode: "A",
-          txn_id:transcId
-        });
-            let txnres = await userTxnHistry.save();
-
-        var adminTxnHistory = new Transaction({
-          user_id: req.admin._id,
-          txn_amount: point,
-          current_balance:req.admin.cash_balance+ point,
-          created_at: new Date().getTime(),
-          transaction_type: "D",
-          resp_msg: `Deposit To ${user.first_name} ${user.last_name}`,
-          is_status: "S",
-          txn_mode: "A",
-          txn_id:transcId+1
-        });
-            let txnresadmin = await adminTxnHistory.save();
+        // console.log(user.cash_balance < point);
+          if(user.cash_balance < point){
+            return res.send({
+              status: 0,
+              Msg: "Insuffiecent Amount",
+            });
+          }
+          let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
     
+          if(transcId.length==0){
+              transcId=0
+          }
+          else{
+              transcId=transcId[0].txn_id
+          }
+          transcId=transcId+1
+          const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:point}})
+          const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:-point}})
+  
+          var userTxnHistry = new Transaction({
+            user_id: user._id,
+            txn_amount: point,
+            current_balance:user.cash_balance- point,
+            created_at: new Date().getTime(),
+            transaction_type: "D",
+            resp_msg:  "Debited by Company",
+            is_status: "S",
+            txn_mode: "A",
+            txn_id:transcId
+          });
+              let txnres = await userTxnHistry.save();
+  
+          var adminTxnHistory = new Transaction({
+            user_id: req.admin._id,
+            txn_amount: point,
+            current_balance:req.admin.cash_balance+ point,
+            created_at: new Date().getTime(),
+            transaction_type: "C",
+            resp_msg: `Credit To ${user.first_name} ${user.last_name}`,
+            is_status: "S",
+            txn_mode: "A",
+            txn_id:transcId+1
+          });
+              let txnresadmin = await adminTxnHistory.save();
+      }else{
+          let point = Number(balance)
+          if(adminBalance < point){
+            return res.send({
+              status: 0,
+              Msg: "Insuffiecent Amount",
+            });
+          }
+          let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+    
+          if(transcId.length==0){
+              transcId=0
+          }
+          else{
+              transcId=transcId[0].txn_id
+          }
+          transcId=transcId+1
+          const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:-point}})
+          const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:point}})
+  
+          var userTxnHistry = new Transaction({
+            user_id: user._id,
+            txn_amount: point,
+            current_balance:user.cash_balance- point,
+            created_at: new Date().getTime(),
+            transaction_type: "C",
+            resp_msg:  "Deposit by Company",
+            is_status: "S",
+            txn_mode: "T",
+            txn_id:transcId
+          });
+              let txnres = await userTxnHistry.save();
+  
+          var adminTxnHistory = new Transaction({
+            user_id: req.admin._id,
+            txn_amount: point,
+            current_balance:req.admin.cash_balance+ point,
+            created_at: new Date().getTime(),
+            transaction_type: "D",
+            resp_msg: `Deposit To ${user.first_name} ${user.last_name}`,
+            is_status: "S",
+            txn_mode: "T",
+            txn_id:transcId+1
+          });
+              let txnresadmin = await adminTxnHistory.save();
+      
+      }
+    }else{
+      if(debitCredit==="Credit"){
+        let point = Number(balance)
+        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+        // console.log(transcId.txn_id);
+        if(transcId.length==0){
+            transcId=0
+        }
+        else{
+            transcId=transcId[0].txn_id
+        }
+        transcId=transcId+1
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+        const year = currentDate.getFullYear();
+        let amountDeduct=await User.updateOne({_id:admin._id},{$inc:{cash_balance:-point}})
+        const formattedDate = `${day}/${month}/${year}`;
+            var newTxn = new DepositRequests({
+              user_id: admin._id,
+              child_id: user._id,
+              txn_amount: Number(point),
+              created_at: new Date().getTime(),
+              txn_id: transcId,
+              resp_msg:  `Chip by ${admin.name}`,
+              is_status: "P",
+              txn_mode: "A",
+              showDate:formattedDate
+            });
+            let txnres = await newTxn.save();
+      }
     }
+
+   
     
     return res.send({
       status: 1,

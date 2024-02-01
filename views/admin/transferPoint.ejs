@@ -26,12 +26,17 @@
                 <tr>
                   <td>User Type</td>
                   <td>
+                    <!-- <%console.log(data)%> -->
+                    <%if(data.parentData.role==="Company"){%>
                     <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
                       <option  value="" >Please Select Role</option>
                       <% data.role.forEach((role) => { %>
                           <option value="<%= role %>" ><%= role %></option>
                       <% }); %>
-                  </select>
+                    </select>
+                    <% }else{ %>
+                    <input name="role" id="role" class="form-control" value="<%= data.role %>" readonly ></input>
+                    <% } %>
                   
                   </td>
                 </tr>
@@ -56,18 +61,19 @@
                 <tr>
                   <td>Available Point</td>
                   <td>
-                    <input name="adminBalance" type="number" value="<%= data.parentData.cash_balance %>" id="adminBalance" class="form-control" placeholder="Enter your Password here...."></input>
+                    <input name="adminBalance" type="number" value="<%= data.parentData.cash_balance %>" id="adminBalance" class="form-control" readonly></input>
                   </td>
                 </tr>
                 <tr>
                   <td>Transfer Point</td>
                   <td>
-                    <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter your Password here...."></input>
+                    <input name="balance" type="number" id="balance" class="form-control" placeholder="Enter Transfer Amount here...."></input>
                   </td>
                 </tr>
 
                 <tr>
                   <td>Debit/Credit</td>
+                  <%if(data.parentData.role==="Company"){%>
                   <td>
                     <select name="debitCredit" id="debitCredit" class="form-control" onchange="updateParentDropdown()">
                       <option  value="" >Please Select Debit/Credit</option>
@@ -75,6 +81,12 @@
                       <option  value="Credit" >Credit</option>
                      </select>  
                     </td>
+                  <%}else{%>
+                    <td>
+                      <input name="debitCredit" value="Credit" id="debitCredit" class="form-control" readonly></input>
+                    </td>
+                  <%}%>
+
                 </tr>
            
                 <tr>
@@ -109,10 +121,11 @@
         const balance = document.getElementById("balance").value;
         // const walletType = document.getElementById("walletType").value;
         const debitCredit = document.getElementById("debitCredit").value;
+        const adminBalance = document.getElementById("adminBalance").value;
                
         fetch("/admin/saveTransferPoint", {
           method: "POST",
-          body: JSON.stringify({ role , userSearchId, securityPin, balance, debitCredit}),
+          body: JSON.stringify({ role , userSearchId, securityPin, balance, debitCredit,adminBalance}),
           headers: {
             "Content-Type": "application/json",
           },

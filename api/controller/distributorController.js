@@ -174,7 +174,7 @@ module.exports = {
     console.log("===================");
 
     let user = req.admin
-
+    let rolesBelow
     const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
     const roles = {};
 
@@ -196,10 +196,23 @@ module.exports = {
       return parseInt(key) < parseInt(currentRoleKey);
     }).map((key) => roles[key]);
 
-    const rolesBelow = Object.keys(roles).filter((key) => {
-      return parseInt(key) > parseInt(currentRoleKey);
-    }).map((key) => roles[key]);
-    rolesBelow.unshift("Company")
+  if(user.role==="Company")
+  {   rolesBelow = Object.keys(roles)
+    .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+    .map((key) => roles[key])
+    .filter((role) => role !== 'Company');
+  
+  // console.log(rolesBelow);
+}else{
+  const lowData = Object.keys(roles)
+    .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+    .map((key) => roles[key])
+    .filter((role) => role !== 'User');
+    rolesBelow=lowData[0]
+
+  // console.log(rolesBelow);
+}
+  
     const lastElement = rolesAbove[rolesAbove.length - 1];
    
     let allParentData = await User.find({ role: lastElement }, { _id: 0, search_id: 1, role: 1 })
