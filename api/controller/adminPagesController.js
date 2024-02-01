@@ -793,6 +793,7 @@ role="User"
     });
   },
   users: async (req, res) => {
+    console.log(req.admin)
     const users = await AdminController.getUsersList();
     res.render("admin/user", {
       title: "User List",
@@ -807,7 +808,8 @@ role="User"
   },
   agentsMGT: async (req, res) => {
     let role="Agent"
-    const users = await AdminController.getAgentList(role);
+    let adminData=req.admin
+    const users = await AdminController.getAgentList(role,adminData);
     res.render("admin/agentsMGT", {
       title: "Agents List",
       type: "usersMGT",
@@ -821,7 +823,8 @@ role="User"
   },
   zoneMGT: async (req, res) => {
     let role="Zone"
-    const users = await AdminController.getAgentList(role);
+    let adminData=req.admin
+    const users = await AdminController.getAgentList(role,adminData);
     res.render("admin/agentsMGT", {
       title: "Zone List",
       type: "usersMGT",
@@ -835,7 +838,8 @@ role="User"
   },
   districtMGT: async (req, res) => {
     let role="District"
-    const users = await AdminController.getAgentList(role);
+    let adminData=req.admin
+    const users = await AdminController.getAgentList(role,adminData);
     res.render("admin/agentsMGT", {
       title: "District List",
       type: "usersMGT",
@@ -849,7 +853,8 @@ role="User"
   },
   stateMGT: async (req, res) => {
     let role="State"
-    const users = await AdminController.getAgentList(role);
+    let adminData=req.admin
+    const users = await AdminController.getAgentList(role,adminData);
     // console.log(users.list);
     res.render("admin/agentsMGT", {
       title: "State List",

@@ -283,14 +283,15 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       count
     };
   },
-  getAgentList: async (role) => {
+  getAgentList: async (role,adminData) => {
 
-
+// console.log("User",user)
 const users = await User.aggregate([
   {
     $match: {
       is_deleted: false,
-      role: { $eq: role }
+      role: { $eq: role },
+      // parent:adminData._id
     }
   },
   {

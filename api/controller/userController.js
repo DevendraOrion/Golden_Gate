@@ -577,7 +577,7 @@ module.exports = {
 
         if (!_.isEmpty(params.token)) {
             user = await User.findOne({
-                'tokens.token': params.token
+                'tokens': params.token
             });
         }
 
