@@ -838,7 +838,8 @@ let created=await Service.formateDateandTime(u.created_at)
     let aggregation_obj = [];
     aggregation_obj.push(
       {$match:{
-        txn_mode:"A"
+        txn_mode:"T",
+        // $or:{}
       }},
       {
         $lookup: {
@@ -915,7 +916,6 @@ let created=await Service.formateDateandTime(u.created_at)
       },
     });
 
-    // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
@@ -934,35 +934,9 @@ let created=await Service.formateDateandTime(u.created_at)
             '<span class="label label-danger">' + u.txn_amount + "</span>";
         }
         let txn_mode = u.txn_mode;
-        if (u.txn_mode == "G") {
-          txn_mode = "GAME";
-        } else if (u.txn_mode == "P") {
-          txn_mode = "Payment";
-          // console.log("UU", u.txn_mode);
-          if (!u.txn_mode) txn_mode += " - Paytm";
-          else if (u.txn_mode == "PA") txn_mode += " - Paytm";
-          else if (u.txn_mode == "N/A") txn_mode += "";
-          else txn_mode += " - Cashfree " + u.txn_mode;
+        if (u.txn_mode == "T") {
+          txn_mode = "Transfer Point";
         } 
-        else if (u.txn_mode == "A") {
-          txn_mode = "ADMIN";
-        }
-        else if (u.txn_mode == "GIFT") {
-          txn_mode = "GIFT";
-        }
-         else if (u.txn_mode == "B") {
-          txn_mode = "BONUS";
-        } else if (u.txn_mode == "R") {
-          txn_mode = "WITHDRAW";
-        } else if (u.txn_mode == "A") {
-          txn_mode = "REFERRAL";
-        } else if (u.txn_mode == "O") {
-          txn_mode = "OTHER";
-        } else if (u.txn_mode == "S") {
-          txn_mode = "SCRATCH CARD";
-        }else{
-          txn_mode = "GAME";
-        }
 let current_balance= u.current_balance
         let status_ = u.is_status;
 

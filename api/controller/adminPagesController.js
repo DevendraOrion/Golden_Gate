@@ -114,10 +114,11 @@ module.exports = {
     });
   },
   depositRequest: async (req, res) => {
-    const users = await AdminController.getDepositRequest();
+    let admin=req.admin
+    const users = await AdminController.getDepositRequest(admin);
     // console.log(users.list);
     res.render("admin/depostRequest", {
-      title: "Deposit Request",
+      title: "Withdrawal Request",
       type: "pointTransfer",
       sub: "depositRequest",
       sub2: "depositRequest",

@@ -3,6 +3,11 @@ var mongoose = require("mongoose"),
 const config = require("./../../config");
 
 var TransactionModel = new Schema({
+  refUser: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User'
+  },
   user_id: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -49,12 +54,6 @@ var TransactionModel = new Schema({
       enum: ['P', 'S', 'F', 'C', 'FL'], // P = Pending, S = Success, F = Failed, C = Canceled, FL = Flagged suspecious
       default: 'S'
   },
-  frame_id: {
-      type: String
-  },
-  spinWinNo: {
-      type: Number
-  }
 });
 TransactionModel.pre("save", function (next) {
   var self = this;
