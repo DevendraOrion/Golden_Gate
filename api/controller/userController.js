@@ -1567,54 +1567,103 @@ module.exports = {
         }
     },
     findUserByRole: async (req, res) => {
-   
         var startTime = new Date();
-
         try {
-            const params = _.pick(req.query, ['search']);
-            let aggregate_obj = [];
-            let condition = {
-                is_deleted: false,
-                role:req.query.role
+   if(req.admin.role==="Company"){
+    const params = _.pick(req.query, ['search']);
+    let aggregate_obj = [];
+    let condition = {
+        is_deleted: false,
+        role:req.query.role
+    };
+    if (params.search) {
+        if (params.search.trim() != '') {
+            condition['search_id'] = {
+                $regex: '^' + params.search,
+                $options: 'i'
             };
-            if (params.search) {
-                if (params.search.trim() != '') {
-                    condition['search_id'] = {
-                        $regex: '^' + params.search,
-                        $options: 'i'
-                    };
-                }
+        }
+    }
+    aggregate_obj.push({
+        $match: condition
+    });
+
+    aggregate_obj.push(
+        {
+            $sort: {
+                search_id: 1
             }
-            aggregate_obj.push({
-                $match: condition
-            });
+        },
+        {
+            $limit: 10
+        },
+        {
+            $project: {
+                id: '$_id',
+                text: '$search_id'
+            }
+        },
+        {
+            $project: {
+                _id: 0
+            }
+        }
+    );
 
-            aggregate_obj.push(
-                {
-                    $sort: {
-                        search_id: 1
-                    }
-                },
-                {
-                    $limit: 10
-                },
-                {
-                    $project: {
-                        id: '$_id',
-                        text: '$search_id'
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0
-                    }
-                }
-            );
+    let users = await User.aggregate(aggregate_obj).allowDiskUse(true);
+    var endTime = new Date();
 
-            let users = await User.aggregate(aggregate_obj).allowDiskUse(true);
-            var endTime = new Date();
+    return res.send({ results: users });
+   }else{
+    const params = _.pick(req.query, ['search']);
+    let aggregate_obj = [];
+    let condition = {
+        is_deleted: false,
+        role:req.query.role,
+        // parent:req.admin._id
+    };
+    if (params.search) {
+        if (params.search.trim() != '') {
+            condition['search_id'] = {
+                $regex: '^' + params.search,
+                $options: 'i'
+            };
+        }
+    }
+    aggregate_obj.push({
+        $match: condition
+    });
 
-            return res.send({ results: users });
+    aggregate_obj.push(
+        {
+            $sort: {
+                search_id: 1
+            }
+        },
+        {
+            $limit: 10
+        },
+        {
+            $project: {
+                id: '$_id',
+                text: '$search_id'
+            }
+        },
+        {
+            $project: {
+                _id: 0
+            }
+        }
+    );
+
+    let users = await User.aggregate(aggregate_obj).allowDiskUse(true);
+    var endTime = new Date();
+
+    return res.send({ results: users });
+   }
+
+       
+           
         } catch (err) {
             logger.info('ERR', err);
             var endTime = new Date();

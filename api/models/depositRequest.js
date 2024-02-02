@@ -2,12 +2,12 @@ var mongoose = require("mongoose"),
   Schema = mongoose.Schema;
 
 var DepositRequest = new Schema({
-  user_id: {
+  fromUser: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'
 },
-child_id: {
+toUser: {
     type: Schema.Types.ObjectId,
     required: true,
     ref: 'User'

@@ -248,7 +248,7 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       {
         $lookup: {
           from: "users",
-          localField: "user_id",
+          localField: "fromUser",
           foreignField: "_id",
           as: "user"
         }
@@ -256,7 +256,7 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       {
         $lookup: {
           from: "users",
-          localField: "child_id",
+          localField: "toUser",
           foreignField: "_id",
           as: "child"
         }
@@ -7475,6 +7475,7 @@ saveTransferPoint: async (req, res) => {
   
           var userTxnHistry = new Transaction({
             user_id: user._id,
+            refUser:req.admin._id,
             txn_amount: point,
             current_balance:user.cash_balance- point,
             created_at: new Date().getTime(),
@@ -7488,6 +7489,7 @@ saveTransferPoint: async (req, res) => {
   
           var adminTxnHistory = new Transaction({
             user_id: req.admin._id,
+            refUser: user._id,
             txn_amount: point,
             current_balance:req.admin.cash_balance+ point,
             created_at: new Date().getTime(),
@@ -7520,6 +7522,7 @@ saveTransferPoint: async (req, res) => {
   
           var userTxnHistry = new Transaction({
             user_id: user._id,
+            refUser: req.admin._id,
             txn_amount: point,
             current_balance:user.cash_balance- point,
             created_at: new Date().getTime(),
@@ -7533,6 +7536,7 @@ saveTransferPoint: async (req, res) => {
   
           var adminTxnHistory = new Transaction({
             user_id: req.admin._id,
+            refUser: user._id,
             txn_amount: point,
             current_balance:req.admin.cash_balance+ point,
             created_at: new Date().getTime(),
@@ -7564,13 +7568,46 @@ saveTransferPoint: async (req, res) => {
         let amountDeduct=await User.updateOne({_id:admin._id},{$inc:{cash_balance:-point}})
         const formattedDate = `${day}/${month}/${year}`;
             var newTxn = new DepositRequests({
-              user_id: admin._id,
-              child_id: user._id,
+              fromUser: admin._id,
+              toUser: user._id,
               txn_amount: Number(point),
               created_at: new Date().getTime(),
               txn_id: transcId,
               resp_msg:  `Chip by ${admin.name}`,
               is_status: "P",
+              transaction_type: "C",
+              txn_mode: "A",
+              showDate:formattedDate
+            });
+            let txnres = await newTxn.save();
+      }
+
+      else{
+        let point = Number(balance)
+        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+        // console.log(transcId.txn_id);
+        if(transcId.length==0){
+            transcId=0
+        }
+        else{
+            transcId=transcId[0].txn_id
+        }
+        transcId=transcId+1
+        const currentDate = new Date();
+        const day = currentDate.getDate().toString().padStart(2, '0');
+        const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+        const year = currentDate.getFullYear();
+        let amountDeduct=await User.updateOne({_id:admin._id},{$inc:{cash_balance:-point}})
+        const formattedDate = `${day}/${month}/${year}`;
+            var newTxn = new DepositRequests({
+              fromUser: admin._id,
+              toUser: user._id,
+              txn_amount: Number(point),
+              created_at: new Date().getTime(),
+              txn_id: transcId,
+              resp_msg:  `Chip by ${admin.name}`,
+              is_status: "P",
+              transaction_type: "D",
               txn_mode: "A",
               showDate:formattedDate
             });

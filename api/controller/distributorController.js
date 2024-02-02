@@ -192,10 +192,12 @@ module.exports = {
 
     const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
 
-    const rolesAbove = Object.keys(roles).filter((key) => {
-      return parseInt(key) < parseInt(currentRoleKey);
-    }).map((key) => roles[key]);
-
+    const rolesAbove = Object.keys(roles)
+    .filter((key) => parseInt(key) < parseInt(currentRoleKey))
+    .map((key) => roles[key]);
+  
+  const lastRoleAbove = rolesAbove.pop(); // Retrieve the last value from the array
+console.log(lastRoleAbove);
   if(user.role==="Company")
   {   rolesBelow = Object.keys(roles)
     .filter((key) => parseInt(key) > parseInt(currentRoleKey))
@@ -221,7 +223,7 @@ module.exports = {
 
     let allState=Object.keys(IndiaState);
 
-    return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData,allState }
+    return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData,allState,rolesAbove:lastRoleAbove }
 
   },
   showRankData: async (req) => {

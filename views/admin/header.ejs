@@ -200,13 +200,18 @@
 
                     <% if (admin.role=='State') { %>
                     <li class="<% if(sub2 =='district') {%> active <% } %> "><a href="/districtMGT"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> District</a></li>
+                     class="fa fa-times-circle-o" aria-hidden="true"></i> District</a></li>
+                    <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
+                     class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
+                    <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                     class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
                           <% } %>
                     <% if (admin.role=='District') { %>
                     
                     <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
-            
+            <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
                           <% } %>
                     <% if (admin.role=='Zone') { %>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
@@ -274,8 +279,6 @@
                 </li>
 
               
-
-
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-link"></i> <span>Chain Management System</span>
                     <span class="pull-right-container">
@@ -301,10 +304,10 @@
                       </span>
                     </a>
                     <ul class="treeview-menu">
+                      <li class="<% if(sub2 =='depositRequest') {%> active <% } %> "><a href="/depositRequest"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point Requests</a></li>
                         <li class="<% if(sub2 =='transferPoint') {%> active <% } %> "><a href="/transferPoint"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point to Player</a></li>
-                        <li class="<% if(sub2 =='depositRequest') {%> active <% } %> "><a href="/depositRequest"><i
-                            class="fa fa-times-circle-o" aria-hidden="true"></i>Withdrawal Request</a></li>
                         <li class="<% if(sub2 =='transferPointToUpper') {%> active <% } %> "><a href="/transferPointToUpper"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i>Transfer Point To Upper Level</a></li>
                         <li class="<% if(sub2 =='transferReport') {%> active <% } %> "><a href="/transferReport"><i
@@ -368,9 +371,6 @@
                                 class="fa fa-times-circle-o" aria-hidden="true"></i> Avaitor</a></li>
                           </ul>
                       </li>
-              
-  
-          
               <% } %>
           </ul>
           <!-- /.sidebar-menu -->

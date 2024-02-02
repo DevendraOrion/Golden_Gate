@@ -118,7 +118,7 @@ module.exports = {
     const users = await AdminController.getDepositRequest(admin);
     // console.log(users.list);
     res.render("admin/depostRequest", {
-      title: "Withdrawal Request",
+      title: "Transfer Point Request",
       type: "pointTransfer",
       sub: "depositRequest",
       sub2: "depositRequest",
