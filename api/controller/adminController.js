@@ -369,23 +369,23 @@ const list=await parentData
     };
 }else{
   console.log("++++++++++++++++++++",adminData._id)
-const users = await User.aggregate([
-  {
-    $match: {
-      is_deleted: false,
-      role: { $eq: role },
-      parent:adminData._id
-    }
-  },
-  {
-    $sort: {
-      created_at: -1
-    }
-  }
-]);
-// const users=await User.find({is_deleted: false,parent:adminData._id})
-console.log("++++++++++++++++++++",users) 
-
+// const users = await User.aggregate([
+//   {
+//     $match: {
+//       is_deleted: false,
+//       // role: { $eq: role },
+//       parent:adminData._id
+//     }
+//   },
+//   {
+//     $sort: {
+//       created_at: -1
+//     }
+//   }
+// ]);
+const users=await User.find({is_deleted: false,parent:adminData._id})
+// console.log("++++++++++++++++++++",users) 
+let maindata=users
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
   let district=0
@@ -415,7 +415,7 @@ let parentData = await Promise.all(users.map(async (a) => {
     })
   }
   return {
-    ...a,
+    ...a._doc,
     parentDatas: Data,
     childData: childData,
     stateCount:state,
@@ -425,7 +425,7 @@ let parentData = await Promise.all(users.map(async (a) => {
     userCount:user,
   };
 }));
-// console.log(parentData);
+console.log(parentData);
 
 const list=await parentData
 

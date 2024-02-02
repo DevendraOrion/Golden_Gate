@@ -201,17 +201,17 @@
                     <% if (admin.role=='State') { %>
                     <li class="<% if(sub2 =='district') {%> active <% } %> "><a href="/districtMGT"><i
                      class="fa fa-times-circle-o" aria-hidden="true"></i> District</a></li>
-                    <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
+                    <!-- <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
                      class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
-                     class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+                     class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
                           <% } %>
                     <% if (admin.role=='District') { %>
                     
                     <li class="<% if(sub2 =='zone') {%> active <% } %> "><a href="/zoneMGT"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Zone</a></li>
-            <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li>
+            <!-- <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i> Agents</a></li> -->
                           <% } %>
                     <% if (admin.role=='Zone') { %>
                     <li class="<% if(sub2 =='agents') {%> active <% } %> "><a href="/agentsMGT"><i
@@ -290,8 +290,6 @@
                       <li class="<% if(sub2 =='rankM') {%> active <% } %> "><a href="/rankMaster"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Rank Master</a></li>
                           <% } %>
-                      <!-- <li class="<% if(sub2 =='distM') {%> active <% } %> "><a href="/distributerMaster"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> Distributer Creation</a></li> -->
                       <li class="<% if(sub2 =='addRankCompany') {%> active <% } %> "><a href="/addRankCompany"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Rank User Creation</a></li>
                   </ul>
@@ -315,11 +313,10 @@
                     </ul>
                   </li>
 
-                 
                   <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Management</span></a></li>
                   <li class="<% if(type=='profit-management') {%> active <% } %>"><a href="/profit-management"><i class="fa fa-money"
-                    aria-hidden="true"></i><span>Profit Management</span></a></li>
+                    aria-hidden="true"></i><span>Profit Percent Master</span></a></li>
                   <li class="<% if(type=='Commission') {%> active <% } %>"><a href="#"><i class="fa fa-level-down"
                     aria-hidden="true"></i> <span>Commission Report</span></a></li>
                   <li class="<% if(type=='revenue-report') {%> active <% } %>"><a href="#"><i class="fa fa-address-book-o"
@@ -334,8 +331,6 @@
                     aria-hidden="true"></i> <span>Game Statestics</span></a></li>
                   <li class="<% if(type=='Revenue-Master') {%> active <% } %>"><a href="#"><i class="fa fa-users"
                     aria-hidden="true"></i> <span>Revenue Master</span></a></li>
-                  <li class="<% if(type=='Profit-Percent-Master') {%> active <% } %>"><a href="#"><i class="fa fa-percent"
-                    aria-hidden="true"></i> <span>Profit Percent Master</span></a></li>
                   <li class="<% if(type=='Setting') {%> active <% } %>"><a href="#"><i class="fa fa-cogs"
                     aria-hidden="true"></i> <span>Setting</span></a></li>
                   <li class="<% if(type=='Distributer-Security-Pin-Mgt') {%> active <% } %>"><a href="#"><i class="fa fa-tasks"
