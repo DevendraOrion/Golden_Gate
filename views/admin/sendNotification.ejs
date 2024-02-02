@@ -7,8 +7,9 @@
   <!-- Main content -->
   <section class="content container-fluid">
     <div class="row">
-      <div class="col-md-6 flex-fill">
+      <div class="col-md-12 flex-fill">
         <div class="box box-danger" style="width: fit-content; min-width: 100%">
+          <h4 style="margin-left: 15px;">Notification To User</h4>
           <div class="box-body">
             <table class="table table-bordered">
                 <tr>
@@ -29,13 +30,13 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Notice Title English</td>
+                    <td>Notice Title</td>
                     <td>
                       <input name="noticeTitle" id="noticeTitle" class="form-control"  ></input>
                     </td>
                   </tr>
               <tr>
-                <td>Notice</td>
+                <td>Notice Content</td>
                 <td>
                   <textarea
                     name="notice"
@@ -53,6 +54,57 @@
                     type="button"
                     class="btn btn-success"
                     onclick="saveSettings()"
+                  >
+                    Save
+                  </button>
+                </td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 flex-fill">
+        <div class="box box-danger" style="width: fit-content; min-width: 100%">
+          <h4 style="margin-left: 15px;">Notification To Game</h4>
+          <div class="box-body">
+            <table class="table table-bordered">
+                <tr>
+                    <td>User List</td>
+                    <td>
+                      <select name="userlist" id="userlist" class="form-control">
+                        <option value="Please Select Game" >Please Select Game</option>
+                        <option value="Please Select Game" >Roullete</option>
+                        <option value="Please Select Game" >Card Roullete</option>
+                        <option value="Please Select Game" >Avaitor</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Notice Title</td>
+                    <td>
+                      <input name="noticeGameTitle" id="noticeGameTitle" class="form-control"  ></input>
+                    </td>
+                  </tr>
+              <tr>
+                <td>Notice Content</td>
+                <td>
+                  <textarea
+                    name="noticeGame"
+                    id="noticeGame"
+                    class="form-control"
+                    placeholder="Enter your notice here...."
+                  ></textarea>
+                </td>
+              </tr>
+           
+
+              <tr>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="saveSettingsGame()"
                   >
                     Save
                   </button>
