@@ -271,9 +271,16 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
           current_balance: 1,
           txn_id: 1,
           created_at: 1,
+          transaction_type: 1,
           userId: "$user.search_id",
+          userRank: "$user.role",
+          username: { $concat: ["$user.first_name", " ", "$user.last_name"] },
+          userNo: "$user.phone",
           userRole: "$user.role",
           childIds: "$child.search_id",
+          childRank: "$child.role",
+          childName: { $concat: ["$child.first_name", " ", "$child.last_name"] },
+          childNo: "$child.phone",
           childRole: "$child.role"
         }
       },
@@ -366,7 +373,7 @@ const users = await User.aggregate([
   {
     $match: {
       is_deleted: false,
-      // role: { $eq: role },
+      role: { $eq: role },
       parent:adminData._id
     }
   },
@@ -376,6 +383,8 @@ const users = await User.aggregate([
     }
   }
 ]);
+// const users=await User.find({is_deleted: false,parent:adminData._id})
+console.log("++++++++++++++++++++",users) 
 
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
@@ -6862,8 +6871,8 @@ acceptRequest: async (req, res) => {
 
     let findData=await DepositRequests.findOne({txn_id:id})
     if(type==1){
-      const adminData=await User.findOne({_id:findData.user_id})
-      const userData=await User.findOne({_id:findData.child_id})
+      const adminData=await User.findOne({_id:findData.fromUser})
+      const userData=await User.findOne({_id:findData.toUser})
       const saveData=await User.updateOne({_id:findData.child_id},{
         $inc:{cash_balance:findData.txn_amount}
       })
@@ -6876,8 +6885,8 @@ acceptRequest: async (req, res) => {
         }
         transcId=transcId+1
       let newTxnAdmin = new Transaction({
-        user_id: findData.user_id,
-        refUser: findData.child_id,
+        user_id: findData.fromUser,
+        refUser: findData.toUser,
         txn_amount: Number(findData.txn_amount),
         created_at: new Date().getTime(),
         transaction_type: "D",
@@ -6891,7 +6900,7 @@ acceptRequest: async (req, res) => {
   
       var newTxn = new Transaction({
         user_id: userData._id,
-        refUser: findData.user_id,
+        refUser: findData.fromUser,
         txn_amount: Number(findData.txn_amount),
         created_at: new Date().getTime(),
         transaction_type: "C",
@@ -6904,9 +6913,46 @@ acceptRequest: async (req, res) => {
       let txnres = await newTxn.save();
       const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"S"})
     }else{
-      const saveData=await User.updateOne({_id:findData.user_id},{
+      const saveData=await User.updateOne({_id:findData.fromUser},{
         $inc:{cash_balance:findData.txn_amount}
       })
+      const adminData=await User.findOne({_id:findData.fromUser})
+      const userData=await User.findOne({_id:findData.toUser})
+      let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
+      if(transcId.length==0){
+          transcId=0
+      }
+      else{
+          transcId=transcId[0].txn_id
+      }
+      transcId=transcId+1
+    let newTxnAdmin = new Transaction({
+      user_id: findData.fromUser,
+      refUser: findData.toUser,
+      txn_amount: Number(findData.txn_amount),
+      created_at: new Date().getTime(),
+      transaction_type: "D",
+      resp_msg:  `Deposit Cancelled By ${userData.name}` ,
+      current_balance: adminData.cash_balance,
+      is_status: "C",
+      txn_mode: "T",
+      txn_id:transcId
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    var newTxn = new Transaction({
+      user_id: userData._id,
+      refUser: findData.fromUser,
+      txn_amount: Number(findData.txn_amount),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  `Deposit Cancelled By ${userData.name} `,
+      current_balance: userData.cash_balance+Number(findData.txn_amount),
+      is_status: "C",
+      txn_mode: "T",
+      txn_id:transcId+1
+    });
+    let txnres = await newTxn.save();
       const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"C"})
     }
 

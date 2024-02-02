@@ -325,9 +325,11 @@ module.exports = {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
             request_id: u?.request_id,
-            username: _.capitalize(u.user_id.username),
-            numeric_id: _.capitalize(u.user_id.search_id),
+            username: _.capitalize(u.user_id.first_name)+" "+_.capitalize(u.user_id.last_name),
+            numeric_id: u.user_id.search_id,
             user_id: u.user_id._id,
+            userRole: u.user_id.role,
+            userNo: u.user_id.phone,
             txn_amount: u.txn_amount,
             win_wallet: u.txn_win_amount || 0,
             main_wallet: u.txn_main_amount || 0,
@@ -341,7 +343,7 @@ module.exports = {
         }
       })
     );
-
+console.log(list);
     let count = list.length
     return {
       list: list.filter((d) => d),
@@ -923,9 +925,10 @@ let created=await Service.formateDateandTime(u.created_at)
         current_balance:1,
         txn_amount: 1,
         payment_mode: 1,
-        username: "$users.name",
+        username: { $concat: ["$user.first_name", " ", "$user.last_name"] },
         transaction_type:1,
         numeric_id: "$users.search_id",
+        mobileNo: "$users.phone",
         user_id: "$users._id",
         resp_msg: 1,
         role: "$users.role",
@@ -936,7 +939,7 @@ let created=await Service.formateDateandTime(u.created_at)
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(aggregation_obj);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -959,7 +962,8 @@ let created=await Service.formateDateandTime(u.created_at)
 
     list = await Promise.all(
       list.map(async (u,index) => {
-    
+    // console.log("u");
+    // console.log(u);
         let txn_amount = u.txn_amount;
 
         if (u.txn_amount > 0) {
@@ -986,7 +990,7 @@ let created=await Service.formateDateandTime(u.created_at)
         } else if (status_ == "S") {
           status_ = '<span class="label label-success">Success</span>';
         } else {
-          status_ = '<span class="label label-danger">Failed</span>';
+          status_ = '<span class="label label-danger">Cancled</span>';
         }
 
         let roles=u.role
@@ -1006,8 +1010,8 @@ let created=await Service.formateDateandTime(u.created_at)
         return [
           ++index,
           // u?.request_id ?? '',
-          `<a target="_blank" href="${config.pre + req.headers.host
-          }/user/view/${u.user_id}">${u.numeric_id}</a>`,
+          ` <p><span style="color: #788ca8;">Unique Id</span>: ${d.numeric_id}</p>
+            <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${d.username}</p>`,
           txn_amount,
           // u.txn_win_amount || 0,
           // u.txn_main_amount || 0,

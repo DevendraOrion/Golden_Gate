@@ -19,8 +19,9 @@
                                         <th>No</th>
                                         <th>From</th>
                                         <th>To</th>
+                                        <th>Type</th>
                                         <th>Amount</th>
-                                        <th>Request Id</th>
+                                        <th>Order Id</th>
                                         <th>Date</th>
                                         <th>Accept</th>
                                         <!-- <th>Win Wallet</th> -->
@@ -36,17 +37,30 @@
                                                 <%= i++ %>
                                             </td>
                                             <td>
-                                                <%= d.userId %>
+                                                <p><span style="color: #788ca8;">Unique Id</span>: <%= d.userId %></p>
+                                                <p><span style="color: rgb(207, 72, 72);">Full Name</span>: <%= d.username %></p>
+                                                <p><span style="color: #788ca8;">Mobile No</span>: <%= d.userNo %></p>
                                             </td>
                                             <td>
-                                                <%= d.childIds %>
+                                                <p><span style="color: #788ca8;">Unique Id</span>: <%= d.childIds %></p>
+                                                <p><span style="color: rgb(207, 72, 72);">Full Name</span>: <%= d.childName %></p>
+                                                <p><span style="color: #788ca8;">Mobile No</span>: <%= d.childNo %></p>
+                                                <p><span style="color: rgb(207, 72, 72);">Rank</span>: <%= d.childRole %></p>
                                             </td>
                                          
                                             <td>
-                                                <%= d.txn_amount%>
+                                                <%if(d.transaction_type==="C"){%>
+                                                    <span class="label label-success">Credit</span>
+                                                <%}else{%>
+                                                    <span class="label label-danger">Debit</span>
+                                                <%}%>
                                             </td>
                                             <td>
-                                                <%= d.txn_id %>
+                                                <span class="label label-success"><%= d.txn_amount%></span>
+                                            </td>
+                                            <td>
+                                                <span class="label label-success"> <%= d.txn_id %></span>
+                                               
                                             </td>
                                             <!-- <td>
                                                 <%= d.win %>

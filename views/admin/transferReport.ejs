@@ -75,7 +75,7 @@
                             <thead>
                                 <tr>
                                     <th>S No</th>
-                                    <th>Player ID</th>
+                                    <th>User Details</th>
                                     <th>Txn Amount (RS)</th>
                                     <th>Main Wallet (RS)</th>
                                     <th>Date</th>
@@ -89,9 +89,12 @@
                                 <% var i=1; for (d of data) {%>
                                 <tr class="gradeX">
                                     <td><%= i++%></td>
-                                    <td><a target="_blank"
-                                            href="<%= host %>/user/view/<%= d.user_id%>"><%= d.numeric_id %></a
-                                            target="_blank"></td>
+                                    <td>
+                                        <p><span style="color: #788ca8;">Unique Id</span>: <%= d.numeric_id %></p>
+                                        <p><span style="color: rgb(207, 72, 72);">Full Name</span>: <%= d.username %></p>
+                                        <p><span style="color: #788ca8;">Mobile No</span>: <%= d.userNo %></p>
+                                        </td>
+
                                     <% if (d.txn_amount > 0) { %>
                                     <td><span class="label label-success"><%= d.txn_amount %></span></td>
                                     <% } else { %>
