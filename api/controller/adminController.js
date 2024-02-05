@@ -6644,9 +6644,9 @@ saveCreateRankData: async (req, res) => {
 getParentName:async(req,res)=>{
   let stateAllocated=null;
   let searchID =  req.query.search_id
+  console.log(searchID);
   const parentName = await User.findOne({_id:searchID},{name:1, _id:0, role:1,stateAllocated:1,districtAllocated:1,areaAllocation:1,cash_balance:1,winning_balance:1})
   stateAllocated=parentName.stateAllocated
-  console.log(parentName);
 
   const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
   const roles = {};
@@ -7727,14 +7727,15 @@ editUserSave: async (req, res) => {
     });
   }
 },
-  saveAddRankData: async (req, res) => {
+saveAddRankData: async (req, res) => {
   try {
-    const { parentId,userSecurityPin, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
-    console.log(parentId, userSecurityPin,stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
+    const { parentId,parentRole,userSecurityPin, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;
+    console.log(parentId, parentRole,userSecurityPin,stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole);
     let parentData= null
-    if(parentId){
-      parentData=await User.findOne({_id:parentId})
-      
+    if(parentId && parentRole==="Company"){
+      parentData=await User.findOne({_id:parentId}) 
+    }else{
+      parentData=await User.findOne({search_id:parentId}) 
     }
     // if(parentData !== null ){
     //   const rankLimit=await Rank_Data.findOne({rankName:parentData.role})

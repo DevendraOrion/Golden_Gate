@@ -28,7 +28,8 @@ var TransactionModel = new Schema({
       default: ""
   },
   created_at: {
-      type: String
+      type: String,
+      default: Date.now
   },
   transaction_type: {
       type: String,

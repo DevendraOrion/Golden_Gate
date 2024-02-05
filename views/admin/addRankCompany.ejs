@@ -19,28 +19,49 @@
                   <td>Parent Name</td>
                   <td>Parent Role</td>
                 </tr>
-                
+                <input type="hidden" id="adminRole" value="<%=admin.role%>">
+                <input type="hidden" id="adminId" value="<%=admin._id%>">
                 <tr class="hidden-row">
-                  <td style="width: 295px;">
-                    <select id="searchId" class="form-control search-user" name="state" oninput="getParentName()"></select>
-                  </td>
-                  <td>
-                    <input name="parentName" id="parentName" class="form-control" readonly></input>
-                  </td>
-                  <td>
-                    <input name="parentRole" id="parentRole" class="form-control" readonly></input>
-                  </td>
+                  <% if(admin.role!=="Company") { %>
+                    <td>
+                      <input name="searchId" id="searchId" class="form-control" value="<%=admin.search_id%>" readonly></input>
+                    </td>
+                    <td>
+                      <input name="parentName" id="parentName" class="form-control" value="<%=admin.first_name+' '+admin.last_name%> " readonly></input>
+                    </td>
+                    <td>
+                      <input name="parentRole" id="parentRole" class="form-control" value="<%=admin.role%>" readonly></input>
+                    </td>
+                  <% }else{ %>
+                    <td style="width: 295px;">
+                      <select id="searchId" class="form-control search-user" name="state" oninput="getParentName()"></select>
+                    </td>
+                    <td>
+                      <input name="parentName" id="parentName" class="form-control" readonly></input>
+                    </td>
+                    <td>
+                      <input name="parentRole" id="parentRole" class="form-control" readonly></input>
+                    </td>
+                  <% } %>
+           
                 </tr>
                 <tr class="hidden-row">
                
                   <td>Allocation</td>
                 </tr>
-                
-                <tr class="hidden-row">
-                  <td>
-                    <input name="parentAllocation" id="parentAllocation" class="form-control" readonly></input>
-                  </td>
-                </tr>
+                <% if(admin.role!=="Company") { %>
+                  <tr class="hidden-row">
+                    <td>
+                      <input name="parentAllocation" id="parentAllocation" class="form-control" value="<%=admin?.stateAllocated ? admin?.stateAllocated :admin?.districtAllocated %>" readonly></input>
+                    </td>
+                  </tr>
+                  <% }else{ %>
+                    <tr class="hidden-row">
+                      <td>
+                        <input name="parentAllocation" id="parentAllocation" class="form-control" readonly></input>
+                      </td>
+                    </tr>
+                    <% } %>
                 
                 <!-- </tr> -->
               </table>
@@ -68,11 +89,10 @@
                       <input name="areaAllocation" id="areaAllocation" class="form-control" placeholder="Enter Area here...." >
                     </input>
                     </td>
-                    <td style="     width: 274px;
-                    ">
+                    <td style="width: 274px;">
                       <input name="firstName" id="firstName" class="form-control" placeholder="Enter Frist Name here...."></input>
                     </td>
-                    <td style="    width: 311px;">
+                    <td style="width: 311px;">
                       <input name="lastName" id="lastName" class="form-control" placeholder="Enter Last Name here...."></input>
                     </td>
                   </tr>
@@ -171,11 +191,13 @@
   </div>
   <%- include footer %>
     <script>
+      const adminRole = document.getElementById("adminRole").value;
+      const adminId = document.getElementById("adminId").value;
       let stateAl;
       let a=[];
       let districtData;
     const saveSettings = () => {
-        const parentId = a[0];
+        let parentId;
         let  districtAllocation=""
         let  stateAllocation = "";
         let  areaAllocation = "";
@@ -185,7 +207,12 @@
           stateAllocation = document.getElementById("stateAllocation").value;
         }
         areaAllocation = document.getElementById("areaAllocation").value;
-
+        if(adminRole !== "Company"){
+         parentId=document.getElementById("searchId").value
+        }else{
+          parentId = a[0];
+        }
+        const parentRole = document.getElementById("parentRole").value;
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
         const phone = document.getElementById("phone").value;
@@ -201,10 +228,10 @@
         const userSecurityPin = document.getElementById("userSecurityPin").value;
         const userRole = document.getElementById("userRole").value;
 
-               console.log(districtData,districtAllocation);
+               console.log(parentRole);
         fetch("/admin/saveAddRank", {
           method: "POST",
-          body: JSON.stringify({parentId, userSecurityPin,stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
+          body: JSON.stringify({parentId, parentRole,userSecurityPin,stateAllocation,districtAllocation, areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -231,6 +258,60 @@
       };
     </script>
   <script>
+   
+    const getDistrictDataForParent = (stateAl) => {
+// console.log(stateAl);
+  fetch("/admin/getIndianDistrict?state=" + stateAl , {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+
+      let states2 = response.district;
+          const stateAllocation = document.getElementById("stateAllocation");
+          stateAllocation.innerHTML = "";
+          states2.map(state => {
+            const option = document.createElement("option");
+            option.value = state;
+            option.text = state;
+            stateAllocation.appendChild(option);
+          });
+    })
+    .catch(error => {
+      console.error("Error fetching districts:", error);
+    });
+};
+    const getDistrictDataFor = (stateAl) => {
+// console.log("stateAl",stateAl);
+  fetch("/admin/getIndianDistrict?state=" + stateAl , {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(response => response.json())
+    .then(response => {
+      // console.log(response);
+
+      let states2 = response.district;
+          const stateAllocation = document.getElementById("stateAllocation");
+          stateAllocation.innerHTML = "";
+          states2.map(state => {
+            const option = document.createElement("option");
+            option.value = state;
+            option.text = state;
+            stateAllocation.appendChild(option);
+          });
+    })
+    .catch(error => {
+      console.error("Error fetching districts:", error);
+    });
+};
+
     const getParentName = (selectedParentId) => {
       fetch("/admin/getParentName?search_id=" + selectedParentId, {
         method: "GET",
@@ -261,14 +342,50 @@
   
         const userRole=document.getElementById("userRole");
         userRole.value=response.rolesBelow[0]
+        // console.log("hi");
         updateParentDropdown(response.parentName.role);
       })
       .catch(error => {
         console.error("Error fetching parent name:", error);
       });
     };
+
+    if(adminRole !=="Company"){
+      getParentName(adminId)
+      console.log(adminId);
+      // const stateSt = document.getElementById("parentAllocation").value;
+      // const stateAllocationLabel = document.getElementById("stateAllocationLabel");
+      // const stateAllocation = document.getElementById("stateAllocation");
+      // const areaAllocationLabel = document.getElementById("areaAllocationLabel");
+      // const areaAllocation = document.getElementById("areaAllocation");
+      // const areaHidden = document.getElementById("areaHidden");
+      // const stateHidden = document.getElementById("stateHidden");
+    
+// if (adminRole ==="State") {
+//     stateAllocationLabel.innerText = "Select District";
+//     getDistrictDataFor(stateSt);
+//     stateAllocation.removeAttribute("readonly");
+//     districtData = true;
+//     stateHidden.style.display = "block";
+//     stateAllocationLabel.style.display = "block";
+//     stateAllocation.style.display = "block";
+//     areaAllocationLabel.style.display = "none";
+//     areaAllocation.style.display = "none";
+//     areaHidden.style.display = "none";
+//   }
+//   else if (adminRole === "District" ||adminRole === "Zone") {
+//     // stateAllocationLabel.innerText = "Enter Area";
+//     // stateAllocation.setAttribute("readonly", "readonly");
+//     stateHidden.style.display = "none";
+//     stateAllocationLabel.style.display = "none";
+//     stateAllocation.style.display = "none";
+//     areaAllocationLabel.style.display = "block";
+//     areaAllocation.style.display = "block";
+//     areaHidden.style.display = "block";
+//   }
+}
   
-    const updateParentDropdown = (parentRole) => {
+const updateParentDropdown = (parentRole) => {
   const stateAllocationLabel = document.getElementById("stateAllocationLabel");
   const stateAllocation = document.getElementById("stateAllocation");
   const areaAllocationLabel = document.getElementById("areaAllocationLabel");
@@ -329,6 +446,7 @@
 };
 
 
+ 
 const fetchIndianStates = () => {
       fetch("/admin/getIndianStates", {
         method: "GET",
@@ -421,32 +539,6 @@ const getDistrictData = () => {
         option.text = district;
         districtDropdown.add(option);
       });
-    })
-    .catch(error => {
-      console.error("Error fetching districts:", error);
-    });
-};
-const getDistrictDataForParent = (stateAl) => {
-
-  fetch("/admin/getIndianDistrict?state=" + stateAl , {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then(response => response.json())
-    .then(response => {
-      // console.log(response);
-
-      let states2 = response.district;
-          const stateAllocation = document.getElementById("stateAllocation");
-          stateAllocation.innerHTML = "";
-          states2.map(state => {
-            const option = document.createElement("option");
-            option.value = state;
-            option.text = state;
-            stateAllocation.appendChild(option);
-          });
     })
     .catch(error => {
       console.error("Error fetching districts:", error);
