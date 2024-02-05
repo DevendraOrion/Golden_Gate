@@ -391,6 +391,7 @@ module.exports = function (router, io) {
   router.post("/admin/banners/delete",AdminController.bannerDelete);
 
   //Commission Report
+  router.get("/manual-card-roullete", AdminPagesController.manualCardRoullete);
   router.get("/car-roullete-report", AdminPagesController.carRoulleteReport);
   router.get("/roullete-report", AdminPagesController.roulleteReport);
   router.get("/avaitor-report", AdminPagesController.avaitorReport);

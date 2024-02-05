@@ -1,0 +1,145 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                <%= title %>
+            </h1>
+        </section>
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="timerIds" style="display: flex;
+            justify-content: space-between;">
+                <div>
+                    <h3>CountDown</h3>
+                </div>
+                <!-- <div>
+                    <p>TimerId:</p>
+                    <input type="text" value="12312312" readonly style="background-color: gainsboro;
+            border: none;">
+                </div> -->
+                <div>
+                    <span> <input type="checkbox" value="Manual">Manual</span>
+                    <span> <input type="checkbox" value="Manual">Automatic</span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Spot</th>
+                                        <th>Bet Amount</th>
+                                        <th>Number Of User</th>
+                                        <th>Payable Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="gradeX">
+                                        <td>
+                                            Ace
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr class="gradeX">
+                                        <td>
+                                            King
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr class="gradeX">
+                                        <td>
+                                            Queen
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr class="gradeX">
+                                        <td>
+                                            Jake
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <tr class="gradeX">
+                                        <td>
+                                            10
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <p>1000</p>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox">
+                                        </td>
+                                    </tr>
+                                    <td>
+                                        <button type="button" class="btn btn-success" onclick="saveSettings()">
+                                            Submit
+                                        </button>
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper --><%- include footer %>
+    
