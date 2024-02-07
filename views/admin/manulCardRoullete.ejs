@@ -1,4 +1,5 @@
 <%- include header %><!-- Content Wrapper. Contains page content -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -142,4 +143,31 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper --><%- include footer %>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Flag to track if the connection has been established
+            let connected = false;
+        
+            function connectToServer() {
+                if (!connected) {
+                    // Connect only once
+                    const socket = io('http://localhost:3070');
+                    console.log("Connecting to Socket.IO server...");
+        
+                    socket.on('connect', function () {
+                        console.log('Connected to Socket.IO server');
+                        connected = true;
+                    });
+        
+                    socket.on('connect_error', function (error) {
+                        console.error('Connection error:', error);
+                    });
+                }
+            }
+        
+            connectToServer();
+        });
+
+        </script>
+        
     

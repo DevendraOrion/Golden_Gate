@@ -299,6 +299,23 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       count
     };
   },
+  manualCardRoullete: async (role,adminData) => {
+    
+    // const socket = io('http://localhost:3070');
+    // console.log("Connecting to Socket.IO server...");
+
+
+    // socket.on('connect', function () {
+    //     console.log('Connected to Socket.IO server');
+    //     connected = true;
+   
+    // });
+
+
+    // socket.on('connect_error', function (error) {
+    //     console.error('Connection error:', error);
+    // });
+  },
   getAgentList: async (role,adminData) => {
 if(adminData.role==="Company"){
 // console.log("User",user)
@@ -7736,7 +7753,12 @@ saveAddRankData: async (req, res) => {
       parentData=await User.findOne({_id:parentId}) 
     }else{
       parentData=await User.findOne({search_id:parentId}) 
+      if(!parentData){
+      parentData=await User.findOne({_id:parentId}) 
+        
     }
+  }
+  // console.log(parentData,"==============");
     // if(parentData !== null ){
     //   const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
     //   const parentChildLength=await User.find({parent:parentData._id})
@@ -7820,6 +7842,7 @@ saveAddRankData: async (req, res) => {
     
 
 let parentDataExist = parentData!=null?new ObjectId(parentData._id):null
+console.log(parentDataExist);
     let saveData = new User({
       search_id,
       numeric_id,

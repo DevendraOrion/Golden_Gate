@@ -441,7 +441,7 @@ console.log(req.params);
   manualCardRoullete: async (req, res) => {
     let role="State"
     let adminData=req.admin
-    const users = await AdminController.getAgentList(role,adminData);
+    const users = await AdminController.manualCardRoullete();
     res.render("admin/manulCardRoullete", {
       title: "Manual Result Card Roulette",
       type: "commissionReport",
@@ -449,8 +449,8 @@ console.log(req.params);
       sub2: "carRoulleteReport",
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: users.list,
-      total: users.count,
+      // data: users.list,
+      // total: users.count,
     });
   },
   carRoulleteReport: async (req, res) => {
