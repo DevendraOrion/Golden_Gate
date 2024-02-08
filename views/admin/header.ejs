@@ -155,7 +155,7 @@
               <a href="#"><i class="fa fa-circle text-success"></i>Online</a>
             </div>
           </div>
-
+         
           <!-- Sidebar Menu -->
           <ul class="sidebar-menu" data-widget="tree">
             <!-- Optionally, you can add icons to the links -->
@@ -179,6 +179,7 @@
                   </ul>
                 </li>
                 <% } %>
+                <% if (admin.role !=='Agent' ) { %>
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-calculator"></i> <span>Distributer Management</span>
                     <span class="pull-right-container">
@@ -218,6 +219,8 @@
                           <% } %>
                   </ul>
                 </li>
+                <% } %>
+
             <!-- 
           <li class="treeview <% if(type=='users') {%> active <% } %>">
             <a href="#">
@@ -236,7 +239,7 @@
             </ul>
           </li> -->
 
-            <% if (admin.role=='Company'||admin.role=='State' ||admin.role=='District' ) { %>
+            <% if (admin.role=='Company'||admin.role=='State' ||admin.role=='District' ||admin.role=='Zone' ||admin.role=='Agent' ) { %>
 
               <li class="<% if(type=='transaction') {%> active <% } %>"><a href="/transaction"><i
                     class="fa fa-credit-card"></i>
