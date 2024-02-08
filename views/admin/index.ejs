@@ -22,32 +22,8 @@
         <section class="content container-fluid">
             <!-- Info boxes -->
             <div class="row">
-                <!-- <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-navy"><i class="ion ion-ios-people-outline"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">All Distributor</span>
-                            <span class="info-box-number">
-                                <span id="userBox"> <%= data.distributor_count %></span>
-                                <span class="icon">
-                                    <div class="arrowWrap open" id="userUp" style="display:none">
-                                        <div class="arrow arrow-green"></div>
-                                        <div class="arrow arrow-green"></div>
-                                        <div class="arrow arrow-green"></div>
-                                    </div>
-                                    <div class="arrowWrap" id="userDown" style="display:none">
-                                        <div class="arrow arrow-red"></div>
-                                        <div class="arrow arrow-red"></div>
-                                        <div class="arrow arrow-red"></div>
-                                    </div>
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div> -->
                 <!-- /.col -->
-
+<% if(admin.role=="Company" ){%>
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
@@ -145,22 +121,7 @@
                 </div>
                 <!-- /.col -->
 
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="info-box">
-                        <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">Total Agent
-                            </span>
-                            <span class="info-box-number">
-                                <%= data.total_agent %>
-                            </span>
-                        </div>
-                        <!-- /.info-box-content -->
-                    </div>
-                    <!-- /.info-box -->
-                </div>
-                <!-- /.col -->
+             
 
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
@@ -220,8 +181,32 @@
                     </div>
                     <!-- /.info-box -->
                 </div>
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
+    
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total State</span>
+                            <span class="info-box-number">
+                                <span id="onlineBox"><%= data.total_state  %></span>
+                                <span class="icon">
+                                    <div class="arrowWrap open" id="onlineUp" style="display:none">
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                        <div class="arrow arrow-green"></div>
+                                    </div>
+                                    <div class="arrowWrap" id="onlineDown" style="display:none">
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                        <div class="arrow arrow-red"></div>
+                                    </div>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
                 <!-- /.col -->
-
+          
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
@@ -264,30 +249,25 @@
                     </div>
                 </div>
             </div>
-                <div class="col-md-3 col-sm-6 col-xs-12">
+            
+            <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
-                    <span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
+                    <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Total State</span>
+                        <span class="info-box-text">Total Agent
+                        </span>
                         <span class="info-box-number">
-                            <span id="onlineBox"><%= data.total_state  %></span>
-                            <span class="icon">
-                                <div class="arrowWrap open" id="onlineUp" style="display:none">
-                                    <div class="arrow arrow-green"></div>
-                                    <div class="arrow arrow-green"></div>
-                                    <div class="arrow arrow-green"></div>
-                                </div>
-                                <div class="arrowWrap" id="onlineDown" style="display:none">
-                                    <div class="arrow arrow-red"></div>
-                                    <div class="arrow arrow-red"></div>
-                                    <div class="arrow arrow-red"></div>
-                                </div>
-                            </span>
+                            <%= data.total_agent %>
                         </span>
                     </div>
+                    <!-- /.info-box-content -->
                 </div>
+                <!-- /.info-box -->
             </div>
+     
+            <!-- /.col -->
+
                 <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-yellow"><i class="fa  fa-arrow-up"></i></span>
@@ -387,10 +367,139 @@
                     </div>
                 </div>
             </div>
-    
-         
-
             </div>
+<% }%>
+<% if(admin.role=="State" ){%>
+   
+    <div class="col-md-3 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Total District
+                </span>
+                <span class="info-box-number">
+                    <%= data.total_district %>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+
+    <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Zone
+            </span>
+            <span class="info-box-number">
+                <span id="onlineBox"><%= data.guest_count  %></span>
+                <span class="icon">
+                    <div class="arrowWrap open" id="onlineUp" style="display:none">
+                        <div class="arrow arrow-green"></div>
+                        <div class="arrow arrow-green"></div>
+                        <div class="arrow arrow-green"></div>
+                    </div>
+                    <div class="arrowWrap" id="onlineDown" style="display:none">
+                        <div class="arrow arrow-red"></div>
+                        <div class="arrow arrow-red"></div>
+                        <div class="arrow arrow-red"></div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Agent
+            </span>
+            <span class="info-box-number">
+                <%= data.total_agent %>
+            </span>
+        </div>
+    </div>
+   
+</div>
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total User
+            </span>
+            <span class="info-box-number">
+                <%= data.total_agent %>
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-orange"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Business
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-gray"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Commission
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-pink"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Pending Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-green"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Paid Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+
+<% }%>
             <!-- /.row -->
 
             <div class="row">

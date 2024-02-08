@@ -40,7 +40,6 @@
                                                 <%= i++ %>
                                             </td>
                                             <td>
-                                                
                                                 <p><span style="color: #788ca8;">Unique Id</span>: <%= d.parentDatas.search_id %></p>
                                                 <p><span style="color: rgb(207, 72, 72);">Full Name</span>: <%= d.parentDatas.first_name %> <%=  d.parentDatas.last_name %></p>
                                                 <p><span style="color: #788ca8;">Mobile No</span>: <%= d.parentDatas.phone %></p>
@@ -69,7 +68,7 @@
                                                             <%= d?.districtCount ?? 0 %>
                                                         </a>
                                                     </p>
-                                                    <p><span style="color: #788ca8;">Zone</span>:
+                                                    <!-- <p><span style="color: #788ca8;">Zone</span>:
                                                         <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
                                                             <%= d?.zoneCount ?? 0 %>
                                                         </a>
@@ -83,7 +82,7 @@
                                                         <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
-                                                    </p>
+                                                    </p> -->
                                                         <% } %>
                                                 <% if (d.role === 'District') { %>
 
@@ -92,7 +91,7 @@
                                                             <%= d?.zoneCount ?? 0 %>
                                                         </a>
                                                     </p>
-                                                    <p><span style="color: rgb(207, 72, 72);">Agent</span>:
+                                                    <!-- <p><span style="color: rgb(207, 72, 72);">Agent</span>:
                                                         <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
                                                             <%= d?.agentCount ?? 0 %>
                                                         </a>
@@ -101,7 +100,7 @@
                                                         <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
-                                                    </p>
+                                                    </p> -->
                                                         <% } %>
                                                 <% if (d.role === 'Zone') { %>
 
@@ -110,11 +109,11 @@
                                                             <%= d?.agentCount ?? 0 %>
                                                         </a>
                                                     </p>
-                                                    <p><span style="color: #788ca8;">User</span>:
+                                                    <!-- <p><span style="color: #788ca8;">User</span>:
                                                         <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
-                                                    </p>
+                                                    </p> -->
                                                         <% } %>
                                                 <% if (d.role === 'Agent') { %>
                                                     <p><span style="color: #788ca8;">User</span>:

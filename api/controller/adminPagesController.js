@@ -25,19 +25,23 @@ module.exports = {
     data.distributor_count = await distributorController.getAllDistributorCount(
       req
     );
-    data.user_count = await AdminController.getAllUserCount();
-    data.fb_user_count = await AdminController.getAllFBUserCount();
-    data.guest_count = await AdminController.getAllGuestUserCount();
-    data.game_count = await AdminController.getAllGameCount();
-    data.most_preferred = await AdminController.mostPreferredAmount();
-    data.latest_user = await AdminController.latestUser();
-    data.graph_data = await AdminController.chartData();
-    data.deposit = await AdminController.getDepositCount();
-    data.withdrawl = await AdminController.getWithdrawlCount();
-    data.referral = await AdminController.getReferralCount();
-    data.total_state = await AdminController.getTotal_state();
-    data.total_district = await AdminController.getTotal_district();
-    data.total_agent = await AdminController.getTotal_agent();
+
+    data.user_count = await AdminController.getAllUserCount(req.admin);
+    data.fb_user_count = await AdminController.getAllFBUserCount(req.admin);
+    data.guest_count = await AdminController.getAllGuestUserCount(req.admin);
+    data.game_count = await AdminController.getAllGameCount(req.admin);
+    data.most_preferred = await AdminController.mostPreferredAmount(req.admin);
+    data.latest_user = await AdminController.latestUser(req.admin);
+    data.graph_data = await AdminController.chartData(req.admin);
+    data.deposit = await AdminController.getDepositCount(req.admin);
+    data.withdrawl = await AdminController.getWithdrawlCount(req.admin);
+    data.referral = await AdminController.getReferralCount(req.admin);
+    data.total_state = await AdminController.getTotal_state(req.admin);
+    data.total_district = await AdminController.getTotal_district(req.admin);
+    data.total_agent = await AdminController.getTotal_agent(req.admin);
+    data.total_user = await AdminController.getTotal_user(req.admin);
+ 
+ 
     res.render("admin/index", {
       title: "Dashboard",
       type: "dashboard",

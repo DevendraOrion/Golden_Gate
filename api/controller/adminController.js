@@ -342,10 +342,11 @@ let parentData = await Promise.all(users.map(async (a) => {
   let user=0
   let Data = await User.findOne({ _id: a.parent });
   let childData = await User.find({ parent: a._id });
+  // console.log(a);
   if(childData){
     childData.map((child)=>{
       // console.log(child)
-      if(child.role==="District"){
+      if(child.role==="State"){
         state++
       }
       if(child.role==="District"){
@@ -385,24 +386,10 @@ const list=await parentData
       count,
     };
 }else{
-  // console.log("++++++++++++++++++++",adminData._id)
-// const users = await User.aggregate([
-//   {
-//     $match: {
-//       is_deleted: false,
-//       // role: { $eq: role },
-//       parent:adminData._id
-//     }
-//   },
-//   {
-//     $sort: {
-//       created_at: -1
-//     }
-//   }
-// ]);
+
 const users=await User.find({is_deleted: false,parent:adminData._id})
-// console.log("++++++++++++++++++++",users) 
 let maindata=users
+// console.log("++++++++++++++++++++",users) 
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
   let district=0
@@ -414,7 +401,7 @@ let parentData = await Promise.all(users.map(async (a) => {
   if(childData){
     childData.map((child)=>{
       // console.log(child)
-      if(child.role==="District"){
+      if(child.role==="State"){
         state++
       }
       if(child.role==="District"){
@@ -442,7 +429,7 @@ let parentData = await Promise.all(users.map(async (a) => {
     userCount:user,
   };
 }));
-console.log(parentData);
+// console.log(parentData);
 
 const list=await parentData
 
@@ -454,11 +441,8 @@ const list=await parentData
       count,
     };
 }
-
-  },
-
-
-  getChildList: async (id) => {
+},
+getChildList: async (id) => {
 
       const users = await User.aggregate([
         {
@@ -480,7 +464,7 @@ const list=await parentData
           parentDatas: Data
         };
       }));
-      console.log(await parentData);
+      // console.log(await parentData);
       const list=await parentData
    
     let count = await User.find({
@@ -644,13 +628,29 @@ now.setHours(0, 0, 0, 0);
     return c;
   },
 //get all guest users
-  getAllGuestUserCount: async () => {
-    //logger.info('ADMIN FB USER Count REQUEST >> ');
-    var c = await User.countDocuments({
+  getAllGuestUserCount: async (data) => {
+
+if(data.role==="Company"){
+      var c = await User.countDocuments({
       is_deleted: false,
-     role:"Zone"
+     role:"Zone",
+
     });
     return c;
+  }
+  if (data.role === "State") {
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "Zone") {
+            main++;
+        }
+    });
+    await Promise.all(Down);
+    return main;
+}
+
   },
   getTotal_state: async () => {
     //logger.info('ADMIN FB USER Count REQUEST >> ');
@@ -660,21 +660,68 @@ now.setHours(0, 0, 0, 0);
     });
     return c;
   },
-  getTotal_district: async () => {
-    //logger.info('ADMIN FB USER Count REQUEST >> ');
-    var c = await User.countDocuments({
+  getTotal_district: async (data) => {
+  console.log(data.role==="State");
+ if(data.role==="Company")
+ {   var c = await User.countDocuments({
       is_deleted: false,
-     role:"District"
+     role:"District",
     });
     return c;
+  }
+ if(data.role==="State"){   
+
+  var c = await User.countDocuments({
+      is_deleted: false,
+     role:"District",
+     parent:data._id
+    });
+    return c;
+  }
   },
-  getTotal_agent: async () => {
-    //logger.info('ADMIN FB USER Count REQUEST >> ');
-    var c = await User.countDocuments({
+  getTotal_agent: async (data) => {
+  if(data.role==="Company"){  
+   var c = await User.countDocuments({
       is_deleted: false,
      role:"Agent"
     });
     return c;
+  }
+  if (data.role === "State") {
+      const downline = await Service.DownLine(data._id);
+      let main = 0;
+      let Down = downline.map(async (a) => {
+          let find = await User.findOne({ _id: a });
+          if (find.role === "Agent") {
+            // console.log(find)
+              main++;
+          }
+      });
+      await Promise.all(Down);
+      return main;
+  }
+  },
+  getTotal_user: async (data) => {
+ if(data.role==="Company"){  
+   var c = await User.countDocuments({
+      is_deleted: false,
+     role:"Agent"
+    });
+    return c;
+  }
+    if (data.role === "State") {
+      const downline = await Service.DownLine(data._id);
+      let main = 0;
+      let Down = downline.map(async (a) => {
+          let find = await User.findOne({ _id: a });
+          if (find.role === "User") {
+            // console.log(find)
+              main++;
+          }
+      });
+      await Promise.all(Down);
+      return main;
+  }
   },
   //Get Count Of Total Game
   getAllGameCount: async () => {
@@ -757,28 +804,31 @@ now.setHours(0, 0, 0, 0);
     return count;
   },
   //Latest User 8
-  latestUser: async () => {
-    //logger.info('Latest Users REQUEST >> ');
-    var d = await User.find({
-      is_deleted: false,
-    })
-      .sort({
-        _id: -1,
-      })
-      .limit(8);
-    var userdata = await Promise.all(
-      d.map(async (k) => {
-        // console.log(k);
-        return {
-          username: k.name,
-          id: k._id,
-          profilepic: k.profile_pic,
-          created_at: k.created_at, //await Service.formateDateandTime(parseInt(k.created_at))
-        };
-      })
-    );
-    return userdata;
-  },
+  latestUser: async (data) => {
+    try {
+        let userIds = await Service.DownLine(data._id);
+        let users = await User.find({
+            is_deleted: false,
+            _id: { $in: userIds } 
+        })
+        .sort({ _id: -1 })
+        .limit(8);
+
+        let userData = await Promise.all(users.map(async (user) => {
+            return {
+                username: user.name,
+                id: user._id,
+                profilepic: user.profile_pic,
+                created_at: user.created_at 
+            };
+        }));
+
+        return userData;
+    } catch (error) {
+        console.error("Error fetching latest users:", error);
+        throw error;
+    }
+},
   //Dashboard Chart
   chartData: async () => {
     logger.info("Chart JS REQUEST >> ");
