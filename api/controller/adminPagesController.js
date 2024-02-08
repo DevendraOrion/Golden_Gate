@@ -593,7 +593,8 @@ console.log(req.params);
     });
   },
   betHistoryAvaitor: async (req, res) => {
-    const transactions = await paymentController.betHistory(10);
+    let game="3"
+    const transactions = await paymentController.betHistory(10,game);
     res.render("admin/betHistory", {
       title: "Bet History(Avaitor)",
       type: "bet",
@@ -603,6 +604,22 @@ console.log(req.params);
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
+      game:game,
+    });
+  },
+  betHistoryRoullete: async (req, res) => {
+    let game="1"
+    const transactions = await paymentController.betHistory(10,game);
+    res.render("admin/betHistory", {
+      title: "Bet History(Roullete)",
+      type: "bet",
+      sub: "roullete",
+      sub2: "roullete",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+      game:game,
     });
   },
   modifyUser: async (req, res) => {

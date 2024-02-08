@@ -389,12 +389,12 @@ console.log(list);
       count: count,
     };
   },
-  betHistory: async (limit) => {
+  betHistory: async (limit,game) => {
 
     const betData = await JoinGame.aggregate([
       {
           $match: {
-              game_id: "3",
+              game_id: game,
           }
       },
       {
@@ -492,12 +492,11 @@ console.log(list);
 ///////////////////////////////////////////////////////////////////////////////////////////
   getBetHistoryTxnAjax: async function (req, res) {
     var startTime = new Date();
+    const GameId=req.query.gameID
 // console.log("jlasfdj");
     const params = req.query;
 // console.log("params", params);
-    let matchObj = {
-      game_id:"3"
-    };
+    let matchObj = {};
     if (params.search) {
       if (params.search.value.trim() != "") {
         matchObj["$or"] = [
@@ -564,68 +563,76 @@ console.log(list);
     }
 
     if (!_.isEmpty(params.status)) {
-      matchObj.is_status = params.status;
+      matchObj.is_updated = params.status;
     }
 
-    if (!_.isEmpty(params.type)) {
-      matchObj.txn_mode = params.type;
-    }
-    if (!_.isEmpty(params.rank)) {
-      matchObj["users.role"] = params.rank;
-    }
     if (!_.isEmpty(params.startDate)) {
       let sdate = params.startDate;
-      let timestamp
+      let timestamp;
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
-        console.log(timestamp);
+          timestamp = dateObject.getTime();
+          // console.log(timestamp);
       } else {
-        console.error("Invalid date string");
+          console.error("Invalid date string");
       }
-      
+  
+      let isoStartDate = new Date(sdate + 'T00:00:00Z');
+  
       matchObj.created = {
-                $gte: timestamp.toString()
-              }
-    }
-    if (!_.isEmpty(params.endDate)) {
-      let sdate = params.endDate + 'T23:59:59.999Z';
-      let timestamp
-      let dateObject = new Date(sdate);
-      if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
-      } else {
-        console.error("Invalid date string");
-      }
-        matchObj.created = {
-          $lt: timestamp.toString()
+          $gte: isoStartDate
       };
-    }
-    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
-      let startdate = params.startDate ;
-      let endDate = params.endDate + 'T23:59:59.999Z';
-      let timestampstart
-      let timestampsend
-      let dateObjectstart = new Date(startdate);
-      let dateObjectend = new Date(endDate);
-      if (!isNaN(dateObjectstart.getTime())) {
-        timestampstart = dateObjectstart.getTime();
-      } else {
+  }
+  
+  if (!_.isEmpty(params.endDate)) {
+    let sdate = params.endDate + 'T23:59:59.999Z';
+    let timestamp;
+    let dateObject = new Date(sdate);
+    if (!isNaN(dateObject.getTime())) {
+        timestamp = dateObject.toISOString();
+        console.log(timestamp);
+    } else {
         console.error("Invalid date string");
-      }
-      if (!isNaN(dateObjectend.getTime())) {
-        timestampsend = dateObjectend.getTime();
-      } else {
-        console.error("Invalid date string");
-      }
-        matchObj.created = {
-          $gte: timestampstart.toString(),
-          $lt: timestampsend.toString()
-      };
     }
+    matchObj.created = {
+        $lt: new Date(timestamp)
+    };
+}
+
+if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
+  let startdate = params.startDate;
+  let endDate = params.endDate + 'T23:59:59.999Z';
+  let timestampstart;
+  let timestampend;
+  let dateObjectstart = new Date(startdate);
+  let dateObjectend = new Date(endDate);
+  
+  if (!isNaN(dateObjectstart.getTime())) {
+      timestampstart = dateObjectstart.toISOString();
+  } else {
+      console.error("Invalid start date string");
+  }
+  
+  if (!isNaN(dateObjectend.getTime())) {
+      timestampend = dateObjectend.toISOString();
+  } else {
+      console.error("Invalid end date string");
+  }
+  
+  matchObj.created = {
+      $gte: new Date(timestampstart),
+      $lt: new Date(timestampend)
+  };
+}
+
     
     let aggregation_obj = [];
     aggregation_obj.push(
+    {
+      $match:{
+        game_id:GameId
+      }
+    },
       {
         $lookup: {
             from: "users",
@@ -685,7 +692,7 @@ console.log(list);
     });
 
     let list = await JoinGame.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(list);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -740,8 +747,6 @@ console.log(list);
       })
     );
 
-    var endTime = new Date();
-    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
 
     return res.status(200).send({
       data: await list,
