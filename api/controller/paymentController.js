@@ -5,6 +5,7 @@ var { User } = require("./../models/user"),
   localization = require("./../service/localization");
 var Cryptr = require("cryptr");
 var { Transaction } = require("./../models/transaction");
+var  JoinGame  = require("./../models/joinGame");
 var Table = require("./../models/table");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
 const uniqid = require("uniqid");
@@ -388,6 +389,63 @@ console.log(list);
       count: count,
     };
   },
+  betHistory: async (limit) => {
+
+    const betData = await JoinGame.aggregate([
+      {
+          $match: {
+              game_id: "3",
+          }
+      },
+      {
+          $lookup: {
+              from: "users",
+              let: { user_id: { $toDecimal: "$user_id" } }, 
+              pipeline: [
+                  {
+                      $match: {
+                          $expr: { $eq: ["$numeric_id", "$$user_id"] }
+                      }
+                  }
+              ],
+              as: "user"
+          }
+      },
+      {
+          $unwind: "$user" 
+      },
+      {
+          $limit: limit
+      }
+  ]);
+  
+  
+    let list = await Promise.all(
+      betData.map(async (u) => {
+        // console.log(u);
+        if (u.user) {
+          return {
+            playerId: u.user.search_id,
+            playerName: u.user.first_name+" "+u.user.last_name,
+            room_id: u.room_id,
+            amount: u.amount,
+            winAmount: u.win_amount,
+            date: u.created,
+            status: u.is_updated,      
+          };
+        } else {
+          return false;
+        }
+      })
+    );
+// console.log(list);
+
+    let count = await Transaction.countDocuments();
+    return {
+      list: list.filter((d) => d),
+      count: count,
+    };
+  },
 
   transactionListPending: async (limit) => {
     const transaction = await Transaction.find({
@@ -431,7 +489,267 @@ console.log(list);
       count: count,
     };
   },
+///////////////////////////////////////////////////////////////////////////////////////////
+  getBetHistoryTxnAjax: async function (req, res) {
+    var startTime = new Date();
+// console.log("jlasfdj");
+    const params = req.query;
+// console.log("params", params);
+    let matchObj = {
+      game_id:"3"
+    };
+    if (params.search) {
+      if (params.search.value.trim() != "") {
+        matchObj["$or"] = [
+          {
+            $expr: {
+              $regexMatch: {
+                input: { $toString: "$users.numeric_id" },
+                regex: params.search.value,
+                options: "i"
+              }
+            }
+          },
+          {
+            request_id: {
+              $regex: params.search.value,
+              $options: "i",
+            },
+          },
+          {
+            resp_msg: {
+              $regex: params.search.value,
+              $options: "i",
+            },
+          },
 
+        ];
+      }
+    }
+
+    var sortObj = {};
+    if (params.order) {
+      if (params.order[0]) {
+        // console.log(params.order[0]);
+        // if (params.order[0].column == "0") {
+        //   // SORT BY TXN AMOUNT
+        //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
+        // }
+          if (params.order[0].column == "2") {
+          // SORT BY TXN AMOUNT
+          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "3") {
+          // SORT BY WIN WALLET
+          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "4") {
+          // SORT BY MAIN WALLET
+          sortObj.created = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "1") {
+          // SORT BY DATE
+          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
+        } else {
+          sortObj = { created: -1 };
+        }
+      } else {
+        sortObj = { created: -1 };
+      }
+    } else {
+      sortObj = { created: -1 };
+    }
+
+    const user_id = params.id || "";
+
+    if (Service.validateObjectId(user_id)) {
+      matchObj.user_id = ObjectId(user_id);
+    }
+
+    if (!_.isEmpty(params.status)) {
+      matchObj.is_status = params.status;
+    }
+
+    if (!_.isEmpty(params.type)) {
+      matchObj.txn_mode = params.type;
+    }
+    if (!_.isEmpty(params.rank)) {
+      matchObj["users.role"] = params.rank;
+    }
+    if (!_.isEmpty(params.startDate)) {
+      let sdate = params.startDate;
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+        console.log(timestamp);
+      } else {
+        console.error("Invalid date string");
+      }
+      
+      matchObj.created = {
+                $gte: timestamp.toString()
+              }
+    }
+    if (!_.isEmpty(params.endDate)) {
+      let sdate = params.endDate + 'T23:59:59.999Z';
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created = {
+          $lt: timestamp.toString()
+      };
+    }
+    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
+      let startdate = params.startDate ;
+      let endDate = params.endDate + 'T23:59:59.999Z';
+      let timestampstart
+      let timestampsend
+      let dateObjectstart = new Date(startdate);
+      let dateObjectend = new Date(endDate);
+      if (!isNaN(dateObjectstart.getTime())) {
+        timestampstart = dateObjectstart.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+      if (!isNaN(dateObjectend.getTime())) {
+        timestampsend = dateObjectend.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created = {
+          $gte: timestampstart.toString(),
+          $lt: timestampsend.toString()
+      };
+    }
+    
+    let aggregation_obj = [];
+    aggregation_obj.push(
+      {
+        $lookup: {
+            from: "users",
+            let: { user_id: { $toDecimal: "$user_id" } }, 
+            pipeline: [
+                {
+                    $match: {
+                        $expr: { $eq: ["$numeric_id", "$$user_id"] }
+                    }
+                }
+            ],
+            as: "user"
+        }
+    },
+    {
+        $unwind: "$user" 
+    },
+    );
+  
+
+    if (matchObj != {})
+      aggregation_obj.push({
+        $match: matchObj,
+      });
+
+    aggregation_obj.push(
+      {
+        $sort: sortObj,
+      },
+      {
+        $skip: params.start == "All" ? 0 : parseInt(params.start),
+      }
+    );
+
+    if (params.length != -1) {
+      aggregation_obj.push({
+        $limit: parseInt(params.length),
+      });
+    }
+
+    aggregation_obj.push({
+      $project: {
+        _id: 1,
+        created: 1,
+        win_amount:1,
+        amount: 1,
+        username: { $concat: ["$user.first_name" ," ", "$user.last_name"] },
+        numeric_id: "$user.search_id",
+        user_id: "$user._id",
+        resp_msg: 1,
+        role: "$user.role",
+        is_updated: 1,
+        is_status: 1,
+        txn_mode: 1,
+        room_id: 1,
+      },
+    });
+
+    let list = await JoinGame.aggregate(aggregation_obj).allowDiskUse(true);
+    console.log(list);
+    let aggregate_rf = [];
+
+    if (matchObj) {
+      aggregate_rf.push({
+        $match: matchObj,
+      });
+    }
+
+    aggregate_rf.push({
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+      },
+    });
+
+    // logger.info("aggregate_rf", aggregate_rf);
+    let rF = await JoinGame.aggregate(aggregate_rf).allowDiskUse(true);
+
+    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    var recordsTotal = await JoinGame.find({}).countDocuments();
+
+    list = await Promise.all(
+      list.map(async (u,index) => {
+    
+        let numeric_id = u.numeric_id;
+        let username = u.username;
+        // console.log(username);
+        let room_id = u.room_id;
+        let amount = u.amount;
+        let win_amount = u.win_amount;
+        let created=await Service.formateDateandTime(u.created)
+        if (u.is_updated == 1) {
+          is_updated =
+            '<span class="label label-success"> Success</span>';
+        } else {
+          is_updated =
+          '<span class="label label-success"> Pending</span>';
+        }
+    
+        return [
+          ++index,
+          // u?.request_id ?? '',
+          `<p><span style="color: #788ca8;">Unique Id</span>: ${numeric_id}</p>
+          <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${username}</p>`,
+          room_id,
+          `<span class="label label-success"> ${amount}</span>`,
+          `<span class="label label-success"> ${win_amount}</span>`,
+          created,
+          // txn_mode,
+          is_updated
+        ];
+      })
+    );
+
+    var endTime = new Date();
+    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
+
+    return res.status(200).send({
+      data: await list,
+      draw: new Date().getTime(),
+      recordsTotal: recordsTotal,
+      recordsFiltered: recordsFiltered,
+    });
+  },
   getTxnAjax: async function (req, res) {
     var startTime = new Date();
 

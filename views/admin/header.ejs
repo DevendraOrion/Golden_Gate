@@ -313,6 +313,21 @@
                             class="fa fa-times-circle-o" aria-hidden="true"></i> Point Transaction Report</a></li>
                     </ul>
                   </li>
+                  <li class="treeview <% if(type=='bet') {%> active <% } %>">
+                    <a href="#"><i class="fa fa-plus"></i> <span>Bet History</span>
+                      <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                      </span>
+                    </a>
+                    <ul class="treeview-menu">
+                      <li class="<% if(sub2 =='avaitor') {%> active <% } %> "><a href="/bet-avaitor"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i>Avaitor</a></li>
+                      <li class="<% if(sub2 =='card') {%> active <% } %> "><a href="/bet-card-roullete"><i
+                          class="fa fa-times-circle-o" aria-hidden="true"></i>Card Roullete</a></li>
+                        <li class="<% if(sub2 =='roullete') {%> active <% } %> "><a href="/bet-roullete"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i>Roullete</a></li>
+                    </ul>
+                  </li>
                   <% if (admin.role=='Company') { %>
                   <li class="<% if(type=='commission-mgt') {%> active <% } %>"><a href="/commission-mgt"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Commission Master</span></a></li>

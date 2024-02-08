@@ -592,6 +592,19 @@ console.log(req.params);
       data: data,
     });
   },
+  betHistoryAvaitor: async (req, res) => {
+    const transactions = await paymentController.betHistory(10);
+    res.render("admin/betHistory", {
+      title: "Bet History(Avaitor)",
+      type: "bet",
+      sub: "avaitor",
+      sub2: "avaitor",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+    });
+  },
   modifyUser: async (req, res) => {
     const user = await AdminController.getUserDetails(
       req.params.id,
@@ -837,6 +850,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
+      child:false
     });
   },
   zoneMGT: async (req, res) => {
@@ -852,6 +866,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
+      child:false
     });
   },
   districtMGT: async (req, res) => {
@@ -867,6 +882,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
+      child:false
     });
   },
   stateMGT: async (req, res) => {
@@ -883,10 +899,11 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
+      child:false
     });
   },
   showChild: async (req, res) => {
-    console.log(req.params.id);
+    // console.log(req.params.id);
     let id= req.params.id
     const users = await AdminController.getChildList(id);
     res.render("admin/agentsMGT", {
@@ -898,6 +915,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
+      child:true
     });
   },
   kycRequests: async (req, res) => {

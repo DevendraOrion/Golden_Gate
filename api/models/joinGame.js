@@ -1,47 +1,17 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const { Schema } = require('mongoose');
+// Define the MongoDB schema for the game_result table
+const joinGame = new Schema({
+  user_id: { type: String, required: true },
+  room_id: { type: String, required: true },
+  spot: { type: String },
+  win_amount: { type: Number, default: 0 },
+  amount: { type: Number, required: true },
+  game_id: { type: String, required: true },
+  created: { type: Date, default: Date.now },
+  is_updated: { type: String, default: '0' }
+});
 
-var JoinGameModel = new Schema({
-    user_id: {
-        type: String,
-        required: true,
-        ref: 'Users'
-    },
-    room_id: {
-        type: String,
-        required: true
-    },
-    game_id: {
-        type: Number,
-        required: true
-    },
-    spot: {
-        type: String,
-        required: true
-    },
-    amount: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    win_amount: {
-        type: Number,
-        default: 0
-    },
-    is_updated: {
-        type: Number,
-        default: 0,
-        enum: [0, 1]
-    },
-    created: {
-        type: Date,
-        default: Date.now
-    },
-    updated: {
-        type: Date,
-        default: Date.now
-    }
-})
-var JoinGame = mongoose.model('JoinGame', JoinGameModel);
-
-module.exports = {JoinGame};
+// Export the MongoDB model
+const Join_game = mongoose.model('join_game', joinGame);
+module.exports = Join_game;

@@ -395,4 +395,11 @@ module.exports = function (router, io) {
   router.get("/car-roullete-report", AdminPagesController.carRoulleteReport);
   router.get("/roullete-report", AdminPagesController.roulleteReport);
   router.get("/avaitor-report", AdminPagesController.avaitorReport);
+
+  //Bet History
+  router.get("/bet-avaitor", AdminPagesController.betHistoryAvaitor);
+  router.get("/bet-card-roullete", AdminPagesController.addStateRank);
+  router.get("/bet-roullete", AdminPagesController.addDistrictRank);
+  router.get("/betHistory_ajax_transaction", paymentController.getBetHistoryTxnAjax);
+
 };
