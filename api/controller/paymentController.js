@@ -625,12 +625,14 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
   };
 }
 
-    
+//////////////////////////////////////////////////
+    let incData=await Service.DownLine(req.admin._id)
+//////////////////////////////////////////////////
     let aggregation_obj = [];
     aggregation_obj.push(
     {
       $match:{
-        game_id:GameId
+        game_id:GameId,
       }
     },
       {
@@ -689,7 +691,14 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
         txn_mode: 1,
         room_id: 1,
       },
-    });
+      
+    },
+    {
+      $match:{
+        user_id:{$in:incData}
+      }
+    },
+    );
 
     let list = await JoinGame.aggregate(aggregation_obj).allowDiskUse(true);
     // console.log(list);
@@ -887,6 +896,8 @@ console.log("params", params);
       };
     }
     
+    let incData=await Service.DownLine(req.admin._id)
+
     let aggregation_obj = [];
     aggregation_obj.push(
       {
@@ -944,7 +955,12 @@ console.log("params", params);
         is_status: 1,
         txn_mode: 1,
       },
-    });
+    },
+    {
+      $match:{
+        user_id:{$in:incData}
+      }
+    },);
 
     // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
 
@@ -1198,7 +1214,8 @@ let created=await Service.formateDateandTime(u.created_at)
           $lt: timestampsend.toString()
       };
     }
-    
+    let incData=await Service.DownLine(req.admin._id)
+
     let aggregation_obj = [];
     aggregation_obj.push(
       {$match:{
@@ -1258,7 +1275,12 @@ let created=await Service.formateDateandTime(u.created_at)
         is_status: 1,
         txn_mode: 1,
       },
-    });
+    },
+    {
+      $match:{
+        user_id:{$in:incData}
+      }
+    },);
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);

@@ -347,12 +347,6 @@ module.exports = function (router, io) {
   //Add Ranks
   router.get("/revenue-report", AdminPagesController.revenueReport);
   router.get("/commission", AdminPagesController.Commission);
-  // router.get("/modify-user", AdminPagesController.modifyUser);
-  // router.get("/add-rank-state", AdminPagesController.addStateRank);
-  // router.get("/add-rank-district", AdminPagesController.addDistrictRank);
-  // router.get("/add-rank-zone", AdminPagesController.addZoneRank);
-  // router.get("/add-rank-agent", AdminPagesController.addAgentRank);
-  // router.get("/add-rank-user", AdminPagesController.adduserRank);
   router.get("/rankMaster", AdminPagesController.rankMaster);
   router.get("/create-user", AdminPagesController.createUser);
   router.get("/addRankCompany", AdminPagesController.addRankss);
