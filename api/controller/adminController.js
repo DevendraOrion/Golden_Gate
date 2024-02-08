@@ -7870,7 +7870,12 @@ saveAddRankData: async (req, res) => {
         else numeric_id = 11111;
     }
     let searchRole = userRole.toLowerCase();
-    let twoSearchWord = searchRole.slice(0, 2);
+    let twoSearchWord
+    if(userRole==="User"){
+      twoSearchWord = "GG"
+    }else{
+      twoSearchWord = searchRole.slice(0, 2);
+    }
     
     var maxSearchId = await User.find({ role_prefix: twoSearchWord }, ['search_id'])
       .sort({
