@@ -173,8 +173,10 @@
                   <ul class="treeview-menu">
                     <li class="<% if(sub2 =='playerMaster') {%> active <% } %> "><a href="/user"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Player Master</a></li>
-                    <li class="<% if(sub2 =='create-user') {%> active <% } %> "><a href="/create-user"><i
-                          class="fa fa-times-circle-o" aria-hidden="true"></i> Player Creation</a></li>
+                          <%if(admin.role !== "Agent"){%>
+                          <li class="<% if(sub2 =='create-user') {%> active <% } %> "><a href="/create-user"><i
+                            class="fa fa-times-circle-o" aria-hidden="true"></i> Player Creation</a></li>
+                            <%}%>
                   
                   </ul>
                 </li>
@@ -262,8 +264,8 @@
                 </ul>
               </li> -->
             
-              <li class="<% if(type=='maintenance') {%> active <% } %>"><a href="/maintenance"><i class="fa fa-wrench"
-                aria-hidden="true"></i> <span>Maintenance</span></a></li>
+              <!-- <li class="<% if(type=='maintenance') {%> active <% } %>"><a href="/maintenance"><i class="fa fa-wrench"
+                aria-hidden="true"></i> <span>Maintenance</span></a></li> -->
             
                 <% if (admin.role=='Company') { %>
                 

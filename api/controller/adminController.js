@@ -32,7 +32,7 @@ var {
 } = require("./../models/DistributorWithdrawalRequest");
 var { AgentWithdrawalRequest } = require("./../models/AgentWithdrawalRequest");
 var { Transaction } = require("./../models/transaction");
-var { JoinGame } = require("./../models/joinGame");
+var  JoinGame  = require("./../models/joinGame");
 var { Default } = require("./../models/default");
 var { Notification } = require("./../models/notification");
 const { Parser } = require("json2csv");
@@ -480,39 +480,39 @@ getChildList: async (id) => {
   getUserListAjax: async () => { },
   //Get User Details
   getUserDetails: async (id,admin_id) => {
-    // console.log(id,admin_id);
-    //logger.info('Admin Request for USER DETAILS ::', id)
+ 
     var u = await User.findById(id);
-    // console.log(u);
-    // var gameData = await JoinGame.find(
-    //   {
-    //     user_id: u.numeric_id,
-    //   },
-    //   // {
-    //   //   room: 1,
-    //   //   is_active: 1,
-    //   //   room_fee: 1,
-    //   //   no_of_players: 1,
-    //   //   created_at: 1,
-    //   //   "players.$": 1,
-    //   // }
-    // ).sort({
-    //   created_at: -1,
-    // });
+    console.log(u);
+    let NumberNumeric=Number(u.numeric_id)
+    var gameData = await JoinGame.find(
+      {
+        user_id:u.numeric_id,
+      },
+      // {
+      //   room: 1,
+      //   is_active: 1,
+      //   room_fee: 1,
+      //   no_of_players: 1,
+      //   created_at: 1,
+      //   "players.$": 1,
+      // }
+    ).sort({
+      created_at: -1,
+    });
     // // console.log(gameData);
     // //logger.info("Game Records::", gameData);
-    // var gameDataModify = await Promise.all(
-    //   gameData.map(async (k) => {
-    //     return {
-    //       // no_of_players: k.no_of_players,
-    //       amount:k.amount,
-    //       room_fee: k.win_amount-k.amount,
-    //       room: k.room_id,
-    //       created_at: k.created, //await Service.formateDateandTime(parseInt(k.created_at)),
-    //       // players: k.players,
-    //     };
-    //   })
-    // );
+    var gameDataModify = await Promise.all(
+      gameData.map(async (k) => {
+        return {
+          // no_of_players: k.no_of_players,
+          amount:k.amount,
+          room_fee: k.win_amount-k.amount,
+          room: k.room_id,
+          created_at: k.created, //await Service.formateDateandTime(parseInt(k.created_at)),
+          // players: k.players,
+        };
+      })
+    );
     let userReferredCount = await User.countDocuments({
       "referral.referred_by": u._id,
       is_deleted: false,
@@ -589,7 +589,7 @@ getChildList: async (id) => {
       email_verified: u.email_verified,
       otp_verified: u.otp_verified,
       role: u.role,
-      // game_data: gameDataModify,
+      game_data: gameDataModify,
       device_name: u.user_device.name,
       device_model: u.user_device.model,
       device_os: u.user_device.os,

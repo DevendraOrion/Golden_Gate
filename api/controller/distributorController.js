@@ -219,11 +219,11 @@ console.log(lastRoleAbove);
    
     let allParentData = await User.find({ role: lastElement }, { _id: 0, search_id: 1, role: 1 })
 
-    const commission = await Commission.findOne({ type: rolesBelow[0] })
+    // const commission = await Commission.findOne({ type: rolesBelow[0] })
 
     let allState=Object.keys(IndiaState);
 
-    return { role: rolesBelow, commission, parentData: user, parentDataSearchId: allParentData,allState,rolesAbove:lastRoleAbove }
+    return { role: rolesBelow, parentData: user, parentDataSearchId: allParentData,allState,rolesAbove:lastRoleAbove }
 
   },
   showRankData: async (req) => {
