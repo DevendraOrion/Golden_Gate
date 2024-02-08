@@ -3886,7 +3886,7 @@ const timestamp = now.getTime();
     if (!rez1) {
       return res.send({
         status: 0,
-        Msg: localization.invalidOldPassError,
+        Msg: "Invalid Security Pin",
       });
     }
     var hash = bcrypt.hashSync(params.pass_confirmation);
@@ -3959,7 +3959,7 @@ const timestamp = now.getTime();
     if (!rez1) {
       return res.send({
         status: 0,
-        Msg: localization.invalidOldPassError,
+        Msg: "Invalid Security Pin",
       });
     }
     var hash = bcrypt.hashSync(params.SPcpass);
