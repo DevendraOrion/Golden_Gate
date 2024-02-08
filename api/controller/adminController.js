@@ -3881,7 +3881,6 @@ const timestamp = now.getTime();
       });
     }
     let user=await User.findOne({search_id:params.userId})
-    console.log(req.admin);
     var rez1 = await bcrypt.compare(params.opass, req.admin.security_pin);
     if (!rez1) {
       return res.send({
