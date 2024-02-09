@@ -26,7 +26,7 @@
                 <tr>
                   <td>User Type</td>
                   <td>
-                    <!-- <%console.log(data)%> -->
+                   
                     <%if(data.parentData.role==="Company"){%>
                     <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
                       <option  value="" >Please Select Role</option>
@@ -99,7 +99,7 @@
                 <tr>
                   <td>
                     <button type="button" class="btn btn-success" onclick="saveSettings()">
-                      Save
+                      Transfer
                     </button>
                   </td>
                   <td></td>
@@ -163,7 +163,7 @@
         })
         .then(response => response.json())
         .then(data => {
-          console.log("Data from API:", data);
+          // console.log("Data from API:", data);
             const searchIdDropdown = document.getElementById("userSearchId");
             searchIdDropdown.innerHTML = "Please Select Search ID"; 
 
@@ -182,7 +182,7 @@
     };
 
     const getParentName = (selectedParentId) => {
-   console.log("getParentName called with selectedParentId:", selectedParentId);
+  //  console.log("getParentName called with selectedParentId:", selectedParentId);
 
    fetch("/admin/getParentName?search_id=" + selectedParentId, {
       method: "GET",

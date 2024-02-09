@@ -184,7 +184,10 @@ module.exports = {
 
     const maxIndex = Math.max(...Object.keys(roles).map(Number));
     roles[1] = "Company";
-    // roles[maxIndex + 1] = "User";
+    if(user.role==="User"){
+      roles[maxIndex + 1] = "User";
+
+    }
 
     // console.log(roles);
 
@@ -197,7 +200,7 @@ module.exports = {
     .map((key) => roles[key]);
   
   const lastRoleAbove = rolesAbove.pop(); // Retrieve the last value from the array
-console.log(lastRoleAbove);
+// console.log(lastRoleAbove);
   if(user.role==="Company")
   {   rolesBelow = Object.keys(roles)
     .filter((key) => parseInt(key) > parseInt(currentRoleKey))
@@ -209,10 +212,10 @@ console.log(lastRoleAbove);
   const lowData = Object.keys(roles)
     .filter((key) => parseInt(key) > parseInt(currentRoleKey))
     .map((key) => roles[key])
-    .filter((role) => role !== 'User');
+    // .filter((role) => role !== 'User');
     rolesBelow=lowData[0]
 
-  // console.log(rolesBelow);
+  console.log(rolesBelow);
 }
   
     const lastElement = rolesAbove[rolesAbove.length - 1];

@@ -1617,10 +1617,12 @@ module.exports = {
    }else{
     const params = _.pick(req.query, ['search']);
     let aggregate_obj = [];
+    let downline=await Service.DownLine(req.admin._id);
+console.log(downline);
     let condition = {
         is_deleted: false,
+        _id:{$in:downline},        
         role:req.query.role,
-        // parent:req.admin._id
     };
     if (params.search) {
         if (params.search.trim() != '') {
