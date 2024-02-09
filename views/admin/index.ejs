@@ -369,9 +369,10 @@
             </div>
             </div>
 <% }%>
-<% if(admin.role=="State" ){%>
-   
-    <div class="col-md-3 col-sm-6 col-xs-12">
+
+<% if(admin.role=="State"){%>
+    
+    <div class="col-md-4 col-sm-6 col-xs-12">
         <div class="info-box">
             <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
 
@@ -388,7 +389,7 @@
     </div>
     <!-- /.col -->
 
-    <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
 
@@ -414,7 +415,7 @@
     </div>
 </div>
 
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
 
@@ -428,7 +429,7 @@
     </div>
    
 </div>
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
 
@@ -436,13 +437,13 @@
             <span class="info-box-text">Total User
             </span>
             <span class="info-box-number">
-                <%= data.total_agent %>
+                <%= data.total_user %>
             </span>
         </div>
        
     </div>
 </div>
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-orange"><i class="fa fa-star"></i></span>
 
@@ -456,7 +457,7 @@
        
     </div>
 </div>
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-gray"><i class="fa fa-star"></i></span>
 
@@ -470,7 +471,7 @@
        
     </div>
 </div>
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-pink"><i class="fa fa-star"></i></span>
 
@@ -484,7 +485,7 @@
        
     </div>
 </div>
-<div class="col-md-3 col-sm-6 col-xs-12">
+<div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-green"><i class="fa fa-star"></i></span>
 
@@ -500,6 +501,284 @@
 </div>
 
 <% }%>
+<% if(admin.role==="District" ){%>
+
+    <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Zone
+            </span>
+            <span class="info-box-number">
+                <span id="onlineBox"><%= data.guest_count  %></span>
+                <span class="icon">
+                    <div class="arrowWrap open" id="onlineUp" style="display:none">
+                        <div class="arrow arrow-green"></div>
+                        <div class="arrow arrow-green"></div>
+                        <div class="arrow arrow-green"></div>
+                    </div>
+                    <div class="arrowWrap" id="onlineDown" style="display:none">
+                        <div class="arrow arrow-red"></div>
+                        <div class="arrow arrow-red"></div>
+                        <div class="arrow arrow-red"></div>
+                    </div>
+                </span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Agent
+            </span>
+            <span class="info-box-number">
+                <%= data.total_agent %>
+            </span>
+        </div>
+    </div>
+   
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total User
+            </span>
+            <span class="info-box-number">
+                <%= data.total_user %>
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-orange"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Business
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-gray"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Commission
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-pink"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Pending Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-green"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Paid Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+
+<% }%>
+
+<% if(admin.role==="Zone" ){%>
+
+
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Agent
+            </span>
+            <span class="info-box-number">
+                <%= data.total_agent %>
+            </span>
+        </div>
+    </div>
+   
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total User
+            </span>
+            <span class="info-box-number">
+                <%= data.total_user %>
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-orange"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Business
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-gray"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Total Commission
+            </span>
+            <span class="info-box-number">
+               0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-pink"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Pending Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="info-box">
+        <span class="info-box-icon bg-green"><i class="fa fa-star"></i></span>
+
+        <div class="info-box-content">
+            <span class="info-box-text">Paid Revenue
+            </span>
+            <span class="info-box-number">
+                0
+            </span>
+        </div>
+       
+    </div>
+</div>
+
+<% }%>
+<% if(admin.role==="Agent" ){%>
+
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
+    
+            <div class="info-box-content">
+                <span class="info-box-text">Total User
+                </span>
+                <span class="info-box-number">
+                    <%= data.total_user %>
+                </span>
+            </div>
+           
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-orange"><i class="fa fa-star"></i></span>
+    
+            <div class="info-box-content">
+                <span class="info-box-text">Total Business
+                </span>
+                <span class="info-box-number">
+                   0
+                </span>
+            </div>
+           
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-gray"><i class="fa fa-star"></i></span>
+    
+            <div class="info-box-content">
+                <span class="info-box-text">Total Commission
+                </span>
+                <span class="info-box-number">
+                   0
+                </span>
+            </div>
+           
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-pink"><i class="fa fa-star"></i></span>
+    
+            <div class="info-box-content">
+                <span class="info-box-text">Pending Revenue
+                </span>
+                <span class="info-box-number">
+                    0
+                </span>
+            </div>
+           
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="fa fa-star"></i></span>
+    
+            <div class="info-box-content">
+                <span class="info-box-text">Paid Revenue
+                </span>
+                <span class="info-box-number">
+                    0
+                </span>
+            </div>
+           
+        </div>
+    </div>
+    
+    <% }%>
             <!-- /.row -->
 
             <div class="row">

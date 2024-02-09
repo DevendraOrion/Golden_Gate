@@ -720,6 +720,18 @@ if(data.role==="Company"){
     await Promise.all(Down);
     return main;
 }
+  if (data.role === "District") {
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "Zone") {
+            main++;
+        }
+    });
+    await Promise.all(Down);
+    return main;
+}
 
   },
   getTotal_state: async () => {
@@ -757,7 +769,7 @@ if(data.role==="Company"){
     });
     return c;
   }
-  if (data.role === "State") {
+  if (data.role !=="Company") {
       const downline = await Service.DownLine(data._id);
       let main = 0;
       let Down = downline.map(async (a) => {
@@ -770,6 +782,19 @@ if(data.role==="Company"){
       await Promise.all(Down);
       return main;
   }
+  // if (data.role === "District") {
+  //     const downline = await Service.DownLine(data._id);
+  //     let main = 0;
+  //     let Down = downline.map(async (a) => {
+  //         let find = await User.findOne({ _id: a });
+  //         if (find.role === "Agent") {
+  //           // console.log(find)
+  //             main++;
+  //         }
+  //     });
+  //     await Promise.all(Down);
+  //     return main;
+  // }
   },
   getTotal_user: async (data) => {
  if(data.role==="Company"){  
@@ -779,7 +804,7 @@ if(data.role==="Company"){
     });
     return c;
   }
-    if (data.role === "State") {
+    if (data.role !=="Company") {
       const downline = await Service.DownLine(data._id);
       let main = 0;
       let Down = downline.map(async (a) => {
@@ -792,6 +817,7 @@ if(data.role==="Company"){
       await Promise.all(Down);
       return main;
   }
+
   },
   //Get Count Of Total Game
   getAllGameCount: async () => {
