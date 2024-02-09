@@ -7898,6 +7898,50 @@ editUserSave: async (req, res) => {
     });
   }
 },
+
+editUserUpdate: async (req, res) => {
+  try {
+    const { adminSearchId, userSearchId, areaAllocationLabel, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, userRole, securityPin } = req.body;
+    console.log(adminSearchId, userSearchId, areaAllocationLabel, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, userRole, securityPin);
+    
+    if(!securityPin){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Security Pin",
+      });
+    }
+
+    var rez1 = await bcrypt.compare(securityPin, req.admin.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+ 
+    const data=await User.findOne({phone})
+
+    if(data){
+      return res.send({
+        status: 0,
+        Msg: "Phone No is already Exists",
+      });
+    }
+
+    let SaveData=await User.updateOne({search_id:userSearchId},{$set:{name:firstName,first_name:firstName,last_name:lastName,phone:phone,state:userState,district:userDistrict,pinCode:pinCode,address:address,aadharNumber:aadharNumber}})
+  
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+  } catch (err) {
+    console.error("Error saving data:", err);
+    return res.send({
+      status: 0,
+      Msg: localization.ServerError,
+    });
+  }
+},
 saveAddRankData: async (req, res) => {
   try {
     const { parentId,parentRole,userSecurityPin, stateAllocation, districtAllocation,areaAllocation,firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, password, cPassword, securityPin, userRole } = req.body;

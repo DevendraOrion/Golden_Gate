@@ -581,8 +581,6 @@ console.log(req.params);
   },
   editUser: async (req, res) => {
     role="User"
-    // console.log(req.query)
-    // console.log(req.params)
     let id=req.params.id
     const data = await distributorController.addRankUserData(req,role,id)
 

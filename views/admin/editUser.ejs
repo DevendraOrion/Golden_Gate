@@ -9,101 +9,141 @@
     <!-- Main content -->
     <section class="content container-fluid">
       <div class="row">
-        <div class="col-md-6 flex-fill">
+        <div class="col-md-12 flex-fill">
           <div class="box box-danger" style="width: fit-content; min-width: 100%">
             <div class="box-body">
+              <p>Parent Code</p>
               <table class="table table-bordered">
-                <tr>
-                  <td>Role</td>
-                  <td>
-                    <input name="role" id="role" class="form-control" value="<%=data.role%>" readonly ></input>
-                  </td>
+                <tr class="hidden-row">
+                  <td>Parent Code</td>
+                  <td>Parent Name</td>
+                  <td>Parent Role</td>
                 </tr>
-                
-                <tr>
-                    <td>Parent Id</td>
+                <input type="hidden" id="adminRole" value="<%=admin.role%>">
+                <input type="hidden" id="adminId" value="<%=admin._id%>">
+                <input type="hidden" id="userSearchId" value="<%=data.editData.search_id%>">
+               
+                <tr class="hidden-row">
                     <td>
-                      <input name="searchId" id="searchId" class="form-control" value="<%=data.previousParentData.search_id%>" readonly ></input>
+                      <input name="adminSearchId" id="adminSearchId" class="form-control" value="<%=admin.search_id%>" readonly></input>
+                    </td>
+                    <td>
+                      <input name="parentName" id="parentName" class="form-control" value="<%=admin.first_name+' '+admin.last_name%> " readonly></input>
+                    </td>
+                    <td>
+                      <input name="parentRole" id="parentRole" class="form-control" value="<%=admin.role%>" readonly></input>
+                    </td>
+                </tr>
+                <tr class="hidden-row">
+                  <td>Allocation</td>
+                </tr>
+                <% if(admin.role!=="Company") { %>
+                  <tr class="hidden-row">
+                    <td>
+                      <input name="parentAllocation" id="parentAllocation" class="form-control" value="<%=admin?.stateAllocated ? admin?.stateAllocated :admin?.districtAllocated %>" readonly></input>
                     </td>
                   </tr>
+                  <% }else{ %>
+                    <tr class="hidden-row">
+                      <td>
+                        <input name="parentAllocation" id="parentAllocation" class="form-control" readonly></input>
+                      </td>
+                    </tr>
+                    <% } %>
+                <!-- </tr> -->
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <p>New Assign Role</p>
+              <table class="table table-bordered">
+                <tr class="hidden-row">
+                  <% if(data.editData.role === "State" ){%>
+                    <td id="areaAllocationLabel">State Allocated</td>
+                    <% }else if(data.editData.role === "District"){%>
+                      <td id="areaAllocationLabel">District Allocated</td>
+                    <% }else{%>
+                      <td id="areaAllocationLabel">Area Allocated</td>
+                    <% }%>
+                  <td>Frist Name</td>
+                  <td>Last Name</td>
+                </tr>
                 
                   <tr class="hidden-row">
-                    <td>Parent Name</td>
-                    <td>
-                      <input name="parentName" id="parentName" class="form-control" value="<%=data.previousParentData.name%>" readonly ></input>
+                    <td id="stateHidden" >
+                      <% if(data.editData.role === "State" ){%>
+                        <input name="stateAllocation" id="stateAllocation" value="<%=data.editData.stateAllocated%>" class="form-control" placeholder="Enter Area here...." readonly>
+                        <% }else if(data.editData.role === "District"){%>
+                          <input name="stateAllocation" id="stateAllocation" value="<%=data.editData.districtAllocated%>" class="form-control" placeholder="Enter Area here...." readonly>
+                        <% }else{%>
+                          <input name="stateAllocation" id="stateAllocation" value="<%=data.editData.areaAllocation%>" class="form-control" placeholder="Enter Area here...." readonly>
+                        <% }%>
+                    </td>
+                    <td style="width: 274px;">
+                      <input name="firstName" id="firstName" value="<%=data.editData.first_name%>" class="form-control" placeholder="Enter Frist Name here...."></input>
+                    </td>
+                    <td style="width: 311px;">
+                      <input name="lastName" id="lastName" value="<%=data.editData.last_name%>" class="form-control" placeholder="Enter Last Name here...."></input>
                     </td>
                   </tr>
 
+                <tr class="hidden-row">
+                  <td>Phone Number</td>
+                  <td>Email Id</td>
+                  <td>User State</td>
+                </tr>
+                
                   <tr class="hidden-row">
-                    <td>Parent Role</td>
                     <td>
-                      <input name="parentRole" id="parentRole" value="<%=data.previousParentData.role%>" class="form-control" readonly ></input>
+                      <input name="phone" id="phone" class="form-control" value="<%=data.editData.phone%>" placeholder="Enter Phone Number here...."></input>
+                    </td>
+                    <td>
+                      <input name="email" id="email" class="form-control" value="<%=data.editData.email%>" placeholder="Enter Email Id here...."></input>
+                    </td>
+                    <td>
+                      <input name="userState" id="userState" class="form-control" value="<%=data.editData.state%>" placeholder="Enter Email Id here...." readonly></input>
+
                     </td>
                   </tr>
-                  
-                <tr>
-                  <td>First Name</td>
-                  <td>
-                    <input name="firstName" id="firstName" class="form-control" value="<%=data.editData.first_name%>" placeholder="Enter your Name here...."></input>
-                  </td>
+                <tr class="hidden-row">
+                  <td>User District</td>
+                  <td>Full Address</td>
+                  <td>Pin Code</td>
                 </tr>
-                <tr>
-                  <td>Last Name</td>
-                  <td>
-                    <input name="lastName" id="lastName" class="form-control" value="<%=data.editData.last_name%>" placeholder="Enter your Name here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Email</td>
-                  <td>
-                    <input name="email" id="email" class="form-control" value="<%=data.editData.email%>"placeholder="Enter your Email here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>State</td>
-                  <td>
-                    <input name="state" id="state" class="form-control" value="<%=data.editData.state%>" placeholder="Enter your State here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>District</td>
-                  <td>
-                    <input name="district" id="district" class="form-control" value="<%=data.editData.district%>" placeholder="Enter your District here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Postal Code</td>
-                  <td>
-                    <input name="postalCode" id="postalCode" class="form-control" value="<%=data.editData.postalCode%>" placeholder="Enter your Postal Code here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Address</td>
-                  <td>
-                    <input name="address" id="address" class="form-control" value="<%=data.editData.address%>" placeholder="Enter your Address here...."></input>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Phone</td>
-                  <td>
-                    <input name="phone" id="phone" class="form-control" value="<%=data.editData.phone%>" placeholder="Enter your Contact here...."></input>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>Security Pin</td>
-                  <td>
-                    <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
-                  </td>
-                </tr>
-                <!-- <tr>
-                    <td>Role</td>
+                
+                  <tr class="hidden-row">
                     <td>
-                      <input name="role" id="role" value="<%= data.role[0] %>" class="form-control" placeholder="Enter your rules here...." readonly>
+                      <input name="district" id="district" class="form-control" value="<%=data.editData.district%>" placeholder="Enter Email Id here...." readonly></input>
+
                     </td>
-                  </tr> -->
-                 
-                <!-- <input type="hidden" name="id" id="notice_id" value="<%=data?._id??''%>" /> -->
+                    
+                    <td>
+                      <input name="address" id="address" class="form-control" value="<%=data.editData.address%>" placeholder="Enter Full Address here...."></input>
+                    </td>
+                    <td>
+                      <input name="pinCode" id="pinCode" class="form-control" value="<%=data.editData.pinCode%>" placeholder="Enter Pin Code here...."></input>
+                    </td>
+                  </tr>
+                <tr class="hidden-row">
+                  <td>Addhar Number</td>
+                  <td>User Role</td>
+                  <td>Security Pin</td>
+                </tr>
+                  <tr class="hidden-row">
+                    <td>
+                      <input name="aadharNumber" id="aadharNumber" value="<%=data.editData.aadharNumber%>" class="form-control" placeholder="Enter Addhar Number here...."></input>
+                    </td>
+                    <td>
+                      <input name="userRole" value="<%=data.editData.role%>"   id="userRole" class="form-control" placeholder="User Role" readonly></input>
+                    </td>
+                    <td>
+                      <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                    </td>
+                  </tr>           
+                <tr>      
                 <tr>
                   <td>
                     <button type="button" class="btn btn-success" onclick="saveSettings()">
@@ -121,24 +161,25 @@
   </div>
   <%- include footer %>
     <script>
-      const saveSettings = () => {
-        const parentId = document.getElementById("searchId").value;
-        const parentName = document.getElementById("parentName").value;
-        const securityPin = document.getElementById("securityPin").value;
+    const saveSettings = () => {
+        const adminSearchId = document.getElementById("adminSearchId").value;
+        const userSearchId = document.getElementById("userSearchId").value;
+        const areaAllocationLabel = document.getElementById("areaAllocationLabel").value;
         const firstName = document.getElementById("firstName").value;
         const lastName = document.getElementById("lastName").value;
-        const email = document.getElementById("email").value;
-        const state = document.getElementById("state").value;
-        const district = document.getElementById("district").value;
-        const postalCode = document.getElementById("postalCode").value;
-        const address = document.getElementById("address").value;
         const phone = document.getElementById("phone").value;
-        const role = document.getElementById("role").value;
-
-               
-        fetch("/admin/editUserSave", {
+        const email = document.getElementById("email").value;
+        const userState = document.getElementById("userState").value;
+        const userDistrict = document.getElementById("district").value;
+        const address = document.getElementById("address").value;
+        const pinCode = document.getElementById("pinCode").value;
+        const aadharNumber = document.getElementById("aadharNumber").value;
+        const userRole = document.getElementById("userRole").value;
+        const securityPin = document.getElementById("securityPin").value;
+              //  console.log(parentRole);
+        fetch("/admin/edit-user-update", {
           method: "POST",
-          body: JSON.stringify({ role , lastName, firstName, email,state, district,postalCode,address,phone,parentName,parentId,securityPin }),
+          body: JSON.stringify({adminSearchId, userSearchId, areaAllocationLabel, firstName, lastName, phone, email, userState, userDistrict, address, pinCode, aadharNumber, userRole, securityPin}),
           headers: {
             "Content-Type": "application/json",
           },
@@ -150,74 +191,18 @@
               icon: response.status == 1 ? "success" : "error",
               title: response.Msg
             }).then(() => {
-              window.location.reload();
+              if(response.status==1){
+                  // console.log("hi");
+                window.location.reload();
+              }
             });
           })
           .catch((error) => {
             console.log(error);
             swal({ icon: "error", title: "An error occurred" }).then(() => {
-              window.location.reload();
+              // window.location.reload();
             });
           });
-
       };
     </script>
-   <script>
-    const updateParentDropdown = () => {
-        const selectedRole = document.getElementById("role").value
-
-      
-
-        fetch("/admin/getSearchIds?role=" + selectedRole, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Data from API:", data);
-            const searchIdDropdown = document.getElementById("searchId");
-            searchIdDropdown.innerHTML = "Please Select Search ID"; 
-
-            data.parentIDs.forEach(searchId => {
-                const option = document.createElement("option");
-                // option.value = "Please Select Search ID"
-                option.text = searchId.search_id;
-                searchIdDropdown.add(option);
-            });
-            const parentName = document.getElementById("parentName");          
-            parentName.value = data.parentIDs[0].name
-
-            const parentRole = document.getElementById("parentRole");
-            parentRole.value = data.parentIDs[0].role
-        })
-        .catch(error => {
-            console.error("Error fetching search ids:", error);
-        });
-    };
-
-    const getParentName = () => {
-       const selectedParentId = document.getElementById("searchId").value;
-       console.log(selectedParentId)
-
-       fetch("admin/getParentName?search_id=" + selectedParentId,{
-        method: "GET",
-        headers: {
-                "Content-Type": "application/json",
-            },
-       })
-       .then(response => response.json())
-       .then(response => {
-          console.log("Data" , response);
-          const parentName = document.getElementById("parentName");          
-          parentName.value = response.parentName.name
-
-          const parentRole = document.getElementById("parentRole");
-          parentRole.value = response.parentName.role
-         
-       })
-    }
-</script>
-
-  
+ 

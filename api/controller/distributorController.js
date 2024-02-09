@@ -158,7 +158,6 @@ module.exports = {
       previousData=await User.findById(id)
       previousParentData=await User.findById(previousData.parent)
       editData=previousData
-// console.log(previousData);
     }
 
     

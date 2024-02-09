@@ -358,6 +358,7 @@ module.exports = function (router, io) {
   router.get("/admin/getParentName", AdminController.getParentName)
   router.get("/distributerMaster", AdminPagesController.distributerMaster);
   router.post("/admin/editUserSave", AdminController.editUserSave);
+  router.post("/admin/edit-user-update", AdminController.editUserUpdate);
   router.post("/admin/saveAddRank", AdminController.saveAddRankData);
   router.post("/admin/saveAddRankDataByParent", AdminController.saveAddRankDataByParent);
   router.post("/admin/saveModifyPlayerData", AdminController.saveModifyPlayerData);
