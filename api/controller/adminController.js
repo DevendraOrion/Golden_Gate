@@ -340,8 +340,9 @@ let parentData = await Promise.all(users.map(async (a) => {
   let zone=0
   let agent=0
   let user=0
+  const downline=await Service.DownLine(a._id)
   let Data = await User.findOne({ _id: a.parent });
-  let childData = await User.find({ parent: a._id });
+  let childData = await User.find({ _id:{$in:downline}});
   // console.log(a);
   if(childData){
     childData.map((child)=>{
@@ -388,16 +389,15 @@ const list=await parentData
 }else{
 
 const users=await User.find({is_deleted: false,parent:adminData._id})
-let maindata=users
-// console.log("++++++++++++++++++++",users) 
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
   let district=0
   let zone=0
   let agent=0
   let user=0
+  const downline=await Service.DownLine(a._id)
   let Data = await User.findOne({ _id: a.parent });
-  let childData = await User.find({ parent: a._id });
+  let childData = await User.find({ _id:{$in:downline} });
   if(childData){
     childData.map((child)=>{
       // console.log(child)
@@ -442,38 +442,108 @@ const list=await parentData
     };
 }
 },
-getChildList: async (id) => {
+getChildList: async (id,role) => {
 
-      const users = await User.aggregate([
-        {
-          $match: {
-            is_deleted: false,
-            parent:id
-          }
-        },
-        {
-          $sort: {
-            created_at: -1
-          }
-        }
-      ]);
-      let parentData = await Promise.all(users.map(async (a) => {
-        let Data = await User.findOne({ _id: a.parent });
-        return {
-          ...a,
-          parentDatas: Data
-        };
-      }));
-      // console.log(await parentData);
-      const list=await parentData
+    //   const users = await User.aggregate([
+    //     {
+    //       $match: {
+    //         is_deleted: false,
+    //         parent:id
+    //       }
+    //     },
+    //     {
+    //       $sort: {
+    //         created_at: -1
+    //       }
+    //     }
+    //   ]);
+    //   let parentData = await Promise.all(users.map(async (a) => {
+    //     let Data = await User.findOne({ _id: a.parent });
+    //     return {
+    //       ...a,
+    //       parentDatas: Data
+    //     };
+    //   }));
+    //   // console.log(await parentData);
+    //   const list=await parentData
    
-    let count = await User.find({
-      is_deleted: false,
-    }).countDocuments();
-    return {
-      list,
-      count,
-    };
+    // let count = await User.find({
+    //   is_deleted: false,
+    // }).countDocuments();
+    // return {
+    //   list,
+    //   count,
+    // };
+    const downlines=await Service.DownLine(id)
+
+    const users = await User.aggregate([
+      {
+        $match: {
+          is_deleted: false,
+          _id:{$in:downlines},
+          // parent:id,
+          role:role,
+        }
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
+      }
+    ]);
+    
+    let parentData = await Promise.all(users.map(async (a) => {
+      let state=0
+      let district=0
+      let zone=0
+      let agent=0
+      let user=0
+      const downline=await Service.DownLine(a._id)
+      let Data = await User.findOne({ _id: a.parent });
+      let childData = await User.find({ _id:{$in:downline}});
+      // console.log(a);
+      if(childData){
+        childData.map((child)=>{
+          // console.log(child)
+          if(child.role==="State"){
+            state++
+          }
+          if(child.role==="District"){
+            district++
+          }
+          if(child.role==="Zone"){
+            zone++
+          }
+          if(child.role==="Agent"){
+            agent++
+          }
+          if(child.role==="User"){
+            user++
+          }
+        })
+      }
+      return {
+        ...a,
+        parentDatas: Data,
+        childData: childData,
+        stateCount:state,
+        districtCount:district,
+        zoneCount:zone,
+        agentCount:agent,
+        userCount:user,
+      };
+    }));
+    // console.log(parentData);
+    
+    const list=await parentData
+    
+        let count = await User.find({
+          is_deleted: false,
+        }).countDocuments();
+        return {
+          list,
+          count,
+        };
   },
 
 
@@ -7542,7 +7612,13 @@ if(parentData){
 saveTransferPoint: async (req, res) => {
   try {
     const { role , userSearchId, securityPin, balance, debitCredit,adminBalance } = req.body;
-  //  console.log(req.admin);
+    console.log(role , userSearchId, securityPin, balance, debitCredit,adminBalance);
+  if(balance <0){
+    return res.send({
+      status: 0,
+      Msg: "Balance should not be in Negative",
+    });
+  }
    let admin=req.admin
     if(!role || !userSearchId || !securityPin || !balance  || !debitCredit){
       return res.send({

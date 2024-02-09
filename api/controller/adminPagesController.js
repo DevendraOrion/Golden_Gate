@@ -924,9 +924,10 @@ role="User"
     });
   },
   showChild: async (req, res) => {
-    // console.log(req.params.id);
+    console.log(req.params,req.query);
+    let role=req.query.role
     let id= req.params.id
-    const users = await AdminController.getChildList(id);
+    const users = await AdminController.getChildList(id,role);
     res.render("admin/agentsMGT", {
       title: "Child List",
       type: "usersMGT",
