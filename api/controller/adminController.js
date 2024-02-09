@@ -56,7 +56,7 @@ module.exports = {
         .json(Service.response(0, localization.missingParamErrorAdmin, null));
     }
     var user = await User.findOne({
-      email: params.email,
+      search_id: params.email,
     });
    
     // console.log(user);
