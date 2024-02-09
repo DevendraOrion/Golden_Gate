@@ -1618,7 +1618,7 @@ module.exports = {
     const params = _.pick(req.query, ['search']);
     let aggregate_obj = [];
     let downline=await Service.DownLine(req.admin._id);
-console.log(downline);
+// console.log(downline);
     let condition = {
         is_deleted: false,
         _id:{$in:downline},        

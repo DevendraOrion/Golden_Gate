@@ -7637,8 +7637,8 @@ if(parentData){
 },
 saveTransferPoint: async (req, res) => {
   try {
-    const { role , userSearchId, securityPin, balance, debitCredit,adminBalance } = req.body;
-    console.log(role , userSearchId, securityPin, balance, debitCredit,adminBalance);
+    const { role , userSearchId, securityPin, balance, debitCredit,adminBalance ,UpperLevel} = req.body;
+    console.log(role , userSearchId, securityPin, balance, debitCredit,adminBalance,UpperLevel);
   if(balance <0){
     return res.send({
       status: 0,
@@ -7659,7 +7659,12 @@ saveTransferPoint: async (req, res) => {
         Msg: "Please Enter Correct Security Pin",
       });
     }
-    const user = await User.findOne({ _id: userSearchId })
+    let user;
+    if(UpperLevel===true){
+      user = await User.findOne({ search_id: userSearchId })
+    }else{
+       user = await User.findOne({ _id: userSearchId })
+    }
     if (!user) {
         return res.json({ response: { status: false, message: 'Invalid User' } });
     }
@@ -7766,7 +7771,6 @@ saveTransferPoint: async (req, res) => {
       if(debitCredit==="Credit"){
         let point = Number(balance)
         let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
-        // console.log(transcId.txn_id);
         if(transcId.length==0){
             transcId=0
         }

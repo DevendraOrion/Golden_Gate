@@ -122,10 +122,10 @@
         // const walletType = document.getElementById("walletType").value;
         const debitCredit = document.getElementById("debitCredit").value;
         const adminBalance = document.getElementById("adminBalance").value;
-               
+        const UpperLevel=false
         fetch("/admin/saveTransferPoint", {
           method: "POST",
-          body: JSON.stringify({ role , userSearchId, securityPin, balance, debitCredit,adminBalance}),
+          body: JSON.stringify({ role , userSearchId, securityPin, balance, debitCredit,adminBalance,UpperLevel}),
           headers: {
             "Content-Type": "application/json",
           },
