@@ -8101,6 +8101,16 @@ saveCommissionMgt: async (req, res) => {
 
       const currentMinCommission = parseInt(currentRank.minCommission);
 
+      console.log("================");
+      console.log(previousRank.availableCommission-currentRank.availableCommission,currentRank.minCommission);
+
+      if((previousRank.availableCommission-currentRank.availableCommission)<currentRank.minCommission){
+        return res.status(400).json({
+          status: 0,
+          Msg: `High Assignable Commission Than Lower Minimum Commission`
+        });
+      }
+
       if (currentAvailableCommission < currentMinCommission) {
         return res.status(400).json({
           status: 0,
@@ -8109,7 +8119,6 @@ saveCommissionMgt: async (req, res) => {
       }
     }
 
-    // All checks passed, update the database
     const commissionUpdates = sortedData.map(async (com) => {
       await Commission.updateOne(
         { gameType: gameType, rankId: com.rankId },

@@ -25,7 +25,6 @@ td{
   <!-- Main content -->
   <section class="content container-fluid">
     <div class="row">
-      <!-- Reusable function for generating game tables -->
       <% const generateGameTable = (gameType, gameData) => { %>
         <div class="col-md-12 d-flex">
           <div class="col-md-12 flex-fill">
@@ -59,7 +58,7 @@ td{
                         <input id="availableCommission<%= gameType %><%= d.rankId %>" class="form-control" value="<%= gameData[i-1]?.commissionData.availableCommission ?? 0 %>" readonly>
                       </td>
                       <td>
-                        <input id="downline<%= gameType %><%= d.rankId %>" class="form-control" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission('<%= gameType %>', <%= d.rankId %>)">
+                        <input id="downline<%= gameType %><%= d.rankId %>" class="form-control" type="number" value="<%= d?.commissionData.availableCommission ?? 0 %>" oninput="updateOwnCommission('<%= gameType %>', <%= d.rankId %>)">
                       </td>
                       <td>
                         <input id="ownCommission<%= gameType %><%= d.rankId %>" class="form-control" value="<%= (gameData[i-1]?.commissionData.availableCommission ?? 0)-(d?.commissionData.availableCommission ?? 0) %>" readonly>
@@ -83,7 +82,6 @@ td{
         </div>
       <% } %>
 
-      <!-- Use the reusable function for each game type -->
       <% generateGameTable('Roulette', data.RoulleteData); %>
       <% generateGameTable('Aviator', data.AvaitorData); %>
       <% generateGameTable('CardRoulette', data.CardRoulleteData); %>
@@ -103,8 +101,7 @@ const updateOwnCommission = (gameType, rankId) => {
   const assignableCommissionElement = document.getElementById(`downline${gameType}${rankId}`);
 
   const ownCommissionValue = availableValue - downlineValue;
-
-  // Ensure Assignable Commission is not higher than Available Commission
+console.log(availableValue,downlineValue,ownCommissionValue,minCommissionElement.value,assignableCommissionElement.value);
   if (assignableCommissionElement.value > availableValue) {
     assignableCommissionElement.value = availableValue;
   }
@@ -116,21 +113,18 @@ const updateOwnCommission = (gameType, rankId) => {
   ownCommissionElement.value = ownCommissionValue;
 };
 
-
-
-
 const saveCommission = (gameType) => {
   const dataRows = document.querySelectorAll(`tr[data-rank-id][data-game-type="${gameType}"]`);
-const rowData = [];
+  const rowData = [];
 
-dataRows.forEach((row) => {
-  const rankId = row.getAttribute("data-rank-id");
-  const rankName = document.getElementById(`rankName${gameType}${rankId}`).value;
-  const availableCommission = document.getElementById(`downline${gameType}${rankId}`).value;
-  const minCommission = document.getElementById(`minCommission${gameType}${rankId}`).value;
+  dataRows.forEach((row) => {
+    const rankId = row.getAttribute("data-rank-id");
+    const rankName = document.getElementById(`rankName${gameType}${rankId}`).value;
+    const availableCommission = document.getElementById(`downline${gameType}${rankId}`).value;
+    const minCommission = document.getElementById(`minCommission${gameType}${rankId}`).value;
 
-  rowData.push({ rankId, rankName, availableCommission, minCommission });
-});
+    rowData.push({ rankId, rankName, availableCommission, minCommission });
+  });
 
   fetch("/admin/saveCommission-mgt", {
     method: "POST",
