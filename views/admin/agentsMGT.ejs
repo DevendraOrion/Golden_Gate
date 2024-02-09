@@ -87,17 +87,17 @@
                                                 <% if (d.role === 'District') { %>
 
                                                     <p><span style="color: #788ca8;">Zone</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=Zone"  class="on-editing save-row">
                                                             <%= d?.zoneCount ?? 0 %>
                                                         </a>
                                                     </p>
                                                     <p><span style="color: rgb(207, 72, 72);">Agent</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=Agent"  class="on-editing save-row">
                                                             <%= d?.agentCount ?? 0 %>
                                                         </a>
                                                     </p>
                                                     <p><span style="color: #788ca8;">User</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=User"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
                                                     </p>
@@ -105,19 +105,19 @@
                                                 <% if (d.role === 'Zone') { %>
 
                                                     <p><span style="color: rgb(207, 72, 72);">Agent</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=Agent"  class="on-editing save-row">
                                                             <%= d?.agentCount ?? 0 %>
                                                         </a>
                                                     </p>
                                                     <p><span style="color: #788ca8;">User</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=User"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
                                                     </p>
                                                         <% } %>
                                                 <% if (d.role === 'Agent') { %>
                                                     <p><span style="color: #788ca8;">User</span>:
-                                                        <a href="<%= host%>/user/showChild/<%= d._id%>"  class="on-editing save-row">
+                                                        <a href="<%= host%>/user/showChild/<%= d._id%>?role=User"  class="on-editing save-row">
                                                             <%= d?.userCount ?? 0 %>
                                                         </a>
                                                     </p>
