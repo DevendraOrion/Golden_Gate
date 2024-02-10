@@ -115,7 +115,10 @@
                                 alt="User Image">
 
                               <p>
-                                <%= admin.name %> - Admin
+                                <%= admin.first_name %> <%=admin.last_name%> - <%=admin.role%>
+                              </p>
+                              <p>
+                               Chip - <%=admin.cash_balance%>
                               </p>
                             </li>
                             <!-- Menu Footer-->
@@ -339,6 +342,8 @@
                     aria-hidden="true"></i><span>Game Management</span></a></li>
                   <li class="<% if(type=='profit-management') {%> active <% } %>"><a href="/profit-management"><i class="fa fa-money"
                     aria-hidden="true"></i><span>Profit Percent Master</span></a></li>
+                    <li class="<% if(type=='Manual-Result-For-Car-Roulete') {%> active <% } %>"><a href="/manual-card-roullete"><i class="fa fa-compass"
+                      aria-hidden="true"></i> <span>Manual Result For Card Roulete</span></a></li>
                     <% } %>
 
                   <li class="<% if(type=='Commission') {%> active <% } %>"><a href="#"><i class="fa fa-level-down"
@@ -346,10 +351,7 @@
                   <li class="<% if(type=='revenue-report') {%> active <% } %>"><a href="#"><i class="fa fa-address-book-o"
                     aria-hidden="true"></i> <span>Revenue Report</span></a></li>
 
-                    <% if (admin.role=='Company') { %>
-                      <li class="<% if(type=='Manual-Result-For-Car-Roulete') {%> active <% } %>"><a href="/manual-card-roullete"><i class="fa fa-compass"
-                        aria-hidden="true"></i> <span>Manual Result For Card Roulete</span></a></li>
-                    <% } %>
+              
                   <li class="<% if(type=='Business-Report') {%> active <% } %>"><a href="#"><i class="fa fa-flag"
                     aria-hidden="true"></i> <span>Business Report</span></a></li>
                   <li class="<% if(type=='Game-Statestics') {%> active <% } %>"><a href="#"><i class="fa fa-stack-exchange"
