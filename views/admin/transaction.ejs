@@ -133,8 +133,8 @@
                                     <td>OTHER</td>
                                     <% } else if(d.txn_mode == 'REF'){ %>
                                     <td>REFERRAL</td>
-                                    <% } else { %>
-                                    <td>GAME</td>
+                                    <% } else if(d.txn_mode == 'T'){ %>
+                                    <td>Transaction</td>
                                     <% } %>
                                     <td>
                                         <%= d.msg %>

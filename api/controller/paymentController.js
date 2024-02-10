@@ -920,41 +920,10 @@ console.log(aggregate_rf)
     
    
     let incData=await Service.DownLine(req.admin._id)
-
+    let a=incData.push(req.admin._id)
+    console.log(incData);
     let aggregation_obj = [];
-    if(req.admin.role==="Company"){
-    aggregation_obj.push(
-      {
-        $lookup: {
-          from: "users",
-          localField: "user_id",
-          foreignField: "_id",
-          as: "users",
-        },
-      },
-      {
-        $unwind: "$users",
-      }
-    );
-  }else{
-    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
-    const roles = {};
 
-    rolesData.forEach(role => {
-      roles[parseInt(role.rankId, 10)] = role.rankName;
-    });
-    roles[1] = "Company";
-
-    const data=req.admin.role;
-
-    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
-    const rolesBelow = Object.keys(roles).filter((key) => {
-      return parseInt(key) > parseInt(currentRoleKey);
-    }).map((key) => roles[key]);
-
-    console.log(rolesBelow);
-    let belowRole=rolesBelow[0]
-    let adminRole=req.admin.role
     aggregation_obj.push(
       {
         $lookup: {
@@ -967,14 +936,7 @@ console.log(aggregate_rf)
       {
         $unwind: "$users",
       },
-      // {
-      //   $match:{
-      //     role:{$eq:{belowRole,adminRole}}
-      //   }
-      // }
     );
-  }
-  
 
     if (matchObj != {})
       aggregation_obj.push({
@@ -998,9 +960,9 @@ console.log(aggregate_rf)
       });
     }
 
-    aggregation_obj.push({
-      $project: {
-        _id: 1,
+  aggregation_obj.push({
+    $project: {
+      _id: 1,
         // no:u++,
         // txn_win_amount: 1,
         // txn_main_amount: 1,
@@ -1023,11 +985,29 @@ console.log(aggregate_rf)
         user_id:{$in:incData}
       }
     },);
+    
+  
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
 
-    // logger.info("AGGRE", JSON.stringify(aggregation_obj, undefined, 2));
+    rolesData.forEach(role => {
+      roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    roles[1] = "Company";
+
+    const data=req.admin.role;
+
+    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+    const rolesBelow = Object.keys(roles).filter((key) => {
+      return parseInt(key) > parseInt(currentRoleKey);
+    }).map((key) => roles[key]);
+
+    let belowRole=rolesBelow[0]
+    let adminRole=req.admin.role
+
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(aggregation_obj);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -1088,7 +1068,11 @@ console.log(aggregate_rf)
           txn_mode = "OTHER";
         } else if (u.txn_mode == "S") {
           txn_mode = "SCRATCH CARD";
-        }else{
+        }
+        else if (u.txn_mode == "T") {
+          txn_mode = "Transaction";
+        }
+        else{
           txn_mode = "GAME";
         }
 let current_balance= u.current_balance
