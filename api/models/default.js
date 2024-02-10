@@ -140,7 +140,19 @@ var DefaultModel = new Schema({
   refer_code_bonus:{
     type: Number,
     default: 0
-  }
+  },
+  avaitor:{
+    type:Number,
+    default:1
+  },
+  roullete:{
+    type:Number,
+    default:1
+  },
+  cardRoullete:{
+    type:Number,
+    default:1
+  },
 });
 
 var Default = mongoose.model("Setting", DefaultModel);

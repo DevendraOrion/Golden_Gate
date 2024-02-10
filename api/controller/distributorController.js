@@ -4,6 +4,7 @@ const Distributor = require('../models/distributor'),
   { AccessLog } = require('./../models/accessLog'),
   { User } = require('./../models/user'),
   { Rank_Data } = require("./../models/rankData"),
+  { Default } = require("./../models/default"),
   { ProfitPercent } = require("./../models/profitPercent"),
   Service = require('./../service'),
   config = require('./../../config'),
@@ -259,6 +260,12 @@ module.exports = {
     return ({ data, user })
   },
 
+  gameMgt: async (req, limit) => {
+      const MainData=await Default.find({})
+      // const cardRoulletedata=await ProfitPercent.findOne({gameType: 'Card Roullete'})
+      return {MainData}
+
+  },
   profitPercent: async (req, limit) => {
 const Avaitordata=await ProfitPercent.findOne({gameType: 'Avaitor'})
 const cardRoulletedata=await ProfitPercent.findOne({gameType: 'Card Roullete'})

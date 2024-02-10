@@ -1,0 +1,143 @@
+<%- include header %>
+<style>
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+  }
+
+  .card-body {
+    background-color: #f8f9fa;
+    padding: 10px;
+  }
+</style>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1>
+      <%= title %>
+    </h1>
+  </section>
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="row">
+      <div class="col-md-12 d-flex">
+        <div class="col-md-12 flex-fill">
+          <div class="box box-danger">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <%- console.log(data.MainData[0].avaitor) %>
+                <tr>
+                  <th>Card Roullete</th>
+                  <input type="hidden" id="undermaintenance" value="<%- data.MainData[0].cardRoullete %>">
+                  <td id="undermaintenanceTd" style="width: 87px;">
+                    <% if (data.MainData[0].cardRoullete=='1' ) { %>
+                      <button type="button" class="btn btn-success" onclick="changeGameMode('0')" style="width: 70px;">
+                        On
+                      </button>
+                    <% } else { %>
+                      <button type="button" class="btn btn-danger" onclick="changeGameMode('1')"  style="width: 70px;">
+                        Off
+                      </button>
+                    <% } %>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Avaitor</th>
+                  <input type="hidden" id="avaitorData" value="<%- data.MainData[0].avaitor %>">
+                  <td id="avaitorDataTd">
+                    <% if (data.MainData[0].avaitor=='1' ) { %>
+                      <button type="button" class="btn btn-success" onclick="changeGameModeAvaitor('0')" style="width: 70px;">
+                          On
+                        </button>
+                      <% } else { %>
+                        <button type="button" class="btn btn-danger" onclick="changeGameModeAvaitor('1')"style="width: 70px;">
+                          Off
+                        </button>
+                      <% } %>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Roullete:</th>
+                  <input type="hidden" id="Roullete" value="<%- data.MainData[0].roullete %>">
+                  <td id="RoulleteTd">
+                    <% if (data.MainData[0].roullete=='1' ) { %>
+                      <button type="button" class="btn btn-success" onclick="changeGameModeRoullte('0')" style="width: 70px;">
+                          On
+                        </button>
+                      <% } else { %>
+                        <button type="button" class="btn btn-danger" onclick="changeGameModeRoullte('1')" style="width: 70px;">
+                          Off
+                        </button>
+                      <% } %>
+                  </td>
+                </tr>
+                <tr>
+                  <td><button type="button" id="typeState" data-type="State" class="btn btn-success" onclick="updateGameSetting()">
+                      Save
+                  </button></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function changeGameMode(type) {
+    // console.log(type);
+    $("#undermaintenance").val(type);
+    $("#undermaintenanceTd").html('<button type="button" style="width: 70px;" class="btn btn-' + (type == '0' ? 'danger' : 'success') + '" onclick="changeGameMode(\'' + (type == '0' ? '1' : '0') + '\')">' + (type == '0' ? 'Off' : 'On') + '</button>');
+  }
+
+  function changeGameModeAvaitor(type) {
+    // console.log(type);
+    $("#avaitorData").val(type);
+    $("#avaitorDataTd").html('<button type="button" style="width: 70px;" class="btn btn-' + (type == '0' ? 'danger' : 'success') + '" onclick="changeGameModeAvaitor(\'' + (type == '0' ? '1' : '0') + '\')">' + (type == '0' ? 'Off' : 'On') + '</button>');
+  }
+
+  function changeGameModeRoullte(type) {
+    // console.log(type);
+    $("#Roullete").val(type);
+    $("#RoulleteTd").html('<button type="button" style="width: 70px;" class="btn btn-' + (type == '0' ? 'danger' : 'success') + '" onclick="changeGameModeRoullte(\'' + (type == '0' ? '1' : '0') + '\')">' + (type == '0' ? 'Off' : 'On') + '</button>');
+  }
+
+  const updateGameSetting = (value) => {
+//   const atype = document.getElementById("atype").value;
+  const cardRoullete = document.getElementById("undermaintenance").value;
+  const avaitorData = document.getElementById("avaitorData").value;
+  const Roullete = document.getElementById("Roullete").value;
+  console.log(cardRoullete, avaitorData,Roullete);
+    fetch("/admin/upadte-game-setting", {
+      method: "POST",
+      body: JSON.stringify({ cardRoullete, avaitorData,Roullete }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then(response => response.json())
+      .then(response => {
+        const title = response.status == 1 ? "Success" : "Error";
+        swal({
+          icon: response.status == 1 ? "success" : "error",
+          title: response.Msg
+        }).then(() => {
+          window.location.reload();
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        swal({ icon: "error", title: "An error occurred" }).then(() => {
+          window.location.reload();
+        });
+      });
+  };
+</script>

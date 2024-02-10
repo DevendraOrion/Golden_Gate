@@ -749,6 +749,21 @@ role="User"
       data: data,
     });}
   },
+  gameMgt: async (req, res) => {
+    // let data = await noticeData.findOne({});
+    if(req.admin.role=="Company"){
+    const data = await distributorController.gameMgt(req)
+    // console.log(req.admin);
+    res.render("admin/gameMgt", {
+      title: "Game Management",
+      type: "game-mgt",
+      sub: "dashboard",
+      sub2: "",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });}
+  },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
     if(req.admin.role=="Company"){

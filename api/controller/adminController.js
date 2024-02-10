@@ -8170,6 +8170,22 @@ if(!atype || !ctype || !cardRoullete || !avaitor){
     });
   }
 },
+updateGameSetting: async (req, res) => {
+try {
+  let {cardRoullete, avaitorData,Roullete}=req.body
+  const UpdateData=await Default.update({key: "app_version"},{$set:{avaitor:avaitorData,roullete:Roullete,cardRoullete}})
+  return res.send({
+    status: 1,
+    Msg: localization.success,
+  }); 
+} catch (error) {
+  console.log(error);
+  return res.send({
+    status: 0,
+    Msg: localization.ServerError,
+  });
+}
+},
 
   bannerList: async (req, limit) => {
     const banners = await Banners.find({})
