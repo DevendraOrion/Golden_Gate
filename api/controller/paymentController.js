@@ -559,7 +559,8 @@ console.log(list);
     const user_id = params.id || "";
 
     if (Service.validateObjectId(user_id)) {
-      matchObj.user_id = ObjectId(user_id);
+      console.log("hi");
+      matchObj["user._id"] = ObjectId(user_id);
     }
 
     if (!_.isEmpty(params.status)) {
@@ -701,11 +702,25 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     );
 
     let list = await JoinGame.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
+    // console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {
-      aggregate_rf.push({
+      aggregate_rf.push( {
+        $lookup: {
+          from: "users",
+          let: { user_id: { $toDecimal: "$user_id" } }, 
+          pipeline: [
+              {
+                  $match: {
+                      $expr: { $eq: ["$numeric_id", "$$user_id"] }
+                  }
+              }
+          ],
+          as: "user"
+      }
+    },
+    {
         $match: matchObj,
       });
     }

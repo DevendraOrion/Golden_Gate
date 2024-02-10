@@ -118,13 +118,13 @@
 <script>
     const GameId=document.getElementById("GameId").value
     $(document).ready(function (e) {
-
         var THAT_ID = "";
         var THAT_TYPE = "";
         var THAT_STATUS = "";
         var THAT_RANK = "";
         var START_DATE = "";
         var END_DATE = "";
+        var table = $('#example').DataTable();
         $('.search-user').select2({
             allowClear: true,
             placeholder: 'Search user',
@@ -135,6 +135,7 @@
                         search: params.term,
                         type: 'public'
                     }
+                    console.log(query);
                     return query;
                 }
             }

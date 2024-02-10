@@ -629,10 +629,10 @@ console.log(req.params);
     let game="2"
     const transactions = await paymentController.betHistory(10,game);
     res.render("admin/betHistory", {
-      title: "Bet History(Roullete)",
+      title: "Bet History (Card Roullete)",
       type: "bet",
-      sub: "roullete",
-      sub2: "roullete",
+      sub: "card",
+      sub2: "card",
       total: transactions.count,
       host: config.pre + req.headers.host,
       admin: req.admin,
