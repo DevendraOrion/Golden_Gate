@@ -7050,7 +7050,8 @@ acceptRequest: async (req, res) => {
         else{
             transcId=transcId[0].txn_id
         }
-        transcId=transcId+1
+        transcId=Number(transcId)+1
+        console.log(adminData.cash_balance,userData.cash_balance,Number(findData.txn_amount));
       let newTxnAdmin = new Transaction({
         user_id: findData.fromUser,
         refUser: findData.toUser,
@@ -7078,6 +7079,8 @@ acceptRequest: async (req, res) => {
         txn_id:transcId+1
       });
       let txnres = await newTxn.save();
+
+      const updateAmount=await User.updateOne({_id:userData._id},{$inc:{cash_balance:Number(findData.txn_amount)}})
       const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"S"})
     }else{
       const saveData=await User.updateOne({_id:findData.fromUser},{
@@ -7092,7 +7095,7 @@ acceptRequest: async (req, res) => {
       else{
           transcId=transcId[0].txn_id
       }
-      transcId=transcId+1
+      transcId=Number(transcId)+1
     let newTxnAdmin = new Transaction({
       user_id: findData.fromUser,
       refUser: findData.toUser,

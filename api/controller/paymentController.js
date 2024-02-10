@@ -7,6 +7,7 @@ var Cryptr = require("cryptr");
 var { Transaction } = require("./../models/transaction");
 var  JoinGame  = require("./../models/joinGame");
 var Table = require("./../models/table");
+ var { Rank_Data } = require("./../models/rankData");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
 const uniqid = require("uniqid");
 
@@ -344,7 +345,7 @@ module.exports = {
         }
       })
     );
-console.log(list);
+// console.log(list);
     let count = list.length
     return {
       list: list.filter((d) => d),
@@ -917,9 +918,11 @@ console.log(aggregate_rf)
       };
     }
     
+   
     let incData=await Service.DownLine(req.admin._id)
 
     let aggregation_obj = [];
+    if(req.admin.role==="Company"){
     aggregation_obj.push(
       {
         $lookup: {
@@ -933,6 +936,44 @@ console.log(aggregate_rf)
         $unwind: "$users",
       }
     );
+  }else{
+    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+    const roles = {};
+
+    rolesData.forEach(role => {
+      roles[parseInt(role.rankId, 10)] = role.rankName;
+    });
+    roles[1] = "Company";
+
+    const data=req.admin.role;
+
+    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+    const rolesBelow = Object.keys(roles).filter((key) => {
+      return parseInt(key) > parseInt(currentRoleKey);
+    }).map((key) => roles[key]);
+
+    console.log(rolesBelow);
+    let belowRole=rolesBelow[0]
+    let adminRole=req.admin.role
+    aggregation_obj.push(
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users",
+        },
+      },
+      {
+        $unwind: "$users",
+      },
+      // {
+      //   $match:{
+      //     role:{$eq:{belowRole,adminRole}}
+      //   }
+      // }
+    );
+  }
   
 
     if (matchObj != {})
@@ -1172,7 +1213,6 @@ let created=await Service.formateDateandTime(u.created_at)
 
     if (Service.validateObjectId(user_id)) {
       matchObj.user_id = ObjectId(user_id);
-      
     }
 
     if (!_.isEmpty(params.status)) {
@@ -1236,17 +1276,17 @@ let created=await Service.formateDateandTime(u.created_at)
       };
     }
     let incData=await Service.DownLine(req.admin._id)
-
+console.log(req.admin._id)
     let aggregation_obj = [];
     aggregation_obj.push(
       {$match:{
         txn_mode:"T",
-        refUser:req.admin._id
+        user_id:req.admin._id
       }},
       {
         $lookup: {
           from: "users",
-          localField: "user_id",
+          localField: "refUser",
           foreignField: "_id",
           as: "users",
         },
@@ -1297,15 +1337,16 @@ let created=await Service.formateDateandTime(u.created_at)
         txn_mode: 1,
       },
     },
-    {
-      $match:{
-        user_id:{$in:incData}
-      }
-    },);
+    // {
+    //   $match:{
+    //     user_id:{$in:incData}
+    //   }
+    // },
+    );
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
+    console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
