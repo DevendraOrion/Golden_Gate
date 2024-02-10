@@ -396,7 +396,7 @@ module.exports = function (router, io) {
   //Bet History
   router.get("/bet-avaitor", AdminPagesController.betHistoryAvaitor);
   router.get("/bet-roullete", AdminPagesController.betHistoryRoullete);
-  router.get("/bet-card-roullete", AdminPagesController.addStateRank);
+  router.get("/bet-card-roullete", AdminPagesController.betHistoryCardRoullete);
   router.get("/betHistory_ajax_transaction", paymentController.getBetHistoryTxnAjax);
 
 };

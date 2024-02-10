@@ -625,6 +625,21 @@ console.log(req.params);
       game:game,
     });
   },
+  betHistoryCardRoullete: async (req, res) => {
+    let game="2"
+    const transactions = await paymentController.betHistory(10,game);
+    res.render("admin/betHistory", {
+      title: "Bet History(Roullete)",
+      type: "bet",
+      sub: "roullete",
+      sub2: "roullete",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+      game:game,
+    });
+  },
   modifyUser: async (req, res) => {
     const user = await AdminController.getUserDetails(
       req.params.id,

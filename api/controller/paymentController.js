@@ -710,18 +710,24 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       });
     }
 
-    aggregate_rf.push({
+    aggregate_rf.push(
+      {
+        $match:{
+          game_id:GameId
+        }
+      },
+      {
       $group: {
         _id: null,
         count: { $sum: 1 },
       },
     });
-
+console.log(aggregate_rf)
     // logger.info("aggregate_rf", aggregate_rf);
     let rF = await JoinGame.aggregate(aggregate_rf).allowDiskUse(true);
 
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
-    var recordsTotal = await JoinGame.find({}).countDocuments();
+    var recordsTotal = list.length;
 
     list = await Promise.all(
       list.map(async (u,index) => {
@@ -768,7 +774,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     var startTime = new Date();
 
     const params = req.query;
-console.log("params", params);
+// console.log("params", params);
     let matchObj = {};
     if (params.search) {
       if (params.search.value.trim() != "") {
@@ -984,8 +990,8 @@ console.log("params", params);
     // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
-    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
-    var recordsTotal = await Transaction.find({}).countDocuments();
+    let recordsFiltered = list.length
+    var recordsTotal = list.length
 
     list = await Promise.all(
       list.map(async (u,index) => {
