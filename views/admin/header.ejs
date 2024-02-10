@@ -99,14 +99,21 @@
                         <!-- User Account Menu -->
                         <li class="dropdown user user-menu">
                           <!-- Menu Toggle Button -->
-                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center; padding: 6px;">
                             <!-- The user image in the navbar-->
                             <img src="<%= host %>/admin-assets/dist/img/avatar5.png" class="user-image"
                               alt="User Image">
                             <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                            <span class="hidden-xs">
+                            <div style="display: flex; flex-direction: column;">
+
+                            <span class="hidden-xs" style="font-size: 11px;">
                               <%= admin.search_id %>
                             </span>
+
+                            <span class="hidden-xs" style="font-size: 11px;">
+                              Chip - <%= admin.cash_balance %>
+                            </span>
+                          </div>
                           </a>
                           <ul class="dropdown-menu">
                             <!-- The user image in the menu -->

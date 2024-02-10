@@ -671,6 +671,12 @@ getChildList: async (id,role) => {
     return list;
   },
   //Get Count Of All User
+  getAllChip: async (admin) => {
+    //logger.info('ADMIN USER Count REQUEST >> ');
+    var c = await User.findOne({_id: admin._id},{_id:0,cash_balance:1});
+    // console.log(c);
+    return c.cash_balance;
+  },
   getAllUserCount: async () => {
     //logger.info('ADMIN USER Count REQUEST >> ');
     var c = await User.countDocuments({

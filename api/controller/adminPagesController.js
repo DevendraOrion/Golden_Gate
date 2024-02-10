@@ -26,6 +26,7 @@ module.exports = {
       req
     );
 
+    data.chipCount = await AdminController.getAllChip(req.admin);
     data.user_count = await AdminController.getAllUserCount(req.admin);
     data.fb_user_count = await AdminController.getAllFBUserCount(req.admin);
     data.guest_count = await AdminController.getAllGuestUserCount(req.admin);
