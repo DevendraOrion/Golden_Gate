@@ -47,13 +47,13 @@
                                             Ace
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p id="aceBet">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p id="aceUser">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p>0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -64,13 +64,13 @@
                                             King
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="KingBet">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p id="KingUser">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p>0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -81,13 +81,13 @@
                                             Queen
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="QueenBet">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="QueenUser">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p>0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -98,13 +98,13 @@
                                             Jake
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="JakeBet">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="JakeUser">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p>0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -115,13 +115,13 @@
                                             10
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="10Bet">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p  id="10User">0</p>
                                         </td>
                                         <td>
-                                            <p>1000</p>
+                                            <p>0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -162,8 +162,19 @@
     
             emitEventOnce();
     
-            socket.on('responseEvent', function (data) {
+            socket.on('data', function (data) {
+                document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
+                document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
+                document.getElementById('KingBet').innerHTML = data.SpotOneUser;
+                document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
+                document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
+                document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
+                document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
+                document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
+                document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
+                document.getElementById('10User').innerHTML = data.SpotThreeUser;
                 console.log('Received response from socket server:', data);
+
             });
         });
     </script>
