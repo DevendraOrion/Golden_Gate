@@ -921,7 +921,7 @@ console.log(aggregate_rf)
    
     let incData=await Service.DownLine(req.admin._id)
     let a=incData.push(req.admin._id)
-    console.log(incData);
+    // console.log(incData);
     let aggregation_obj = [];
 
     aggregation_obj.push(
@@ -959,34 +959,6 @@ console.log(aggregate_rf)
         $limit: parseInt(params.length),
       });
     }
-
-  aggregation_obj.push({
-    $project: {
-      _id: 1,
-        // no:u++,
-        // txn_win_amount: 1,
-        // txn_main_amount: 1,
-        created_at: 1,
-        current_balance:1,
-        txn_amount: 1,
-        payment_mode: 1,
-        username: "$users.name",
-        numeric_id: "$users.search_id",
-        user_id: "$users._id",
-        resp_msg: 1,
-        role: "$users.role",
-        // request_id: 1,
-        is_status: 1,
-        txn_mode: 1,
-      },
-    },
-    {
-      $match:{
-        user_id:{$in:incData}
-      }
-    },);
-    
-  
     const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
     const roles = {};
 
@@ -1004,15 +976,50 @@ console.log(aggregate_rf)
 
     let belowRole=rolesBelow[0]
     let adminRole=req.admin.role
+    console.log(belowRole, adminRole);
+
+  aggregation_obj.push(
+    {
+      $match:{
+        "users._id":{$in:incData}
+      }
+    },
+    // {
+    //   $match: {
+    //     "users.role": { $in: [belowRole, adminRole] }
+    // }
+    // },
+    {
+    $project: {
+        _id: 1,
+        created_at: 1,
+        current_balance:1,
+        txn_amount: 1,
+        payment_mode: 1,
+        username: "$users.name",
+        numeric_id: "$users.search_id",
+        user_id: "$users._id",
+        resp_msg: 1,
+        role: "$users.role",
+        is_status: 1,
+        txn_mode: 1,
+      },
+    },
+
+    
+    );
+    
+  
+   
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
+    console.log(incData);
     let aggregate_rf = [];
 
     if (matchObj) {
       aggregate_rf.push({
-        $match: matchObj,
+        $match: {user_id:{$in:incData}},
       });
     }
 
@@ -1025,9 +1032,9 @@ console.log(aggregate_rf)
 
     // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
-
-    let recordsFiltered = list.length
-    var recordsTotal = list.length
+// console.log(rF);
+    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
       list.map(async (u,index) => {

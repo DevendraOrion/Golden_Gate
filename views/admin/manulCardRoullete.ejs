@@ -143,7 +143,7 @@
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper --><%- include footer %>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const socket = io('http://localhost:3070');
@@ -151,13 +151,14 @@
             let eventEmitted = false;
     
             function emitEventOnce() {
-    if (!eventEmitted) {
-        const gameId = '1'; // Set the gameId here
-        socket.emit('onEnterLobby', { gameId: gameId });
-        eventEmitted = true;
-    }
-}
-
+                if (!eventEmitted) {
+                    const playerId = '11111197'; // Set the playerId here
+                    const gameId = '2'; // Set the gameId here
+                    console.log('Emitting onEnterLobby with playerId:', playerId, 'and gameId:', gameId);
+                    socket.emit('onEnterLobby', { playerId: playerId, gameId: gameId });
+                    eventEmitted = true;
+                }
+            }
     
             emitEventOnce();
     
@@ -166,5 +167,6 @@
             });
         });
     </script>
+    
         
     

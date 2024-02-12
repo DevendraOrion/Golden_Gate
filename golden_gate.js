@@ -10,9 +10,9 @@ const https = require('https');
 const config = require('./config/index.js');
 const session = require('cookie-session');
 const mongoose = require('mongoose');
-
+const cors = require("cors")
 require('./cron/index.js');
-
+app.use(cors())
 app.use(
     session({
         secret: config.sessionSecret,
