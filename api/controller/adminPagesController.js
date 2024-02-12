@@ -97,7 +97,7 @@ module.exports = {
   transferPoint: async (req, res) => {
     const data = await distributorController.addRankssData(req) 
       res.render("admin/transferPoint", {
-      title: "Transfer Point To Player",
+      title: "Chip Transfer",
       type: "transfer",
       sub: "transferPoint",
       sub2: "transferPoint",
@@ -109,7 +109,7 @@ module.exports = {
   transferPointToUpper: async (req, res) => {
     const data = await distributorController.addRankssData(req) 
       res.render("admin/transferPointToUpper", {
-      title: "Transfer Point To Upper Level",
+      title: "Chip Transfer To Upper Level",
       type: "transfer",
       sub: "transferPointToUpper",
       sub2: "transferPointToUpper",
@@ -123,7 +123,7 @@ module.exports = {
     const users = await AdminController.getDepositRequest(admin);
     // console.log(users.list);
     res.render("admin/depostRequest", {
-      title: "Transfer Point Request",
+      title: "Accept Chip Request",
       type: "pointTransfer",
       sub: "depositRequest",
       sub2: "depositRequest",
@@ -138,7 +138,7 @@ module.exports = {
     const transactions = await paymentController.transferPoint(admin);
     console.log(transactions.list.length);
       res.render("admin/transferReport", {
-      title: "Point Transfer Report",
+      title: "Chip Transfer History",
       type: "pointTransfer",
       sub: "transferReport",
       sub2: "transferReport",
@@ -599,7 +599,7 @@ console.log(req.params);
     let game="3"
     const transactions = await paymentController.betHistory(10,game);
     res.render("admin/betHistory", {
-      title: "Bet History(Avaitor)",
+      title: "Slot History(Avaitor)",
       type: "bet",
       sub: "avaitor",
       sub2: "avaitor",
@@ -614,7 +614,7 @@ console.log(req.params);
     let game="1"
     const transactions = await paymentController.betHistory(10,game);
     res.render("admin/betHistory", {
-      title: "Bet History(Roullete)",
+      title: "Slot History(Roullete)",
       type: "bet",
       sub: "roullete",
       sub2: "roullete",
@@ -629,7 +629,7 @@ console.log(req.params);
     let game="2"
     const transactions = await paymentController.betHistory(10,game);
     res.render("admin/betHistory", {
-      title: "Bet History (Card Roullete)",
+      title: "Slot History (Card Roullete)",
       type: "bet",
       sub: "card",
       sub2: "card",
@@ -1161,7 +1161,7 @@ role="User"
   allTransactions: async (req, res) => {
     const transactions = await paymentController.transactionList(10);
     res.render("admin/transaction", {
-      title: "All transactions",
+      title: "Wallet Transfer",
       type: "transaction",
       sub: "all",
       sub2: "",
