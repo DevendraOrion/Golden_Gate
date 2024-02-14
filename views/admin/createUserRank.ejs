@@ -23,13 +23,26 @@
                 
                 <tr class="hidden-row">
                   <td style="width: 295px;">
+                    <input type="hidden" value="<%= admin.role%>" id="adminRole">
+                    <%if(admin.role==="Company"){%>
                     <select id="searchId" class="form-control search-user" name="state" oninput="getParentName()"></select>
+                    <%} else if(admin.role==="Agent"){%>
+                      <input name="state" value="<%= admin.search_id%>" id="searchId" class="form-control" readonly></input>
+                    <%} %>
                   </td>
                   <td>
-                    <input name="parentName" id="parentName" class="form-control" readonly></input>
+                    <%if(admin.role==="Company"){%>
+                      <input name="parentName" id="parentName" class="form-control" readonly></input>
+                      <%} else if(admin.role==="Agent"){%>
+                      <input name="parentName" value="<%= admin.first_name%> <%= admin.last_name%>" id="parentName" class="form-control" readonly></input>
+                      <%} %>
                   </td>
                   <td>
-                    <input name="parentRole" id="parentRole" class="form-control" readonly></input>
+                    <%if(admin.role==="Company"){%>
+                      <input name="parentRole" id="parentRole" class="form-control" readonly></input>
+                      <%} else if(admin.role==="Agent"){%>
+                        <input name="parentRole" value="<%= admin.role%>" id="parentRole" class="form-control" readonly></input>
+                      <%} %>
                   </td>
                 </tr>
                 <tr class="hidden-row">
@@ -39,7 +52,11 @@
                 
                 <tr class="hidden-row">
                   <td>
-                    <input name="parentarea" id="parentarea" class="form-control" readonly></input>
+                    <%if(admin.role==="Company"){%>
+                      <input name="parentarea" id="parentarea" class="form-control" readonly></input>
+                      <%} else if(admin.role==="Agent"){%>
+                        <input name="parentarea" value="<%= admin.areaAllocation%>" id="parentarea" class="form-control" readonly></input>
+                      <%} %>
                   </td>
                 </tr>
                 
@@ -160,7 +177,13 @@
       let a=[];
       let districtData;
     const saveSettings = () => {
-        const parentId = a[0];
+        const adminRole = document.getElementById("adminRole").value;
+        let parentId;
+if(adminRole==="Company"){
+   parentId = a[0]; 
+  }else if(adminRole==="Agent"){
+  parentId = document.getElementById("searchId").value;
+}
         let  districtAllocation=""
         let  stateAllocation = "";
         let  areaAllocation = "";
