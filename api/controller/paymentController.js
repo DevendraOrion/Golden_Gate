@@ -359,7 +359,7 @@ module.exports = {
         created_at: -1,
       })
       .limit(limit);
-console.log(transaction);
+// console.log(transaction);
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
@@ -795,7 +795,7 @@ console.log(aggregate_rf)
     let matchObj = {};
     var sortObj = {};
 
-
+// console.log(req.admin._id)
     if (params.order) {
       if (params.order[0]) {
         // console.log(params.order[0]);
@@ -921,6 +921,11 @@ console.log(aggregate_rf)
       {
         $unwind: "$refUser",
       },
+      {
+        $match:{
+          user_id:{$in:incData}
+        }
+      },
     );
 
     if (matchObj != {})
@@ -935,7 +940,6 @@ console.log(aggregate_rf)
       {
         $skip: params.start == "All" ? 0 : parseInt(params.start),
       }
-    
     );
 
     if (params.length != -1) {
@@ -945,31 +949,30 @@ console.log(aggregate_rf)
     }
 
 
-  aggregation_obj.push(
-    // {
-    //   $match:{
-    //     "users._id":{$in:incData}
-    //   }
-    // },
-    {$project: {
-        _id: 1,
-        username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
-        refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
-        transaction_type: 1,
-        created_at: 1,
-        resp_msg: 1,
-        txn_amount: 1,
-        current_balance:1,
-        payment_mode: 1,
-        refSearch_id: "$refUser.search_id",
-        search_id: "$users.search_id",
-        user_id: "$users._id",
-        role: "$users.role",
-        is_status: 1,
-        txn_mode: 1,
-      },
-    },
-    );
+      aggregation_obj.push(
+          {
+          $project: {
+            _id: 1,
+            username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
+            refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
+            transaction_type: 1,
+            created_at: 1,
+            resp_msg: 1,
+            txn_amount: 1,
+            current_balance:1,
+            payment_mode: 1,
+            refSearch_id: "$refUser.search_id",
+            search_id: "$users.search_id",
+            user_id: "$users._id",
+            role: "$users.role",
+            is_status: 1,
+            txn_mode: 1,
+          },
+        },
+        );
+      
+    
+
     
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     // console.log(list);

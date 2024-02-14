@@ -7690,15 +7690,16 @@ saveTransferPoint: async (req, res) => {
               Msg: "Insuffiecent Amount",
             });
           }
-          let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
-    
+          let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
+          
           if(transcId.length==0){
               transcId=0
           }
           else{
               transcId=transcId[0].txn_id
+              console.log(transcId[0].txn_id);
           }
-          transcId=transcId+1
+          transcId=Number(transcId)+1
           const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:point}})
           const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:-point}})
   
@@ -7737,7 +7738,7 @@ saveTransferPoint: async (req, res) => {
               Msg: "Insuffiecent Amount",
             });
           }
-          let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+          let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
     
           if(transcId.length==0){
               transcId=0
@@ -7745,7 +7746,7 @@ saveTransferPoint: async (req, res) => {
           else{
               transcId=transcId[0].txn_id
           }
-          transcId=transcId+1
+          transcId=Number(transcId)+1
           const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:-point}})
           const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:point}})
   
@@ -7781,14 +7782,14 @@ saveTransferPoint: async (req, res) => {
     }else{
       if(debitCredit==="Credit"){
         let point = Number(balance)
-        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+        let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
         if(transcId.length==0){
             transcId=0
         }
         else{
             transcId=transcId[0].txn_id
         }
-        transcId=transcId+1
+        transcId=Number(transcId)+1
         const currentDate = new Date();
         const day = currentDate.getDate().toString().padStart(2, '0');
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
@@ -7812,7 +7813,7 @@ saveTransferPoint: async (req, res) => {
 
       else{
         let point = Number(balance)
-        let transcId=await DepositRequests.find({}).sort({created_at:-1}).limit(1)
+        let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
         // console.log(transcId.txn_id);
         if(transcId.length==0){
             transcId=0
@@ -7820,7 +7821,7 @@ saveTransferPoint: async (req, res) => {
         else{
             transcId=transcId[0].txn_id
         }
-        transcId=transcId+1
+        transcId=Number(transcId)+1
         const currentDate = new Date();
         const day = currentDate.getDate().toString().padStart(2, '0');
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
