@@ -903,6 +903,10 @@ role="User"
     let role="Agent"
     let adminData=req.admin
     const users = await AdminController.getAgentList(role,adminData);
+    let Child=true
+    if(req.admin.role =="Zone" ||req.admin.role =="Company"){
+      Child=false
+    }
     res.render("admin/agentsMGT", {
       title: "Agents List",
       type: "usersMGT",
@@ -912,13 +916,17 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:false
+      child:Child
     });
   },
   zoneMGT: async (req, res) => {
     let role="Zone"
     let adminData=req.admin
     const users = await AdminController.getAgentList(role,adminData);
+    let Child=true
+    if(req.admin.role=="District" ||req.admin.role=="Company"){
+      Child=false
+    }
     res.render("admin/agentsMGT", {
       title: "Zone List",
       type: "usersMGT",
@@ -928,13 +936,18 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:false
+      child:Child
     });
   },
   districtMGT: async (req, res) => {
     let role="District"
     let adminData=req.admin
     const users = await AdminController.getAgentList(role,adminData);
+    let Child=true
+    if(req.admin.role=="State"||req.admin.role=="Company"){
+      Child=false
+      console.log(Child);
+    }
     res.render("admin/agentsMGT", {
       title: "District List",
       type: "usersMGT",
@@ -944,7 +957,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:false
+      child:Child
     });
   },
   stateMGT: async (req, res) => {
@@ -952,6 +965,10 @@ role="User"
     let adminData=req.admin
     const users = await AdminController.getAgentList(role,adminData);
     // console.log(users.list);
+    let Child=true
+    if(req.admin=="Company"){
+      Child=false
+    }
     res.render("admin/agentsMGT", {
       title: "State List",
       type: "usersMGT",
@@ -961,7 +978,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:false
+      child:Child
     });
   },
   showChild: async (req, res) => {
