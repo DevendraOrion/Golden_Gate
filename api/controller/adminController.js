@@ -230,7 +230,7 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
         parentDatas: Data
       };
     }));
-    // console.log(await parentData);
+    console.log(await parentData);
     const list=await parentData
  
     let count = await User.find({

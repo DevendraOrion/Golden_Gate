@@ -172,7 +172,6 @@
             <li class="<% if(type=='dashboard') {%> active <% } %>"><a href="/dashboard"><i class="fa fa-home"></i>
                 <span>Dashboard</span></a></li>
 
-                <% if (admin.role=='Company' || admin.role=='Agent') { %>
          
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-calculator"></i> <span>Player Management System</span>
@@ -189,7 +188,6 @@
                             <%}%>
                   </ul>
                 </li>
-                <% } %>
                 <% if (admin.role !=='Agent' ) { %>
                 <li class="treeview <% if(type=='users') {%> active <% } %>">
                   <a href="#"><i class="fa fa-calculator"></i> <span>Distributer Management</span>

@@ -886,7 +886,7 @@ role="User"
     });
   },
   users: async (req, res) => {
-    console.log(req.admin)
+    // console.log(req.admin)
     const users = await AdminController.getUsersList();
     res.render("admin/user", {
       title: "User List",
