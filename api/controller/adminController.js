@@ -677,12 +677,14 @@ getChildList: async (id,role) => {
     // console.log(c);
     return c.cash_balance;
   },
-  getAllUserCount: async () => {
-    //logger.info('ADMIN USER Count REQUEST >> ');
-    var c = await User.countDocuments({
-      is_deleted: false,
-    });
-    // console.log(c);
+  getAllUserCount: async (data) => {
+    const downline = await Service.DownLine(data._id);
+var c = await User.countDocuments({
+  is_deleted: false,
+  _id: { $in: downline },
+  role: "User"
+});
+   
     return c;
   },
   //Get Count Of FB User

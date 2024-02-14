@@ -449,8 +449,8 @@ console.log(req.params);
     const users = await AdminController.manualCardRoullete();
     res.render("admin/manulCardRoullete", {
       title: "Manual Result Card Roulette",
-      type: "commissionReport",
-      sub: "commissionReport",
+      type: "control",
+      sub: "control",
       sub2: "carRoulleteReport",
       host: config.pre + req.headers.host,
       admin: req.admin,
@@ -694,9 +694,9 @@ console.log(req.params);
     // let data = await noticeData.findOne({});
     const data = await distributorController.showRankData(req)
     res.render("admin/rankMaster", {
-      title: "Rank Master",
-      type: "Rank Management",
-      sub: "rankMgt",
+      title: "Set User Creation Limits",
+      type: "master",
+      sub: "master",
       sub2: "rankM",
       host: config.pre + req.headers.host,
       admin: req.admin,
@@ -756,10 +756,10 @@ role="User"
     const data = await distributorController.profitPercent(req)
     // console.log(req.admin);
     res.render("admin/profit-management", {
-      title: "Profit Percentage Management",
-      type: "profit-management",
-      sub: "dashboard",
-      sub2: "",
+      title: "Set Game Profit",
+      type: "master",
+      sub: "master",
+      sub2: "profit",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
@@ -771,10 +771,10 @@ role="User"
     const data = await distributorController.gameMgt(req)
     // console.log(req.admin);
     res.render("admin/gameMgt", {
-      title: "Game Management",
-      type: "game-mgt",
-      sub: "dashboard",
-      sub2: "",
+      title: "Game Play/Pause",
+      type: "master",
+      sub: "master",
+      sub2: "game-mgt",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
@@ -786,10 +786,10 @@ role="User"
     const data = await distributorController.commission_management(req)
     // console.log(req.admin);
     res.render("admin/commission-mgt", {
-      title: "Commission Management",
-      type: "commission-mgt",
-      sub: "dashboard",
-      sub2: "",
+      title: "Set Game Commission",
+      type: "master",
+      sub: "master",
+      sub2: "commission-mgt",
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,

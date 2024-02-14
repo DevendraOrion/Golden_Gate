@@ -183,7 +183,7 @@
                   <ul class="treeview-menu">
                     <li class="<% if(sub2 =='playerMaster') {%> active <% } %> "><a href="/user"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i> Player Master</a></li>
-                          <%if(admin.role !== "Agent"){%>
+                          <%if(admin.role == "Agent" || admin.role == "Company"){%>
                           <li class="<% if(sub2 =='create-user') {%> active <% } %> "><a href="/create-user"><i
                             class="fa fa-times-circle-o" aria-hidden="true"></i> Player Creation</a></li>
                             <%}%>
@@ -305,8 +305,11 @@
                     <ul class="treeview-menu">
                       <li class="<% if(sub2 =='transferPoint') {%> active <% } %> "><a href="/transferPoint"><i
                           class="fa fa-times-circle-o" aria-hidden="true"></i>Chip Transfer</a></li>
+                          <% if (admin.role !=='Company') { %>
                           <li class="<% if(sub2 =='transferPointToUpper') {%> active <% } %> "><a href="/transferPointToUpper"><i
                               class="fa fa-times-circle-o" aria-hidden="true"></i>Chip Transfer to Upper</a></li>
+                <% } %>
+
                               <li class="<% if(sub2 =='transferReport') {%> active <% } %> "><a href="/transferReport"><i
                                   class="fa fa-times-circle-o" aria-hidden="true"></i> Chip Transfer History</a></li>
                       <li class="<% if(sub2 =='depositRequest') {%> active <% } %> "><a href="/depositRequest"><i
@@ -344,7 +347,7 @@
                           </li>
                   <% } %>
                   <% if (admin.role=='Company') { %>
-                    <li class="treeview <% if(type=='users') {%> active <% } %>">
+                    <li class="treeview <% if(type=='master') {%> active <% } %>">
                       <a href="#"><i class="fa fa-link"></i> <span>Master</span>
                         <span class="pull-right-container">
                           <i class="fa fa-angle-left pull-right"></i>
@@ -357,7 +360,7 @@
                           <li class="<% if(sub2 =='rankM') {%> active <% } %> "><a href="/rankMaster"><i
                               class="fa fa-times-circle-o" aria-hidden="true"></i> Set User Creation Limit</a></li>
                          
-                          <li class="<% if(sub2 =='addRankCompany') {%> active <% } %> "><a href="/profit-management"><i
+                          <li class="<% if(sub2 =='profit') {%> active <% } %> "><a href="/profit-management"><i
                               class="fa fa-times-circle-o" aria-hidden="true"></i> Set Game Profit</a></li>
                           <li class="<% if(sub2 =='game-mgt') {%> active <% } %> "><a href="/game-mgt"><i
                               class="fa fa-times-circle-o" aria-hidden="true"></i> Game play / Pause</a></li>
@@ -392,19 +395,16 @@
 
                           </ul>
                           </li>
-                        <li class="treeview <% if(type=='commissionReport') {%> active <% } %>">
+                        <li class="treeview <% if(type=='control') {%> active <% } %>">
                           <a href="#"><i class="fa fa-book"></i> <span>Game Control</span>
                             <span class="pull-right-container">
                               <i class="fa fa-angle-left pull-right"></i>
                             </span>
                           </a>
                           <ul class="treeview-menu">
-                            <li class="<% if(sub2 =='carRoulleteReport') {%> active <% } %> "><a href="#"><i
-                                class="fa fa-times-circle-o" aria-hidden="true"></i> Car Roulette</a></li>
-                            <li class="<% if(sub2 =='avaitorReport') {%> active <% } %> "><a href="#"><i
-                                class="fa fa-times-circle-o" aria-hidden="true"></i> Avaitor</a></li>
-                            <li class="<% if(sub2 =='roulleteReport') {%> active <% } %> "><a href="#"><i
-                                class="fa fa-times-circle-o" aria-hidden="true"></i> Roullete</a></li>
+                            <li class="<% if(sub2 =='carRoulleteReport') {%> active <% } %> "><a href="/manual-card-roullete"><i
+                                class="fa fa-times-circle-o" aria-hidden="true"></i> Card Roulette</a></li>
+
                         </ul>
                           </li>
                         <li class="treeview <% if(type=='commissionReport') {%> active <% } %>">
