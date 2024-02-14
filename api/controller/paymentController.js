@@ -354,12 +354,12 @@ module.exports = {
   },
   transactionList: async (limit) => {
     const transaction = await Transaction.find({})
-      .populate("user_id")
+      .populate("user_id").populate("refUser")
       .sort({
         created_at: -1,
       })
       .limit(limit);
-
+console.log(transaction);
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
@@ -367,14 +367,15 @@ module.exports = {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
             request_id: u?.request_id,
-            username: _.capitalize(u.user_id.username),
-            numeric_id: _.capitalize(u.user_id.search_id),
+            username:_.capitalize(u.user_id.first_name)+""+ _.capitalize(u.user_id.last_name),
+            search_id: _.capitalize(u.user_id.search_id),
+            refUsername: u.refUser != null ?_.capitalize(u.refUser.first_name)+""+ _.capitalize(u.refUser.last_name):"",
+            refUserSearchId: u.refUser != null?_.capitalize(u.refUser.search_id):"",
             user_id: u.user_id._id,
             txn_amount: u.txn_amount,
-            win_wallet: u.txn_win_amount || 0,
-            main_wallet: u.txn_main_amount || 0,
-            created_at: u.created_at, //await Service.formateDateandTime(parseInt(u.created_at)),
+            created_at: await Service.formateDateandTime(parseInt(u.created_at)), 
             is_status: u.is_status,
+            current_balance: u.current_balance,
             msg: u.resp_msg || "No Data Found",
             txn_mode: u.txn_mode || "G",
           };
@@ -792,36 +793,9 @@ console.log(aggregate_rf)
     const params = req.query;
 // console.log("params", params);
     let matchObj = {};
-    if (params.search) {
-      if (params.search.value.trim() != "") {
-        matchObj["$or"] = [
-          {
-            $expr: {
-              $regexMatch: {
-                input: { $toString: "$users.numeric_id" },
-                regex: params.search.value,
-                options: "i"
-              }
-            }
-          },
-          {
-            request_id: {
-              $regex: params.search.value,
-              $options: "i",
-            },
-          },
-          {
-            resp_msg: {
-              $regex: params.search.value,
-              $options: "i",
-            },
-          },
-
-        ];
-      }
-    }
-
     var sortObj = {};
+
+
     if (params.order) {
       if (params.order[0]) {
         // console.log(params.order[0]);
@@ -936,6 +910,17 @@ console.log(aggregate_rf)
       {
         $unwind: "$users",
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "refUser",
+          foreignField: "_id",
+          as: "refUser",
+        },
+      },
+      {
+        $unwind: "$refUser",
+      },
     );
 
     if (matchObj != {})
@@ -950,8 +935,7 @@ console.log(aggregate_rf)
       {
         $skip: params.start == "All" ? 0 : parseInt(params.start),
       }
-      // limit
-      // { $limit: params.length == -1 ? null :  parseInt(params.length) },
+    
     );
 
     if (params.length != -1) {
@@ -959,62 +943,36 @@ console.log(aggregate_rf)
         $limit: parseInt(params.length),
       });
     }
-    const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
-    const roles = {};
 
-    rolesData.forEach(role => {
-      roles[parseInt(role.rankId, 10)] = role.rankName;
-    });
-    roles[1] = "Company";
-
-    const data=req.admin.role;
-
-    const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
-    const rolesBelow = Object.keys(roles).filter((key) => {
-      return parseInt(key) > parseInt(currentRoleKey);
-    }).map((key) => roles[key]);
-
-    let belowRole=rolesBelow[0]
-    let adminRole=req.admin.role
-    console.log(belowRole, adminRole);
 
   aggregation_obj.push(
-    {
-      $match:{
-        "users._id":{$in:incData}
-      }
-    },
     // {
-    //   $match: {
-    //     "users.role": { $in: [belowRole, adminRole] }
-    // }
+    //   $match:{
+    //     "users._id":{$in:incData}
+    //   }
     // },
-    {
-    $project: {
+    {$project: {
         _id: 1,
+        username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
+        refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
+        transaction_type: 1,
         created_at: 1,
-        current_balance:1,
-        txn_amount: 1,
-        payment_mode: 1,
-        username: "$users.name",
-        numeric_id: "$users.search_id",
-        user_id: "$users._id",
         resp_msg: 1,
+        txn_amount: 1,
+        current_balance:1,
+        payment_mode: 1,
+        refSearch_id: "$refUser.search_id",
+        search_id: "$users.search_id",
+        user_id: "$users._id",
         role: "$users.role",
         is_status: 1,
         txn_mode: 1,
       },
     },
-
-    
     );
     
-  
-   
-
-
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(incData);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -1048,33 +1006,12 @@ console.log(aggregate_rf)
           txn_amount =
             '<span class="label label-danger">' + u.txn_amount + "</span>";
         }
+
         let txn_mode = u.txn_mode;
         if (u.txn_mode == "G") {
           txn_mode = "GAME";
-        } else if (u.txn_mode == "P") {
-          txn_mode = "Payment";
-          // console.log("UU", u.txn_mode);
-          if (!u.txn_mode) txn_mode += " - Paytm";
-          else if (u.txn_mode == "PA") txn_mode += " - Paytm";
-          else if (u.txn_mode == "N/A") txn_mode += "";
-          else txn_mode += " - Cashfree " + u.txn_mode;
-        } 
-        else if (u.txn_mode == "A") {
-          txn_mode = "ADMIN";
-        }
-        else if (u.txn_mode == "GIFT") {
-          txn_mode = "GIFT";
-        }
-         else if (u.txn_mode == "B") {
-          txn_mode = "BONUS";
-        } else if (u.txn_mode == "R") {
-          txn_mode = "WITHDRAW";
         } else if (u.txn_mode == "A") {
-          txn_mode = "REFERRAL";
-        } else if (u.txn_mode == "O") {
-          txn_mode = "OTHER";
-        } else if (u.txn_mode == "S") {
-          txn_mode = "SCRATCH CARD";
+          txn_mode = "ADMIN";
         }
         else if (u.txn_mode == "T") {
           txn_mode = "Transaction";
@@ -1082,7 +1019,8 @@ console.log(aggregate_rf)
         else{
           txn_mode = "GAME";
         }
-let current_balance= u.current_balance
+
+        let current_balance= u.current_balance
         let status_ = u.is_status;
 
         if (status_ == "P") {
@@ -1092,42 +1030,34 @@ let current_balance= u.current_balance
         } else {
           status_ = '<span class="label label-danger">Failed</span>';
         }
+        let Debit_credit = u.transaction_type;
+        let BeforeBalance;
 
-        let roles=u.role
-        if (roles == "State") {
-          roles = 'State';
-        } 
-        else if (roles == "Zone") {
-          roles = 'Zone';
+        if (Debit_credit == "D") {
+          Debit_credit = '<span class="label label-danger">Debit</span>';
+          BeforeBalance=u.current_balance+u.txn_amount
+        }  else {
+          Debit_credit = '<span class="label label-success">Credit</span>';
+          BeforeBalance=u.current_balance-u.txn_amount
         }
-        else if (roles == "District") {
-          roles = 'District';
-        }
-        else if (roles == "Agent") {
-          roles = 'Agent';
-        }
-let created=await Service.formateDateandTime(u.created_at)
+        let created=await Service.formateDateandTime(u.created_at)
         return [
           ++index,
           // u?.request_id ?? '',
-          `<a target="_blank" href="${config.pre + req.headers.host
-          }/user/view/${u.user_id}">${u.numeric_id}</a>`,
-          txn_amount,
-          // u.txn_win_amount || 0,
-          // u.txn_main_amount || 0,
-        current_balance,
-          // `<div class="time_formateDateandTime2">${u.created_at}</div>`,
-          created,
-          txn_mode,
+          ` ${u.username}(${u.search_id})`,
+          ` ${u.refusername}(${u.refSearch_id})`,
+          Debit_credit,
           u.resp_msg ? u.resp_msg : "No Data Found",
+          created,
+          BeforeBalance,
+          txn_amount,
+          current_balance,
           status_,
-          role=u.role,
         ];
       })
     );
 
-    var endTime = new Date();
-    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
+
 
     return res.status(200).send({
       data: await list,

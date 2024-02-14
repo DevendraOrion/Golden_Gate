@@ -75,23 +75,36 @@
                             <thead>
                                 <tr>
                                     <th>S No</th>
-                                    <th>Player ID</th>
-                                    <th>Txn Amount (RS)</th>
-                                    <th>Main Wallet (RS)</th>
+                                    <th>From User</th>
+                                    <th>To User</th>
+                                    <th>Credit/Debit</th>
+                                    <th>Subject</th>
                                     <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Remark</th>
+                                    <th>Before Balance</th>
+                                    <th>Transfer Point</th>
+                                    <th>Final Point</th>
                                     <th>Status</th>
-                                    <th>Rank</th>
+                                  
                                 </tr>
                             </thead>
                             <tbody>
                                 <% var i=1; for (d of data) {%>
                                 <tr class="gradeX">
                                     <td><%= i++%></td>
-                                    <td><a target="_blank"
-                                            href="<%= host %>/user/view/<%= d.user_id%>"><%= d.numeric_id %></a
-                                            target="_blank"></td>
+                                    <td><%= d.username %>(<%= d.search_id %>)</td>
+                                    <td><%= d.refUsername %>(<%= d.refUserSearchId %>)</td>
+                                    <% if (d.transaction_type == "C") { %>
+                                    <td><span class="label label-success">Credit</span></td>
+                                    <% } else { %>
+                                    <td><span class="label label-danger">Debit</span></td>
+                                    <% } %>
+                                    <td>
+                                        <%= d.msg %>
+                                    </td>
+                                    
+                                    <td><%=d.created_at %></td>
+                                    <td><%=d.current_balance - d.txn_amount %></td>
+
                                     <% if (d.txn_amount > 0) { %>
                                     <td><span class="label label-success"><%= d.txn_amount %></span></td>
                                     <% } else { %>
@@ -99,53 +112,13 @@
                                     <% } %>
                                   
                                     <td><%= d.current_balance %></td>
-                                    <% 
-                                    function formateDateandTime(date) {
-                                        // 7/12/2018 12:25PM
-                                        var dat = new Date(date);
-                                        var mon = (dat.getMonth() + 1 > 9) ? dat.getMonth() + 1 : "0" + parseInt(dat.getMonth() + parseInt(1));
-                                                        
-                                        var hours = dat.getHours() % 12;
-                                        hours = (hours > 9) ? hours : "0" + hours;
-                            
-                                        var minutes = dat.getMinutes();
-                                        minutes = (minutes > 9) ? minutes : "0" + minutes;
-                            
-                                        var ap = (dat.getHours() >= 12) ? "PM" : "AM";
-                                        var day = (dat.getDate() > 9) ? dat.getDate() : "0" + dat.getDate();
-                            
-                                        rez = day + "/" + mon + "/" + dat.getFullYear() + " " + hours + ":" + minutes + ap;
-                                        return rez;
-                                    }
-                                    %>
-                                    <td><%=d.created %></td>
-                                    <% if (d.txn_mode == 'P') { %>
-                                    <td>Payment<span><%- (d.txn_mode == 'PA') ? ' - Paytm' : (d.txn_mode == 'N/A') ? '' : ' - '+d.txn_mode%></span></td>
-                                    <% } else if(d.txn_mode == 'A'){ %>
-                                    <td>ADMIN</td>
-                                    <% } else if(d.txn_mode == 'B'){ %>
-                                    <td>BONUS</td>
-                                    <% } else if(d.txn_mode == 'R'){ %>
-                                    <td>REFUND</td>
-                                    <% } else if(d.txn_mode == 'GIFT'){ %>
-                                        <td>GIFT</td>
-                                    <% } else if(d.txn_mode == 'O'){ %>
-                                    <td>OTHER</td>
-                                    <% } else if(d.txn_mode == 'REF'){ %>
-                                    <td>REFERRAL</td>
-                                    <% } else if(d.txn_mode == 'T'){ %>
-                                    <td>Transaction</td>
-                                    <% }else {%>
-                                    <td>Game</td>
-                                    <% } %>
-                                    <td>
-                                        <%= d.msg %>
-                                    </td>
+                               
+
                                     <td>
                                         <button type="button"
                                             class="btn btn-<% if(d.is_status == 'P'){%>warning<%}else if(d.is_status == 'S'){%>success<%}else if(d.is_status == 'F'){%>danger<%}%> label bg-<% if(d.is_status == 'P'){%>orange<%}else if(d.is_status == 'S'){%>green<%}else if(d.is_status == 'F'){%>red<%}%>" data-id="<%= d.id%>"><% if(d.is_status == 'P'){%>Pending<%}else if(d.is_status == 'S'){%>Success<%}else if(d.is_status == 'F'){%>Failed<%}%></button>
                                     </td>
-                                    <td><%= d.role !== undefined ? d.role : "User" %></td>
+                                  
 
                                 </tr>
                             <% }%>
@@ -301,7 +274,7 @@
                                     data = data.replace(/<.*?>/ig, "");
                                 }
 
-                                if (column === 4) {
+                                if (column === 5) {
                                     data = formateDateandTime(parseInt(data));
                                 }
                                 return data;
@@ -331,7 +304,7 @@
                                     data = data.replace(/<.*?>/ig, "");
                                 }
 
-                                if (column === 4) {
+                                if (column === 5) {
                                     data = formateDateandTime(parseInt(data));
                                 }
                                 return data;
@@ -367,7 +340,8 @@
                     '<td>' + data[5] + '</td>' +
                     '<td>' + data[6] + '</td>' +
                     '<td>' + data[7] + '</td>' +
-                    '<td>' + data[8] + '</td>';
+                    '<td>' + data[8] + '</td>'+
+                    '<td>' + data[9] + '</td>';
                 $(row).html(rowData);
             },
             columnDefs: [{
@@ -376,11 +350,11 @@
                 },
                 {
                     orderable: false,
-                    targets: [1, 6, 7]
+                    targets: [1, 6, 7,8,9]
                 }
             ]
         });
-        $('#example1').DataTable().order([4, 'desc']).draw();
+        $('#example1').DataTable().order([5, 'desc']).draw();
 
         $(document).on("click", ".export", function () {
             console.log("fire");
