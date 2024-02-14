@@ -6578,6 +6578,43 @@ console.log(notice, noticeDate, noticeTitle,noticeId)
       });
     }
   },
+  updateGeneratePoint: async(req,res)=>{
+    
+    const {adminId, adminName, adminPoints, generateChip, securitypin} = req.body
+    console.log(adminId, adminName, adminPoints, generateChip, securitypin);
+    var rez1 = await bcrypt.compare(securitypin, req.admin.security_pin);
+    if(!rez1){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Correct Security Pin",
+      });
+    }
+
+    if(!adminId || !generateChip || !securitypin){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter all Fields",
+      });
+    }
+
+const UpdateData = await User.updateOne({ _id: req.admin._id }, { $inc: { cash_balance: Number(generateChip) } });
+    let newTxnAdmin = new Transaction({
+      user_id: req.admin._id,
+      txn_amount: Number(generateChip),
+      created_at: new Date().getTime(),
+      transaction_type: "C",
+      resp_msg:  `${req.admin.first_name} ${req.admin.last_name} Generated ${generateChip} Points`,
+      current_balance: Number(adminPoints)+Number(generateChip),
+      is_status: "S",
+      txn_mode: "U",
+    })
+    let txnAdmin = await newTxnAdmin.save();
+
+    return res.send({
+      status: 1,
+      Msg: localization.success,
+    });
+ },
   addnoticelist: async(req,res)=>{
     
     const {notice, userList, noticeTitle} = req.body
@@ -6592,7 +6629,6 @@ console.log(notice, noticeDate, noticeTitle,noticeId)
     )
    const newNoticeList = await noticelist.save()
    res.status(200).send({"Data": newNoticeList})
-
  },
   saveNoticeData: async (req, res) => {
     const { notice, noticeDate, noticeTitle,noticeId } = req.body;

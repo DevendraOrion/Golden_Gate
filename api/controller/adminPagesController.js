@@ -68,6 +68,18 @@ module.exports = {
     });
 
   },
+  generateChip: async (req, res) => {
+    let data = await noticeData.findOne({});
+    res.render("admin/generateChip", {
+      title: "Generate Chip",
+      type: "generate",
+      sub: "chip",
+      sub2: "chip",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+    });
+  },
   notice: async (req, res) => {
     let data = await noticeData.findOne({});
     res.render("admin/notice", {

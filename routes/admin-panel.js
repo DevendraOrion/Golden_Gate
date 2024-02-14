@@ -316,6 +316,9 @@ module.exports = function (router, io) {
   router.get("/admin/find_userByRole", UserController.findUserByRole);
   router.get("/admin/find_distributor", DistributorController.findDistributor);
   router.get("/admin/find_agent", AgentController.findAgent);
+// Generate Chip
+router.get("/generate-chip", AdminPagesController.generateChip);
+router.post("/updateGeneratePoint",AdminController.updateGeneratePoint) 
 
   // NOTICE
   router.get("/notice-management", AdminPagesController.noticeManagement);

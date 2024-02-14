@@ -1,0 +1,106 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <h1><%= title %></h1>
+  </section>
+  <!-- Main content -->
+  <section class="content container-fluid">
+    <div class="row">
+      <div class="col-md-12 flex-fill">
+        <div class="box box-danger" style="width: fit-content; min-width: 100%">
+          <h4 style="margin-left: 15px;">Generate Chip</h4>
+          <div class="box-body">
+            <table class="table table-bordered">
+                <tr>
+                    <td>Admin Id</td>
+                    <td>
+                    
+                     <input name="adminId" id="adminId" value="<%=admin.search_id%>" class="form-control" readonly></input>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Admin Name</td>
+                    <td>
+                      <input name="adminName" id="adminName" value="<%=admin.first_name%> <%=admin.last_name%>" class="form-control" readonly></input>
+                    </td>
+                  </tr>
+              <tr>
+                <td>Admin Current Balance</td>
+                <td>
+                    <input name="adminPoints" id="adminPoints" value="<%=admin.cash_balance%>" class="form-control" readonly></input>
+                </td>
+              </tr>
+              <tr>
+                <td>Enter Chip</td>
+                <td>
+                    <input name="generateChip" id="generateChip"  class="form-control" placeholder="Enter Chip Here"></input>
+                </td>
+              </tr>
+              <tr>
+                <td>Security Pin</td>
+                <td>
+                    <input maxlength="4" type="password" name="securitypin" id="securitypin" class="form-control" placeholder="Enter Security Pin"></input>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-success"
+                    onclick="saveSettings()"
+                  >
+                    Update
+                  </button>
+                </td>
+                <td></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<%- include footer %>
+<script>
+
+   
+    const saveSettings = () => {
+      const adminId = document.getElementById("adminId").value;
+      const adminName = document.getElementById("adminName").value;
+      const adminPoints  = document.getElementById("adminPoints").value;
+      const generateChip  = document.getElementById("generateChip").value;
+      const securitypin  = document.getElementById("securitypin").value;
+     
+
+      fetch("/updateGeneratePoint", {
+        method: "POST",
+        body: JSON.stringify({ adminId, adminName, adminPoints, generateChip, securitypin}),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              if(response.status==1){
+                  // console.log("hi");
+                window.location.reload();
+              }
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              // window.location.reload();
+            });
+          });
+       
+    };
+</script>
+s
