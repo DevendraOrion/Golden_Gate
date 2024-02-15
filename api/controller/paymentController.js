@@ -318,7 +318,6 @@ module.exports = {
       .sort({
         created_at: -1,
       })
-      // .limit(limit);
 
     let list = await Promise.all(
       transaction.map(async (u) => {
@@ -339,6 +338,7 @@ module.exports = {
             is_status: u.is_status,
             msg: u.resp_msg || "No Data Found",
             txn_mode: u.txn_mode || "G",
+            beforeBalance:u.current_balance-u.txn_amount
           };
         } else {
           return false;
@@ -1075,64 +1075,7 @@ console.log(aggregate_rf)
 
     const params = req.query;
     let matchObj = {};
-    if (params.search) {
-      if (params.search.value.trim() != "") {
-        matchObj["$or"] = [
-          {
-            $expr: {
-              $regexMatch: {
-                input: { $toString: "$users.numeric_id" },
-                regex: params.search.value,
-                options: "i"
-              }
-            }
-          },
-          {
-            request_id: {
-              $regex: params.search.value,
-              $options: "i",
-            },
-          },
-          {
-            resp_msg: {
-              $regex: params.search.value,
-              $options: "i",
-            },
-          },
-
-        ];
-      }
-    }
-
-    var sortObj = {};
-    if (params.order) {
-      if (params.order[0]) {
-        // console.log(params.order[0]);
-        // if (params.order[0].column == "0") {
-        //   // SORT BY TXN AMOUNT
-        //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
-        // }
-          if (params.order[0].column == "2") {
-          // SORT BY TXN AMOUNT
-          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "3") {
-          // SORT BY WIN WALLET
-          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "4") {
-          // SORT BY MAIN WALLET
-          sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "1") {
-          // SORT BY DATE
-          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
-        } else {
-          sortObj = { created_at: -1 };
-        }
-      } else {
-        sortObj = { created_at: -1 };
-      }
-    } else {
-      sortObj = { created_at: -1 };
-    }
+    var sortObj = {created_at: -1};
 
     const user_id = params.id || "";
 
@@ -1201,7 +1144,7 @@ console.log(aggregate_rf)
       };
     }
     let incData=await Service.DownLine(req.admin._id)
-console.log(req.admin._id)
+// console.log(req.admin._id)
     let aggregation_obj = [];
     aggregation_obj.push(
       {$match:{
@@ -1339,27 +1282,26 @@ console.log(req.admin._id)
           roles = 'Agent';
         }
         let created=await Service.formateDateandTime(u.created_at)
+        let BeforeBalance;
+        if (txn_mode == "D") {
+          BeforeBalance=u.current_balance+u.txn_amount
+        }  else {
+          BeforeBalance=u.current_balance-u.txn_amount
+        }
         return [
           ++index,
-          // u?.request_id ?? '',
           ` <p><span style="color: #788ca8;">Unique Id</span>: ${d.numeric_id}</p>
             <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${d.username}</p>`,
+            BeforeBalance,
           txn_amount,
-          // u.txn_win_amount || 0,
-          // u.txn_main_amount || 0,
-        current_balance,
-          // `<div class="time_formateDateandTime2">${u.created_at}</div>`,
+          current_balance,
           created,
           txn_mode,
           u.resp_msg ? u.resp_msg : "No Data Found",
           status_,
-          role=u.role,
         ];
       })
     );
-
-    var endTime = new Date();
-    // utility.logElapsedTime(req, startTime, endTime, "getTXNAjax");
 
     return res.status(200).send({
       data: await list,

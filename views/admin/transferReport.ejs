@@ -76,13 +76,14 @@
                                 <tr>
                                     <th>S No</th>
                                     <th>User Details</th>
-                                    <th>Txn Amount (RS)</th>
-                                    <th>Main Wallet (RS)</th>
+                                    <th>Before Chip</th>
+                                    <th>Transfer Chip</th>
+                                    <th>Current Chip</th>
                                     <th>Date</th>
                                     <th>Type</th>
                                     <th>Remark</th>
                                     <th>Status</th>
-                                    <th>Rank</th>
+                               
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,8 +94,9 @@
                                         <p><span style="color: #788ca8;">Unique Id</span>: <%= d.numeric_id %></p>
                                         <p><span style="color: rgb(207, 72, 72);">Full Name</span>: <%= d.username %></p>
                                         <p><span style="color: #788ca8;">Mobile No</span>: <%= d.userNo %></p>
-                                        </td>
+                                    </td>
 
+                                        <td><%= d.beforeBalance %></td>
                                     <% if (d.txn_amount > 0) { %>
                                     <td><span class="label label-success"><%= d.txn_amount %></span></td>
                                     <% } else { %>
@@ -138,7 +140,7 @@
                                         <button type="button"
                                             class="btn btn-<% if(d.is_status == 'P'){%>warning<%}else if(d.is_status == 'S'){%>success<%}else if(d.is_status == 'F'){%>danger<%}%> label bg-<% if(d.is_status == 'P'){%>orange<%}else if(d.is_status == 'S'){%>green<%}else if(d.is_status == 'F'){%>red<%}%>" data-id="<%= d.id%>"><% if(d.is_status == 'P'){%>Pending<%}else if(d.is_status == 'S'){%>Success<%}else if(d.is_status == 'F'){%>Failed<%}%></button>
                                     </td>
-                                    <td><%= d.role !== undefined ? d.role : "User" %></td>
+                                   
 
                                 </tr>
                             <% }%>
