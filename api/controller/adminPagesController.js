@@ -990,10 +990,6 @@ role="User"
     let adminData=req.admin
     const users = await AdminController.getAgentList(role,adminData);
     // console.log(users.list);
-    let Child=true
-    if(req.admin=="Company"){
-      Child=false
-    }
     res.render("admin/agentsMGT", {
       title: "State List",
       type: "usersMGT",
@@ -1003,7 +999,7 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:Child
+      child:false
     });
   },
   showChild: async (req, res) => {
