@@ -1107,33 +1107,33 @@ if(data.role==="Company"){
     return JSON.stringify(final_most_data);
   },
   //Get Count Of Total Deposit
-  getDepositCount: async () => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    
-    const timestamp = now.getTime();
-    
-   
-    let depo = await Transaction.aggregate([
+  getDepositCount: async (admin) => {
+    const today = new Date();
+    const currentDayOfWeek = today.getDay(); 
+    const daysToSubtract = currentDayOfWeek + 1; 
+    const lastSunday = new Date(today);
+    lastSunday.setDate(today.getDate() - daysToSubtract);
+  
+    const sevenDaysAgoTimestamp = lastSunday.getTime();
+    console.log(lastSunday)
+    let data=await Transaction.aggregate([
       {
-        $match: {
-          transaction_type: "D",
-          is_status: "S",
-          created_at:{$gte:timestamp.toString()}
-        },
+        $match:{
+          txn_mode:"T",
+          user_id:admin._id,
+          // transaction_type:"C"
+          created_at:{$gte:sevenDaysAgoTimestamp.toString()}
+        }
       },
       {
-        $group: {
-          _id: null,
-          total: {
-            $sum: "$txn_amount",
-          },
-        },
-      },
-    ]);
-    console.log(depo);
-    return depo.length > 0 ? depo[0].total || 0 : 0;
-    
+        $group:{
+          _id:null,
+          sum:{$sum:"$txn_amount"}
+        }
+      }
+    ])
+    // console.log(data)
+    return data[0].sum
   },
   //Get Count Of Total WITHDRAWAL
   getWithdrawlCount: async () => {
@@ -7013,6 +7013,21 @@ updateRankData: async (req, res) => {
   try {
     const { parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData } = req.body;
     console.log(parentId,rankId,rankName,rankTargetWeek,rankTargetMonth,rankJoining,securityPin,updateData);
+    if(rankTargetWeek<0||rankTargetMonth<0||rankJoining<0){
+      return res.send({
+        status: 0,
+        Msg: "Please Enter Valid Target",
+      });
+    }
+    let checkData=await Rank_Data.findOne({rankId:rankId})
+    if(checkData){
+      if(checkData.rankTargetWeek>rankTargetWeek||checkData.rankTargetMonth>rankTargetMonth||checkData.rankJoining>rankJoining){
+        return res.send({
+          status: 0,
+          Msg: "Please Enter Valid Target",
+        });
+      }
+    }
     let parentData= null
     if(parentId){
       parentData=await User.findOne({search_id:parentId})
