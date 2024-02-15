@@ -1,0 +1,256 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        <%= title %>
+      </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+      <div class="row">
+        <div class="col-md-6 flex-fill">
+          <div class="box box-danger" style="width: fit-content; min-width: 100%">
+            <div class="box-body">
+              <table class="table table-bordered">
+                <input type="hidden" name="" id="pinTrue" value="<%= pass %>">
+                <tr>
+                  <td>User Type</td>
+                  <td>
+                   
+                    <%if(data.parentData.role==="Company"){%>
+                    <select name="role" id="role" class="form-control" onchange="updateParentDropdown()">
+                      <option  value="" >Please Select Role</option>
+                      <% data.role.forEach((role) => { %>
+                          <option value="<%= role %>" ><%= role %></option>
+                      <% }); %>
+                    </select>
+                    <% }else{ %>
+                    <input name="role" id="role" class="form-control" value="<%= data.role %>" readonly ></input>
+                    <% } %>
+                  
+                  </td>
+                </tr>
+                <tr class="hidden-row">
+                    <td>User Id</td>
+                    <td >                  
+                      <select style="width: 282px;" class="col search-user" name="state" ></select>
+                  </td>
+                </tr>
+                  <tr class="hidden-row">
+                    <td>User Name</td>
+                    <td>
+                      <input name="username" id="username" class="form-control" readonly ></input>
+                    </td>
+                  </tr>
+                <% if(pass){%>
+                <tr>
+                  <td>New Password</td>
+                  <td>
+                    <input name="newPass" type="number" id="newPass" class="form-control" placeholder="Enter New Password...."></input>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Conform Password</td>
+                  <td>
+                    <input name="confirmPass" type="number" id="confirmPass" class="form-control" placeholder="Enter Conform Password here...."></input>
+                  </td>
+                </tr>
+                <% }else{%>
+                    <tr>
+                        <td>New Security Pin</td>
+                        <td>
+                          <input name="newPass" type="number" id="newPass" class="form-control" placeholder="Enter New Security Pin...."></input>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Conform Security Pin</td>
+                        <td>
+                          <input name="confirmPass" type="number" id="confirmPass" class="form-control" placeholder="Enter Conform Security Pin here...."></input>
+                        </td>
+                      </tr>
+                <% }%>
+                <tr>
+                  <td>Security Pin</td>
+                  <td>
+                    <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>
+                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                      Change
+                    </button>
+                  </td>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <%- include footer %>
+    <script>
+        let a;
+        let pinTrue=document.getElementById("pinTrue").value
+
+        const pinTrueValue = JSON.parse(pinTrue);
+        const saveSettings = () => {
+            const userId=a
+            console.log("========++++++++=======",pinTrue);
+            if(pinTrueValue===true){
+            const opass = document.getElementById("securityPin").value;
+        const pass = document.getElementById("newPass").value;
+        const pass_confirmation = document.getElementById("confirmPass").value;
+        fetch("/admin/userpass", {
+          method: "POST",
+          body: JSON.stringify({ userId, opass, pass, pass_confirmation}),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              if(response.status == 1){
+                window.location.reload();
+              }
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+        }else{
+            console.log("-------------");
+        const CurrentPass = document.getElementById("securityPin").value;
+        const SPnpass = document.getElementById("newPass").value;
+        const SPcpass = document.getElementById("confirmPass").value;
+        fetch("/admin/userSP", {
+          method: "POST",
+          body: JSON.stringify({ userId, CurrentPass, SPnpass, SPcpass}),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              if(response.status == 1){
+                window.location.reload();
+              }
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+        }
+      };
+
+     
+    </script>
+   <script>
+      var THAT_ID = "";
+
+    const updateParentDropdown = () => {
+        const selectedRole = document.getElementById("role").value
+        fetch("/admin/selectedId?role=" + selectedRole, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+          // console.log("Data from API:", data);
+            const searchIdDropdown = document.getElementById("userSearchId");
+            searchIdDropdown.innerHTML = "Please Select Search ID"; 
+
+            data.mydata.forEach(searchId => {
+                const option = document.createElement("option");
+                // option.value = "Please Select Search ID"
+                option.text = searchId.search_id;
+                searchIdDropdown.add(option);
+            });
+            const username = document.getElementById("username");          
+            username.value = data.mydata[0].name
+        })
+        .catch(error => {
+            console.error("Error fetching search ids:", error);
+        });
+    };
+
+    const getParentName = (selectedParentId) => {
+  //  console.log("getParentName called with selectedParentId:", selectedParentId);
+
+   fetch("/admin/getParentName?search_id=" + selectedParentId, {
+      method: "GET",
+      headers: {
+         "Content-Type": "application/json",
+      },
+   })
+   .then(response => response.json())
+   .then(response => {
+      // console.log("Response from getParentName:", response);
+      const username = document.getElementById("username");
+      username.value = response.parentName.name;
+
+      const userPoint = document.getElementById("userPoint");
+      userPoint.value = response.parentName.cash_balance;
+
+      updateParentDropdown(response.parentName.role);
+   })
+   .catch(error => {
+      console.error("Error fetching parent name:", error);
+   });
+};
+var table = $('#example').DataTable();
+    $('.search-user').select2({
+            allowClear: true,
+            placeholder: 'Search user',
+            ajax: {
+                url: '/admin/find_userByRole',
+                data: function (params) {
+                    var query = {
+                        search: params.term,
+                        type: 'public',
+                        role: document.getElementById("role").value
+                    }
+                    // Query parameters will be ?search=[term]&type=public
+                    return query;
+                }
+            }
+        });
+
+        $('.search-user').on('select2:select', function (e) {
+    
+          THAT_ID = e.params.data.id;
+          console.log("Selected User ID:", THAT_ID);
+          table.ajax.reload();
+          getParentName(THAT_ID);
+          a=THAT_ID
+        });
+
+
+        $(".search-user").on("select2:clearing", function (e) {
+            console.log('cleared');
+            THAT_ID = "";
+            table.ajax.reload();
+        });
+</script>

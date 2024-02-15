@@ -332,6 +332,10 @@ router.post("/updateGeneratePoint",AdminController.updateGeneratePoint)
   router.post("/addnoticelist",AdminController.addnoticelist) 
   router.post("/admin/addNotice", AdminController.saveNoticeData);
   router.post("/admin/editNotice", AdminController.editNoticeData);
+// Change Pin And Pass 
+router.get("/chang-pass", AdminPagesController.changePass);
+router.get("/chang-pin", AdminPagesController.changePin);
+
 
   // commsion
   router.get("/transferPoint", AdminPagesController.transferPoint);

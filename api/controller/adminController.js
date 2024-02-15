@@ -4043,7 +4043,7 @@ const timestamp = now.getTime();
   updateUserProfilePass: async (req, res) => {
     var params = _.pick(req.body, "opass", "pass_confirmation", "pass","userName","userId");
     //logger.info("Admin Profile Update Request", params);
-    // console.log(params);
+    console.log(params);
     
     if (!params) {
       return res.send({
@@ -4074,7 +4074,12 @@ const timestamp = now.getTime();
         Msg: localization.passwordValidationError,
       });
     }
-    let user=await User.findOne({search_id:params.userId})
+    let user;
+    if(Service.validateObjectId(params.userId)){
+       user=await User.findOne({_id:params.userId})
+    }else{
+       user=await User.findOne({search_id:params.userId})
+    }
     var rez1 = await bcrypt.compare(params.opass, req.admin.security_pin);
     if (!rez1) {
       return res.send({
@@ -4146,7 +4151,12 @@ const timestamp = now.getTime();
         Msg: localization.passwordValidationError2,
       });
     }
-    let user=await User.findOne({search_id:params.userId})
+    let user;
+    if(Service.validateObjectId(params.userId)){
+      user=await User.findOne({_id:params.userId})
+    }else{
+      user=await User.findOne({search_id:params.userId})
+    }
     var rez1 = await bcrypt.compare(params.CurrentPass, req.admin.security_pin);
     // console.log(rez1);
     if (!rez1) {

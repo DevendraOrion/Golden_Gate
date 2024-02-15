@@ -105,6 +105,32 @@ module.exports = {
     });
 
   },
+  changePass: async (req, res) => {
+    const data = await distributorController.addRankssData(req) 
+      res.render("admin/SepratePinPass", {
+      title: "Change Password",
+      type: "passPin",
+      sub: "pass",
+      sub2: "pass",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+      pass:true
+    });
+  },
+  changePin: async (req, res) => {
+    const data = await distributorController.addRankssData(req) 
+      res.render("admin/SepratePinPass", {
+      title: "Change Security Pin",
+      type: "passPin",
+      sub: "pin",
+      sub2: "pin",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: data,
+      pass:false
+    });
+  },
   transferPoint: async (req, res) => {
     const data = await distributorController.addRankssData(req) 
       res.render("admin/transferPoint", {
