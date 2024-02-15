@@ -998,6 +998,22 @@ role="User"
       child:true
     });
   },
+  showDetailOfSlot: async (req, res) => {
+    // console.log(req.params,req.query);
+    let roomId= req.params.id
+    const users = await AdminController.getSlotDetails(roomId);
+    res.render("admin/slotDetail", {
+      title: "Slot Details",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "child",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users,
+      total: users.length,
+      child:true
+    });
+  },
   kycRequests: async (req, res) => {
     const wr = await kycController.kycRequest();
     res.render("admin/kyc_view", {

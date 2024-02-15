@@ -766,15 +766,16 @@ console.log(aggregate_rf)
     
         return [
           ++index,
-          // u?.request_id ?? '',
+
           `<p><span style="color: #788ca8;">Unique Id</span>: ${numeric_id}</p>
           <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${username}</p>`,
           room_id,
           `<span class="label label-success"> ${amount}</span>`,
           `<span class="label label-success"> ${win_amount}</span>`,
           created,
-          // txn_mode,
-          is_updated
+          is_updated,
+          `<a  href="${config.pre + req.headers.host
+          }/user/showSlotDetail/${room_id}"> <i class="fa fa-pencil"></i></a>`
         ];
       })
     );

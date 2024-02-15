@@ -442,6 +442,49 @@ const list=await parentData
     };
 }
 },
+getSlotDetails: async (roomId) => {
+  let findData = await JoinGame.aggregate([
+    {
+      $match: {
+        room_id: roomId
+      }
+    },
+    {
+      $lookup: {
+        from: "game_record_aviators",
+        localField: "room_id",
+        foreignField: "room_id",
+        as: "finishGameRecord"
+      }
+    },
+    {
+      $unwind: "$finishGameRecord"
+    },
+  
+  ]);
+const date = new Date(Number(roomId));
+// console.log(roomId);
+let formatDate=await Service.formateDateandTime(date)
+  let encounteredUserIds = new Set();
+  let totalWin=0
+  let TotalBet=0
+  let TotalUser=0
+  let CreateAt=formatDate
+  let status=[]
+  let AdminCommission=0
+  const data= await findData.map((a)=>{
+   totalWin+=a.win_amount
+   TotalBet+=a.amount
+   status.push(a.is_updated)
+   AdminCommission+=Number(a.finishGameRecord.admin_commission)
+    if (!encounteredUserIds.has(a.user_id)) {
+    TotalUser++;
+    encounteredUserIds.add(a.user_id);
+}
+  })
+  
+  return [{totalWin,TotalBet,TotalUser,CreateAt,roomId,status:status[0],AdminCommission}]
+},
 getChildList: async (id,role) => {
 
     //   const users = await User.aggregate([

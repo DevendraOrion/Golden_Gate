@@ -61,6 +61,7 @@
                                     <th>Win Amount</th>
                                     <th>Date</th>
                                     <th>Status</th>
+                                    <th>Slot Details</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,12 +76,17 @@
                                     <td><%= d.amount %></td>
                                     <td><%= d.winAmount %></td>
                                     <td><%= d.date %></td>
-
+                                    
                                     <% if (d.status == 1) { %>
-                                    <td><span class="label label-success"><%= d.status %></span></td>
-                                    <% } else { %>
-                                    <td><span class="label label-danger"><%= d.status %></span></td>
-                                    <% } %>
+                                        <td><span class="label label-success"><%= d.status %></span></td>
+                                        <% } else { %>
+                                            <td><span class="label label-danger"><%= d.status %></span></td>
+                                            <% } %>
+                                    <td class="actions text-center">
+                                    <a href="<%= host%>/user/showSlotDetail/<%= d._id%>"  class="on-editing save-row">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    </td>
                                 </tr>
                             <% }%>
                             </tbody>

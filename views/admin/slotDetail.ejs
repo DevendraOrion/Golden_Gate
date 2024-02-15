@@ -1,0 +1,195 @@
+<%- include header %><!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                <%= title %>
+            </h1>
+        </section>
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <!-- /.box-header -->
+                        <div class="box-body table-responsive">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>S.No</th>
+                                        <th>Slot No</th>
+                                        <th>Slot Timing</th>
+                                        <th>Total Bet Amount</th>
+                                        <th>User Profit</th>
+                                        <th>Parent Comm</th>
+                                        <th>Comp Profit</th>
+                                        <th>User Played</th>
+                                        <th>Result</th>
+                                        <th>Game Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                 
+                                    <% console.log(data)%>
+                                    <% var i=1; for (d of data) {%>
+                               
+                                        <tr class="gradeX">
+                                            <td>
+                                                <%= i++ %>
+                                            </td>
+                                            <td>
+                                                <p style="color: #788ca8;"><%= d.roomId %></p>
+                                             
+                                            </td>
+                                            <td>
+                                                <p><%= d.CreateAt %></p>
+                                            </td>
+                                            <td>
+                                                <p><%= d.TotalBet %></p>
+                                            </td>
+                                            <td>
+                                                <p><%= d.totalWin %></p>
+                                               
+                                            </td>
+                                            <td>
+                                                <p><%= d.AdminCommission %></p>
+                                            </td>
+                                            <td>
+                                                <p><%= d.TotalBet -d.totalWin %></p>
+                                            </td>
+                                            <td>
+                                                <p><%= d.TotalUser %></p>
+                                            </td>
+                                            <td>
+                                                <p></p>
+                                            </td>
+                                          
+                                                <%if(d.status==="1"){%>
+                                                    <td><span class="label label-success">Success</span></td>
+                                                <%}else{%>
+
+                                                    <td><span class="label label-danger">Failed</span></td>
+                                                <%}%>
+                                          
+                                   
+                                        </tr>
+                                        <% }%>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper --><%- include footer %>
+        <script>
+            $(document).ready(function (e) {
+                function formateDateandTime(date) {
+                    // console.log(data);
+                    var dat = new Date(date);
+                    var mon =
+                        dat.getMonth() + 1 > 9
+                            ? dat.getMonth() + 1
+                            : "0" + parseInt(dat.getMonth() + parseInt(1));
+                    var hours = dat.getHours() % 12;
+                    hours = hours > 9 ? hours : "0" + hours;
+                    var minutes = dat.getMinutes();
+                    minutes = minutes > 9 ? minutes : "0" + minutes;
+                    var ap = dat.getHours() >= 12 ? "PM" : "AM";
+                    var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+                    rez =
+                        day +
+                        "/" +
+                        mon +
+                        "/" +
+                        dat.getFullYear() +
+                        " " +
+                        hours +
+                        ":" +
+                        minutes +
+                        ap;
+                    return rez;
+                }
+                // console.log(data);
+                $("#usersTab").DataTable({
+                    destroy: true,
+                    dom: "lBfrtip",
+                    lengthMenu: [
+                        [10, 25, 100, 500],
+                        [10, 25, 100, 500],
+                    ],
+                    pageLength: 10,
+                    buttons: [
+                        {
+                            extend: "excel",
+                            text: '<span class="fa fa-file-excel-o"></span> Excel Export',
+                            exportOptions: {
+                                modifier: { search: "applied", order: "applied" },
+                                format: {
+                                    body: function (data, row, column, node) {
+                                        // if (column === 7) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        // if (column === 8) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        if (column === 4) {
+                                            data = formateDateandTime(parseInt(data));
+                                        }
+                                        return data;
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            extend: "pdf",
+                            text: '<span class="fa fa-file-pdf-o"></span> PDF Export',
+                            exportOptions: {
+                                modifier: { search: "applied", order: "applied" },
+                                format: {
+                                    body: function (data, row, column, node) {
+                                        // if (column === 7) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        // if (column === 8) {
+                                        //     data = data.replace(/<.*?>/gi, "");
+                                        // }
+                                        if (column === 4) {
+                                            data = formateDateandTime(parseInt(data));
+                                        }
+                                        return data;
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
+                    ajax: "/users_ajax",
+                    deferLoading: "<%= total %>",
+                    aaSorting: [],
+                    sortField: 5,
+                    sortOrder: "-1",
+                    columnDefs: [
+                        { orderable: true, targets: [0, 6, 3, 4] },
+                        { orderable: false, targets: [1, 2, 7, 8] },
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+        console.log(data[5], dataIndex);
+        var rowData =
+            "<td>" + data[0] + "</td>" +
+            "<td>" + data[1] + "</td>" +
+            "<td>" + data[2] + "</td>" +
+            "<td>" + data[3] + "</td>" +
+            "<td>" + (data[4] ? formateDateandTime(parseInt(data[4])) : '') + "</td>";
+        $(row).html(rowData);
+    },
+                });
+                $("#usersTab").DataTable().order([4, "desc"]).draw();
+            });
+        </script>
