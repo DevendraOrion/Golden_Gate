@@ -28,7 +28,7 @@ module.exports = {
 
     data.chipCount = await AdminController.getAllChip(req.admin);
     data.user_count = await AdminController.getAllUserCount(req.admin);
-    data.fb_user_count = await AdminController.getAllFBUserCount(req.admin);
+    data.totalWithRequest = await AdminController.totalWithRequest(req.admin);
     data.guest_count = await AdminController.getAllGuestUserCount(req.admin);
     data.game_count = await AdminController.getAllGameCount(req.admin);
     data.most_preferred = await AdminController.mostPreferredAmount(req.admin);
@@ -36,12 +36,11 @@ module.exports = {
     data.graph_data = await AdminController.chartData(req.admin);
     data.deposit = await AdminController.getDepositCount(req.admin);
     data.withdrawl = await AdminController.getWithdrawlCount(req.admin);
-    data.referral = await AdminController.getReferralCount(req.admin);
+    data.chipCirculated = await AdminController.getReferralCount(req.admin);
     data.total_state = await AdminController.getTotal_state(req.admin);
     data.total_district = await AdminController.getTotal_district(req.admin);
     data.total_agent = await AdminController.getTotal_agent(req.admin);
     data.total_user = await AdminController.getTotal_user(req.admin);
- 
  
     res.render("admin/index", {
       title: "Dashboard",

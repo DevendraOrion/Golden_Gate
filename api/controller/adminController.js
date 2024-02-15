@@ -730,21 +730,11 @@ var c = await User.countDocuments({
    
     return c;
   },
-  //Get Count Of FB User
-  getAllFBUserCount: async () => {
-    //logger.info('ADMIN FB USER Count REQUEST >> ');
-    const now = new Date();
-now.setHours(0, 0, 0, 0);
 
-// console.log(now);
-    var c = await User.countDocuments({
-      is_deleted: false,
-      // is_guest: {
-      //   $ne: true,
-      // },
-      created_at:{
-        $gte:now
-      }
+  totalWithRequest: async (admin) => {
+
+    var c = await DepositRequests.countDocuments({
+      toUser:admin._id
     });
     return c;
   },
@@ -1171,24 +1161,31 @@ const timestamp = now.getTime();
     if (data.length > 0) return data[0].sum;
     else return 0;
   },
-  getReferralCount: async () => {
-    var data = await User.aggregate([
-      {
-        $match: {
-          is_deleted: false,
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          sum: {
-            $sum: "$referral.amount",
-          },
-        },
-      },
-    ]).allowDiskUse(true);
-    if (data.length > 0) return data[0].sum;
-    else return 0;
+  getReferralCount: async (admin) => {
+   let transferByAdmin=await Transaction.aggregate([{
+    $match:{
+      txn_mode:"T"
+    }
+   },
+   {
+    $group:{
+      _id:null,
+      sum:{$sum:"$txn_amount"}
+    }
+   }])
+   let transferToUser=await Transaction.aggregate([{
+    $match:{
+      txn_mode:"T",is_status:"S"
+    }
+   },
+   {
+    $group:{
+      _id:null,
+      sum:{$sum:"$txn_amount"}
+    }
+   }])
+   let realData=transferByAdmin[0].sum-transferToUser[0].sum
+   return realData 
   },
   getReferralList: async () => {
     var users = await User.aggregate([
