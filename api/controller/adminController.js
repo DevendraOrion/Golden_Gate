@@ -6622,6 +6622,12 @@ console.log(notice, noticeDate, noticeTitle,noticeId)
     
     const {adminId, adminName, adminPoints, generateChip, securitypin} = req.body
     console.log(adminId, adminName, adminPoints, generateChip, securitypin);
+    if(generateChip<0){
+      return res.send({
+        status: 0,
+        Msg: "Enter Number Should Not be Negetive",
+      });
+    }
     var rez1 = await bcrypt.compare(securitypin, req.admin.security_pin);
     if(!rez1){
       return res.send({
