@@ -28,27 +28,22 @@
                         <select class="col select-type" name="type" style="width:152px;">
                             <option></option>
                             <option value="G">Game</option>
-                            <option value="P">Payment</option>
+                            <option value="T">Transfer</option>
                             <option value="A">Admin</option>
-                            <option value="B">Bonus</option>
-                            <option value="R">Withdraw</option>
-                            <option value="REF">Referral</option>
-                            <option value="O">Other</option>
-                            <option value="Gift">Gift</option>
-                            <option value="S">Scratch Card</option>
+                        
                         </select>
         
                         <select class="col select-status" name="status" style="width:152px;">
                             <option></option>
-                            <option value="S">Success</option>
-                            <option value="P">Pending</option>
-                            <option value="F">Failed</option>
+                            <option value="D">Debit</option>
+                            <option value="C">Credit</option>
+                          
                         </select>
                         <select class="col select-rank" name="rank" style="width:152px;">
                             <option></option>
                             <option value="State">State</option>
-                            <option value="Zone">Zone</option>
                             <option value="District">District</option>
+                            <option value="Zone">Zone</option>
                             <option value="Agent">Agent</option>
                         </select>
                         <input type="text" class="col select-date" onfocus="(this.type='date')"  placeholder="Start Date" id="startdatepicker" name="StartDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray; border: 1px solid gray;">
@@ -165,7 +160,7 @@
     var END_DATE = "";
         $('.search-user').select2({
             allowClear: true,
-            placeholder: 'Search user',
+            placeholder: 'User',
             ajax: {
                 url: '/admin/find_user',
                 data: function (params) {
@@ -210,7 +205,7 @@
 
         $('.select-status').select2({
             allowClear: true,
-            placeholder: 'Transaction status'
+            placeholder: 'Debit/Credit'
         });
 
         $('.select-status').on('select2:select', function (e) {
@@ -224,7 +219,7 @@
         });
         $('.select-rank').select2({
             allowClear: true,
-            placeholder: 'Rank '
+            placeholder: 'User Type'
         });
 
         $('.select-rank').on('select2:select', function (e) {

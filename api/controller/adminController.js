@@ -734,7 +734,8 @@ var c = await User.countDocuments({
   totalWithRequest: async (admin) => {
 
     var c = await DepositRequests.countDocuments({
-      toUser:admin._id
+      toUser:admin._id,
+      is_status:"P"
     });
     return c;
   },
@@ -1121,7 +1122,7 @@ if(data.role==="Company"){
         $match:{
           txn_mode:"T",
           user_id:admin._id,
-          // transaction_type:"C"
+
           created_at:{$gte:sevenDaysAgoTimestamp.toString()}
         }
       },
@@ -1132,7 +1133,7 @@ if(data.role==="Company"){
         }
       }
     ])
-    // console.log(data)
+    console.log(data)
     return data[0].sum
   },
   //Get Count Of Total WITHDRAWAL
@@ -8292,7 +8293,7 @@ if(!atype || !ctype || !cardRoullete || !avaitor){
 updateGameSetting: async (req, res) => {
 try {
   let {cardRoullete, avaitorData,Roullete}=req.body
-  const UpdateData=await Default.update({key: "app_version"},{$set:{avaitor:avaitorData,roullete:Roullete,cardRoullete}})
+  const UpdateData=await Default.update({key: "app_version"},{$set:{avaitor:avaitorData,roullete:Roullete,cardRoullete}}, { upsert: true })
   return res.send({
     status: 1,
     Msg: localization.success,

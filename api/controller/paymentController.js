@@ -833,7 +833,7 @@ console.log(aggregate_rf)
     }
 
     if (!_.isEmpty(params.status)) {
-      matchObj.is_status = params.status;
+      matchObj.transaction_type = params.status;
     }
 
     if (!_.isEmpty(params.type)) {
