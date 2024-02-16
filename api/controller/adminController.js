@@ -1134,7 +1134,7 @@ if(data.role==="Company"){
       }
     ])
     console.log(data)
-    return data[0].sum
+    return data[0]?.sum ??0 
   },
   //Get Count Of Total WITHDRAWAL
   getWithdrawlCount: async () => {

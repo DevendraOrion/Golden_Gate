@@ -70,7 +70,7 @@
                 <div class="box">
                     <!-- /.box-header -->
                     <div class="box-body table-responsive">
-
+<input type="hidden" value="<%= chip %>" id="chip">
                         <table id="example1" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -348,6 +348,8 @@
             params.rank = THAT_RANK;
             params.startDate = START_DATE;
             params.endDate = END_DATE;
+            params.chip = document.getElementById('chip').value;
+            
             return params;
         }
     },

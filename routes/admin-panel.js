@@ -322,6 +322,7 @@ module.exports = function (router, io) {
   router.get("/admin/find_distributor", DistributorController.findDistributor);
   router.get("/admin/find_agent", AgentController.findAgent);
 // Generate Chip
+router.get("/history-generate-chip", AdminPagesController.generateHistory);
 router.get("/generate-chip", AdminPagesController.generateChip);
 router.post("/updateGeneratePoint",AdminController.updateGeneratePoint) 
 

@@ -312,13 +312,13 @@ module.exports = {
       .json(Service.response(1, localization.TransactionsHistory, userHistory));
   },
 
-  transferPoint: async (admin) => {
-    const transaction = await Transaction.find({refUser:admin._id})
+  transferPoint: async (admin,TxnMode) => {
+    const transaction = await Transaction.find({refUser:admin._id,txn_mode:TxnMode})
       .populate("user_id")
       .sort({
         created_at: -1,
       })
-
+console.log(TxnMode);
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
@@ -1074,6 +1074,8 @@ console.log(aggregate_rf)
     var startTime = new Date();
 
     const params = req.query;
+    let chip=params.chip
+    console.log(chip);
     let matchObj = {};
     var sortObj = {created_at: -1};
 
@@ -1146,23 +1148,44 @@ console.log(aggregate_rf)
     let incData=await Service.DownLine(req.admin._id)
 // console.log(req.admin._id)
     let aggregation_obj = [];
-    aggregation_obj.push(
-      {$match:{
-        txn_mode:"T",
-        user_id:req.admin._id
-      }},
-      {
-        $lookup: {
-          from: "users",
-          localField: "refUser",
-          foreignField: "_id",
-          as: "users",
+    if(chip=="generate"){
+      aggregation_obj.push(
+        {$match:{
+          txn_mode:"U",
+          user_id:req.admin._id
+        }},
+        {
+          $lookup: {
+            from: "users",
+            localField: "user_id",
+            foreignField: "_id",
+            as: "users",
+          },
         },
-      },
-      {
-        $unwind: "$users",
-      }
-    );
+        {
+          $unwind: "$users",
+        }
+      );
+    }else{
+      aggregation_obj.push(
+        {$match:{
+          txn_mode:"T",
+          user_id:req.admin._id
+        }},
+        {
+          $lookup: {
+            from: "users",
+            localField: "refUser",
+            foreignField: "_id",
+            as: "users",
+          },
+        },
+        {
+          $unwind: "$users",
+        }
+      );
+    }
+  
   
 
     if (matchObj != {})
@@ -1194,7 +1217,7 @@ console.log(aggregate_rf)
         current_balance:1,
         txn_amount: 1,
         payment_mode: 1,
-        username: { $concat: ["$user.first_name", " ", "$user.last_name"] },
+        username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
         transaction_type:1,
         numeric_id: "$users.search_id",
         mobileNo: "$users.phone",
@@ -1205,16 +1228,11 @@ console.log(aggregate_rf)
         txn_mode: 1,
       },
     },
-    // {
-    //   $match:{
-    //     user_id:{$in:incData}
-    //   }
-    // },
     );
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(list);
+    // console.log(list);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -1290,8 +1308,8 @@ console.log(aggregate_rf)
         }
         return [
           ++index,
-          ` <p><span style="color: #788ca8;">Unique Id</span>: ${d.numeric_id}</p>
-            <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${d.username}</p>`,
+          ` <p><span style="color: #788ca8;">Unique Id</span>: ${u.numeric_id}</p>
+            <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${u.username}</p>`,
             BeforeBalance,
           txn_amount,
           current_balance,

@@ -171,8 +171,9 @@ module.exports = {
     });
   },
   transferReport: async (req, res) => {
+    let TxnMode="T"
     let admin=req.admin
-    const transactions = await paymentController.transferPoint(admin);
+    const transactions = await paymentController.transferPoint(admin,TxnMode);
     console.log(transactions.list.length);
       res.render("admin/transferReport", {
       title: "Chip Transfer History",
@@ -183,6 +184,25 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
+      chip:"report"
+    });
+  
+  },
+  generateHistory: async (req, res) => {
+    let TxnMode="U"
+    let admin=req.admin
+    const transactions = await paymentController.transferPoint(admin,TxnMode);
+    console.log(transactions.list.length);
+      res.render("admin/transferReport", {
+      title: "Generate Chip History",
+      type: "generateChip",
+      sub: "generateChipHistory",
+      sub2: "generateChipHistory",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+      chip:"generate"
     });
   
   },
