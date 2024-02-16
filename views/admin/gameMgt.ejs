@@ -115,13 +115,13 @@
   const cardRoullete = document.getElementById("undermaintenance").value;
   const avaitorData = document.getElementById("avaitorData").value;
   const Roullete = document.getElementById("Roullete").value;
-  const socket = io('http://localhost:3070');
+  const socket = io('http://103.175.163.97:3070');
 
       let eventEmitted = false;
 
       function emitEventOnce() {
-          if (!eventEmitted) {
-              socket.emit('gameStatus', {  avaitorData: avaitorData, Roullete: Roullete, cardRoullete: cardRoullete });
+        if (!eventEmitted) { 
+              socket.emit('gameStatus', {  avaitor: avaitorData, roullete: Roullete, cardRoullete: cardRoullete });
               eventEmitted = true;
           }
       }

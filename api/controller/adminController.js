@@ -1116,7 +1116,7 @@ if(data.role==="Company"){
     lastSunday.setDate(today.getDate() - daysToSubtract);
   
     const sevenDaysAgoTimestamp = lastSunday.getTime();
-    console.log(lastSunday)
+    // console.log(lastSunday)
     let data=await Transaction.aggregate([
       {
         $match:{
@@ -1133,8 +1133,8 @@ if(data.role==="Company"){
         }
       }
     ])
-    console.log(data)
-    return data[0]?.sum ??0 
+    // console.log(data)
+    return data[0] ? data[0].sum : 0;
   },
   //Get Count Of Total WITHDRAWAL
   getWithdrawlCount: async () => {

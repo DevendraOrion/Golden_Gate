@@ -313,15 +313,25 @@ module.exports = {
   },
 
   transferPoint: async (admin,TxnMode) => {
-    const transaction = await Transaction.find({refUser:admin._id,txn_mode:TxnMode})
+    let transaction;
+    console.log(admin._id);
+    if(TxnMode==="generate"){
+       transaction = await Transaction.find({user_id:admin._id,txn_mode:"U"})
+        .populate("user_id")
+        .sort({
+          created_at: -1,
+        })
+    }else{
+       transaction = await Transaction.find({refUser:admin._id,txn_mode:TxnMode})
       .populate("user_id")
       .sort({
         created_at: -1,
       })
-console.log(TxnMode);
+    }
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
+          console.log(u);
           return {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
@@ -1075,7 +1085,7 @@ console.log(aggregate_rf)
 
     const params = req.query;
     let chip=params.chip
-    console.log(chip);
+    // console.log(chip);
     let matchObj = {};
     var sortObj = {created_at: -1};
 
@@ -1232,22 +1242,32 @@ console.log(aggregate_rf)
 
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
     let aggregate_rf = [];
-
-    if (matchObj) {
-      aggregate_rf.push({
-        $match: matchObj,
-      });
+    if(chip=="generate"){
+      if (matchObj != {}) {
+        aggregate_rf.push({
+          $match: { txn_mode:"U",
+          user_id:req.admin._id},
+        });
+      }
+    }else{
+      if (matchObj != {}) {
+        aggregate_rf.push({
+          $match: { txn_mode:"T",
+          user_id:req.admin._id},
+        });
+      }
     }
-
+  
+    
     aggregate_rf.push({
       $group: {
         _id: null,
         count: { $sum: 1 },
       },
     });
-
+    
+    // console.log(aggregation_obj,aggregate_rf,matchObj);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
