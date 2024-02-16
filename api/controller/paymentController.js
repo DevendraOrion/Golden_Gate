@@ -552,7 +552,7 @@ module.exports = {
   
       let isoStartDate = new Date(sdate + 'T00:00:00Z');
   
-      matchObj.created = {
+      matchObj.created_at = {
           $gte: isoStartDate
       };
   }
@@ -567,7 +567,7 @@ module.exports = {
     } else {
         console.error("Invalid date string");
     }
-    matchObj.created = {
+    matchObj.created_at = {
         $lt: new Date(timestamp)
     };
 }
@@ -592,7 +592,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       console.error("Invalid end date string");
   }
   
-  matchObj.created = {
+  matchObj.created_at = {
       $gte: new Date(timestampstart),
       $lt: new Date(timestampend)
   };
@@ -629,14 +629,6 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
         $match: matchObj,
       });
 
-    // aggregation_obj.push(
-    //   {
-    //     $sort: sortObj,
-    //   },
-    //   {
-    //     $skip: params.start == "All" ? 0 : parseInt(params.start),
-    //   }
-    // );
 
     if (params.length != -1) {
       aggregation_obj.push({
@@ -644,37 +636,14 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       });
     }
 
-    // aggregation_obj.push({
-    //   $project: {
-    //     _id: 1,
-    //     created: 1,
-    //     win_amount:1,
-    //     amount: 1,
-    //     username: { $concat: ["$user.first_name" ," ", "$user.last_name"] },
-    //     numeric_id: "$user.search_id",
-    //     user_id: "$user._id",
-    //     resp_msg: 1,
-    //     role: "$user.role",
-    //     is_updated: 1,
-    //     is_status: 1,
-    //     txn_mode: 1,
-    //     room_id: 1,
-    //   },
-      
-    // },
-    // {
-    //   $match:{
-    //     user_id:{$in:incData}
-    //   }
-    // },
-    // );
 
     let list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(aggregation_obj);
+    console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {
-      aggregate_rf.push( {
+      aggregate_rf.push(
+         {
         $lookup: {
           from: "users",
           let: { user_id: { $toDecimal: "$user_id" } }, 
@@ -690,7 +659,8 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     },
     {
         $match: matchObj,
-      });
+      }
+      );
     }
 
     aggregate_rf.push(
@@ -705,9 +675,8 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
         count: { $sum: 1 },
       },
     });
-console.log(aggregate_rf)
-    // logger.info("aggregate_rf", aggregate_rf);
-    let rF = await JoinGame.aggregate(aggregate_rf).allowDiskUse(true);
+// console.log(aggregate_rf)
+    let rF = await Game_record_aviator.aggregate(aggregate_rf).allowDiskUse(true);
 
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
     var recordsTotal = list.length;
