@@ -84,7 +84,7 @@
                       <input name="lastName" id="lastName" class="form-control" placeholder="Enter Last Name here...."></input>
                     </td>
                     <td>
-                      <input name="phone" id="phone" class="form-control" placeholder="Enter Phone Number here...."></input>
+                      <input name="phone" type="number" id="phone" class="form-control" placeholder="Enter Phone Number here...."></input>
                     </td>
                   </tr>
 
@@ -97,7 +97,7 @@
                   <tr class="hidden-row">
 
                     <td>
-                      <input name="email" id="email" class="form-control" placeholder="Enter Email Id here...."></input>
+                      <input name="email" id="email" type="email" class="form-control" placeholder="Enter Email Id here...."></input>
                     </td>
                     <td>
                       <select name="userState" id="userState" class="form-control" onchange="getDistrictData()">
@@ -127,7 +127,7 @@
                       <input name="pinCode" id="pinCode" class="form-control" placeholder="Enter Pin Code here...."></input>
                     </td>
                     <td>
-                      <input name="password" id="password" class="form-control" placeholder="Enter Paasword here...."></input>
+                      <input name="password" id="password" type="password" class="form-control" placeholder="Enter Paasword here...."></input>
                     </td>
                     
                   </tr>              
@@ -139,13 +139,13 @@
                 </tr>
                   <tr class="hidden-row">
                     <td>
-                      <input name="cPassword" id="cPassword" class="form-control" placeholder="Enter Confirm Paasword here...."></input>
+                      <input name="cPassword" type="password" id="cPassword" class="form-control" placeholder="Enter Confirm Paasword here...."></input>
                     </td>
                     <td>
                       <input name="parentName" id="parentName" class="form-control" value="User" readonly></input>
                     </td>
                     <td>
-                      <input name="userSecurityPin" type="number"  id="userSecurityPin" class="form-control" placeholder="Enter User Security Pin "></input>
+                      <input name="userSecurityPin" maxlength="4" type="password" type="number"  id="userSecurityPin" class="form-control" placeholder="Enter User Security Pin "></input>
                     </td>
                   </tr>
                 <tr>
@@ -154,7 +154,7 @@
                   </tr>
                     <tr class="hidden-row">
                       <td>
-                        <input name="securityPin" type="number"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
+                        <input name="securityPin" maxlength="4"  type="password"  id="securityPin" class="form-control" placeholder="Enter Security Pin "></input>
                       </td>
                   <tr>
                   <td>
