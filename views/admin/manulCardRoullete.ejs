@@ -148,20 +148,8 @@
         document.addEventListener("DOMContentLoaded", function () {
             const socket = io('http://localhost:3070');
     
-            // let eventEmitted = false;
-    
-            // function emitEventOnce() {
-            //     if (!eventEmitted) {
-            //         const playerId = '11111197'; // Set the playerId here
-            //         const gameId = '2'; // Set the gameId here
-            //         console.log('Emitting onEnterLobby with playerId:', playerId, 'and gameId:', gameId);
-            //         socket.emit('onEnterLobby', { playerId: playerId, gameId: gameId });
-            //         eventEmitted = true;
-            //     }
-            // }
-    
-            // emitEventOnce();
-    
+            socket.emit("livebets",{hii:"hii"})
+            socket.emit("adminspot",{adminspot : 2})
             socket.on('livebets', function (data) {
                 document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
                 document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
@@ -172,12 +160,38 @@
                 document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
                 document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
                 document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
-                document.getElementById('10User').innerHTML = data.SpotThreeUser;
+                document.getElementById('10User').innerHTML = data.SpotFourUser;
                 console.log('Received response from socket server:', data);
 
             });
         });
     </script>
+    <script>
+        function saveSettings() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    let selectedSpot = 0;
+    const socket = io('http://localhost:3070');
+    const spotIndices = {
+        Ace: 0,
+        King: 1,
+        Queen: 2,
+        Jake: 3,
+        "10": 4
+    };
+
+    if (checkboxes.length > 0) {
+        const spotName = checkboxes[0].closest("tr").querySelector("td:first-child").textContent.trim();
+        selectedSpot = spotIndices[spotName];
+    }
+console.log(selectedSpot);
+    
+    socket.emit("adminspot", { adminspot: selectedSpot });
+
+    console.log('Selected spot value:', selectedSpot);
+}
+
+    </script>
+
     
         
     
