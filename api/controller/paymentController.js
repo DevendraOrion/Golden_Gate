@@ -782,7 +782,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     var startTime = new Date();
 
     const params = req.query;
-// console.log("params", params);
+console.log("params", params);
     let matchObj = {};
     var sortObj = {};
 
@@ -819,7 +819,10 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     const user_id = params.id || "";
 
     if (Service.validateObjectId(user_id)) {
-      matchObj.user_id = ObjectId(user_id);
+      matchObj = { $or: [
+        { refUser: ObjectId(user_id) },
+        { user_id: ObjectId(user_id) }
+    ]}
     }
 
     if (!_.isEmpty(params.status)) {
@@ -889,12 +892,14 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     // console.log(incData);
     if (req.admin.role==="Company") {
       matchObj.user_id = {$in:incData};
-    }else{
+    }else {
       matchObj.user_id = req.admin._id;
-
     }
     let aggregation_obj = [];
-
+    if (matchObj != {})
+    aggregation_obj.push({
+      $match: matchObj,
+    });
     aggregation_obj.push(
       {
         $lookup: {
@@ -925,10 +930,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       // },
     );
 
-    if (matchObj != {})
-      aggregation_obj.push({
-        $match: matchObj,
-      });
+ 
 
     aggregation_obj.push(
       {
@@ -973,7 +975,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     console.log(aggregation_obj);
-    console.log(req.admin.role);
+    // console.log(req.admin.role);
 
     let aggregate_rf = [];
 
