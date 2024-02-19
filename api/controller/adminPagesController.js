@@ -1245,7 +1245,8 @@ role="User"
     }
   },
   allTransactions: async (req, res) => {
-    const transactions = await paymentController.transactionList(10);
+    let admin=req.admin
+    const transactions = await paymentController.transactionList(10,admin);
     res.render("admin/transaction", {
       title: "Wallet Transfer",
       type: "transaction",

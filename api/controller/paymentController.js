@@ -364,13 +364,57 @@ module.exports = {
       count: count,
     };
   },
-  transactionList: async (limit) => {
-    const transaction = await Transaction.find({})
-      .populate("user_id").populate("refUser")
-      .sort({
-        created_at: -1,
-      })
-      .limit(limit);
+  transactionList: async (limit,admin) => {
+    // const transaction = await Transaction.find({})
+    //   .populate("user_id").populate("refUser")
+    //   .sort({
+    //     created_at: -1,
+    //   })
+    //   .limit(limit);
+    const transaction = await Transaction.aggregate([
+      {
+        '$lookup': {
+          from: 'users',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'users'
+        }
+      },
+      { '$unwind': '$users' },
+      {
+        '$lookup': {
+          from: 'users',
+          localField: 'refUser',
+          foreignField: '_id',
+          as: 'refUser'
+        }
+      },
+      { '$unwind': '$refUser' },
+      { '$match': { user_id: admin._id } },
+      { '$match': {} },
+      { '$sort': { created_at: -1 } },
+      { '$skip': 0 },
+      { '$limit': limit },
+      {
+        '$project': {
+          _id: 1,
+          username: [Object],
+          refusername: [Object],
+          transaction_type: 1,
+          created_at: 1,
+          resp_msg: 1,
+          txn_amount: 1,
+          current_balance: 1,
+          payment_mode: 1,
+          refSearch_id: '$refUser.search_id',
+          search_id: '$users.search_id',
+          user_id: '$users._id',
+          role: '$users.role',
+          is_status: 1,
+          txn_mode: 1
+        }
+      }
+    ])
 // console.log(transaction);
     let list = await Promise.all(
       transaction.map(async (u) => {
@@ -843,6 +887,12 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     let incData=await Service.DownLine(req.admin._id)
     let a=incData.push(req.admin._id)
     // console.log(incData);
+    if (req.admin.role==="Company") {
+      matchObj.user_id = {$in:incData};
+    }else{
+      matchObj.user_id = req.admin._id;
+
+    }
     let aggregation_obj = [];
 
     aggregation_obj.push(
@@ -868,11 +918,11 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       {
         $unwind: "$refUser",
       },
-      {
-        $match:{
-          user_id:{$in:incData}
-        }
-      },
+      // {
+      //   $match:{
+      //     user_id:req.admin._id
+      //   }
+      // },
     );
 
     if (matchObj != {})
@@ -922,12 +972,14 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
 
     
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(list);
+    console.log(aggregation_obj);
+    console.log(req.admin.role);
+
     let aggregate_rf = [];
 
     if (matchObj) {
       aggregate_rf.push({
-        $match: {user_id:{$in:incData}},
+        $match: matchObj,
       });
     }
 
