@@ -56,7 +56,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-
+                        <a href="<%=host%>/user" style="color: black;">
                         <div class="info-box-content">
                             <span class="info-box-text">Total Player
                             </span>
@@ -78,6 +78,8 @@
                                 </span>
                             </span>
                         </div>
+                    </a>
+
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
@@ -95,7 +97,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
-    
+                        <a href="<%=host%>/stateMGT" style="color: black;">
                         <div class="info-box-content">
                             <span class="info-box-text">Total State</span>
                             <span class="info-box-number">
@@ -114,6 +116,7 @@
                                 </span>
                             </span>
                         </div>
+                    </a>
                     </div>
                 </div>
                 <!-- /.col -->
@@ -121,7 +124,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                     <div class="info-box">
                         <span class="info-box-icon bg-maroon"><i class="fa  fa-handshake-o"></i></span>
-
+                        <a href="<%=host%>/districtMGT" style="color: black;">
                         <div class="info-box-content">
                             <span class="info-box-text">Total District
                             </span>
@@ -129,6 +132,8 @@
                                 <%= data.total_district %>
                             </span>
                         </div>
+                    </a>
+
                         <!-- /.info-box-content -->
                     </div>
                     <!-- /.info-box -->
@@ -138,6 +143,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
+                    <a href="<%=host%>/zoneMGT" style="color: black;">
 
                     <div class="info-box-content">
                         <span class="info-box-text">Total Zone
@@ -158,12 +164,15 @@
                             </span>
                         </span>
                     </div>
+                </a>
+
                 </div>
             </div>
             
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+                    <a href="<%=host%>/agentsMGT" style="color: black;">
 
                     <div class="info-box-content">
                         <span class="info-box-text">Total Agent
@@ -172,6 +181,8 @@
                             <%= data.total_agent %>
                         </span>
                     </div>
+                </a>
+
                     <!-- /.info-box-content -->
                 </div>
                 <!-- /.info-box -->
@@ -182,6 +193,7 @@
                 <div class="col-md-4 col-sm-6 col-xs-12">
                 <div class="info-box">
                     <span class="info-box-icon bg-yellow"><i class="fa  fa-arrow-up"></i></span>
+                    <a href="<%=host%>/depositRequest" style="color: black;">
 
                     <div class="info-box-content">
                         <span class="info-box-text">Total Chip Request
@@ -202,6 +214,8 @@
                             </span>
                         </span>
                     </div>
+                </a>
+
                 </div>
             </div>
                
@@ -407,7 +421,7 @@
 <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
-
+        <a href="<%=host%>/user" style="color: black;">
         <div class="info-box-content">
             <span class="info-box-text">Total Player
             </span>
@@ -415,7 +429,7 @@
                 <%= data.total_user %>
             </span>
         </div>
-       
+    </a>
     </div>
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12">
@@ -510,7 +524,7 @@
     <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-red"><i class="ion ion-ios-people-outline"></i></span>
-
+        <a href="<%=host%>/zoneMGT" style="color: black;">
         <div class="info-box-content">
             <span class="info-box-text">Total Zone
             </span>
@@ -530,12 +544,15 @@
                 </span>
             </span>
         </div>
+    </a>
+
     </div>
 </div>
 
 <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+        <a href="<%=host%>/agentsMGT" style="color: black;">
 
         <div class="info-box-content">
             <span class="info-box-text">Total Agent
@@ -544,13 +561,15 @@
                 <%= data.total_agent %>
             </span>
         </div>
+    </a>
+
     </div>
    
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
-
+        <a href="<%=host%>/user" style="color: black;">
         <div class="info-box-content">
             <span class="info-box-text">Total Player
             </span>
@@ -558,7 +577,7 @@
                 <%= data.total_user %>
             </span>
         </div>
-       
+    </a>
     </div>
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12">
@@ -655,6 +674,7 @@
 <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-aqua"><i class="fa fa-star"></i></span>
+        <a href="<%=host%>/agentsMGT" style="color: black;">
 
         <div class="info-box-content">
             <span class="info-box-text">Total Agent
@@ -663,13 +683,15 @@
                 <%= data.total_agent %>
             </span>
         </div>
+    </a>
+
     </div>
    
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12">
     <div class="info-box">
         <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
-
+        <a href="<%=host%>/user" style="color: black;">
         <div class="info-box-content">
             <span class="info-box-text">Total Player
             </span>
@@ -677,7 +699,7 @@
                 <%= data.total_user %>
             </span>
         </div>
-       
+    </a>
     </div>
 </div>
 <div class="col-md-4 col-sm-6 col-xs-12">
@@ -772,7 +794,7 @@
     <div class="col-md-6 col-sm-6 col-xs-12">
         <div class="info-box">
             <span class="info-box-icon bg-yellow"><i class="fa fa-star"></i></span>
-    
+            <a href="<%=host%>/user" style="color: black;">
             <div class="info-box-content">
                 <span class="info-box-text">Total Player
                 </span>
@@ -780,7 +802,7 @@
                     <%= data.total_user %>
                 </span>
             </div>
-           
+        </a>
         </div>
     </div>
     <div class="col-md-6 col-sm-6 col-xs-12">
