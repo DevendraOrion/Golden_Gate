@@ -832,8 +832,12 @@ console.log("params", params);
     if (!_.isEmpty(params.type)) {
       matchObj.txn_mode = params.type;
     }
+    let matchObj2 = {}
     if (!_.isEmpty(params.rank)) {
-      matchObj["users.role"] = params.rank;
+      matchObj2 = { $or: [
+        { role: params.rank },
+        { refUserRole: params.rank }
+    ]}
     }
     if (!_.isEmpty(params.startDate)) {
       let sdate = params.startDate;
@@ -923,14 +927,9 @@ console.log("params", params);
       {
         $unwind: "$refUser",
       },
-      // {
-      //   $match:{
-      //     user_id:req.admin._id
-      //   }
-      // },
+
     );
 
- 
 
     aggregation_obj.push(
       {
@@ -938,7 +937,8 @@ console.log("params", params);
       },
       {
         $skip: params.start == "All" ? 0 : parseInt(params.start),
-      }
+      },
+      
     );
 
     if (params.length != -1) {
@@ -964,17 +964,21 @@ console.log("params", params);
             search_id: "$users.search_id",
             user_id: "$users._id",
             role: "$users.role",
+            refUserRole: "$refUser.role",
             is_status: 1,
             txn_mode: 1,
           },
         },
+        {
+          $match: matchObj2,
+        }
         );
       
     
 
     
+        // console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(aggregation_obj);
     // console.log(req.admin.role);
 
     let aggregate_rf = [];
