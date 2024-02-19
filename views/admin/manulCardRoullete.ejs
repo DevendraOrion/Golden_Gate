@@ -21,11 +21,12 @@
                 </div> -->
                 <div>
                     <span> <input type="checkbox" value="Manual">Manual</span>
-                    <span> <input type="checkbox" value="Manual">Automatic</span>
+                    <span> <input type="checkbox" value="Automatic">Automatic</span>
+                    
                 </div>
             </div>
 
-
+<input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
             <div class="row">
                 <div class="col-md-12">
                     <div class="box">
@@ -53,7 +54,7 @@
                                             <p id="aceUser">0</p>
                                         </td>
                                         <td>
-                                            <p>0</p>
+                                            <p id="acePayable">0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -70,7 +71,7 @@
                                             <p id="KingUser">0</p>
                                         </td>
                                         <td>
-                                            <p>0</p>
+                                            <p id="kingPayable">0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -87,7 +88,7 @@
                                             <p  id="QueenUser">0</p>
                                         </td>
                                         <td>
-                                            <p>0</p>
+                                            <p id="queenPayable">0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -104,7 +105,7 @@
                                             <p  id="JakeUser">0</p>
                                         </td>
                                         <td>
-                                            <p>0</p>
+                                            <p id="jakePayable">0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -121,7 +122,7 @@
                                             <p  id="10User">0</p>
                                         </td>
                                         <td>
-                                            <p>0</p>
+                                            <p id="10Payable">0</p>
                                         </td>
                                         <td>
                                             <input type="checkbox">
@@ -147,23 +148,36 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const socket = io('http://localhost:3070');
-    
+            let gamePercent=document.getElementById("gamePercent").value;
+console.log(gamePercent);
             socket.emit("livebets",{hii:"hii"})
             socket.emit("adminspot",{adminspot : 2})
             socket.on('livebets', function (data) {
-                document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
-                document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
-                document.getElementById('KingBet').innerHTML = data.SpotOneUser;
-                document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
-                document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
-                document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
-                document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
-                document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
-                document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
-                document.getElementById('10User').innerHTML = data.SpotFourUser;
-                console.log('Received response from socket server:', data);
+    const gamePercent = parseFloat(document.getElementById("gamePercent").value);
+console.log(1 + gamePercent / 100);
+    document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
+    document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
+    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * (1 + gamePercent / 100);
 
-            });
+    document.getElementById('KingBet').innerHTML = data.SpotOneUser;
+    document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
+    document.getElementById('kingPayable').innerHTML = parseFloat(data.SpotOneAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
+    document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
+    document.getElementById('queenPayable').innerHTML = parseFloat(data.SpotTwoAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
+    document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
+    document.getElementById('jakePayable').innerHTML = parseFloat(data.SpotThreeAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
+    document.getElementById('10User').innerHTML = data.SpotFourUser;
+    document.getElementById('10Payable').innerHTML = parseFloat(data.SpotFourAmt) * (1 + gamePercent / 100);
+
+    console.log('Received response from socket server:', data);
+});
+
         });
     </script>
     <script>

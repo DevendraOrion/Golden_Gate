@@ -304,21 +304,10 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
     };
   },
   manualCardRoullete: async (role,adminData) => {
-    
-    // const socket = io('http://localhost:3070');
-    // console.log("Connecting to Socket.IO server...");
 
-
-    // socket.on('connect', function () {
-    //     console.log('Connected to Socket.IO server');
-    //     connected = true;
-   
-    // });
-
-
-    // socket.on('connect_error', function (error) {
-    //     console.error('Connection error:', error);
-    // });
+    let profitPercent=await ProfitPercent.findOne({gameType:"Card Roullete"})
+    // console.log(profitPercent);
+    return {profitPercent:profitPercent.gamePercent}
   },
   getAgentList: async (role,adminData) => {
 if(adminData.role==="Company"){
