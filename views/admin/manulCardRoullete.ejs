@@ -148,21 +148,21 @@
         document.addEventListener("DOMContentLoaded", function () {
             const socket = io('http://localhost:3070');
     
-            let eventEmitted = false;
+            // let eventEmitted = false;
     
-            function emitEventOnce() {
-                if (!eventEmitted) {
-                    const playerId = '11111197'; // Set the playerId here
-                    const gameId = '2'; // Set the gameId here
-                    console.log('Emitting onEnterLobby with playerId:', playerId, 'and gameId:', gameId);
-                    socket.emit('onEnterLobby', { playerId: playerId, gameId: gameId });
-                    eventEmitted = true;
-                }
-            }
+            // function emitEventOnce() {
+            //     if (!eventEmitted) {
+            //         const playerId = '11111197'; // Set the playerId here
+            //         const gameId = '2'; // Set the gameId here
+            //         console.log('Emitting onEnterLobby with playerId:', playerId, 'and gameId:', gameId);
+            //         socket.emit('onEnterLobby', { playerId: playerId, gameId: gameId });
+            //         eventEmitted = true;
+            //     }
+            // }
     
-            emitEventOnce();
+            // emitEventOnce();
     
-            socket.on('data', function (data) {
+            socket.on('livebets', function (data) {
                 document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
                 document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
                 document.getElementById('KingBet').innerHTML = data.SpotOneUser;

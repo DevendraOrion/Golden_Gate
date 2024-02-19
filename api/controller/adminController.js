@@ -207,13 +207,17 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       count,
     };
   },
-  getUsersList: async (limit) => {
+  getUsersList: async (admin) => {
     //logger.info('ADMIN USER LIST REQUEST >> ');
+    let downLine=await Service.DownLine(admin._id)
+    downLine.push(admin._id)
+    console.log(downLine);
     const users = await User.aggregate([
       {
         $match: {
+          _id: { $in: downLine },
           is_deleted: false,
-          role: "User"
+          role: "User",
         }
       },
       {

@@ -932,7 +932,7 @@ role="User"
   },
   users: async (req, res) => {
     // console.log(req.admin)
-    const users = await AdminController.getUsersList();
+    const users = await AdminController.getUsersList(req.admin);
     res.render("admin/user", {
       title: "User List",
       type: "usersMGT",
