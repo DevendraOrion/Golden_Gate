@@ -24,6 +24,7 @@
                                         <th>Balance</th>
                                         <th>Status</th>
                                         <th>Action</th>
+                                        <th>Change Password/Pin</th>
                                    
                                     </tr>
                                 </thead>
@@ -114,6 +115,11 @@
                                                             <td class="actions text-center">
                                                                 <a href="<%= host%>/user/view/<%= d._id%>"  class="on-editing save-row">
                                                                     <i class="fa fa-eye"></i>
+                                                                </a>
+                                                            </td>
+                                                            <td class="actions text-center">
+                                                                <a href="<%= host%>/user/changePinPass/<%= d._id%>"  class="on-editing save-row">
+                                                                    <i class="fa fa-pencil"></i>
                                                                 </a>
                                                             </td>
                                                           

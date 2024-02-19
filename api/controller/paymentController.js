@@ -7,6 +7,7 @@ var Cryptr = require("cryptr");
 var { Transaction } = require("./../models/transaction");
 var  JoinGame  = require("./../models/joinGame");
 var  Game_record_aviator  = require("./../models/game_record_avaitor");
+var  Roulette_record  = require("./../models/game_record_roullete");
 var Table = require("./../models/table");
  var { Rank_Data } = require("./../models/rankData");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
@@ -598,9 +599,7 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
   };
 }
 
-//////////////////////////////////////////////////
-    let incData=await Service.DownLine(req.admin._id)
-//////////////////////////////////////////////////
+
     let aggregation_obj = [];
     aggregation_obj.push(
       // {
@@ -635,10 +634,13 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
         $limit: parseInt(params.length),
       });
     }
-
-
-    let list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
-    console.log(aggregation_obj);
+    let list
+    if(GameId=="1"){
+      list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
+    }else{
+      list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
+    }
+    // console.log(aggregation_obj);
     let aggregate_rf = [];
 
     if (matchObj) {
@@ -676,14 +678,20 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       },
     });
 // console.log(aggregate_rf)
-    let rF = await Game_record_aviator.aggregate(aggregate_rf).allowDiskUse(true);
+    let rF
+    if(GameId=="1"){
+     rF = await Roulette_record.aggregate(aggregate_rf).allowDiskUse(true);
 
+    }else{
+      rF = await Game_record_aviator.aggregate(aggregate_rf).allowDiskUse(true);
+
+    }
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
     var recordsTotal = list.length;
 
     list = await Promise.all(
       list.map(async (u,index) => {
-    
+    // console.log(u);
        let totalPlayer=0
       let totalBetAmt=0
       let totalWinAmt=0
@@ -696,17 +704,23 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
           status.push(a.is_updated)
         })
       }
-   
+   let spot;  
+   if(GameId=="1"){
+    spot=u.spots
+   }else{
+    spot=u.distance
+   }
+   let adminComm=u.admin_commission?u.admin_commission:0
         return [
           ++index,
           u.room_id,
           Service.formateDateandTime(u.room_id),
           totalBetAmt,
           totalWinAmt,
-          u.admin_commission,
+          adminComm,
           totalBetAmt-totalWinAmt,
           totalPlayer,
-          u.distance,
+          spot,
           status[0] ? '<span class="label label-success"> Success</span>' : '<span class="label label-success"> Success</span>',
         ];
       })

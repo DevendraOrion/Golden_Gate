@@ -184,7 +184,7 @@ module.exports = {
 
     const maxIndex = Math.max(...Object.keys(roles).map(Number));
     roles[1] = "Company";
-    if(user.role==="User"){
+    if(user.role==="Company" || user.role==="Agent"){
       roles[maxIndex + 1] = "User";
 
     }
