@@ -156,13 +156,14 @@
                     const gameId = '2'; // Set the gameId here
                     console.log('Emitting onEnterLobby with playerId:', playerId, 'and gameId:', gameId);
                     socket.emit('onEnterLobby', { playerId: playerId, gameId: gameId });
+                    socket.emit("livebets",{hii:"hii"})
                     eventEmitted = true;
                 }
             }
     
             emitEventOnce();
-    
-            socket.on('data', function (data) {
+            socket.emit("adminspot",{adminspot : 2})
+            socket.on('livebets', function (data) {
                 document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
                 document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
                 document.getElementById('KingBet').innerHTML = data.SpotOneUser;
@@ -172,7 +173,7 @@
                 document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
                 document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
                 document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
-                document.getElementById('10User').innerHTML = data.SpotThreeUser;
+                document.getElementById('10User').innerHTML = data.SpotFourUser;
                 console.log('Received response from socket server:', data);
 
             });
