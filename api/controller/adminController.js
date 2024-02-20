@@ -435,48 +435,76 @@ const list=await parentData
     };
 }
 },
-getSlotDetails: async (roomId) => {
+getSlotDetails: async (roomId,gameId,admin) => {
+  let downline = await Service.DownLine(admin._id);
+  downline.push(admin._id);
+  let game;
+  if (gameId == 1) {
+      game = "game_record_roulette";
+  } else if (gameId == 2) {
+      game = "gamerecords";
+  } else {
+      game = "game_record_aviators";
+  }
+  // console.log(game)
   let findData = await JoinGame.aggregate([
-    {
-      $match: {
-        room_id: roomId
+      {
+          $match: {
+              // room_id: "1707461299239"
+              room_id: roomId
+          }
+      },
+      {
+          $lookup: {
+              from: game,
+              localField: "room_id",
+              foreignField: "room_id",
+              as: "finishGameRecord"
+          }
+      },
+      {
+          $unwind: "$finishGameRecord"
+      },
+      {
+          $addFields: {
+              user_id_numeric: { $toDecimal: "$user_id" } 
+          }
+      },
+      {
+          $lookup: {
+              from: "users",
+              localField: "user_id_numeric", 
+              foreignField: "numeric_id",
+              as: "users"
+          }
+      },
+      {
+          $unwind: "$users"
+      },
+      {
+          $match: {
+              "users._id": { $in: downline.map(id => ObjectId(id)) } 
+          }
+      },
+      {
+          $group: {
+              _id: { user_id: "$user_id", spot: "$spot" },
+              totalAmount: { $sum: "$amount" },
+              totalWinAmount: { $sum: "$win_amount" },
+              count: { $sum: 1 },
+              user_id: { $first: "$user_id" },
+              room_id: { $first: "$room_id" },
+              spot: { $first: "$spot" },
+              game_id: { $first: "$game_id" },
+              is_updated: { $first: "$is_updated" },
+              created: { $first: { $dateToString: { format: "%Y-%m-%d %H:%M:%S", date: "$created" } } },
+              username: { $first: { $concat: ["$users.first_name", " ", "$users.last_name"] } },
+              search_id: { $first: "$users.search_id" }
+          }
       }
-    },
-    {
-      $lookup: {
-        from: "game_record_aviators",
-        localField: "room_id",
-        foreignField: "room_id",
-        as: "finishGameRecord"
-      }
-    },
-    {
-      $unwind: "$finishGameRecord"
-    },
-  
   ]);
-const date = new Date(Number(roomId));
-// console.log(roomId);
-let formatDate=await Service.formateDateandTime(date)
-  let encounteredUserIds = new Set();
-  let totalWin=0
-  let TotalBet=0
-  let TotalUser=0
-  let CreateAt=formatDate
-  let status=[]
-  let AdminCommission=0
-  const data= await findData.map((a)=>{
-   totalWin+=a.win_amount
-   TotalBet+=a.amount
-   status.push(a.is_updated)
-   AdminCommission+=Number(a.finishGameRecord.admin_commission)
-    if (!encounteredUserIds.has(a.user_id)) {
-    TotalUser++;
-    encounteredUserIds.add(a.user_id);
-}
-  })
-  
-  return [{totalWin,TotalBet,TotalUser,CreateAt,roomId,status:status[0],AdminCommission}]
+
+  return findData;
 },
 getChildList: async (id,role) => {
 
@@ -7798,7 +7826,7 @@ saveTransferPoint: async (req, res) => {
           }
           else{
               transcId=transcId[0].txn_id
-              console.log(transcId[0].txn_id);
+              console.log(transcId);
           }
           transcId=Number(transcId)+1
           const updateAdmin=await User.updateOne({_id:req.admin._id},{$inc:{cash_balance:point}})
@@ -7808,7 +7836,7 @@ saveTransferPoint: async (req, res) => {
             user_id: user._id,
             refUser:req.admin._id,
             txn_amount: point,
-            current_balance:user.cash_balance- point,
+            current_balance:user.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "D",
             resp_msg:  "Debited by Company",
@@ -7822,7 +7850,7 @@ saveTransferPoint: async (req, res) => {
             user_id: req.admin._id,
             refUser: user._id,
             txn_amount: point,
-            current_balance:req.admin.cash_balance+ point,
+            current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "C",
             resp_msg: `Credit To ${user.first_name} ${user.last_name}`,
@@ -7857,7 +7885,7 @@ saveTransferPoint: async (req, res) => {
             user_id: user._id,
             refUser: req.admin._id,
             txn_amount: point,
-            current_balance:user.cash_balance- point,
+            current_balance:user.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "C",
             resp_msg:  "Deposit by Company",
@@ -7871,7 +7899,7 @@ saveTransferPoint: async (req, res) => {
             user_id: req.admin._id,
             refUser: user._id,
             txn_amount: point,
-            current_balance:req.admin.cash_balance+ point,
+            current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "D",
             resp_msg: `Deposit To ${user.first_name} ${user.last_name}`,

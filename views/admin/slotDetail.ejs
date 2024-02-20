@@ -17,19 +17,19 @@
                                 <thead>
                                     <tr>
                                         <th>S No</th>
-                                        <th>Player Details</th>
-                                        <th>Room Id</th>
-                                        <th>Amount</th>
-                                        <th>Win Amount</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Slot Details</th>
+                                        <th>Slot No</th>
+                                        <th>User Detail</th>
+                                        <th>Bet On</th>
+                                        <th>Quantity</th>
+                                        <th>Per Item</th>
+                                        <th>Bet Amount</th>
+                                        <th>Result Status</th>
+                                        <th>Win Amount </th>
+                                        <th>Created At</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                 
-                                    <% console.log(data)%>
                                     <% var i=1; for (d of data) {%>
                                
                                         <tr class="gradeX">
@@ -37,38 +37,38 @@
                                                 <%= i++ %>
                                             </td>
                                             <td>
-                                                <p style="color: #788ca8;"><%= d.roomId %></p>
+                                                <p style="color: #788ca8;"><%= d.room_id %></p>
                                              
                                             </td>
                                             <td>
-                                                <p><%= d.CreateAt %></p>
+                                                <p><%= d.username %>(<%= d.search_id %>)</p>
                                             </td>
                                             <td>
-                                                <p><%= d.TotalBet %></p>
+                                                <p><%= d.spot %></p>
                                             </td>
                                             <td>
-                                                <p><%= d.totalWin %></p>
+                                                <p><%= d.count %></p>
                                                
                                             </td>
                                             <td>
-                                                <p><%= d.AdminCommission %></p>
+                                                <p><%= d.totalAmount %></p>
                                             </td>
                                             <td>
-                                                <p><%= d.TotalBet -d.totalWin %></p>
+                                                <p><%= d.totalAmount %></p>
                                             </td>
-                                            <td>
-                                                <p><%= d.TotalUser %></p>
-                                            </td>
-                                            <td>
-                                                <p></p>
-                                            </td>
-                                          
-                                                <%if(d.status==="1"){%>
-                                                    <td><span class="label label-success">Success</span></td>
-                                                <%}else{%>
+                                                                                   
+                                            <%if(d.is_updated=="1"){%>
+                                                <td><span class="label label-success">Success</span></td>
+                                            <%}else{%>
 
-                                                    <td><span class="label label-danger">Failed</span></td>
-                                                <%}%>
+                                                <td><span class="label label-danger">Failed</span></td>
+                                            <%}%>
+                                            <td>
+                                                <p><%= d.totalWinAmount %></p>
+                                            </td>
+                                            <td>
+                                                <p><%= d.created %></p>
+                                            </td>
                                           
                                    
                                         </tr>

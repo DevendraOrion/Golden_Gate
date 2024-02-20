@@ -1042,7 +1042,10 @@ role="User"
   showDetailOfSlot: async (req, res) => {
     // console.log(req.params,req.query);
     let roomId= req.params.id
-    const users = await AdminController.getSlotDetails(roomId);
+    let gameId= req.params.gameId
+    let admin=req.admin
+    const users = await AdminController.getSlotDetails(roomId,gameId,admin);
+    // console.log(users);
     res.render("admin/slotDetail", {
       title: "Slot Details",
       type: "usersMGT",

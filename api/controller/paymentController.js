@@ -645,155 +645,141 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
 }
 
 
-    let aggregation_obj = [];
-    aggregation_obj.push(
-      {
-        $sort: {
-          created_at: -1 ,
-        }
-      },
-      {
-        $lookup: {
-          from: "join_games",
-          localField: "room_id",
-          foreignField: "room_id",
-          as: "joinData"
-        }
-      },
-    );
-  
+let aggregation_obj = [];
 
-    if (matchObj != {})
-      aggregation_obj.push({
+// Sort stage
+aggregation_obj.push({
+    $sort: {
+        created_at: -1,
+    }
+});
+
+// Lookup stage
+aggregation_obj.push({
+    $lookup: {
+        from: "join_games",
+        localField: "room_id",
+        foreignField: "room_id",
+        as: "joinData"
+    }
+});
+
+// Match stage for filtering
+if (!_.isEmpty(matchObj)) {
+    aggregation_obj.push({
         $match: matchObj,
-      });
-
-
-    if (params.length != -1) {
-      aggregation_obj.push({
-        $limit: parseInt(params.length),
-      });
-    }
-    let list
-    if(GameId=="1"){
-      list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
-    }else if(GameId=="2"){
-      list = await GameRecord.aggregate(aggregation_obj).allowDiskUse(true);
-    }else{
-      list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
-    }
-    // console.log(aggregation_obj);
-    let aggregate_rf = [];
-
-    if (matchObj) {
-      aggregate_rf.push(
-         {
-        $lookup: {
-          from: "users",
-          let: { user_id: { $toDecimal: "$user_id" } }, 
-          pipeline: [
-              {
-                  $match: {
-                      $expr: { $eq: ["$numeric_id", "$$user_id"] }
-                  }
-              }
-          ],
-          as: "user"
-      }
-    },
-    {
-        $match: matchObj,
-      }
-      );
-    }
-
-if (GameId==1){    
-  aggregate_rf.push(
-      {
-        $match:{
-          game_id:Number(GameId)
-        }
-      },
-      {
-      $group: {
-        _id: null,
-        count: { $sum: 1 },
-      },
     });
-  }else if(GameId==3 || GameId==2){
-    
-    aggregate_rf.push(
-      {
-        $match:{
-          game_id:GameId
-        }
-      },
-      {
-      $group: {
-        _id: null,
-        count: { $sum: 1 },
-      },
+}
+
+// Limit and Skip stages for pagination
+const pageSize = parseInt(params.length) || 10; // Number of records per page
+const pageNumber = parseInt(params.start) || 0; // Page number (0-indexed)
+aggregation_obj.push({
+    $skip: pageNumber * pageSize
+}, {
+    $limit: pageSize
+});
+
+// Executing the aggregation
+let list;
+if (GameId == "1") {
+    list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
+} else if (GameId == "2") {
+    list = await GameRecord.aggregate(aggregation_obj).allowDiskUse(true);
+} else {
+    list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
+}
+
+// Counting total records after filtering
+let recordsTotal = list.length;
+
+// Counting total records without pagination
+let totalCountAggregate = [];
+if (!_.isEmpty(matchObj)) {
+    totalCountAggregate.push({
+        $match: matchObj
     });
+}
+if (GameId == "1") {
+    totalCountAggregate.push({
+        $count: "totalCount"
+    });
+} else if (GameId == "2" || GameId == "3") {
+    totalCountAggregate.push({
+        $match: {
+            game_id: GameId
+        }
+    }, {
+        $count: "totalCount"
+    });
+}
+console.log(totalCountAggregate);
+let totalAggregateResult;
+if (totalCountAggregate.length > 0) {
+    if (GameId == "1") {
+        totalAggregateResult = await Roulette_record.aggregate(totalCountAggregate).allowDiskUse(true);
+    } else if(GameId == "2") {
+        totalAggregateResult = await GameRecord.aggregate(totalCountAggregate).allowDiskUse(true);
+    } else  {
+        totalAggregateResult = await Game_record_aviator.aggregate(totalCountAggregate).allowDiskUse(true);
     }
-// console.log(aggregate_rf)
-    let rF
-    if(GameId=="1"){
-     rF = await Roulette_record.aggregate(aggregate_rf).allowDiskUse(true);
+    recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[0].totalCount : 0;
+}
 
-    }else if(GameId=="2"){
-      rF = await GameRecord.aggregate(aggregate_rf).allowDiskUse(true);
+list = await Promise.all(list.map(async (u, index) => {
+    let totalPlayer = 0;
+    let totalBetAmt = 0;
+    let totalWinAmt = 0;
+    let status ;
+    if(GameId == "1"){
+    status=  u.spots !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
+  }else if(GameId=="2"){
+      status=  u.winNo !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }else{
-      rF = await Game_record_aviator.aggregate(aggregate_rf).allowDiskUse(true);
+      status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }
-    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
-    var recordsTotal = list.length;
-
-    list = await Promise.all(
-      list.map(async (u,index) => {
     // console.log(u);
-       let totalPlayer=0
-      let totalBetAmt=0
-      let totalWinAmt=0
-      let status=[]
-      if(u.joinData){
-        totalPlayer=u.joinData.length
-        u.joinData.map((a)=>{
-          totalBetAmt+=a.amount
-          totalWinAmt+=a.win_amount
-          status.push(a.is_updated)
-        })
-      }
-   let spot;  
-   if(GameId=="1"){
-    spot=u.spots
-   }else if(GameId=="2"){
-    spot=u.spot
-   }else{
-    spot=u.distance
-   }
-   let adminComm=u.admin_commission?u.admin_commission:0
-        return [
-          ++index,
-          u.room_id,
-          Service.formateDateandTime(u.room_id),
-          totalBetAmt,
-          totalWinAmt,
-          adminComm,
-          totalBetAmt-totalWinAmt,
-          totalPlayer,
-          spot,
-          status[0] ? '<span class="label label-success"> Success</span>' : '<span class="label label-success"> Success</span>',
-        ];
-      })
-    );
+    if (u.joinData) {
+        totalPlayer = u.joinData.length;
+        u.joinData.map((a) => {
+            totalBetAmt += a.amount;
+            totalWinAmt += a.win_amount;
+            // status.push(a.is_updated);
+        });
+    }
+    let spot;
+    if (GameId == "1") {
+        spot = u.spots;
+    } else if (GameId == "2") {
+        spot = u.spot;
+    } else {
+        spot = u.distance;
+    }
+    let adminComm = u.admin_commission ? u.admin_commission : 0;
+    return [
+        ++index,
+        u.room_id,
+        Service.formateDateandTime(u.room_id),
+        totalBetAmt,
+        totalWinAmt,
+        adminComm,
+        totalBetAmt - totalWinAmt,
+        totalPlayer,
+        spot,
+        status,
+        `<a  href="${config.pre + req.headers.host
+        }/user/showSlotDetail/${u.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>`
+    ];
+}));
 
+// Sending response
+return res.status(200).send({
+    data: await list,
+    draw: new Date().getTime(),
+    recordsTotal: recordsTotal,
+    recordsFiltered: recordsTotal,
+});
 
-    return res.status(200).send({
-      data: await list,
-      draw: new Date().getTime(),
-      recordsTotal: recordsTotal,
-      recordsFiltered: recordsFiltered,
-    });
   },
   getTxnAjax: async function (req, res) {
     var startTime = new Date();

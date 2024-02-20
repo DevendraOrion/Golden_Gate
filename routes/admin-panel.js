@@ -35,7 +35,7 @@ module.exports = function (router, io) {
     AdminPagesController.showChild
   );
   router.get(
-    "/user/showSlotDetail/:id",
+    "/user/showSlotDetail/:id/:gameId",
     Service.authenticateAdmin,
     AdminPagesController.showDetailOfSlot
   );
