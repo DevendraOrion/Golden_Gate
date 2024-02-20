@@ -8,6 +8,7 @@ var { Transaction } = require("./../models/transaction");
 var  JoinGame  = require("./../models/joinGame");
 var  Game_record_aviator  = require("./../models/game_record_avaitor");
 var  Roulette_record  = require("./../models/game_record_roullete");
+var  GameRecord  = require("./../models/game_record_cardRoullte");
 var Table = require("./../models/table");
  var { Rank_Data } = require("./../models/rankData");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
@@ -565,7 +566,7 @@ module.exports = {
   getBetHistoryTxnAjax: async function (req, res) {
     var startTime = new Date();
     const GameId=req.query.gameID
-// console.log("jlasfdj");
+console.log(GameId);
     const params = req.query;
 // console.log("params", params);
     let matchObj = {};
@@ -646,11 +647,6 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
 
     let aggregation_obj = [];
     aggregation_obj.push(
-      // {
-      //   $match: {
-      //     room_id:"1707461299239"
-      //   }
-      // },
       {
         $sort: {
           created_at: -1 ,
@@ -681,6 +677,8 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
     let list
     if(GameId=="1"){
       list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
+    }else if(GameId=="2"){
+      list = await GameRecord.aggregate(aggregation_obj).allowDiskUse(true);
     }else{
       list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
     }
@@ -709,6 +707,21 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
       );
     }
 
+if (GameId==1){    
+  aggregate_rf.push(
+      {
+        $match:{
+          game_id:Number(GameId)
+        }
+      },
+      {
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+      },
+    });
+  }else if(GameId==3 || GameId==2){
+    
     aggregate_rf.push(
       {
         $match:{
@@ -721,14 +734,16 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
         count: { $sum: 1 },
       },
     });
+    }
 // console.log(aggregate_rf)
     let rF
     if(GameId=="1"){
      rF = await Roulette_record.aggregate(aggregate_rf).allowDiskUse(true);
 
+    }else if(GameId=="2"){
+      rF = await GameRecord.aggregate(aggregate_rf).allowDiskUse(true);
     }else{
       rF = await Game_record_aviator.aggregate(aggregate_rf).allowDiskUse(true);
-
     }
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
     var recordsTotal = list.length;
@@ -751,6 +766,8 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
    let spot;  
    if(GameId=="1"){
     spot=u.spots
+   }else if(GameId=="2"){
+    spot=u.spot
    }else{
     spot=u.distance
    }
