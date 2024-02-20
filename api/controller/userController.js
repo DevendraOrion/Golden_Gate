@@ -1568,6 +1568,7 @@ module.exports = {
     },
     findUserByRole: async (req, res) => {
         var startTime = new Date();
+        // console.log(req.query);
         try {
    if(req.admin.role==="Company"){
     const params = _.pick(req.query, ['search']);
@@ -1600,7 +1601,7 @@ module.exports = {
         {
             $project: {
                 id: '$_id',
-                text: '$search_id'
+                text: { $concat: [ "$first_name", " ", "$last_name", " (", "$search_id", ")" ] }
             }
         },
         {
@@ -1611,6 +1612,7 @@ module.exports = {
     );
 
     let users = await User.aggregate(aggregate_obj).allowDiskUse(true);
+    console.log(users);
     var endTime = new Date();
 
     return res.send({ results: users });

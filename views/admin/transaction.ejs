@@ -23,6 +23,14 @@
                 </div>
                 <div class="col-md-8">
                     <div class="pull-right">
+                        <select class="col select-rank" name="rank" style="width:152px;">
+                            <option></option>
+                            <option value="State">State</option>
+                            <option value="District">District</option>
+                            <option value="Zone">Zone</option>
+                            <option value="Agent">Agent</option>
+                            <option value="User">User</option>
+                        </select>
                         <select class="col search-user" name="state" style="width:152px;"></select>
     
                         <select class="col select-type" name="type" style="width:152px;">
@@ -39,14 +47,7 @@
                             <option value="C">Credit</option>
                           
                         </select>
-                        <select class="col select-rank" name="rank" style="width:152px;">
-                            <option></option>
-                            <option value="State">State</option>
-                            <option value="District">District</option>
-                            <option value="Zone">Zone</option>
-                            <option value="Agent">Agent</option>
-                            <option value="User">User</option>
-                        </select>
+              
                         <input type="text" class="col select-date" onfocus="(this.type='date')" onblur="(this.type='text')"  placeholder="From Date" id="startdatepicker" name="StartDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray; border: 1px solid gray;">
                         <input type="text" class="col select-date" onfocus="(this.type='date')" onblur="(this.type='text')" placeholder="To Date" id="enddatepicker" name="EndDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
 
@@ -152,7 +153,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
     $(document).ready(function (e) {
-
+        let rank;
         var THAT_ID = "";
         var THAT_TYPE = "";
         var THAT_STATUS = "";
@@ -160,14 +161,16 @@
         var START_DATE = "";
     var END_DATE = "";
         $('.search-user').select2({
+            
             allowClear: true,
             placeholder: 'User',
             ajax: {
-                url: '/admin/find_user',
+                url: `/admin/find_userByRole`,
                 data: function (params) {
                     var query = {
                         search: params.term,
-                        type: 'public'
+                        type: 'public',
+                        role:rank
                     }
                     // Query parameters will be ?search=[term]&type=public
                     return query;
@@ -225,6 +228,7 @@
 
         $('.select-rank').on('select2:select', function (e) {
             THAT_RANK = e.params.data.id;
+            rank=THAT_RANK
             table.ajax.reload();
         });
 
@@ -315,13 +319,13 @@
             "serverSide": true,
             "ajax": {
         'url': '/ajax_transaction',
-        data: function (params) {
-            params.id = THAT_ID;
-            params.type = THAT_TYPE;
-            params.status = THAT_STATUS;
-            params.rank = THAT_RANK;
-            params.startDate = START_DATE;
-            params.endDate = END_DATE;
+        data: function (params) {    
+    params.id = THAT_ID;
+    params.type = THAT_TYPE;
+    params.status = THAT_STATUS;
+    params.rank = THAT_RANK;
+    params.startDate = START_DATE;
+    params.endDate = END_DATE;
             return params;
         }
     },

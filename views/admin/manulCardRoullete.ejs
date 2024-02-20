@@ -13,6 +13,7 @@
             justify-content: space-between;">
                 <div>
                     <h3>CountDown</h3>
+                    <span id="countdown"></span>
                 </div>
                 <!-- <div>
                     <p>TimerId:</p>
@@ -146,12 +147,33 @@
     <!-- /.content-wrapper --><%- include footer %>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const socket = io('http://localhost:3070');
-            let gamePercent=document.getElementById("gamePercent").value;
-console.log(gamePercent);
-            socket.emit("livebets",{hii:"hii"})
-            socket.emit("adminspot",{adminspot : 2})
+       document.addEventListener("DOMContentLoaded", function () {
+        const socket = io('http://localhost:3070');
+        let gamePercent = document.getElementById("gamePercent").value;
+        console.log(gamePercent);
+        socket.emit("livebets", { hii: "hii" });
+        socket.emit("adminspot", { adminspot: 2 });
+
+        // Countdown timer logic
+        function startCountdown(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = duration;
+                }
+            }, 1000);
+        }
+
+            const countdownDisplay = document.querySelector('#countdown');
+        startCountdown(15 * 60, countdownDisplay);
             socket.on('livebets', function (data) {
     const gamePercent = parseFloat(document.getElementById("gamePercent").value);
 console.log(1 + gamePercent / 100);
