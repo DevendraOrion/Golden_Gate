@@ -1206,7 +1206,8 @@ const timestamp = now.getTime();
       sum:{$sum:"$txn_amount"}
     }
    }])
-   let realData=transferByAdmin[0].sum-transferToUser[0].sum
+   let realData = (transferByAdmin[0]?.sum - transferToUser[0]?.sum) ? (transferByAdmin[0]?.sum - transferToUser[0].sum) : 0;
+
    return realData 
   },
   getReferralList: async () => {
