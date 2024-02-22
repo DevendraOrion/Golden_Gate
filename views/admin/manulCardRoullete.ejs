@@ -21,8 +21,8 @@
             border: none;">
                 </div> -->
                 <div>
-                    <span> <input type="checkbox" value="Manual">Manual</span>
-                    <span> <input type="checkbox" value="Automatic">Automatic</span>
+                    <span> <input type="checkbox" id="manualCheckbox" value="Manual">Manual</span>
+                    <span> <input type="checkbox" id="automaticCheckbox" value="Automatic">Automatic</span>
                     
                 </div>
             </div>
@@ -58,7 +58,7 @@
                                             <p id="acePayable">0</p>
                                         </td>
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="radio" name="spot" value="0">
                                         </td>
                                     </tr>
                                     <tr class="gradeX">
@@ -75,7 +75,7 @@
                                             <p id="kingPayable">0</p>
                                         </td>
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="radio" name="spot" value="1">
                                         </td>
                                     </tr>
                                     <tr class="gradeX">
@@ -92,7 +92,7 @@
                                             <p id="queenPayable">0</p>
                                         </td>
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="radio" name="spot" value="2">
                                         </td>
                                     </tr>
                                     <tr class="gradeX">
@@ -109,7 +109,7 @@
                                             <p id="jakePayable">0</p>
                                         </td>
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="radio" name="spot" value="3">
                                         </td>
                                     </tr>
                                     <tr class="gradeX">
@@ -126,7 +126,7 @@
                                             <p id="10Payable">0</p>
                                         </td>
                                         <td>
-                                            <input type="checkbox">
+                                            <input type="radio" name="spot" value="4">
                                         </td>
                                     </tr>
                                     <td>
@@ -184,7 +184,17 @@
 
     startCountdown(timerInSeconds, countdownDisplay);
 });
+document.getElementById('manualCheckbox').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('automaticCheckbox').checked = false;
+        }
+    });
 
+    document.getElementById('automaticCheckbox').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('manualCheckbox').checked = false;
+        }
+    });
         });
 
         function startCountdown(durationInSeconds, display) {
@@ -210,23 +220,19 @@
 
     </script>
     <script>
-        function saveSettings() {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    let selectedSpot = 0;
+function saveSettings() {
+    const checkboxes = document.querySelectorAll('input[type="radio"]:checked');
+    const manualCheckbox = document.getElementById('manualCheckbox');
+    const automaticCheckbox = document.getElementById('automaticCheckbox');
+    console.log(manualCheckbox.checked);
+    let  selectedSpot; 
     const socket = io('http://localhost:3070');
-    const spotIndices = {
-        Ace: 0,
-        King: 1,
-        Queen: 2,
-        Jake: 3,
-        "10": 4
-    };
-
-    if (checkboxes.length > 0) {
-        const spotName = checkboxes[0].closest("tr").querySelector("td:first-child").textContent.trim();
-        selectedSpot = spotIndices[spotName];
+    
+    if (manualCheckbox.checked) {
+        selectedSpot = Number(checkboxes[0].value);
+    }else if(automaticCheckbox.checked){
+        selectedSpot=undefined
     }
-console.log(selectedSpot);
     
     socket.emit("adminspot", { adminspot: selectedSpot });
 
