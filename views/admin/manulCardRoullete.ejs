@@ -154,29 +154,10 @@
         socket.emit("livebets", { hii: "hii" });
         socket.emit("adminspot", { adminspot: 2 });
 
-        // Countdown timer logic
-        function startCountdown(duration, display) {
-            let timer = duration, minutes, seconds;
-            setInterval(function () {
-                minutes = parseInt(timer / 60, 10);
-                seconds = parseInt(timer % 60, 10);
 
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    timer = duration;
-                }
-            }, 1000);
-        }
-
-            const countdownDisplay = document.querySelector('#countdown');
-        startCountdown(15 * 60, countdownDisplay);
             socket.on('livebets', function (data) {
     const gamePercent = parseFloat(document.getElementById("gamePercent").value);
-console.log(1 + gamePercent / 100);
+// console.log(1 + gamePercent / 100);
     document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
     document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
     document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * (1 + gamePercent / 100);
@@ -198,9 +179,35 @@ console.log(1 + gamePercent / 100);
     document.getElementById('10Payable').innerHTML = parseFloat(data.SpotFourAmt) * (1 + gamePercent / 100);
 
     console.log('Received response from socket server:', data);
+    const timerInSeconds = data.changespottime; 
+    const countdownDisplay = document.querySelector('#countdown');
+
+    startCountdown(timerInSeconds, countdownDisplay);
 });
 
         });
+
+        function startCountdown(durationInSeconds, display) {
+    let timer = durationInSeconds;
+    
+    const countdownInterval = setInterval(function () {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+
+        const displayMinutes = String(minutes).padStart(2, '0');
+        const displaySeconds = String(seconds).padStart(2, '0');
+
+        display.textContent = displayMinutes + ':' + displaySeconds;
+
+        if (timer <= 0) {
+            clearInterval(countdownInterval);
+        } else {
+            timer--;
+        }
+    }, 1000);
+}
+
+
     </script>
     <script>
         function saveSettings() {
