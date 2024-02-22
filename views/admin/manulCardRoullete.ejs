@@ -226,7 +226,7 @@ function saveSettings() {
     const automaticCheckbox = document.getElementById('automaticCheckbox');
     console.log(manualCheckbox.checked);
     let  selectedSpot; 
-    const socket = io('http://localhost:3070');
+    const socket = io('http://103.175.163.97:3070');
     
     if (manualCheckbox.checked) {
         selectedSpot = Number(checkboxes[0].value);
