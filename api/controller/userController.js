@@ -1568,7 +1568,7 @@ module.exports = {
     },
     findUserByRole: async (req, res) => {
         var startTime = new Date();
-        // console.log(req.query);
+        console.log(req.query);
         try {
    if(req.admin.role==="Company"){
     const params = _.pick(req.query, ['search']);
@@ -1577,14 +1577,14 @@ module.exports = {
         is_deleted: false,
         role:req.query.role
     };
-    if (params.search) {
-        if (params.search.trim() != '') {
-            condition['search_id'] = {
-                $regex: '^' + params.search,
-                $options: 'i'
-            };
-        }
+    if (params.search && params.search.trim() !== '') {
+        const searchRegex = new RegExp('^' + params.search.trim(), 'i');
+        condition['$or'] = [
+            { 'first_name': { $regex: searchRegex } },
+            { 'search_id': { $regex: searchRegex } }
+        ];
     }
+    
     aggregate_obj.push({
         $match: condition
     });
