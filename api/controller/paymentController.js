@@ -838,11 +838,11 @@ console.log("params", params);
     ]}
     }
 
-    if (!_.isEmpty(params.status)) {
+    if (!_.isEmpty(params.status)&& params.status !== " ") {
       matchObj.transaction_type = params.status;
     }
 
-    if (!_.isEmpty(params.type)) {
+    if (!_.isEmpty(params.type) && params.type !== " ") {
       matchObj.txn_mode = params.type;
     }
     let matchObj2 = {}
@@ -1085,7 +1085,7 @@ console.log("params", params);
           ` ${u.username}(${u.search_id})`,
           ` ${u.refusername}(${u.refSearch_id})`,
           Debit_credit,
-          u.resp_msg ? u.resp_msg : "No Data Found",
+          u.transaction_type=="C"? `Deposit By ${u.refusername}`:`Deposit To ${u.username}`,
           created,
           BeforeBalance,
           txn_amount,

@@ -1581,6 +1581,7 @@ module.exports = {
         const searchRegex = new RegExp('^' + params.search.trim(), 'i');
         condition['$or'] = [
             { 'first_name': { $regex: searchRegex } },
+            { 'last_name': { $regex: searchRegex } },
             { 'search_id': { $regex: searchRegex } }
         ];
     }
