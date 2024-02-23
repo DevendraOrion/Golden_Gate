@@ -648,11 +648,19 @@ if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
 let aggregation_obj = [];
 
 // Sort stage
-aggregation_obj.push({
+if(GameId==2){
+  aggregation_obj.push({
     $sort: {
-        created_at: -1,
+      room_id: -1,
     }
 });
+}else{
+  aggregation_obj.push({
+    $sort: {
+      created_at: -1,
+    }
+});
+}
 
 // Lookup stage
 aggregation_obj.push({
@@ -689,6 +697,7 @@ if (GameId == "1") {
 } else {
     list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
 }
+// console.log(aggregation_obj);
 
 // Counting total records after filtering
 let recordsTotal = list.length;
@@ -725,6 +734,7 @@ if (totalCountAggregate.length > 0) {
     }
     recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[0].totalCount : 0;
 }
+console.log(totalAggregateResult);
 
 list = await Promise.all(list.map(async (u, index) => {
     let totalPlayer = 0;
@@ -734,7 +744,7 @@ list = await Promise.all(list.map(async (u, index) => {
     if(GameId == "1"){
     status=  u.spots !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
   }else if(GameId=="2"){
-      status=  u.winNo !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
+      status=  u.winNo !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-danger"> Refund</span>'
     }else{
       status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }

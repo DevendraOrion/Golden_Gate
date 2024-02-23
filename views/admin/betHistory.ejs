@@ -310,43 +310,31 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script>
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-let selectedSpot = 0;
-const socket = io('http://103.175.163.97:3070');
-console.log("___________________________")
-// Map to store total chip amount and total users for each room ID
+ const socket = io('http://103.175.163.97:3070');
+if(GameId==1){
 const roomDataMap = new Map();
-
 socket.on('OnChipMoveRoullate', function (data) {
-    // Reload AJAX data for the DataTable
     $('#example1').DataTable().ajax.reload(function() {
-        // Get current date and time
         var currentDateTime = getCurrentDateTime();
 
-        // Initialize variables to track total chips and unique users
         let totalChips = 0;
         let uniqueUsers = new Set();
 
-        // Iterate over the bets object and calculate total chips and unique users
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
                 totalChips += b.chip;
-                uniqueUsers.add(b.playerId); // Add playerId to the set to count unique users
+                uniqueUsers.add(b.playerId); 
             });
         });
 
-        // Calculate the total number of unique users
         let totalUser = uniqueUsers.size;
 
-        // Check if the row for the room ID already exists in the table
         const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
 
         if (existingRow.length > 0) {
-            // If the row exists, update the total chips and total users in the existing row
             existingRow.find('td:nth-child(4)').text(totalChips);
             existingRow.find('td:nth-child(8)').text(totalUser);
         } else {
-            // Construct the new row HTML
             var newRow =
                 '<tr class="gradeX">' +
                 '<td>' + "1" + '</td>' +
@@ -362,45 +350,82 @@ socket.on('OnChipMoveRoullate', function (data) {
                 '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
                 '</tr>';
 
-            // Prepend the new row to the table body
             $('#example1 tbody').prepend(newRow);
         }
     });
 });
 
+}else if (GameId=="2"){
+    socket.on('OnChipMoveCardRoullate', function (data) {
+        console.log(data)
+    });
+    const roomDataMap = new Map();
+socket.on('OnChipMoveCardRoullate', function (data) {
+    $('#example1').DataTable().ajax.reload(function() {
+        var currentDateTime = getCurrentDateTime();
 
+        let totalChips = 0;
+        let uniqueUsers = new Set();
 
+        Object.values(data.bets).forEach(bet => {
+            bet.forEach(b => {
+                totalChips += b.chip;
+                uniqueUsers.add(b.playerId); 
+            });
+        });
 
+        let totalUser = uniqueUsers.size;
 
+        const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
+
+        if (existingRow.length > 0) {
+            existingRow.find('td:nth-child(4)').text(totalChips);
+            existingRow.find('td:nth-child(8)').text(totalUser);
+        } else {
+            var newRow =
+                '<tr class="gradeX">' +
+                '<td>' + "1" + '</td>' +
+                '<td>' + data.room_id + '</td>' +
+                '<td >' + currentDateTime + '</td>' +
+                '<td >' + totalChips + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + totalUser + '</td>' +
+                '<td >' + " " + '</td>' +
+                '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
+                '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
+                '</tr>';
+
+            $('#example1 tbody').prepend(newRow);
+        }
+    });
+});
+
+}
 function getCurrentDateTime() {
-    // Get current date and time
     var now = new Date();
 
-    // Get day, month, year
     var day = now.getDate();
-    var month = now.getMonth() + 1; // Months are zero based
+    var month = now.getMonth() + 1; 
     var year = now.getFullYear();
 
-    // Get hours, minutes, seconds
     var hours = now.getHours();
     var minutes = now.getMinutes();
     var seconds = now.getSeconds();
 
-    // Convert hours to 12-hour format
     var period = "AM";
     if (hours > 12) {
         hours -= 12;
         period = "PM";
     }
 
-    // Add leading zero if necessary
     day = day < 10 ? "0" + day : day;
     month = month < 10 ? "0" + month : month;
     hours = hours < 10 ? "0" + hours : hours;
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
 
-    // Format the date and time string
     var formattedDateTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes + ":" + seconds + " " + period;
 
     return formattedDateTime;
