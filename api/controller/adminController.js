@@ -438,9 +438,10 @@ const list=await parentData
 getSlotDetails: async (roomId,gameId,admin) => {
   let downline = await Service.DownLine(admin._id);
   downline.push(admin._id);
+  console.log(downline)
   let game;
   if (gameId == 1) {
-      game = "game_record_roulette";
+      game = "game_record_roulettes";
   } else if (gameId == 2) {
       game = "gamerecords";
   } else {
@@ -481,11 +482,7 @@ getSlotDetails: async (roomId,gameId,admin) => {
       {
           $unwind: "$users"
       },
-      {
-          $match: {
-              "users._id": { $in: downline.map(id => ObjectId(id)) } 
-          }
-      },
+     
       {
           $group: {
               _id: { user_id: "$user_id", spot: "$spot" },
@@ -493,6 +490,7 @@ getSlotDetails: async (roomId,gameId,admin) => {
               totalWinAmount: { $sum: "$win_amount" },
               count: { $sum: 1 },
               user_id: { $first: "$user_id" },
+              IDS: { $first: "$users._id" },
               room_id: { $first: "$room_id" },
               spot: { $first: "$spot" },
               game_id: { $first: "$game_id" },
@@ -501,9 +499,14 @@ getSlotDetails: async (roomId,gameId,admin) => {
               username: { $first: { $concat: ["$users.first_name", " ", "$users.last_name"] } },
               search_id: { $first: "$users.search_id" }
           }
-      }
+      },
+      {
+        $match: {
+            "IDS": { $in: downline.map(id => ObjectId(id)) } 
+        }
+    }
   ]);
-
+// console.log(findData);
   return findData;
 },
 getChildList: async (id,role) => {
