@@ -310,46 +310,74 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script>
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    let selectedSpot = 0;
-    const socket = io('http://103.175.163.97:3070');
-    console.log("___________________________")
-    socket.on('OnChipMoveRoullate', function (data) {
-        // Iterate over the bets object and append each bet's details
-        var currentDateTime = getCurrentDateTime();
-    let User=new Set()
-        var betsHTML = '';
-        let totalChips = 0;
-        let totalUser = 1;
-        Object.values(data.bets).forEach(bet => {
-            bet.forEach(b => {
-            User.add(b.playerId)
-            console.log(User,b.playerId,User.has(b.playerId));
-            if(!User.has(b.playerId)){
-                totalUser++
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+let selectedSpot = 0;
+const socket = io('http://103.175.163.97:3070');
+console.log("___________________________")
+
+// Map to store total chip amount and total users for each room ID
+const roomDataMap = new Map();
+
+socket.on('OnChipMoveRoullate', function (data) {
+    // Get current date and time
+    var currentDateTime = getCurrentDateTime();
+    let User = new Set();
+    var betsHTML = '';
+    let totalChips = 0;
+    let totalUser = 1;
+
+    // Check if the room ID already exists in the map
+    if (roomDataMap.has(data.room_id)) {
+        // If the room ID exists, update the total chip amount and total users
+        const roomData = roomDataMap.get(data.room_id);
+        totalChips = roomData.totalChips;
+        totalUser = roomData.totalUser; 
+    }
+
+    // Iterate over the bets object and append each bet's details
+    Object.values(data.bets).forEach(bet => {
+        bet.forEach(b => {
+            User.add(b.playerId);
+            if (!User.has(b.playerId)) {
+                totalUser++;
             }
-            console.log(b);
             totalChips += b.chip;
-            betsHTML += `<span>Type: ${b.type}${b.type === 'Straight' ?', Spot: ' + b.spot :" " }</span><br>`;
+            betsHTML += `<span>Type: ${b.type}${b.type === 'Straight' ? ', Spot: ' + b.spot : ''}</span><br>`;
         });
     });
-    var newRow =
-        '<tr class="gradeX">' +
-        '<td>' + "1" + '</td>' + 
-        '<td>' + data.room_id + '</td>' + 
-        '<td >' + currentDateTime + '</td>' + 
-        '<td >' + totalChips + '</td>' + 
-        '<td >' + 0 + '</td>' + 
-        '<td >' + 0 + '</td>' + 
-        '<td >' + 0 + '</td>' + 
-        '<td >' + totalUser + '</td>' + 
-        '<td >' + betsHTML + '</td>' + 
-        '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' + 
-        '<td >' +  `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' + 
-        '</tr>';
 
-    $('#example1 tbody').prepend(newRow);
+    // Update the map with the new total chip amount and total users for the room ID
+    roomDataMap.set(data.room_id, { totalChips, totalUser });
+
+    // Check if the row for the room ID already exists in the table
+    const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
+
+    if (existingRow.length > 0) {
+        // If the row exists, update the total chips and total users in the existing row
+        existingRow.find('td:nth-child(4)').text(totalChips);
+        existingRow.find('td:nth-child(8)').text(totalUser);
+    } else {
+        // Construct the new row HTML
+        var newRow =
+            '<tr class="gradeX">' +
+            '<td>' + "1" + '</td>' +
+            '<td>' + data.room_id + '</td>' +
+            '<td >' + currentDateTime + '</td>' +
+            '<td >' + totalChips + '</td>' +
+            '<td >' + 0 + '</td>' +
+            '<td >' + 0 + '</td>' +
+            '<td >' + 0 + '</td>' +
+            '<td >' + totalUser + '</td>' +
+            '<td >' + betsHTML + '</td>' +
+            '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
+            '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
+            '</tr>';
+
+        // Prepend the new row to the table body
+        $('#example1 tbody').prepend(newRow);
+    }
 });
+
 
 
 
