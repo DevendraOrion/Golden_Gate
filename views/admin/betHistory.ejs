@@ -321,33 +321,21 @@ const roomDataMap = new Map();
 socket.on('OnChipMoveRoullate', function (data) {
     // Get current date and time
     var currentDateTime = getCurrentDateTime();
-    let User = new Set();
-    var betsHTML = '';
+
+    // Initialize variables to track total chips and unique users
     let totalChips = 0;
-    let totalUser = 1;
+    let uniqueUsers = new Set();
 
-    // Check if the room ID already exists in the map
-    if (roomDataMap.has(data.room_id)) {
-        // If the room ID exists, update the total chip amount and total users
-        const roomData = roomDataMap.get(data.room_id);
-        totalChips = roomData.totalChips;
-        totalUser = roomData.totalUser; 
-    }
-
-    // Iterate over the bets object and append each bet's details
+    // Iterate over the bets object and calculate total chips and unique users
     Object.values(data.bets).forEach(bet => {
         bet.forEach(b => {
-            User.add(b.playerId);
-            if (!User.has(b.playerId)) {
-                totalUser++;
-            }
             totalChips += b.chip;
-            betsHTML += `<span>Type: ${b.type}${b.type === 'Straight' ? ', Spot: ' + b.spot : ''}</span><br>`;
+            uniqueUsers.add(b.playerId); // Add playerId to the set to count unique users
         });
     });
 
-    // Update the map with the new total chip amount and total users for the room ID
-    roomDataMap.set(data.room_id, { totalChips, totalUser });
+    // Calculate the total number of unique users
+    let totalUser = uniqueUsers.size;
 
     // Check if the row for the room ID already exists in the table
     const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
@@ -368,7 +356,7 @@ socket.on('OnChipMoveRoullate', function (data) {
             '<td >' + 0 + '</td>' +
             '<td >' + 0 + '</td>' +
             '<td >' + totalUser + '</td>' +
-            '<td >' + betsHTML + '</td>' +
+            '<td >' + " " + '</td>' +
             '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
             '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
             '</tr>';
