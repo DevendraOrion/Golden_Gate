@@ -314,57 +314,60 @@
 let selectedSpot = 0;
 const socket = io('http://103.175.163.97:3070');
 console.log("___________________________")
-
 // Map to store total chip amount and total users for each room ID
 const roomDataMap = new Map();
 
 socket.on('OnChipMoveRoullate', function (data) {
-    // Get current date and time
-    var currentDateTime = getCurrentDateTime();
+    // Reload AJAX data for the DataTable
+    $('#example1').DataTable().ajax.reload(function() {
+        // Get current date and time
+        var currentDateTime = getCurrentDateTime();
 
-    // Initialize variables to track total chips and unique users
-    let totalChips = 0;
-    let uniqueUsers = new Set();
+        // Initialize variables to track total chips and unique users
+        let totalChips = 0;
+        let uniqueUsers = new Set();
 
-    // Iterate over the bets object and calculate total chips and unique users
-    Object.values(data.bets).forEach(bet => {
-        bet.forEach(b => {
-            totalChips += b.chip;
-            uniqueUsers.add(b.playerId); // Add playerId to the set to count unique users
+        // Iterate over the bets object and calculate total chips and unique users
+        Object.values(data.bets).forEach(bet => {
+            bet.forEach(b => {
+                totalChips += b.chip;
+                uniqueUsers.add(b.playerId); // Add playerId to the set to count unique users
+            });
         });
+
+        // Calculate the total number of unique users
+        let totalUser = uniqueUsers.size;
+
+        // Check if the row for the room ID already exists in the table
+        const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
+
+        if (existingRow.length > 0) {
+            // If the row exists, update the total chips and total users in the existing row
+            existingRow.find('td:nth-child(4)').text(totalChips);
+            existingRow.find('td:nth-child(8)').text(totalUser);
+        } else {
+            // Construct the new row HTML
+            var newRow =
+                '<tr class="gradeX">' +
+                '<td>' + "1" + '</td>' +
+                '<td>' + data.room_id + '</td>' +
+                '<td >' + currentDateTime + '</td>' +
+                '<td >' + totalChips + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + 0 + '</td>' +
+                '<td >' + totalUser + '</td>' +
+                '<td >' + " " + '</td>' +
+                '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
+                '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
+                '</tr>';
+
+            // Prepend the new row to the table body
+            $('#example1 tbody').prepend(newRow);
+        }
     });
-
-    // Calculate the total number of unique users
-    let totalUser = uniqueUsers.size;
-
-    // Check if the row for the room ID already exists in the table
-    const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
-
-    if (existingRow.length > 0) {
-        // If the row exists, update the total chips and total users in the existing row
-        existingRow.find('td:nth-child(4)').text(totalChips);
-        existingRow.find('td:nth-child(8)').text(totalUser);
-    } else {
-        // Construct the new row HTML
-        var newRow =
-            '<tr class="gradeX">' +
-            '<td>' + "1" + '</td>' +
-            '<td>' + data.room_id + '</td>' +
-            '<td >' + currentDateTime + '</td>' +
-            '<td >' + totalChips + '</td>' +
-            '<td >' + 0 + '</td>' +
-            '<td >' + 0 + '</td>' +
-            '<td >' + 0 + '</td>' +
-            '<td >' + totalUser + '</td>' +
-            '<td >' + " " + '</td>' +
-            '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
-            '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
-            '</tr>';
-
-        // Prepend the new row to the table body
-        $('#example1 tbody').prepend(newRow);
-    }
 });
+
 
 
 
