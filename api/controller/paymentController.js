@@ -1041,7 +1041,7 @@ console.log("params", params);
           txn_mode = "GAME";
         }
 
-        let current_balance= u.current_balance
+        let current_balance;
         let status_ = u.is_status;
 
         if (status_ == "P") {
@@ -1055,11 +1055,28 @@ console.log("params", params);
         let BeforeBalance;
 
         if (Debit_credit == "D") {
-          Debit_credit = '<span class="label label-danger">Debit</span>';
-          BeforeBalance=u.current_balance+u.txn_amount
+       
+          if(u.role=="Company"){
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance
+            current_balance= u.current_balance-u.txn_amount;
+
+          }else{
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance+u.txn_amount;
+            current_balance= u.current_balance;
+
+          }
         }  else {
-          Debit_credit = '<span class="label label-success">Credit</span>';
-          BeforeBalance=u.current_balance-u.txn_amount
+          if(u.refUserRole=="Company"){
+            Debit_credit = '<span class="label label-success">Credit</span>';
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance+u.txn_amount;
+          }else{
+            Debit_credit = '<span class="label label-success">Credit</span>';
+            BeforeBalance=u.current_balance-u.txn_amount
+            current_balance= u.current_balance
+          }
         }
         let created=await Service.formateDateandTime(u.created_at)
         return [
