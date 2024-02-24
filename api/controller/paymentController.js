@@ -722,7 +722,7 @@ if (GameId == "1") {
         $count: "totalCount"
     });
 }
-console.log(totalCountAggregate);
+// console.log(totalCountAggregate);
 let totalAggregateResult;
 if (totalCountAggregate.length > 0) {
     if (GameId == "1") {
@@ -734,7 +734,7 @@ if (totalCountAggregate.length > 0) {
     }
     recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[0].totalCount : 0;
 }
-console.log(totalAggregateResult);
+// console.log(totalAggregateResult);
 
 list = await Promise.all(list.map(async (u, index) => {
     let totalPlayer = 0;
@@ -759,9 +759,32 @@ list = await Promise.all(list.map(async (u, index) => {
     }
     let spot;
     if (GameId == "1") {
-        spot = u.spots;
+      let parseData;
+      if (u?.spots) {
+          parseData = JSON.parse(u.spots);
+      } else {
+          parseData = null; // or some default value
+      }
+       let mainspot = parseData?.["0"] ?? " ";
+      console.log(spot);
+      spot=await Service.findRouletteSpot(mainspot)
     } else if (GameId == "2") {
-        spot = u.spot;
+      if(u.spot==0){
+          spot = "Ace";
+        }
+        else if(u.spot==1){
+          spot = "King";
+        }
+        else if(u.spot==2){
+          spot = "Queen";
+        }
+        else if(u.spot==3){
+          spot = "Jake";
+        }
+        else if(u.spot==4){
+          spot = "10";
+        }
+       
     } else {
         spot = u.distance;
     }
@@ -1063,7 +1086,7 @@ console.log("params", params);
             current_balance= u.current_balance;
             console.log(BeforeBalance,current_balance);
           }
-           else if(u.role=="Company" || u.role=="Agent"){
+           else if(u.role=="Company" || u.role=="State"){
             Debit_credit = '<span class="label label-danger">Debit</span>';
             BeforeBalance=u.current_balance;
             current_balance= u.current_balance-u.txn_amount;

@@ -312,48 +312,52 @@
     <script>
  const socket = io('http://103.175.163.97:3070');
 if(GameId==1){
-const roomDataMap = new Map();
+    const roomDataMap = new Map();
 socket.on('OnChipMoveRoullate', function (data) {
-    $('#example1').DataTable().ajax.reload(function() {
-        var currentDateTime = getCurrentDateTime();
+    if (data.room_id !== undefined) { // Check if room_id is present
+        console.log(data);
+        $('#example1').DataTable().ajax.reload(function() {
+            var currentDateTime = getCurrentDateTime();
 
-        let totalChips = 0;
-        let uniqueUsers = new Set();
+            let totalChips = 0;
+            let uniqueUsers = new Set();
 
-        Object.values(data.bets).forEach(bet => {
-            bet.forEach(b => {
-                totalChips += b.chip;
-                uniqueUsers.add(b.playerId); 
+            Object.values(data.bets).forEach(bet => {
+                bet.forEach(b => {
+                    totalChips += b.chip;
+                    uniqueUsers.add(b.playerId); 
+                });
             });
+
+            let totalUser = uniqueUsers.size;
+
+            const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
+
+            if (existingRow.length > 0) {
+                existingRow.find('td:nth-child(4)').text(totalChips);
+                existingRow.find('td:nth-child(8)').text(totalUser);
+            } else {
+                var newRow =
+                    '<tr class="gradeX">' +
+                    '<td>' + "1" + '</td>' +
+                    '<td>' + data.room_id + '</td>' +
+                    '<td >' + currentDateTime + '</td>' +
+                    '<td >' + totalChips + '</td>' +
+                    '<td >' + 0 + '</td>' +
+                    '<td >' + 0 + '</td>' +
+                    '<td >' + 0 + '</td>' +
+                    '<td >' + totalUser + '</td>' +
+                    '<td >' + " " + '</td>' +
+                    '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
+                    '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
+                    '</tr>';
+
+                $('#example1 tbody').prepend(newRow);
+            }
         });
-
-        let totalUser = uniqueUsers.size;
-
-        const existingRow = $('#example1 tbody').find(`td:contains('${data.room_id}')`).closest('tr');
-
-        if (existingRow.length > 0) {
-            existingRow.find('td:nth-child(4)').text(totalChips);
-            existingRow.find('td:nth-child(8)').text(totalUser);
-        } else {
-            var newRow =
-                '<tr class="gradeX">' +
-                '<td>' + "1" + '</td>' +
-                '<td>' + data.room_id + '</td>' +
-                '<td >' + currentDateTime + '</td>' +
-                '<td >' + totalChips + '</td>' +
-                '<td >' + 0 + '</td>' +
-                '<td >' + 0 + '</td>' +
-                '<td >' + 0 + '</td>' +
-                '<td >' + totalUser + '</td>' +
-                '<td >' + " " + '</td>' +
-                '<td >' + `<span class="label label-danger">Pending</span>` + '</td>' +
-                '<td >' + `<a  href="<%= host%>/user/showSlotDetail/${data.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>` + '</td>' +
-                '</tr>';
-
-            $('#example1 tbody').prepend(newRow);
-        }
-    });
+    }
 });
+
 
 }else if (GameId=="2"){
     socket.on('OnChipMoveCardRoullate', function (data) {

@@ -14,6 +14,7 @@ var logger = require('./logger');
 
 const monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+const rouletteSpot = { DoubleZero: 0, Zero: 1, One: 2, Two: 3, Three: 4, Four: 5, Five: 6, Six: 7, Seven: 8, Eight: 9, Nine: 10, Ten: 11, Eleven: 12, Twelve: 13, Thirteen: 14, Fourteen: 15, Fifteen: 16, Sixteen: 17, Seventeen: 18, Eighteen: 19, Nineteen: 20, Twenty: 21, TwentyOne: 22, TwentyTwo: 23, TwentyThree: 24, TwentyFour: 25, TwentyFive: 26, TwentySix: 27, TwentySeven: 28, TwentyEight: 29, TwentyNine: 30, Thirty: 31, ThirtyOne: 32, ThirtyTwo: 33, ThirtyThree: 34, ThirtyFour: 35, ThirtyFive: 36, ThirtySix: 37, FirstRow: 38, SecondRow: 39, ThirdRow: 40, FirstDozen: 41, SecondDozen: 42, ThirdDozen: 43, Small: 44, Big: 45, Even: 46, Odd: 47, Red: 48, Black: 49 };
 
 var timeago = require('timeago.js');
 var timeagoInstance = timeago();
@@ -34,7 +35,14 @@ module.exports = {
             data: data
         };
     },
-
+     findRouletteSpot:function(number) {
+        for (const key in rouletteSpot) {
+            if (rouletteSpot[key] === number) {
+                return key;
+            }
+        }
+        return " ";
+    },
     issueToken: function(data) {
         return jwt.sign(data, config.apiSecret);
     },

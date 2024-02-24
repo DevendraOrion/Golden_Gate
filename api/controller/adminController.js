@@ -247,6 +247,31 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
   },
   getDepositRequest: async (admin) => {
 
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    const timestamp = currentDate.getTime();
+
+    let findOldData = await DepositRequests.aggregate([
+      {
+        $match: {
+          toUser:admin._id,is_status:"P",created_at:{$lt:timestamp.toString()}
+        }
+      },
+      {
+        $group: {
+          _id: "$fromUser",
+          amount: { $sum: "$txn_amount" }
+        }
+      }
+    ]);
+console.log(findOldData)
+let updateData=await findOldData.map(async (a)=>{
+  let updateAmount = await User.updateOne({ _id: a._id }, { $inc: { cash_balance: a?.amount ?? 0 } });
+
+})
+  let UpdateTimeOut=await DepositRequests.updateMany({toUser:admin._id,is_status:"P",created_at:{$lt:timestamp}},{is_status:"T"});
+
+
     const depositRequest = await DepositRequests.aggregate([
       { $match: { is_status: "P" } },
       {
@@ -7216,7 +7241,7 @@ acceptRequest: async (req, res) => {
       let txnres = await newTxn.save();
 
       const updateAmount=await User.updateOne({_id:userData._id},{$inc:{cash_balance:Number(findData.txn_amount)}})
-      const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"S"})
+      const updateStatus=await DepositRequests.updateOne({txn_id:id},{$set:{is_status:"S"}})
     }else{
       const saveData=await User.updateOne({_id:findData.fromUser},{
         $inc:{cash_balance:findData.txn_amount}
@@ -8124,8 +8149,8 @@ saveAddRankData: async (req, res) => {
     // if(parentData !== null ){
     //   const rankLimit=await Rank_Data.findOne({rankName:parentData.role})
     //   const parentChildLength=await User.find({parent:parentData._id})
-    //   console.log(parentChildLength.length,rankLimit.rankJoining);
-    //   if(parentChildLength.length>=rankLimit.rankJoining){
+    //   // console.log(parentChildLength.length,rankLimit.rankJoining);
+    //   if(parentChildLength.length<=rankLimit.rankJoining){
     //     return res.send({
     //       status: 0,
     //       Msg: "Limit Reached of Creating User",
