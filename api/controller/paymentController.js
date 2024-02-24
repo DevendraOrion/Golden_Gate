@@ -1055,24 +1055,39 @@ console.log("params", params);
         let BeforeBalance;
 
         if (Debit_credit == "D") {
-       
-          if(u.role=="Company"){
+      
+          if(u.refUserRole=="Company" ){
+            // console.log(u.username)
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance
+            BeforeBalance=u.current_balance+u.txn_amount;
+            current_balance= u.current_balance;
+            console.log(BeforeBalance,current_balance);
+          }
+           else if(u.role=="Company" || u.role=="Agent"){
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance;
             current_balance= u.current_balance-u.txn_amount;
 
           }else{
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance+u.txn_amount;
-            current_balance= u.current_balance;
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance-u.txn_amount;
 
           }
         }  else {
           if(u.refUserRole=="Company"){
+            
             Debit_credit = '<span class="label label-success">Credit</span>';
             BeforeBalance=u.current_balance;
             current_balance= u.current_balance+u.txn_amount;
-          }else{
+            // console.log("===========",BeforeBalance,current_balance);
+          }else if(u.role=="Company"){
+            Debit_credit = '<span class="label label-success">Credit</span>';
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance+u.txn_amount;
+            // console.log("===========",BeforeBalance,current_balance);
+          }
+          else{
             Debit_credit = '<span class="label label-success">Credit</span>';
             BeforeBalance=u.current_balance-u.txn_amount
             current_balance= u.current_balance

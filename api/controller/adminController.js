@@ -7208,7 +7208,7 @@ acceptRequest: async (req, res) => {
         created_at: new Date().getTime(),
         transaction_type: "C",
         resp_msg:  `Deposit by ${adminData.name} `,
-        current_balance: userData.cash_balance+Number(findData.txn_amount),
+        current_balance: userData.cash_balance,
         is_status: "S",
         txn_mode: "T",
         txn_id:transcId+1
@@ -7252,7 +7252,7 @@ acceptRequest: async (req, res) => {
       created_at: new Date().getTime(),
       transaction_type: "C",
       resp_msg:  `Deposit Cancelled By ${userData.name} `,
-      current_balance: userData.cash_balance+Number(findData.txn_amount),
+      current_balance: userData.cash_balance,
       is_status: "C",
       txn_mode: "T",
       txn_id:transcId+1
@@ -7840,7 +7840,7 @@ saveTransferPoint: async (req, res) => {
             user_id: user._id,
             refUser:req.admin._id,
             txn_amount: point,
-            current_balance:user.cash_balance,
+            current_balance:user.cash_balance-point,
             created_at: new Date().getTime(),
             transaction_type: "D",
             resp_msg:  "Debited by Company",
@@ -7940,6 +7940,7 @@ saveTransferPoint: async (req, res) => {
             var newTxn = new DepositRequests({
               fromUser: admin._id,
               toUser: user._id,
+              current_balance:admin.cash_balance,
               txn_amount: Number(point),
               created_at: new Date().getTime(),
               txn_id: transcId,
@@ -7982,6 +7983,7 @@ saveTransferPoint: async (req, res) => {
               fromUser: admin._id,
               toUser: user._id,
               txn_amount: Number(point),
+              current_balance:admin.cash_balance,
               created_at: new Date().getTime(),
               txn_id: transcId,
               resp_msg:  `Chip by ${admin.name}`,

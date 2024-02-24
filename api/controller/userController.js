@@ -1518,13 +1518,13 @@ module.exports = {
             let condition = {
                 is_deleted: false
             };
-            if (params.search) {
-                if (params.search.trim() != '') {
-                    condition['search_id'] = {
-                        $regex: '^' + params.search,
-                        $options: 'i'
-                    };
-                }
+            if (params.search && params.search.trim() !== '') {
+                const searchRegex = new RegExp('^' + params.search.trim(), 'i');
+                condition['$or'] = [
+                    { 'first_name': { $regex: searchRegex } },
+                    { 'last_name': { $regex: searchRegex } },
+                    { 'search_id': { $regex: searchRegex } }
+                ];
             }
             aggregate_obj.push({
                 $match: condition
@@ -1542,7 +1542,7 @@ module.exports = {
                 {
                     $project: {
                         id: '$_id',
-                        text: '$search_id'
+                        text: { $concat: [ "$first_name", " ", "$last_name", " (", "$search_id", ")" ] }
                     }
                 },
                 {
@@ -1571,11 +1571,13 @@ module.exports = {
         console.log(req.query);
         try {
    if(req.admin.role==="Company"){
+    let downline=await Service.DownLine(req.admin._id);
     const params = _.pick(req.query, ['search']);
     let aggregate_obj = [];
     let condition = {
         is_deleted: false,
-        role:req.query.role
+        _id:{$in:downline},        
+        role:req.query.role,
     };
     if (params.search && params.search.trim() !== '') {
         const searchRegex = new RegExp('^' + params.search.trim(), 'i');
@@ -1651,7 +1653,7 @@ module.exports = {
         {
             $project: {
                 id: '$_id',
-                text: '$search_id'
+                text: { $concat: [ "$first_name", " ", "$last_name", " (", "$search_id", ")" ] }
             }
         },
         {
