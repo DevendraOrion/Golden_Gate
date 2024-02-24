@@ -856,7 +856,7 @@ console.log("params", params);
 
     if (Service.validateObjectId(user_id)) {
       matchObj = { $or: [
-        { refUser: ObjectId(user_id) },
+        // { refUser: ObjectId(user_id) },
         { user_id: ObjectId(user_id) }
     ]}
     }
@@ -1013,7 +1013,7 @@ console.log("params", params);
     
 
     
-        // console.log(aggregation_obj);
+        console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     // console.log(req.admin.role);
 

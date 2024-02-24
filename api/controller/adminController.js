@@ -337,12 +337,14 @@ let updateData=await findOldData.map(async (a)=>{
   getAgentList: async (role,adminData) => {
 if(adminData.role==="Company"){
 // console.log("User",user)
+const downlines=await Service.DownLine(adminData._id)
 const users = await User.aggregate([
   {
     $match: {
       is_deleted: false,
       role: { $eq: role },
       // parent:adminData._id
+      _id:{$in:downlines}
     }
   },
   {
@@ -792,12 +794,18 @@ var c = await User.countDocuments({
   getAllGuestUserCount: async (data) => {
 
 if(data.role==="Company"){
-      var c = await User.countDocuments({
-      is_deleted: false,
-     role:"Zone",
 
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "Zone") {
+          // console.log(find)
+            main++;
+        }
     });
-    return c;
+    await Promise.all(Down);
+    return main;
   }
   if (data.role === "State") {
     const downline = await Service.DownLine(data._id);
@@ -825,22 +833,40 @@ if(data.role==="Company"){
 }
 
   },
-  getTotal_state: async () => {
-    //logger.info('ADMIN FB USER Count REQUEST >> ');
-    var c = await User.countDocuments({
-      is_deleted: false,
-     role:"State"
+  getTotal_state: async (data) => {
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "State") {
+          // console.log(find)
+            main++;
+        }
     });
-    return c;
+    await Promise.all(Down);
+    return main;
+    // var c = await User.countDocuments({
+    //   is_deleted: false,
+    //  role:"State"
+    // });
+    // return c;
   },
   getTotal_district: async (data) => {
   console.log(data.role==="State");
  if(data.role==="Company")
- {   var c = await User.countDocuments({
-      is_deleted: false,
-     role:"District",
+ { 
+
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "District") {
+          // console.log(find)
+            main++;
+        }
     });
-    return c;
+    await Promise.all(Down);
+    return main;
   }
  if(data.role==="State"){   
 
@@ -854,11 +880,18 @@ if(data.role==="Company"){
   },
   getTotal_agent: async (data) => {
   if(data.role==="Company"){  
-   var c = await User.countDocuments({
-      is_deleted: false,
-     role:"Agent"
+
+    const downline = await Service.DownLine(data._id);
+    let main = 0;
+    let Down = downline.map(async (a) => {
+        let find = await User.findOne({ _id: a });
+        if (find.role === "Agent") {
+          // console.log(find)
+            main++;
+        }
     });
-    return c;
+    await Promise.all(Down);
+    return main;
   }
   if (data.role !=="Company") {
       const downline = await Service.DownLine(data._id);
@@ -1212,31 +1245,41 @@ const timestamp = now.getTime();
     else return 0;
   },
   getReferralCount: async (admin) => {
-   let transferByAdmin=await Transaction.aggregate([{
+  //  let transferByAdmin=await Transaction.aggregate([{
+  //   $match:{
+  //     txn_mode:"T"
+  //   }
+  //  },
+  //  {
+  //   $group:{
+  //     _id:null,
+  //     sum:{$sum:"$txn_amount"}
+  //   }
+  //  }])
+  //  let transferToUser=await Transaction.aggregate([{
+  //   $match:{
+  //     txn_mode:"T",is_status:"S"
+  //   }
+  //  },
+  //  {
+  //   $group:{
+  //     _id:null,
+  //     sum:{$sum:"$txn_amount"}
+  //   }
+  //  }])
+  //  let realData = (transferByAdmin[0]?.sum - transferToUser[0]?.sum) ? (transferByAdmin[0]?.sum - transferToUser[0].sum) : 0;
+let DownLine=await Service.DownLine(admin._id)
+DownLine.push(admin._id)
+// console.log(DownLine);
+let distributerData=await User.aggregate([
+  {
     $match:{
-      txn_mode:"T"
+      _id:{$in:DownLine}
     }
-   },
-   {
-    $group:{
-      _id:null,
-      sum:{$sum:"$txn_amount"}
-    }
-   }])
-   let transferToUser=await Transaction.aggregate([{
-    $match:{
-      txn_mode:"T",is_status:"S"
-    }
-   },
-   {
-    $group:{
-      _id:null,
-      sum:{$sum:"$txn_amount"}
-    }
-   }])
-   let realData = (transferByAdmin[0]?.sum - transferToUser[0]?.sum) ? (transferByAdmin[0]?.sum - transferToUser[0].sum) : 0;
-
-   return realData 
+  }
+])
+console.log(distributerData);
+   return 0 
   },
   getReferralList: async () => {
     var users = await User.aggregate([
