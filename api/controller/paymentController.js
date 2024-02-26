@@ -1016,10 +1016,18 @@ return res.status(200).send({
         // console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     list = list.map((a) => {
+      console.log(a);
       let username = a.users[0].first_name + " " + a.users[0].last_name;
-      let refusername = "Game";
+      let refusername;
       if (a.refUser[0]) {
-        refusername = a.refUser[0].first_name + " " + a.refUser[0].last_name;
+        refusername = a.refUser[0].first_name + " " + a.refUser[0].last_name+" ("+a.refUser[0].search_id+")";
+      }else{
+        if(a.gameId==1){
+          refusername=`Roullete(${a.room_id})`
+        }
+        if(a.gameId==2){
+          refusername=`Card Roullete(${a.room_id})`
+        }
       }
       let transaction_type = a.transaction_type;
       let created_at = a.created_at;
@@ -1166,7 +1174,7 @@ return res.status(200).send({
           ++index,
           // u?.request_id ?? '',
           ` ${u.username}(${u.search_id})`,
-          ` ${u.refusername}(${u.refSearch_id})`,
+          u.refusername,
           Debit_credit,
           u.transaction_type=="C"? `Deposit By ${u.refusername}`:`Deposit To ${u.username}`,
           created,

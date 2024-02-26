@@ -513,6 +513,23 @@ console.log(req.params);
       admin: req.admin,
       data: users,
       // total: users.count,
+      manual:false
+    });
+  },
+  liveStaticsCardRoullete: async (req, res) => {
+    let role="State"
+    let adminData=req.admin
+    const users = await AdminController.manualCardRoullete();
+    res.render("admin/liveCardRoulleteData", {
+      title: "Live Statics of Card Roulette",
+      type: "statics",
+      sub: "statics",
+      sub2: "cardstatics",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users,
+      // total: users.count,
+      manual:true
     });
   },
   roulleteStatics: async (req, res) => {
