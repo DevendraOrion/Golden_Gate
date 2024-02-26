@@ -520,7 +520,7 @@ console.log(req.params);
     let adminData=req.admin
     const users = await AdminController.manualCardRoullete();
     res.render("admin/roulleteStatics", {
-      title: "Manual Result Card Roulette",
+      title: "Live Statics of Roullete",
       type: "control",
       sub: "control",
       sub2: "carRoulleteReport",

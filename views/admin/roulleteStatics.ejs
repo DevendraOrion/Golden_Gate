@@ -249,66 +249,57 @@ socket.on('OnChipMoveRoullate', function (data) {
     let totalChips = 0;
     let uniqueUsers = new Set();
 
-    // Initialize an object to store chip values for each spot
     let chipValues = {};
 
-    // Check if 'bets' object is empty
     if (Object.keys(data.bets).length === 0) {
-        // Set chip value to 0 for every <p> tag
         document.querySelectorAll('p').forEach(p => {
             p.innerText = '0';
         });
+
+        startCountdown(59, document.getElementById('countdown')); 
     } else {
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
 
-                // Split the spot value into individual spot numbers
                 let spots = b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
-                    spot = spot - 1; // Adjusting spot index as it seems to be 1-based
-                    // Accumulate chip value for each spot
+                    spot = spot - 1; 
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                 });
             });
         });
         
-        // Update the chip value in corresponding <p> tag for each spot
         Object.keys(chipValues).forEach(spot => {
             document.getElementById(spot).innerText = '' + chipValues[spot];
         });
     }
 
-    // Display total users and total bets
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
-
     document.getElementById("totalBet").innerHTML = totalChips;
 });
 
 
+function startCountdown(durationInSeconds, display) {
+    let timer = durationInSeconds;
 
+    const countdownInterval = setInterval(function () {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
 
+        const displayMinutes = String(minutes).padStart(2, '0');
+        const displaySeconds = String(seconds).padStart(2, '0');
 
+        display.textContent = displayMinutes + ':' + displaySeconds;
 
-    function startCountdown(durationInSeconds, display) {
-        let timer = durationInSeconds;
-    
-        const countdownInterval = setInterval(function () {
-            const minutes = Math.floor(timer / 60);
-            const seconds = timer % 60;
+        if (timer <= 0) {
+            clearInterval(countdownInterval);
+        } else {
+            timer--;
+        }
+    }, 1000);
+}
 
-            const displayMinutes = String(minutes).padStart(2, '0');
-            const displaySeconds = String(seconds).padStart(2, '0');
-
-            display.textContent = displayMinutes + ':' + displaySeconds;
-
-            if (timer <= 0) {
-                clearInterval(countdownInterval);
-            } else {
-                timer--;
-            }
-        }, 1000);
-    }
 </script>
 
