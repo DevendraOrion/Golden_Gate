@@ -697,7 +697,7 @@ if (GameId == "1") {
 } else {
     list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
 }
-// console.log(aggregation_obj);
+console.log(aggregation_obj);
 
 // Counting total records after filtering
 let recordsTotal = list.length;
@@ -748,13 +748,11 @@ list = await Promise.all(list.map(async (u, index) => {
     }else{
       status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }
-    // console.log(u);
     if (u.joinData) {
         totalPlayer = u.joinData.length;
         u.joinData.map((a) => {
             totalBetAmt += a.amount;
             totalWinAmt += a.win_amount;
-            // status.push(a.is_updated);
         });
     }
     let spot;
@@ -763,11 +761,10 @@ list = await Promise.all(list.map(async (u, index) => {
       if (u?.spots) {
           parseData = JSON.parse(u.spots);
       } else {
-          parseData = null; // or some default value
+          parseData = null; 
       }
       spot = parseData?.["0"] ?? " ";
-      // console.log(spot);
-      // spot=await Service.findRouletteSpot(mainspot)
+
     } else if (GameId == "2") {
       if(u.spot==0){
           spot = "Ace";
@@ -805,7 +802,6 @@ list = await Promise.all(list.map(async (u, index) => {
     ];
 }));
 
-// Sending response
 return res.status(200).send({
     data: await list,
     draw: new Date().getTime(),
@@ -1025,8 +1021,11 @@ return res.status(200).send({
         if(a.gameId==1){
           refusername=`Roullete(${a.room_id})`
         }
-        if(a.gameId==2){
+        else if(a.gameId==2){
           refusername=`Card Roullete(${a.room_id})`
+        }
+        else if(a.gameId==3){
+          refusername=`Avaitor(${a.room_id})`
         }
       }
       let transaction_type = a.transaction_type;
@@ -1176,7 +1175,7 @@ return res.status(200).send({
           ` ${u.username}(${u.search_id})`,
           u.refusername,
           Debit_credit,
-          u.transaction_type=="C"? `Deposit By ${u.refusername}`:`Deposit To ${u.username}`,
+          u.resp_msg,
           created,
           BeforeBalance,
           txn_amount,

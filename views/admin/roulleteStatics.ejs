@@ -243,13 +243,36 @@
 <script>
 const socket = io('http://103.175.163.97:3070');
 
-       
+const rouletteRate = {
+    Straight: 36,
+    Split: 18,
+    Street: 12,
+    Corner: 9,
+    DoubleStreet: 6,
+    Basket: 3,
+    FiveBet: 3,
+    Column: 3,
+    FirstRow: 3,
+    SecondRow: 3,
+    ThirdRow: 3,
+    FirstDozen: 3,
+    SecondDozen: 3,
+    ThirdDozen: 3,
+    Low: 2,
+    High: 2,
+    Odd: 2,
+    Even: 2,
+    Red: 2,
+    Black: 2,
+};
+
 socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
     let totalChips = 0;
     let uniqueUsers = new Set();
 
     let chipValues = {};
+    let returnAmount = {};
 
     if (Object.keys(data.bets).length === 0) {
         document.querySelectorAll('p').forEach(p => {
@@ -267,12 +290,16 @@ socket.on('OnChipMoveRoullate', function (data) {
                 spots.forEach(spot => {
                     spot = spot - 1; 
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
+                    const rate = rouletteRate[b.type]; // Retrieve the rate based on the bet type
+                    returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                 });
             });
         });
         
         Object.keys(chipValues).forEach(spot => {
-            document.getElementById(spot).innerText = '' + chipValues[spot];
+            const returnId = "return" + (parseInt(spot) );
+            document.getElementById(spot).innerText = chipValues[spot];
+            document.getElementById(returnId).innerText = returnAmount[spot];
         });
     }
 
