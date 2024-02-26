@@ -515,6 +515,21 @@ console.log(req.params);
       // total: users.count,
     });
   },
+  roulleteStatics: async (req, res) => {
+    let role="State"
+    let adminData=req.admin
+    const users = await AdminController.manualCardRoullete();
+    res.render("admin/roulleteStatics", {
+      title: "Manual Result Card Roulette",
+      type: "control",
+      sub: "control",
+      sub2: "carRoulleteReport",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users,
+      // total: users.count,
+    });
+  },
   carRoulleteReport: async (req, res) => {
     const data = await distributorController.addRankssData(req)
     res.render("admin/commissionReport", {

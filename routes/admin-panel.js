@@ -411,5 +411,7 @@ router.get("/chang-pin", AdminPagesController.changePin);
   router.get("/bet-roullete", AdminPagesController.betHistoryRoullete);
   router.get("/bet-card-roullete", AdminPagesController.betHistoryCardRoullete);
   router.get("/betHistory_ajax_transaction", paymentController.getBetHistoryTxnAjax);
+// Bet Statics
+router.get("/roullete-statics", AdminPagesController.roulleteStatics);
 
 };

@@ -1274,12 +1274,33 @@ DownLine.push(admin._id)
 let distributerData=await User.aggregate([
   {
     $match:{
-      _id:{$in:DownLine}
+      _id:{$in:DownLine},
+      role:{$ne:"User"}
+    }
+  },
+  {
+    $group:{
+      _id:null,
+      balance:{$sum:"$cash_balance"}
     }
   }
 ])
-console.log(distributerData);
-   return 0 
+let userData=await User.aggregate([
+  {
+    $match:{
+      _id:{$in:DownLine},
+      role:{$eq:"User"}
+    }
+  },
+  {
+    $group:{
+      _id:null,
+      balance:{$sum:"$cash_balance"}
+    }
+  }
+])
+console.log(distributerData,userData);
+   return {distributerData:distributerData[0]?.balance ??0 ,userData:userData[0]?.balance ??0}
   },
   getReferralList: async () => {
     var users = await User.aggregate([

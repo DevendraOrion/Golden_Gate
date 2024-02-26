@@ -1,0 +1,304 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="timerIds" style="display: flex; justify-content: space-between;">
+            <div>
+                <h3>CountDown</h3>
+                <span id="countdown"></span>
+            </div>
+        </div>
+
+        <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div style="display: flex;">
+                        <h3  style="font-size: 13px; margin-left: 11px;     font-weight: bold;">Total User:<span id="totalUser">0</span></h3>
+                        <h3 style="font-size: 13px; margin-left: 44px;     font-weight: bold;">Total Bet Amount:<span id="totalBet">0</span></h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Spot No</th>
+                                    <th>Bet Amount</th>
+                                    <th>Total Return Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>00</td>
+                                    <td><p id="00">0</p></td>
+                                    <td><p id="return00">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>0</td>
+                                    <td><p id="0">0</p></td>
+                                    <td><p id="return0">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>1</td>
+                                    <td><p id="1">0</p></td>
+                                    <td><p id="return1">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><p id="2">0</p></td>
+                                    <td><p id="return2">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td><p id="3">0</p></td>
+                                    <td><p id="return3">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td><p id="4">0</p></td>
+                                    <td><p id="return4">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td><p id="5">0</p></td>
+                                    <td><p id="return5">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td><p id="6">0</p></td>
+                                    <td><p id="return6">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td><p id="7">0</p></td>
+                                    <td><p id="return7">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td><p id="8">0</p></td>
+                                    <td><p id="return8">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td><p id="9">0</p></td>
+                                    <td><p id="return9">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td><p id="10">0</p></td>
+                                    <td><p id="return10">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td><p id="11">0</p></td>
+                                    <td><p id="return11">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>12</td>
+                                    <td><p id="12">0</p></td>
+                                    <td><p id="return12">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>13</td>
+                                    <td><p id="13">0</p></td>
+                                    <td><p id="return13">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>14</td>
+                                    <td><p id="14">0</p></td>
+                                    <td><p id="return14">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>15</td>
+                                    <td><p id="15">0</p></td>
+                                    <td><p id="return15">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>16</td>
+                                    <td><p id="16">0</p></td>
+                                    <td><p id="return16">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>17</td>
+                                    <td><p id="17">0</p></td>
+                                    <td><p id="return17">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>18</td>
+                                    <td><p id="18">0</p></td>
+                                    <td><p id="return18">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>19</td>
+                                    <td><p id="19">0</p></td>
+                                    <td><p id="return19">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>20</td>
+                                    <td><p id="20">0</p></td>
+                                    <td><p id="return20">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>21</td>
+                                    <td><p id="21">0</p></td>
+                                    <td><p id="return21">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>22</td>
+                                    <td><p id="22">0</p></td>
+                                    <td><p id="return22">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>23</td>
+                                    <td><p id="23">0</p></td>
+                                    <td><p id="return23">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>24</td>
+                                    <td><p id="24">0</p></td>
+                                    <td><p id="return24">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>25</td>
+                                    <td><p id="25">0</p></td>
+                                    <td><p id="return25">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>26</td>
+                                    <td><p id="26">0</p></td>
+                                    <td><p id="return26">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>27</td>
+                                    <td><p id="27">0</p></td>
+                                    <td><p id="return27">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>28</td>
+                                    <td><p id="28">0</p></td>
+                                    <td><p id="return28">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>29</td>
+                                    <td><p id="29">0</p></td>
+                                    <td><p id="return29">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>30</td>
+                                    <td><p id="30">0</p></td>
+                                    <td><p id="return30">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>31</td>
+                                    <td><p id="31">0</p></td>
+                                    <td><p id="return31">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>32</td>
+                                    <td><p id="32">0</p></td>
+                                    <td><p id="return32">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>33</td>
+                                    <td><p id="33">0</p></td>
+                                    <td><p id="return33">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>34</td>
+                                    <td><p id="34">0</p></td>
+                                    <td><p id="return34">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>35</td>
+                                    <td><p id="35">0</p></td>
+                                    <td><p id="return35">0</p></td>
+                                </tr>
+                                <tr>
+                                    <td>36</td>
+                                    <td><p id="36">0</p></td>
+                                    <td><p id="return36">0</p></td>
+                                </tr>
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script>
+const socket = io('http://103.175.163.97:3070');
+
+       
+socket.on('OnChipMoveRoullate', function (data) {
+    console.log(data);
+    let totalChips = 0;
+    let uniqueUsers = new Set();
+
+    // Check if 'bets' object is empty
+    if (Object.keys(data.bets).length === 0) {
+        // Set chip value to 0 for every <p> tag
+        document.querySelectorAll('p').forEach(p => {
+            p.innerText = '0';
+        });
+    } else {
+        Object.values(data.bets).forEach(bet => {
+            bet.forEach(b => {
+                totalChips += b.chip;
+                uniqueUsers.add(b.playerId); 
+                // console.log(b.spot);
+                let spots = b.spot.split(',').filter(spot => spot !== '');
+                spots.forEach(spot => {
+                    spot=spot-1
+                    console.log(b.chip);
+                    // Display chip value in corresponding <p> tag with spot number as id
+                    document.getElementById(spot).innerText = '' + b.chip;
+                });
+            });
+        });
+    }
+
+    let totalUser = uniqueUsers.size;
+    let showUser=document.getElementById("totalUser").innerHTML=totalUser;
+    let showUseramt=document.getElementById("totalBet").innerHTML=totalChips;
+});
+
+
+
+
+
+    function startCountdown(durationInSeconds, display) {
+        let timer = durationInSeconds;
+    
+        const countdownInterval = setInterval(function () {
+            const minutes = Math.floor(timer / 60);
+            const seconds = timer % 60;
+
+            const displayMinutes = String(minutes).padStart(2, '0');
+            const displaySeconds = String(seconds).padStart(2, '0');
+
+            display.textContent = displayMinutes + ':' + displaySeconds;
+
+            if (timer <= 0) {
+                clearInterval(countdownInterval);
+            } else {
+                timer--;
+            }
+        }, 1000);
+    }
+</script>
+

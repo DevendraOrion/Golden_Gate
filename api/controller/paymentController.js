@@ -765,9 +765,9 @@ list = await Promise.all(list.map(async (u, index) => {
       } else {
           parseData = null; // or some default value
       }
-       let mainspot = parseData?.["0"] ?? " ";
-      console.log(spot);
-      spot=await Service.findRouletteSpot(mainspot)
+      spot = parseData?.["0"] ?? " ";
+      // console.log(spot);
+      // spot=await Service.findRouletteSpot(mainspot)
     } else if (GameId == "2") {
       if(u.spot==0){
           spot = "Ace";
@@ -818,7 +818,7 @@ return res.status(200).send({
     var startTime = new Date();
 
     const params = req.query;
-console.log("params", params);
+// console.log("params", params);
     let matchObj = {};
     var sortObj = {};
 
@@ -949,9 +949,9 @@ console.log("params", params);
           as: "users",
         },
       },
-      {
-        $unwind: "$users",
-      },
+      // {
+      //   $unwind: "$users",
+      // },
       {
         $lookup: {
           from: "users",
@@ -960,9 +960,9 @@ console.log("params", params);
           as: "refUser",
         },
       },
-      {
-        $unwind: "$refUser",
-      },
+      // {
+      //   $unwind: "$refUser",
+      // },
 
     );
 
@@ -984,38 +984,83 @@ console.log("params", params);
     }
 
 
-      aggregation_obj.push(
-          {
-          $project: {
-            _id: 1,
-            username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
-            refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
-            transaction_type: 1,
-            created_at: 1,
-            resp_msg: 1,
-            txn_amount: 1,
-            current_balance:1,
-            payment_mode: 1,
-            refSearch_id: "$refUser.search_id",
-            search_id: "$users.search_id",
-            user_id: "$users._id",
-            role: "$users.role",
-            refUserRole: "$refUser.role",
-            is_status: 1,
-            txn_mode: 1,
-          },
-        },
-        {
-          $match: matchObj2,
-        }
-        );
+      // aggregation_obj.push(
+      //     {
+      //     $project: {
+      //       _id: 1,
+      //       username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
+      //       refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
+      //       transaction_type: 1,
+      //       created_at: 1,
+      //       resp_msg: 1,
+      //       txn_amount: 1,
+      //       current_balance:1,
+      //       payment_mode: 1,
+      //       refSearch_id: "$refUser.search_id",
+      //       search_id: "$users.search_id",
+      //       user_id: "$users._id",
+      //       role: "$users.role",
+      //       refUserRole: "$refUser.role",
+      //       is_status: 1,
+      //       txn_mode: 1,
+      //     },
+      //   },
+      //   {
+      //     $match: matchObj2,
+      //   }
+      //   );
       
     
 
     
-        console.log(aggregation_obj);
+        // console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
-    // console.log(req.admin.role);
+    list = list.map((a) => {
+      let username = a.users[0].first_name + " " + a.users[0].last_name;
+      let refusername = "Game";
+      if (a.refUser[0]) {
+        refusername = a.refUser[0].first_name + " " + a.refUser[0].last_name;
+      }
+      let transaction_type = a.transaction_type;
+      let created_at = a.created_at;
+      let txn_amount = a.txn_amount;
+      let resp_msg = a.resp_msg;
+      let current_balance = a.current_balance;
+      let payment_mode = a.payment_mode;
+      let refSearch_id = " ";
+      let refUserRole = " ";
+      if (a.refUser[0]) {
+        refSearch_id = a.refUser[0].search_id;
+        refUserRole = a.refUser[0].role;
+      }
+      let search_id = a.users[0].search_id;
+      let user_id = a.users[0]._id;
+      let role = a.users[0].role;
+      let txn_mode = a.txn_mode;
+      let is_status = a.is_status;
+    
+      return {
+        username,
+        refusername,
+        transaction_type,
+        created_at,
+        txn_amount,
+        resp_msg,
+        current_balance,
+        payment_mode,
+        refSearch_id,
+        refUserRole,
+        search_id,
+        user_id,
+        role,
+        txn_mode,
+        is_status
+      };
+    });
+    
+    console.log(list);
+    
+    // console.log(list);
 
     let aggregate_rf = [];
 
