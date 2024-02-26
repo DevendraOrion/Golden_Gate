@@ -249,6 +249,9 @@ socket.on('OnChipMoveRoullate', function (data) {
     let totalChips = 0;
     let uniqueUsers = new Set();
 
+    // Initialize an object to store chip values for each spot
+    let chipValues = {};
+
     // Check if 'bets' object is empty
     if (Object.keys(data.bets).length === 0) {
         // Set chip value to 0 for every <p> tag
@@ -260,22 +263,29 @@ socket.on('OnChipMoveRoullate', function (data) {
             bet.forEach(b => {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
-                // console.log(b.spot);
+
+                // Split the spot value into individual spot numbers
                 let spots = b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
-                    spot=spot-1
-                    console.log(b.chip);
-                    // Display chip value in corresponding <p> tag with spot number as id
-                    document.getElementById(spot).innerText = '' + b.chip;
+                    spot = spot - 1; // Adjusting spot index as it seems to be 1-based
+                    // Accumulate chip value for each spot
+                    chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                 });
             });
         });
+        
+        // Update the chip value in corresponding <p> tag for each spot
+        Object.keys(chipValues).forEach(spot => {
+            document.getElementById(spot).innerText = '' + chipValues[spot];
+        });
     }
 
-    let totalUser = uniqueUsers.size;
-    let showUser=document.getElementById("totalUser").innerHTML=totalUser;
-    let showUseramt=document.getElementById("totalBet").innerHTML=totalChips;
+    // Display total users and total bets
+    document.getElementById("totalUser").innerHTML = uniqueUsers.size;
+
+    document.getElementById("totalBet").innerHTML = totalChips;
 });
+
 
 
 
