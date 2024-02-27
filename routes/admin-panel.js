@@ -415,4 +415,9 @@ router.get("/chang-pin", AdminPagesController.changePin);
 router.get("/roullete-statics", AdminPagesController.roulleteStatics);
 router.get("/card-roullete-statics", AdminPagesController.liveStaticsCardRoullete);
 
+//Commission Report
+router.get("/commission-report", AdminPagesController.allCommissionReport);
+router.get("/commission_ajax_transaction", paymentController.getCommissionAjax);
+
+
 };

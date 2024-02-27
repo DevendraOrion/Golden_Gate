@@ -923,12 +923,12 @@ return res.status(200).send({
    
     let incData=await Service.DownLine(req.admin._id)
     let a=incData.push(req.admin._id)
-
-    if (req.admin.role==="Company") {
-      matchObj.user_id = {$in:incData};
-    }else {
-      matchObj.user_id = req.admin._id;
-    }
+    matchObj.user_id = {$in:incData};
+    // if (req.admin.role==="Company") {
+    //   matchObj.user_id = {$in:incData};
+    // }else {
+    //   matchObj.user_id = req.admin._id;
+    // }
     let aggregation_obj = [];
     if (matchObj != {})
     aggregation_obj.push({
@@ -1202,6 +1202,309 @@ return res.status(200).send({
           txn_amount,
           current_balance.toFixed(2),
           status_,
+        ];
+      })
+    );
+
+
+
+    return res.status(200).send({
+      data: await list,
+      draw: new Date().getTime(),
+      recordsTotal: recordsTotal,
+      recordsFiltered: recordsFiltered,
+    });
+  },
+  getCommissionAjax: async function (req, res) {
+    var startTime = new Date();
+console.log("+============");
+    const params = req.query;
+// console.log("params", params);
+    let matchObj = {};
+    var sortObj = {};
+  matchObj.is_status= {$ne:"P"} ;
+  matchObj.txn_mode="C" ;
+
+    if (params.order) {
+      if (params.order[0]) {
+        // console.log(params.order[0]);
+        // if (params.order[0].column == "0") {
+        //   // SORT BY TXN AMOUNT
+        //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
+        // }
+          if (params.order[0].column == "2") {
+          // SORT BY TXN AMOUNT
+          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "3") {
+          // SORT BY WIN WALLET
+          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "4") {
+          // SORT BY MAIN WALLET
+          sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
+        } else if (params.order[0].column == "1") {
+          // SORT BY DATE
+          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
+        } else {
+          sortObj = { created_at: -1 };
+        }
+      } else {
+        sortObj = { created_at: -1 };
+      }
+    } else {
+      sortObj = { created_at: -1 };
+    }
+
+    const user_id = params.id || "";
+
+    if (Service.validateObjectId(user_id)) {
+      matchObj = { $or: [
+        // { refUser: ObjectId(user_id) },
+        { user_id: ObjectId(user_id) }
+    ]}
+    }
+
+    if (!_.isEmpty(params.status)&& params.status !== " ") {
+      matchObj.transaction_type = params.status;
+    }
+
+    if (!_.isEmpty(params.type) && params.type !== " ") {
+      matchObj.txn_mode = params.type;
+    }
+    let matchObj2 = {}
+    if (!_.isEmpty(params.rank)) {
+      matchObj2.role = params.rank
+    }
+    if (!_.isEmpty(params.startDate)) {
+      let sdate = params.startDate;
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+        console.log(timestamp);
+      } else {
+        console.error("Invalid date string");
+      }
+      
+      matchObj.created_at = {
+                $gte: timestamp.toString()
+      }
+    }else{
+let today = new Date();
+
+let daysToSubtract = today.getDay() - 1;
+if (daysToSubtract < 0) {
+  daysToSubtract = 6;
+}
+
+let mondayDate = new Date(today.getTime() - (daysToSubtract * 24 * 60 * 60 * 1000));
+
+mondayDate.setHours(0, 0, 0, 0);
+
+let mondayTimestamp = mondayDate.getTime() / 1000; 
+
+console.log(mondayDate);
+
+// console.log(previousSundayTimestamp);
+      matchObj.created_at = {
+        $gte: mondayTimestamp.toString()
+}
+    }
+
+
+
+    if (!_.isEmpty(params.endDate)) {
+      let sdate = params.endDate + 'T23:59:59.999Z';
+      let timestamp
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
+         timestamp = dateObject.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $lt: timestamp.toString()
+      };
+    }
+    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
+      let startdate = params.startDate ;
+      let endDate = params.endDate + 'T23:59:59.999Z';
+      let timestampstart
+      let timestampsend
+      let dateObjectstart = new Date(startdate);
+      let dateObjectend = new Date(endDate);
+      if (!isNaN(dateObjectstart.getTime())) {
+        timestampstart = dateObjectstart.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+      if (!isNaN(dateObjectend.getTime())) {
+        timestampsend = dateObjectend.getTime();
+      } else {
+        console.error("Invalid date string");
+      }
+        matchObj.created_at = {
+          $gte: timestampstart.toString(),
+          $lt: timestampsend.toString()
+      };
+    }
+    
+   
+    let incData=await Service.DownLine(req.admin._id)
+    let a=incData.push(req.admin._id)
+
+    if (req.admin.role==="Company") {
+      matchObj.user_id = {$in:incData};
+    }else {
+      matchObj.user_id = req.admin._id;
+    }
+    let aggregation_obj = [];
+    if (matchObj != {})
+    aggregation_obj.push({
+      $match: matchObj,
+    });
+    aggregation_obj.push(
+      
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users",
+        },
+      },
+    {
+      $unwind: "$users",
+    },
+    {
+      $group:{
+        _id: "$users._id",
+        searchId:{$first:"$users.search_id"},
+        txn_amount:{$sum:"$txn_amount"},
+        created_at:{$first:"$created_at"},
+        txn_mode:{$first:"$txn_mode"},
+        first_name:{$first:"$users.first_name"},       
+        last_name:{$first:"$users.last_name"},   
+        transaction_type:{$first:"$transaction_type"},
+        current_balance:{$first:"$current_balance"},
+        resp_msg:{$first:"$resp_msg"},
+        is_status:{$first:"$is_status"},
+        role:{$first:"$users.role"},    
+      }
+    });
+
+    aggregation_obj.push({
+      $match: matchObj2,
+    });
+
+    aggregation_obj.push(
+      {
+        $sort: sortObj,
+      },
+      {
+        $skip: params.start == "All" ? 0 : parseInt(params.start),
+      },
+      
+    );
+
+    if (params.length != -1) {
+      aggregation_obj.push({
+        $limit: parseInt(params.length),
+      });
+    }
+console.log(aggregation_obj);
+    let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
+    list = list.map((a) => {
+      let username = a.first_name + " " + a.last_name;
+      let creditDebit=a.transaction_type;
+      let subject=a.resp_msg;
+      let txn_amount=a.txn_amount;
+      let status=a.is_status;
+      let search_id= a.searchId;
+      let current_balance=a.current_balance;
+      let resp_msg=a.resp_msg
+      return {
+        username,
+        creditDebit,
+        subject,
+        txn_amount,
+        status,
+        search_id,
+        current_balance,
+        resp_msg
+      };
+    });
+    
+    let aggregate_rf = [];
+
+    if (matchObj) {
+      aggregate_rf.push(
+        {
+        $match: matchObj,
+      },  {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "users",
+        },
+      },
+    {
+      $unwind: "$users",
+    },
+    {
+      $group:{
+        _id: "$users._id",
+        searchId:{$first:"$users.search_id"},
+        txn_amount:{$sum:"$txn_amount"},
+        created_at:{$first:"$created_at"},
+        txn_mode:{$first:"$txn_mode"},
+        first_name:{$first:"$users.first_name"},       
+        last_name:{$first:"$users.last_name"},   
+        transaction_type:{$first:"$transaction_type"},
+        current_balance:{$first:"$current_balance"},
+        resp_msg:{$first:"$resp_msg"},
+        is_status:{$first:"$is_status"},    
+      }
+    }
+      );
+    }
+
+    aggregate_rf.push({
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+      },
+    });
+
+
+    let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
+
+    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    var recordsTotal = await Transaction.find({}).countDocuments();
+
+    list = await Promise.all(
+      list.map(async (u,index) => {
+     let debitCreit=u.creditDebit
+     if(debitCreit==="C"){
+      debitCreit = '<span class="label label-success">Credit</span>';
+     }else{
+      debitCreit = '<span class="label label-danger">Debit</span>';
+     }
+     let is_status=a.status
+     if(is_status==="P"){
+      is_status = '<span class="label label-warning">Pending</span>';
+     }else{
+      is_status = '<span class="label label-success">Success</span>';
+     }
+        return [
+          ++index,
+          ` ${u.username}(${u.search_id})`,
+          debitCreit,
+          u.resp_msg,
+          (u.current_balance-u.txn_amount).toFixed(2),
+          (u.txn_amount).toFixed(2),
+          (u.current_balance).toFixed(2),
+          is_status,
         ];
       })
     );

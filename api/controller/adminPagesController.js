@@ -1293,6 +1293,20 @@ role="User"
       data: transactions.list,
     });
   },
+  allCommissionReport: async (req, res) => {
+    let admin=req.admin
+    const transactions = await paymentController.transactionList(10,admin);
+    res.render("admin/commissionData", {
+      title: "Commission Report",
+      type: "commrep",
+      sub: "commrep",
+      sub2: "report",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+    });
+  },
   gameRecords: async (req, res) => {
     const allGameRecords = await AdminController.allGameRecords(10);
     // let allGameRecords =""
