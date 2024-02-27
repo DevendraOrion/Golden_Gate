@@ -662,7 +662,6 @@ if(GameId==2){
 });
 }
 
-// Lookup stage
 aggregation_obj.push({
     $lookup: {
         from: "join_games",
@@ -672,23 +671,20 @@ aggregation_obj.push({
     }
 });
 
-// Match stage for filtering
 if (!_.isEmpty(matchObj)) {
     aggregation_obj.push({
         $match: matchObj,
     });
 }
 
-// Limit and Skip stages for pagination
-const pageSize = parseInt(params.length) || 10; // Number of records per page
-const pageNumber = parseInt(params.start) || 0; // Page number (0-indexed)
+const pageSize = parseInt(params.length) || 10; 
+const pageNumber = parseInt(params.start) || 0; 
 aggregation_obj.push({
     $skip: pageNumber * pageSize
 }, {
     $limit: pageSize
 });
-
-// Executing the aggregation
+// console.log(aggregation_obj);
 let list;
 if (GameId == "1") {
     list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
@@ -697,12 +693,12 @@ if (GameId == "1") {
 } else {
     list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
 }
-console.log(aggregation_obj);
+// console.log(list);
 
-// Counting total records after filtering
+
+
 let recordsTotal = list.length;
 
-// Counting total records without pagination
 let totalCountAggregate = [];
 if (!_.isEmpty(matchObj)) {
     totalCountAggregate.push({
@@ -735,7 +731,9 @@ if (totalCountAggregate.length > 0) {
     recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[0].totalCount : 0;
 }
 // console.log(totalAggregateResult);
+let downLine=await Service.DownLine(req.admin._id)
 
+console.log(downLine);
 list = await Promise.all(list.map(async (u, index) => {
     let totalPlayer = 0;
     let totalBetAmt = 0;
@@ -925,7 +923,7 @@ return res.status(200).send({
    
     let incData=await Service.DownLine(req.admin._id)
     let a=incData.push(req.admin._id)
-    // console.log(incData);
+
     if (req.admin.role==="Company") {
       matchObj.user_id = {$in:incData};
     }else {
@@ -937,6 +935,12 @@ return res.status(200).send({
       $match: matchObj,
     });
     aggregation_obj.push(
+      {
+        $match: {
+             is_status: {$ne:"P"} 
+        }
+      },
+      
       {
         $lookup: {
           from: "users",
@@ -1009,7 +1013,7 @@ return res.status(200).send({
     
 
     
-        // console.log(aggregation_obj);
+        console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     list = list.map((a) => {
       console.log(a);
@@ -1045,7 +1049,7 @@ return res.status(200).send({
       let role = a.users[0].role;
       let txn_mode = a.txn_mode;
       let is_status = a.is_status;
-    
+      let gameId=a?.gameId??0
       return {
         username,
         refusername,
@@ -1061,11 +1065,12 @@ return res.status(200).send({
         user_id,
         role,
         txn_mode,
-        is_status
+        is_status,
+        gameId
       };
     });
     
-    console.log(list);
+    // console.log(list);
     
     // console.log(list);
 
@@ -1136,14 +1141,30 @@ return res.status(200).send({
             Debit_credit = '<span class="label label-danger">Debit</span>';
             BeforeBalance=u.current_balance+u.txn_amount;
             current_balance= u.current_balance;
-            console.log(BeforeBalance,current_balance);
+            // console.log(BeforeBalance,current_balance);
           }
            else if(u.role=="Company" ){
             Debit_credit = '<span class="label label-danger">Debit</span>';
             BeforeBalance=u.current_balance;
             current_balance= u.current_balance-u.txn_amount;
 
-          }else{
+          }
+          else if(u.gameId==2){
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance-u.txn_amount;
+          }
+          else if(u.gameId==1){
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance-u.txn_amount;
+          }
+          else if(u.gameId==3){
+            Debit_credit = '<span class="label label-danger">Debit</span>';
+            BeforeBalance=u.current_balance-u.txn_amount;
+            current_balance= u.current_balance-u.txn_amount;
+          }
+          else{
             Debit_credit = '<span class="label label-danger">Debit</span>';
             BeforeBalance=u.current_balance+u.txn_amount;
             current_balance= u.current_balance;
@@ -1177,9 +1198,9 @@ return res.status(200).send({
           Debit_credit,
           u.resp_msg,
           created,
-          BeforeBalance,
+          BeforeBalance.toFixed(2),
           txn_amount,
-          current_balance,
+          current_balance.toFixed(2),
           status_,
         ];
       })
