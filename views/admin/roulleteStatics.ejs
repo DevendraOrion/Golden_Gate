@@ -366,6 +366,15 @@ socket.on('OnChipMoveRoullate', function (data) {
     let uniqueUsers = new Set();
     let userTotalBet = {}; // Mapping to store total bet amount for each userId
     let userStraightSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Straight"
+    let userSplitSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Split"
+    let userCornerSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Corner"
+    let userThreeSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Three"
+    let userLowSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Low"
+    let userHighSpot = {}; // Mapping to store the spot for each userId if the type of spot is "High"
+    let userOddSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Odd"
+    let userEvenSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Even"
+    let userRedSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Red"
+    let userBlackSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Black"
 
     let typeData = {};
     let chipValues = {};
@@ -394,24 +403,50 @@ socket.on('OnChipMoveRoullate', function (data) {
                     userIdSet = true;
                 }
 
-                if (b.type === 'Straight') {
-                    let realSpot=parseInt(b.spot)-1
-                    userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realSpot + ',';
-                    const straightSpotElement = document.getElementById('userStraight');
-                    if (straightSpotElement) {
-                        straightSpotElement.innerText = userStraightSpot[b.playerId];
-                    }
+                // Update spot for the current userId based on the type of spot
+                switch (b.type) {
+                    case 'Straight':
+                        let realStraightSpot=parseInt(b.spot)-1;
+                        userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realStraightSpot + ',';
+                        break;
+                    case 'Split':
+                        let realSplitSpot=parseInt(b.spot)-1;
+                        userSplitSpot[b.playerId] = (userSplitSpot[b.playerId] || '') + realSplitSpot + ',';
+                        break;
+                    case 'Corner':
+                        let realCornerSpot=parseInt(b.spot)-1;
+                        userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + realCornerSpot + ',';
+                        break;
+                    case 'Three':
+                        let realThreeSpot=parseInt(b.spot)-1;
+                        userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + realThreeSpot + ',';
+                        break;
+                    case 'Low':
+                        let realLowSpot=parseInt(b.spot)-1;
+                        userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + realLowSpot + ',';
+                        break;
+                    case 'High':
+                        let realHighSpot=parseInt(b.spot)-1;
+                        userHighSpot[b.playerId] = (userHighSpot[b.playerId] || '') + realHighSpot + ',';
+                        break;
+                    case 'Odd':
+                        let realOddSpot=parseInt(b.spot)-1;
+                        userOddSpot[b.playerId] = (userOddSpot[b.playerId] || '') + realOddSpot + ',';
+                        break;
+                    case 'Even':
+                        let realEvenSpot=parseInt(b.spot)-1;
+                        userEvenSpot[b.playerId] = (userEvenSpot[b.playerId] || '') + realEvenSpot + ',';
+                        break;
+                    case 'Red':
+                        userRedSpot[b.playerId] = (userRedSpot[b.playerId] || '') + b.spot + ',';
+                        break;
+                    case 'Black':
+                        let realBlackSpot=parseInt(b.spot)-1;
+                        userBlackSpot[b.playerId] = (userBlackSpot[b.playerId] || '') + b.spot + ',';
+                        break;
                 }
-                // if (b.type === 'Split') {
-                //     let realSpot=Number(b.spot)-1
-                //     userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realSpot + '';
-                //     const straightSpotElement = document.getElementById('userSplit');
-                //     if (straightSpotElement) {
-                //         straightSpotElement.innerText = userStraightSpot[b.playerId];
-                //     }
-                // }
-
-                let spots = b.spot.split(',').filter(spot => spot !== '');
+                console.log(b.spot);
+                let spots = Array.isArray(b.spot) ? b.spot : b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
@@ -429,6 +464,31 @@ socket.on('OnChipMoveRoullate', function (data) {
             totalBetElement.innerText = userTotalBet[userId];
         }
 
+        // Update each player's data for each type of spot
+        updatePlayerSpot('userStraight', userStraightSpot);
+        updatePlayerSpot('userSplit', userSplitSpot);
+        updatePlayerSpot('userCorner', userCornerSpot);
+        updatePlayerSpot('userThree', userThreeSpot);
+        updatePlayerSpot('userLow', userLowSpot);
+        updatePlayerSpot('userHigh', userHighSpot);
+        updatePlayerSpot('userOdd', userOddSpot);
+        updatePlayerSpot('userEven', userEvenSpot);
+        updatePlayerSpot('userRed', userRedSpot);
+        updatePlayerSpot('userBlack', userBlackSpot);
+
+        // Function to update player's spot data
+        function updatePlayerSpot(elementId, spotData) {
+            const playerId = document.getElementById('userId').innerText;
+            const spotElement = document.getElementById(elementId);
+            if (playerId && spotData[playerId] && spotElement) {
+                spotElement.innerText = spotData[playerId];
+            } else {
+                spotElement.innerText = '0';
+            }
+        }
+
+        // Update the rest of the data (e.g., chip values, profit, etc.)
+        // Note: This part of the code remains unchanged from your original implementation
         let three = 0;
         Object.keys(typeData).forEach(spot => {
             const id = "profit" + spot;
