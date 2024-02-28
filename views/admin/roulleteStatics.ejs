@@ -12,8 +12,16 @@
     <section class="content container-fluid">
         <div class="timerIds" style="display: flex; justify-content: space-between;">
             <div>
-                <h3>CountDown</h3>
-                <span id="countdown"></span>
+                <p style="font-weight: bold;">Control Type</p>
+            </div>
+            <div>
+                <!-- <h3>CountDown</h3> -->
+                <span id="countdown" style="font-size: 18px;">00.00</span>
+            </div>
+            <div >
+                <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span id="totalUser">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span id="totalBet">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Profit:<span id="totalProfit">0</span></h3>
             </div>
         </div>
 
@@ -21,213 +29,299 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="box">
-                    <div style="display: flex;">
-                        <h3  style="font-size: 13px; margin-left: 11px;     font-weight: bold;">Total User:<span id="totalUser">0</span></h3>
-                        <h3 style="font-size: 13px; margin-left: 44px;     font-weight: bold;">Total Bet Amount:<span id="totalBet">0</span></h3>
-                    </div>
+                    <h2 style="    display: flex;
+                    justify-content: center;
+                    font-size: 16px;">Bet Item List</h2>
                     <!-- /.box-header -->
                     <div class="box-body table-responsive">
                         <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Spot No</th>
-                                    <th>Bet Amount</th>
-                                    <th>Total Return Amount</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 <tr>
+                                    <th>Item</th>
                                     <td>00</td>
-                                    <td><p id="00">0</p></td>
-                                    <td><p id="return00">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>0</td>
-                                    <td><p id="0">0</p></td>
-                                    <td><p id="return0">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>1</td>
-                                    <td><p id="1">0</p></td>
-                                    <td><p id="return1">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>2</td>
-                                    <td><p id="2">0</p></td>
-                                    <td><p id="return2">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>3</td>
-                                    <td><p id="3">0</p></td>
-                                    <td><p id="return3">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>4</td>
-                                    <td><p id="4">0</p></td>
-                                    <td><p id="return4">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>5</td>
-                                    <td><p id="5">0</p></td>
-                                    <td><p id="return5">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>6</td>
-                                    <td><p id="6">0</p></td>
-                                    <td><p id="return6">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>7</td>
-                                    <td><p id="7">0</p></td>
-                                    <td><p id="return7">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>8</td>
-                                    <td><p id="8">0</p></td>
-                                    <td><p id="return8">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>9</td>
-                                    <td><p id="9">0</p></td>
-                                    <td><p id="return9">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>10</td>
-                                    <td><p id="10">0</p></td>
-                                    <td><p id="return10">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>11</td>
-                                    <td><p id="11">0</p></td>
-                                    <td><p id="return11">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>12</td>
-                                    <td><p id="12">0</p></td>
-                                    <td><p id="return12">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>13</td>
-                                    <td><p id="13">0</p></td>
-                                    <td><p id="return13">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>14</td>
-                                    <td><p id="14">0</p></td>
-                                    <td><p id="return14">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>15</td>
-                                    <td><p id="15">0</p></td>
-                                    <td><p id="return15">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>16</td>
-                                    <td><p id="16">0</p></td>
-                                    <td><p id="return16">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>17</td>
-                                    <td><p id="17">0</p></td>
-                                    <td><p id="return17">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>18</td>
-                                    <td><p id="18">0</p></td>
-                                    <td><p id="return18">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>19</td>
-                                    <td><p id="19">0</p></td>
-                                    <td><p id="return19">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>20</td>
-                                    <td><p id="20">0</p></td>
-                                    <td><p id="return20">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>21</td>
-                                    <td><p id="21">0</p></td>
-                                    <td><p id="return21">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>22</td>
-                                    <td><p id="22">0</p></td>
-                                    <td><p id="return22">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>23</td>
-                                    <td><p id="23">0</p></td>
-                                    <td><p id="return23">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>24</td>
-                                    <td><p id="24">0</p></td>
-                                    <td><p id="return24">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>25</td>
-                                    <td><p id="25">0</p></td>
-                                    <td><p id="return25">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>26</td>
-                                    <td><p id="26">0</p></td>
-                                    <td><p id="return26">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>27</td>
-                                    <td><p id="27">0</p></td>
-                                    <td><p id="return27">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>28</td>
-                                    <td><p id="28">0</p></td>
-                                    <td><p id="return28">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>29</td>
-                                    <td><p id="29">0</p></td>
-                                    <td><p id="return29">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>30</td>
-                                    <td><p id="30">0</p></td>
-                                    <td><p id="return30">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>31</td>
-                                    <td><p id="31">0</p></td>
-                                    <td><p id="return31">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>32</td>
-                                    <td><p id="32">0</p></td>
-                                    <td><p id="return32">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>33</td>
-                                    <td><p id="33">0</p></td>
-                                    <td><p id="return33">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>34</td>
-                                    <td><p id="34">0</p></td>
-                                    <td><p id="return34">0</p></td>
-                                </tr>
-                                <tr>
                                     <td>35</td>
+                                    <td>36</td>
+                                </tr>
+                      
+                   
+                                <tr>
+                                    <th>Bet Amount</th>
+                                    <td><p id="00">0</p></td>
+                                    <td><p id="0">0</p></td>
+                                    <td><p id="1">0</p></td>
+                                    <td><p id="2">0</p></td>
+                                    <td><p id="3">0</p></td>
+                                    <td><p id="4">0</p></td>
+                                    <td><p id="5">0</p></td>
+                                    <td><p id="6">0</p></td>
+                                    <td><p id="7">0</p></td>
+                                    <td><p id="8">0</p></td>
+                                    <td><p id="9">0</p></td>
+                                    <td><p id="10">0</p></td>
+                                    <td><p id="11">0</p></td>
+                                    <td><p id="12">0</p></td>
+                                    <td><p id="13">0</p></td>
+                                    <td><p id="14">0</p></td>
+                                    <td><p id="15">0</p></td>
+                                    <td><p id="16">0</p></td>
+                                    <td><p id="17">0</p></td>
+                                    <td><p id="18">0</p></td>
+                                    <td><p id="19">0</p></td>
+                                    <td><p id="20">0</p></td>
+                                    <td><p id="21">0</p></td>
+                                    <td><p id="22">0</p></td>
+                                    <td><p id="23">0</p></td>
+                                    <td><p id="24">0</p></td>
+                                    <td><p id="25">0</p></td>
+                                    <td><p id="26">0</p></td>
+                                    <td><p id="27">0</p></td>
+                                    <td><p id="28">0</p></td>
+                                    <td><p id="29">0</p></td>
+                                    <td><p id="30">0</p></td>
+                                    <td><p id="31">0</p></td>
+                                    <td><p id="32">0</p></td>
+                                    <td><p id="33">0</p></td>
+                                    <td><p id="34">0</p></td>
                                     <td><p id="35">0</p></td>
-                                    <td><p id="return35">0</p></td>
+                                    <td><p id="36">0</p></td>
+                               
                                 </tr>
                                 <tr>
-                                    <td>36</td>
-                                    <td><p id="36">0</p></td>
+                                    <th>Profit Amount</th>
+                                    <td><p id="return00">0</p></td>
+                                    <td><p id="return0">0</p></td>
+                                    <td><p id="return1">0</p></td>
+                                    <td><p id="return2">0</p></td>
+                                    <td><p id="return3">0</p></td>
+                                    <td><p id="return4">0</p></td>
+                                    <td><p id="return5">0</p></td>
+                                    <td><p id="return6">0</p></td>
+                                    <td><p id="return7">0</p></td>
+                                    <td><p id="return8">0</p></td>
+                                    <td><p id="return9">0</p></td>
+                                    <td><p id="return10">0</p></td>
+                                    <td><p id="return11">0</p></td>
+                                    <td><p id="return12">0</p></td>
+                                    <td><p id="return13">0</p></td>
+                                    <td><p id="return14">0</p></td>
+                                    <td><p id="return15">0</p></td>
+                                    <td><p id="return16">0</p></td>
+                                    <td><p id="return17">0</p></td>
+                                    <td><p id="return18">0</p></td>
+                                    <td><p id="return19">0</p></td>
+                                    <td><p id="return20">0</p></td>
+                                    <td><p id="return21">0</p></td>
+                                    <td><p id="return22">0</p></td>
+                                    <td><p id="return23">0</p></td>
+                                    <td><p id="return24">0</p></td>
+                                    <td><p id="return25">0</p></td>
+                                    <td><p id="return26">0</p></td>
+                                    <td><p id="return27">0</p></td>
+                                    <td><p id="return28">0</p></td>
+                                    <td><p id="return29">0</p></td>
+                                    <td><p id="return30">0</p></td>
+                                    <td><p id="return31">0</p></td>
+                                    <td><p id="return32">0</p></td>
+                                    <td><p id="return33">0</p></td>
+                                    <td><p id="return34">0</p></td>
+                                    <td><p id="return35">0</p></td>
                                     <td><p id="return36">0</p></td>
                                 </tr>
+                                <tr>
+                                    <th>Profit %</th>
+                                    <td><p id="percent00">0</p></td>
+                                    <td><p id="percent0">0</p></td>
+                                    <td><p id="percent1">0</p></td>
+                                    <td><p id="percent2">0</p></td>
+                                    <td><p id="percent3">0</p></td>
+                                    <td><p id="percent4">0</p></td>
+                                    <td><p id="percent5">0</p></td>
+                                    <td><p id="percent6">0</p></td>
+                                    <td><p id="percent7">0</p></td>
+                                    <td><p id="percent8">0</p></td>
+                                    <td><p id="percent9">0</p></td>
+                                    <td><p id="percent10">0</p></td>
+                                    <td><p id="percent11">0</p></td>
+                                    <td><p id="percent12">0</p></td>
+                                    <td><p id="percent13">0</p></td>
+                                    <td><p id="percent14">0</p></td>
+                                    <td><p id="percent15">0</p></td>
+                                    <td><p id="percent16">0</p></td>
+                                    <td><p id="percent17">0</p></td>
+                                    <td><p id="percent18">0</p></td>
+                                    <td><p id="percent19">0</p></td>
+                                    <td><p id="percent20">0</p></td>
+                                    <td><p id="percent21">0</p></td>
+                                    <td><p id="percent22">0</p></td>
+                                    <td><p id="percent23">0</p></td>
+                                    <td><p id="percent24">0</p></td>
+                                    <td><p id="percent25">0</p></td>
+                                    <td><p id="percent26">0</p></td>
+                                    <td><p id="percent27">0</p></td>
+                                    <td><p id="percent28">0</p></td>
+                                    <td><p id="percent29">0</p></td>
+                                    <td><p id="percent30">0</p></td>
+                                    <td><p id="percent31">0</p></td>
+                                    <td><p id="percent32">0</p></td>
+                                    <td><p id="percent33">0</p></td>
+                                    <td><p id="percent34">0</p></td>
+                                    <td><p id="percent35">0</p></td>
+                                    <td><p id="percent36">0</p></td>
+                                </tr>
+                             
                             
                             </tbody>
+                          
+                        </table>
+                    </div>
+                    <div class="box-body table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Bet On</th>
+                                    <td>Number(18x)</td>
+                                    <td>Number(9x)</td>
+                                    <td>Number(3x)</td>
+                                    <td>Number(1 to 18) </td>
+                                    <td>Number(19 to 36) </td>
+                                    <td>Odd Number </td>
+                                    <td>Even Number </td>
+                                    <td>Red </td>
+                                    <td>Black </td>
+                                 
+                                </tr>
+                                <tr>
+                                    <th>Total Bet</th>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p id="Low">0 </p></td>
+                                    <td><p id="High">0</p></td>
+                                    <td><p id="Odd">0</p></td>
+                                    <td><p id="Even">0</p></td>
+                                    <td><p id="Red">0</p></td>
+                                    <td><p id="Black">0</p></td>
+                                 
+                                </tr>
+                                <tr>
+                                    <th>Profit Amont</th>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0 </p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                 
+                                </tr>
+                                <tr>
+                                    <th>Profit %</th>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0 </p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                    <td><p >0</p></td>
+                                 
+                                </tr>
+                            </tbody>
+                          
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h2 style="    display: flex;
+                    justify-content: center;
+                    font-size: 21px;">Current Game User List</h2>
+                </div>
+                <div class="box">
+                    <h2 style="    display: flex;
+                    justify-content: center;
+                    font-size: 16px;">Bet On</h2>
+                    <!-- /.box-header -->
+                    <div class="box-body table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>User Id</th>
+                                    <td>Number(36x)</td>
+                                    <td>Number(18x)</td>
+                                    <td>Number(9x)</td>
+                                    <td>Number(3x)</td>
+                                    <td>Number(1 to 18) </td>
+                                    <td>Number(19 to 36) </td>
+                                    <td>Odd Number </td>
+                                    <td>Even Number </td>
+                                    <td>Red </td>
+                                    <td>Black </td>
+                                    <td>Total Bet </td>
+                                 
+                                </tr>
+                                <tr>
+                                    <th>0</th>
+                                    <td><p id="userId">0</p></td>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="user">0 </p></td>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="Odd">0</p></td>
+                                    <td><p id="Even">0</p></td>
+                                    <td><p id="Red">0</p></td>
+                                    <td><p id="Black">0</p></td>
+                                    <td><p id="userTotal">0</p></td>
+                                 
+                                </tr>
+                             
+                            </tbody>
+                          
                         </table>
                     </div>
                     <!-- /.box-body -->
@@ -242,7 +336,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
 const socket = io('http://103.175.163.97:3070');
-
+let gamePercent=document.getElementById('gamePercent').value;
 const rouletteRate = {
     Straight: 36,
     Split: 18,
@@ -273,6 +367,7 @@ socket.on('OnChipMoveRoullate', function (data) {
 
     let chipValues = {};
     let returnAmount = {};
+    let profitPercent = {};
 
     if (Object.keys(data.bets).length === 0) {
         document.querySelectorAll('p').forEach(p => {
@@ -286,20 +381,25 @@ socket.on('OnChipMoveRoullate', function (data) {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
 
+                // let typeSum
+
                 let spots = b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
-                    const rate = rouletteRate[b.type]; // Retrieve the rate based on the bet type
+                    const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+                    profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                 });
             });
         });
         
         Object.keys(chipValues).forEach(spot => {
             const returnId = "return" + (parseInt(spot) );
+            const percentData = "percent" + (parseInt(spot) );
             document.getElementById(spot).innerText = chipValues[spot];
             document.getElementById(returnId).innerText = returnAmount[spot];
+            document.getElementById(percentData).innerText =`${(returnAmount[spot]/chipValues[spot])*100}%`;
         });
     }
 

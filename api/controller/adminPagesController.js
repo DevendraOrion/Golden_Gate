@@ -533,9 +533,9 @@ console.log(req.params);
     });
   },
   roulleteStatics: async (req, res) => {
-    let role="State"
+    let gameId=1
     let adminData=req.admin
-    const users = await AdminController.manualCardRoullete();
+    const users = await AdminController.liveRoullete(adminData,gameId);
     res.render("admin/roulleteStatics", {
       title: "Live Statics of Roullete",
       type: "control",

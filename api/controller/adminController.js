@@ -328,6 +328,12 @@ let updateData=await findOldData.map(async (a)=>{
       count
     };
   },
+  liveRoullete: async (adminData,gameId) => {
+
+    let profitPercent=await Commission.find({gameId:gameId,rankName:{$in:["Company","State"]}})
+    // console.log(profitPercent[0].availableCommission-profitPercent[1].availableCommission);
+    return {profitPercent:profitPercent[0].availableCommission-profitPercent[1].availableCommission}
+  },
   manualCardRoullete: async (role,adminData) => {
 
     let profitPercent=await ProfitPercent.findOne({gameType:"Card Roullete"})
