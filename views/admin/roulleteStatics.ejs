@@ -306,16 +306,16 @@
                                 <tr>
                                     <th>0</th>
                                     <td><p id="userId"></p></td>
-                                    <td><p id="user">0</p></td>
-                                    <td><p id="user">0</p></td>
-                                    <td><p id="user">0</p></td>
-                                    <td><p id="user">0 </p></td>
-                                    <td><p id="Low">0</p></td>
-                                    <td><p id="High">0</p></td>
-                                    <td><p id="Odd">0</p></td>
-                                    <td><p id="Even">0</p></td>
-                                    <td><p id="Red">0</p></td>
-                                    <td><p id="Black">0</p></td>
+                                    <td><p id="userStraight">0</p></td>
+                                    <td><p id="userSplit">0</p></td>
+                                    <td><p id="userCorner">0</p></td>
+                                    <td><p id="userThree">0 </p></td>
+                                    <td><p id="userLow">0</p></td>
+                                    <td><p id="userHigh">0</p></td>
+                                    <td><p id="userOdd">0</p></td>
+                                    <td><p id="userEven">0</p></td>
+                                    <td><p id="userRed">0</p></td>
+                                    <td><p id="userBlack">0</p></td>
                                     <td><p id="userTotal">0</p></td>
                                  
                                 </tr>
@@ -364,6 +364,8 @@ socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
     let totalChips = 0;
     let uniqueUsers = new Set();
+    let userTotalBet = {}; // Mapping to store total bet amount for each userId
+    let userStraightSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Straight"
 
     let typeData = {};
     let chipValues = {};
@@ -377,29 +379,37 @@ socket.on('OnChipMoveRoullate', function (data) {
 
         startCountdown(59, document.getElementById('countdown')); 
     } else {
+        let userIdSet = false; // Flag to track if userId is already set
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
-
-           
-                fetch("/get_id?userId=" + b.playerId, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                })
-                .then(response => response.json())
-                .then(response => {
-                    console.log("dddddddddddddddd");
-                    const userName = response.name || 'Unknown';
-                    document.getElementById('userId').innerText = "userName";
-                })
-                .catch(error => {
-                    console.error("Error fetching user data:", error);
-                });
                 
+                userTotalBet[b.playerId] = (userTotalBet[b.playerId] || 0) + b.chip;
+
                 typeData[b.type]=(typeData[b.type] || 0) + 1;
+
+                if (!userIdSet) {
+                    document.getElementById('userId').innerText = b.playerId;
+                    userIdSet = true;
+                }
+
+                if (b.type === 'Straight') {
+                    let realSpot=parseInt(b.spot)-1
+                    userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realSpot + ',';
+                    const straightSpotElement = document.getElementById('userStraight');
+                    if (straightSpotElement) {
+                        straightSpotElement.innerText = userStraightSpot[b.playerId];
+                    }
+                }
+                // if (b.type === 'Split') {
+                //     let realSpot=Number(b.spot)-1
+                //     userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realSpot + '';
+                //     const straightSpotElement = document.getElementById('userSplit');
+                //     if (straightSpotElement) {
+                //         straightSpotElement.innerText = userStraightSpot[b.playerId];
+                //     }
+                // }
 
                 let spots = b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
@@ -411,40 +421,43 @@ socket.on('OnChipMoveRoullate', function (data) {
                 });
             });
         });
-        let three=0
+
+        // Set total bet amount for the userId in the userTotal <p> tag
+        const userId = document.getElementById('userId').innerText;
+        const totalBetElement = document.getElementById('userTotal');
+        if (userId && userTotalBet[userId] !== undefined && totalBetElement) {
+            totalBetElement.innerText = userTotalBet[userId];
+        }
+
+        let three = 0;
         Object.keys(typeData).forEach(spot => {
-    const id = "profit" + spot;
-    const percentId = "profitPercent" + spot;
-    const rate = gamePercent / 100;
-    const betAmount = typeData[spot];
-    const returnAmount = typeData[spot] * rate;
-    if(rouletteRate[spot]==3){
-        console.log("===============");
-        // console.log(spot,typeData);
-        console.log(betAmount);
-        three+= betAmount
-        const element = document.getElementById("Three").innerText = three;
-        const datas = document.getElementById("profitThree").innerText = three*rate;
-        const profitThreePercient = document.getElementById("profitPercentThree").innerText = gamePercent+"%";
-            
-    }
-    const element = document.getElementById(spot);
-    if (element) {
-        element.innerText = typeData[spot];
-    }
+            const id = "profit" + spot;
+            const percentId = "profitPercent" + spot;
+            const rate = gamePercent / 100;
+            const betAmount = typeData[spot];
+            const returnAmount = typeData[spot] * rate;
+            if (rouletteRate[spot] == 3) {
+                console.log("===============");
+                three += betAmount;
+                const element = document.getElementById("Three").innerText = three;
+                const datas = document.getElementById("profitThree").innerText = three * rate;
+                const profitThreePercient = document.getElementById("profitPercentThree").innerText = gamePercent + "%";
+            }
+            const element = document.getElementById(spot);
+            if (element) {
+                element.innerText = typeData[spot];
+            }
 
-    const profitElement = document.getElementById(id);
-    if (profitElement) {
-        profitElement.innerText = (typeData[spot] * rate);
-    }
+            const profitElement = document.getElementById(id);
+            if (profitElement) {
+                profitElement.innerText = (typeData[spot] * rate);
+            }
 
-    const percentElement = document.getElementById(percentId);
-    if (percentElement) {
-        percentElement.innerText = `${(returnAmount / betAmount) * 100}%`;
-    }
-});
-
-
+            const percentElement = document.getElementById(percentId);
+            if (percentElement) {
+                percentElement.innerText = `${(returnAmount / betAmount) * 100}%`;
+            }
+        });
 
         Object.keys(chipValues).forEach(spot => {
             const returnId = "return" + (parseInt(spot) );
@@ -458,7 +471,6 @@ socket.on('OnChipMoveRoullate', function (data) {
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
 });
-
 
 function startCountdown(durationInSeconds, display) {
     let timer = durationInSeconds;
