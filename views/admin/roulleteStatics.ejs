@@ -285,8 +285,8 @@
                     font-size: 16px;">Bet On</h2>
                     <!-- /.box-header -->
                     <div class="box-body table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <tbody>
+                        <table class="table table-bordered table-striped" id="userData">
+                            <thead>
                                 <tr>
                                     <th>S.No</th>
                                     <th>User Id</th>
@@ -294,32 +294,16 @@
                                     <td>Number(18x)</td>
                                     <td>Number(9x)</td>
                                     <td>Number(3x)</td>
-                                    <td>Number(1 to 18) </td>
-                                    <td>Number(19 to 36) </td>
-                                    <td>Odd Number </td>
-                                    <td>Even Number </td>
-                                    <td>Red </td>
-                                    <td>Black </td>
-                                    <td>Total Bet </td>
-                                 
+                                    <td>Number(1 to 18)</td>
+                                    <td>Number(19 to 36)</td>
+                                    <td>Odd Number</td>
+                                    <td>Even Number</td>
+                                    <td>Red</td>
+                                    <td>Black</td>
+                                    <td>Total Bet</td>
                                 </tr>
-                                <tr>
-                                    <th>0</th>
-                                    <td><p id="userId"></p></td>
-                                    <td><p id="userStraight">0</p></td>
-                                    <td><p id="userSplit">0</p></td>
-                                    <td><p id="userCorner">0</p></td>
-                                    <td><p id="userThree">0 </p></td>
-                                    <td><p id="userLow">0</p></td>
-                                    <td><p id="userHigh">0</p></td>
-                                    <td><p id="userOdd">0</p></td>
-                                    <td><p id="userEven">0</p></td>
-                                    <td><p id="userRed">0</p></td>
-                                    <td><p id="userBlack">0</p></td>
-                                    <td><p id="userTotal">0</p></td>
-                                 
-                                </tr>
-                             
+                            </thead>
+                            <tbody>
                             </tbody>
                           
                         </table>
@@ -388,7 +372,6 @@ socket.on('OnChipMoveRoullate', function (data) {
 
         startCountdown(59, document.getElementById('countdown')); 
     } else {
-        let userIdSet = false; // Flag to track if userId is already set
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
                 totalChips += b.chip;
@@ -397,13 +380,11 @@ socket.on('OnChipMoveRoullate', function (data) {
                 userTotalBet[b.playerId] = (userTotalBet[b.playerId] || 0) + b.chip;
 
                 typeData[b.type]=(typeData[b.type] || 0) + 1;
-
-                if (!userIdSet) {
-                    document.getElementById('userId').innerText = b.playerId;
-                    userIdSet = true;
-                }
-
-                // Update spot for the current userId based on the type of spot
+                if (rouletteRate[b.type] == 3) {
+                console.log("===============");
+                      let realThreeSpot=parseInt(b.spot)-1;
+                    userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + b.spot + ',';
+            }
                 switch (b.type) {
                     case 'Straight':
                         let realStraightSpot=parseInt(b.spot)-1;
@@ -417,10 +398,10 @@ socket.on('OnChipMoveRoullate', function (data) {
                         let realCornerSpot=parseInt(b.spot)-1;
                         userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + realCornerSpot + ',';
                         break;
-                    case 'Three':
-                        let realThreeSpot=parseInt(b.spot)-1;
-                        userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + realThreeSpot + ',';
-                        break;
+                    // case 'Three':
+                    //     let realThreeSpot=parseInt(b.spot)-1;
+                    //     userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + realThreeSpot + ',';
+                    //     break;
                     case 'Low':
                         let realLowSpot=parseInt(b.spot)-1;
                         userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + realLowSpot + ',';
@@ -445,7 +426,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                         userBlackSpot[b.playerId] = (userBlackSpot[b.playerId] || '') + b.spot + ',';
                         break;
                 }
-                console.log(b.spot);
+
                 let spots = Array.isArray(b.spot) ? b.spot : b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
@@ -457,27 +438,38 @@ socket.on('OnChipMoveRoullate', function (data) {
             });
         });
 
-        // Set total bet amount for the userId in the userTotal <p> tag
-        const userId = document.getElementById('userId').innerText;
-        const totalBetElement = document.getElementById('userTotal');
-        if (userId && userTotalBet[userId] !== undefined && totalBetElement) {
-            totalBetElement.innerText = userTotalBet[userId];
+        // Update the table with user data
+        updateUserTable();
+
+        // Function to update the table with user data
+        function updateUserTable() {
+            const userDataContainer = document.querySelector('#userData tbody');
+            userDataContainer.innerHTML = ''; // Clear existing data
+            let count = 0;
+            uniqueUsers.forEach(userId => {
+                count++;
+                const userData = `
+                    <tr>
+                        <td>${count}</td>
+                        <td>${userId}</td>
+                        <td>${userStraightSpot[userId] || '0'}</td>
+                        <td>${userSplitSpot[userId] || '0'}</td>
+                        <td>${userCornerSpot[userId] || '0'}</td>
+                        <td>${userThreeSpot[userId] || '0'}</td>
+                        <td>${userLowSpot[userId] || '0'}</td>
+                        <td>${userHighSpot[userId] || '0'}</td>
+                        <td>${userOddSpot[userId] || '0'}</td>
+                        <td>${userEvenSpot[userId] || '0'}</td>
+                        <td>${userRedSpot[userId] || '0'}</td>
+                        <td>${userBlackSpot[userId] || '0'}</td>
+                        <td>${userTotalBet[userId] || '0'}</td>
+                    </tr>
+                `;
+                userDataContainer.insertAdjacentHTML('beforeend', userData);
+            });
         }
-
-        // Update each player's data for each type of spot
-        updatePlayerSpot('userStraight', userStraightSpot);
-        updatePlayerSpot('userSplit', userSplitSpot);
-        updatePlayerSpot('userCorner', userCornerSpot);
-        updatePlayerSpot('userThree', userThreeSpot);
-        updatePlayerSpot('userLow', userLowSpot);
-        updatePlayerSpot('userHigh', userHighSpot);
-        updatePlayerSpot('userOdd', userOddSpot);
-        updatePlayerSpot('userEven', userEvenSpot);
-        updatePlayerSpot('userRed', userRedSpot);
-        updatePlayerSpot('userBlack', userBlackSpot);
-
-        // Function to update player's spot data
-        function updatePlayerSpot(elementId, spotData) {
+    }
+    function updatePlayerSpot(elementId, spotData) {
             const playerId = document.getElementById('userId').innerText;
             const spotElement = document.getElementById(elementId);
             if (playerId && spotData[playerId] && spotElement) {
@@ -487,8 +479,7 @@ socket.on('OnChipMoveRoullate', function (data) {
             }
         }
 
-        // Update the rest of the data (e.g., chip values, profit, etc.)
-        // Note: This part of the code remains unchanged from your original implementation
+
         let three = 0;
         Object.keys(typeData).forEach(spot => {
             const id = "profit" + spot;
@@ -526,8 +517,6 @@ socket.on('OnChipMoveRoullate', function (data) {
             document.getElementById(returnId).innerText = returnAmount[spot];
             document.getElementById(percentData).innerText =`${(returnAmount[spot]/chipValues[spot])*100}%`;
         });
-    }
-
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
 });
