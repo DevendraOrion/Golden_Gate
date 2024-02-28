@@ -76,31 +76,55 @@
 <%- include footer %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const socket = io('http://localhost:3070');
-        let gamePercent = parseFloat(document.getElementById("gamePercent").value);
+     document.addEventListener("DOMContentLoaded", function () {
+        const socket = io('http://103.175.163.97:3070');
+        let gamePercent = document.getElementById("gamePercent").value;
+        console.log(gamePercent);
         socket.emit("livebets", { hii: "hii" });
         socket.emit("adminspot", { adminspot: 2 });
 
-        socket.on('livebets', function (data) {
-            updateTable(data);
-            const timerInSeconds = data.changespottime;
-            const countdownDisplay = document.querySelector('#countdown');
-            startCountdown(timerInSeconds, countdownDisplay);
-        });
 
-        document.getElementById('manualCheckbox').addEventListener('change', function () {
-            if (this.checked) {
-                document.getElementById('automaticCheckbox').checked = false;
-            }
-        });
+            socket.on('livebets', function (data) {
+    const gamePercent = parseFloat(document.getElementById("gamePercent").value);
+// console.log(1 + gamePercent / 100);
+    document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
+    document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
+    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * (1 + gamePercent / 100);
 
-        document.getElementById('automaticCheckbox').addEventListener('change', function () {
-            if (this.checked) {
-                document.getElementById('manualCheckbox').checked = false;
-            }
-        });
+    document.getElementById('KingBet').innerHTML = data.SpotOneUser;
+    document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
+    document.getElementById('kingPayable').innerHTML = parseFloat(data.SpotOneAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
+    document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
+    document.getElementById('queenPayable').innerHTML = parseFloat(data.SpotTwoAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
+    document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
+    document.getElementById('jakePayable').innerHTML = parseFloat(data.SpotThreeAmt) * (1 + gamePercent / 100);
+
+    document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
+    document.getElementById('10User').innerHTML = data.SpotFourUser;
+    document.getElementById('10Payable').innerHTML = parseFloat(data.SpotFourAmt) * (1 + gamePercent / 100);
+
+    console.log('Received response from socket server:', data);
+    const timerInSeconds = data.changespottime; 
+    const countdownDisplay = document.querySelector('#countdown');
+
+    startCountdown(timerInSeconds, countdownDisplay);
+});
+document.getElementById('manualCheckbox').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('automaticCheckbox').checked = false;
+        }
     });
+
+    document.getElementById('automaticCheckbox').addEventListener('change', function() {
+        if (this.checked) {
+            document.getElementById('manualCheckbox').checked = false;
+        }
+    });
+        });
 
     function updateTable(data) {
         const gamePercent = parseFloat(document.getElementById("gamePercent").value);
