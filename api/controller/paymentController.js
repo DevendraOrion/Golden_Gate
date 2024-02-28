@@ -1215,6 +1215,13 @@ return res.status(200).send({
       recordsFiltered: recordsFiltered,
     });
   },
+  userName: async function (req, res) {
+    let UserId=req.query.userId
+
+    let FindData=await User.findOne({numeric_id:UserId})
+    // console.log(FindData.search_id);
+    return {name:FindData.search_id}
+  },
   getCommissionAjax: async function (req, res) {
     var startTime = new Date();
 console.log("+============");

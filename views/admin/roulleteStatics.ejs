@@ -227,9 +227,9 @@
                                 </tr>
                                 <tr>
                                     <th>Total Bet</th>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
+                                    <td><p id="Split">0</p></td>
+                                    <td><p id="Corner">0</p></td>
+                                    <td><p id="Three">0</p></td>
                                     <td><p id="Low">0 </p></td>
                                     <td><p id="High">0</p></td>
                                     <td><p id="Odd">0</p></td>
@@ -240,9 +240,9 @@
                                 </tr>
                                 <tr>
                                     <th>Profit Amont</th>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
+                                    <td><p id="profitSplit">0</p></td>
+                                    <td><p id="profitCorner">0</p></td>
+                                    <td><p id="profitThree">0</p></td>
                                     <td><p id="profitLow">0 </p></td>
                                     <td><p id="profitHigh">0</p></td>
                                     <td><p id="profitOdd">0</p></td>
@@ -253,15 +253,15 @@
                                 </tr>
                                 <tr>
                                     <th>Profit %</th>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0 </p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
+                                    <td><p id="profitPercentSplit">0</p></td>
+                                    <td><p id="profitPercentCorner">0</p></td>
+                                    <td><p id="profitPercentThree">0</p></td>
+                                    <td><p id="profitPercentLow">0 </p></td>
+                                    <td><p id="profitPercentHigh">0</p></td>
+                                    <td><p id="profitPercentOdd">0</p></td>
+                                    <td><p id="profitPercentEven">0</p></td>
+                                    <td><p id="profitPercentRed">0</p></td>
+                                    <td><p id="profitPercentBlack">0</p></td>
                                  
                                 </tr>
                             </tbody>
@@ -305,13 +305,13 @@
                                 </tr>
                                 <tr>
                                     <th>0</th>
-                                    <td><p id="userId">0</p></td>
+                                    <td><p id="userId"></p></td>
                                     <td><p id="user">0</p></td>
                                     <td><p id="user">0</p></td>
                                     <td><p id="user">0</p></td>
                                     <td><p id="user">0 </p></td>
-                                    <td><p id="user">0</p></td>
-                                    <td><p id="user">0</p></td>
+                                    <td><p id="Low">0</p></td>
+                                    <td><p id="High">0</p></td>
                                     <td><p id="Odd">0</p></td>
                                     <td><p id="Even">0</p></td>
                                     <td><p id="Red">0</p></td>
@@ -382,6 +382,23 @@ socket.on('OnChipMoveRoullate', function (data) {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
 
+           
+                fetch("/get_id?userId=" + b.playerId, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+                .then(response => response.json())
+                .then(response => {
+                    console.log("dddddddddddddddd");
+                    const userName = response.name || 'Unknown';
+                    document.getElementById('userId').innerText = "userName";
+                })
+                .catch(error => {
+                    console.error("Error fetching user data:", error);
+                });
+                
                 typeData[b.type]=(typeData[b.type] || 0) + 1;
 
                 let spots = b.spot.split(',').filter(spot => spot !== '');
@@ -394,11 +411,40 @@ socket.on('OnChipMoveRoullate', function (data) {
                 });
             });
         });
-        
+        let three=0
         Object.keys(typeData).forEach(spot => {
-            document.getElementById(spot).innerText = typeData[spot];
+    const id = "profit" + spot;
+    const percentId = "profitPercent" + spot;
+    const rate = gamePercent / 100;
+    const betAmount = typeData[spot];
+    const returnAmount = typeData[spot] * rate;
+    if(rouletteRate[spot]==3){
+        console.log("===============");
+        // console.log(spot,typeData);
+        console.log(betAmount);
+        three+= betAmount
+        const element = document.getElementById("Three").innerText = three;
+        const datas = document.getElementById("profitThree").innerText = three*rate;
+        const profitThreePercient = document.getElementById("profitPercentThree").innerText = gamePercent+"%";
             
-        })
+    }
+    const element = document.getElementById(spot);
+    if (element) {
+        element.innerText = typeData[spot];
+    }
+
+    const profitElement = document.getElementById(id);
+    if (profitElement) {
+        profitElement.innerText = (typeData[spot] * rate);
+    }
+
+    const percentElement = document.getElementById(percentId);
+    if (percentElement) {
+        percentElement.innerText = `${(returnAmount / betAmount) * 100}%`;
+    }
+});
+
+
 
         Object.keys(chipValues).forEach(spot => {
             const returnId = "return" + (parseInt(spot) );
