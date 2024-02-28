@@ -243,12 +243,12 @@
                                     <td><p >0</p></td>
                                     <td><p >0</p></td>
                                     <td><p >0</p></td>
-                                    <td><p >0 </p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
-                                    <td><p >0</p></td>
+                                    <td><p id="profitLow">0 </p></td>
+                                    <td><p id="profitHigh">0</p></td>
+                                    <td><p id="profitOdd">0</p></td>
+                                    <td><p id="profitEven">0</p></td>
+                                    <td><p id="profitRed">0</p></td>
+                                    <td><p id="profitBlack">0</p></td>
                                  
                                 </tr>
                                 <tr>
@@ -365,6 +365,7 @@ socket.on('OnChipMoveRoullate', function (data) {
     let totalChips = 0;
     let uniqueUsers = new Set();
 
+    let typeData = {};
     let chipValues = {};
     let returnAmount = {};
     let profitPercent = {};
@@ -381,7 +382,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
 
-                // let typeSum
+                typeData[b.type]=(typeData[b.type] || 0) + 1;
 
                 let spots = b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
@@ -394,6 +395,11 @@ socket.on('OnChipMoveRoullate', function (data) {
             });
         });
         
+        Object.keys(typeData).forEach(spot => {
+            document.getElementById(spot).innerText = typeData[spot];
+            
+        })
+
         Object.keys(chipValues).forEach(spot => {
             const returnId = "return" + (parseInt(spot) );
             const percentData = "percent" + (parseInt(spot) );
