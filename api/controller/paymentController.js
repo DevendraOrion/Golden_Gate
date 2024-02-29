@@ -686,7 +686,7 @@ aggregation_obj.push({
 }, {
     $limit: pageSize
 });
-console.log(aggregation_obj);
+// console.log(aggregation_obj);
 let list;
 if (GameId == "1") {
     list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
@@ -735,7 +735,7 @@ if (totalCountAggregate.length > 0) {
 // console.log(totalAggregateResult);
 let downLine=await Service.DownLine(req.admin._id)
 
-// console.log(downLine);
+// console.log( downLine);
 list = await Promise.all(list.map(async (u, index) => {
   // console.log(u);
     let totalPlayer = 0;
@@ -750,13 +750,17 @@ list = await Promise.all(list.map(async (u, index) => {
     }else{
       status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }
+
     if (u.joinData) {
-      totalPlayer = u.joinData.length;
-      
-      // Using Promise.all to await all promises generated inside the map function
+      // totalPlayer = u.joinData.length;
       await Promise.all(u.joinData.map(async (a) => {
-          totalBetAmt += a.amount;
-          totalWinAmt += a.win_amount;
+        console.log(a.user_id)
+          let findUser=await User.findOne({numeric_id:a.user_id});
+        if (downLine.map(id => id.toString()).includes(findUser._id.toString())) {
+            totalBetAmt += a.amount;
+            totalWinAmt += a.win_amount;
+            totalPlayer++
+          // console.log("================",findUser);
           if (u.room_id) {
               let findData = await Transaction.aggregate([
                   {
@@ -772,9 +776,8 @@ list = await Promise.all(list.map(async (u, index) => {
                       }
                   }
               ]);
-              commission += findData[0] ? findData[0].commission : 0; // Adding commission if data is found
-              console.log(findData, u.room_id, commission, "-------------");
-          }
+              commission += findData[0] ? findData[0].commission : 0;
+          } }
       }));
   }
     let spot;

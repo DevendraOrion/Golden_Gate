@@ -27,9 +27,9 @@
                 <span id="countdown" style="font-size: 18px;">00.00</span>
             </div>
             <div >
-                <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span id="totalUser">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span id="totalBet">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;">Profit:<span id="totalProfit">0</span></h3>
+                <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span class="zero" id="totalUser">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Profit:<span class="zero" id="totalProfit">0</span></h3>
             </div>
         </div>
 
@@ -222,8 +222,11 @@
                             <tbody>
                                 <tr>
                                     <th>Bet On</th>
+                                    <td>Number(36x)</td>
                                     <td>Number(18x)</td>
+                                    <td>Number(12x)</td>
                                     <td>Number(9x)</td>
+                                    <td>Number(6x)</td>
                                     <td>Number(3x)</td>
                                     <td>Number(1 to 18) </td>
                                     <td>Number(19 to 36) </td>
@@ -231,12 +234,14 @@
                                     <td>Even Number </td>
                                     <td>Red </td>
                                     <td>Black </td>
-                                 
                                 </tr>
                                 <tr>
                                     <th>Total Bet</th>
+                                    <td><p id="Straight">0</p></td>
                                     <td><p id="Split">0</p></td>
+                                    <td><p id="Street">0</p></td>
                                     <td><p id="Corner">0</p></td>
+                                    <td><p id="DoubleStreet">0</p></td>
                                     <td><p id="Three">0</p></td>
                                     <td><p id="Low">0 </p></td>
                                     <td><p id="High">0</p></td>
@@ -244,12 +249,14 @@
                                     <td><p id="Even">0</p></td>
                                     <td><p id="Red">0</p></td>
                                     <td><p id="Black">0</p></td>
-                                 
                                 </tr>
                                 <tr>
                                     <th>Profit Amont</th>
+                                    <td><p id="profitStraight">0</p></td>
                                     <td><p id="profitSplit">0</p></td>
+                                    <td><p id="profitStreet">0</p></td>
                                     <td><p id="profitCorner">0</p></td>
+                                    <td><p id="profitDoubleStreet">0</p></td>
                                     <td><p id="profitThree">0</p></td>
                                     <td><p id="profitLow">0 </p></td>
                                     <td><p id="profitHigh">0</p></td>
@@ -261,8 +268,11 @@
                                 </tr>
                                 <tr>
                                     <th>Profit %</th>
+                                    <td><p id="profitPercentStraight">0</p></td>
                                     <td><p id="profitPercentSplit">0</p></td>
+                                    <td><p id="profitPercentStreet">0</p></td>
                                     <td><p id="profitPercentCorner">0</p></td>
+                                    <td><p id="profitPercentDoubleStreet">0</p></td>
                                     <td><p id="profitPercentThree">0</p></td>
                                     <td><p id="profitPercentLow">0 </p></td>
                                     <td><p id="profitPercentHigh">0</p></td>
@@ -300,7 +310,9 @@
                                     <th>User Id</th>
                                     <td>Number(36x)</td>
                                     <td>Number(18x)</td>
+                                    <td>Number(12x)</td>
                                     <td>Number(9x)</td>
+                                    <td>Number(6x)</td>
                                     <td>Number(3x)</td>
                                     <td>Number(1 to 18)</td>
                                     <td>Number(19 to 36)</td>
@@ -356,17 +368,19 @@ socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
     let totalChips = 0;
     let uniqueUsers = new Set();
-    let userTotalBet = {}; // Mapping to store total bet amount for each userId
-    let userStraightSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Straight"
-    let userSplitSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Split"
-    let userCornerSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Corner"
-    let userThreeSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Three"
-    let userLowSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Low"
-    let userHighSpot = {}; // Mapping to store the spot for each userId if the type of spot is "High"
-    let userOddSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Odd"
-    let userEvenSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Even"
-    let userRedSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Red"
-    let userBlackSpot = {}; // Mapping to store the spot for each userId if the type of spot is "Black"
+    let userTotalBet = {};    
+    let userStraightSpot = {};
+    let userSplitSpot = {};   
+    let userStreetSpot = {};   
+    let userDoubleStreetSpot = {};  
+    let userCornerSpot = {};  
+    let userThreeSpot = {};   
+    let userLowSpot = {};     
+    let userHighSpot = {};    
+    let userOddSpot = {};     
+    let userEvenSpot = {};    
+    let userRedSpot = {};     
+    let userBlackSpot = {};  
 
     let typeData = {};
     let chipValues = {};
@@ -375,6 +389,9 @@ socket.on('OnChipMoveRoullate', function (data) {
 
     if (Object.keys(data.bets).length === 0) {
         document.querySelectorAll('p').forEach(p => {
+            p.innerText = '0';
+        });
+        document.querySelectorAll('zero').forEach(p => {
             p.innerText = '0';
         });
         
@@ -407,10 +424,17 @@ socket.on('OnChipMoveRoullate', function (data) {
                         let realCornerSpot=parseInt(b.spot)-1;
                         userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + b.spot + ',';
                         break;
-                    // case 'Three':
-                    //     let realThreeSpot=parseInt(b.spot)-1;
-                    //     userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + realThreeSpot + ',';
-                    //     break;
+
+                    case 'Street':
+                        // let userStreetSpot=parseInt(b.spot)-1;
+                        console.log("dsafdf",b.spot);
+                        userStreetSpot[b.playerId] = (userStreetSpot[b.playerId] || '') + b.spot + ',';
+                        break;
+                    case 'DoubleStreet':
+                        // let userDoubleStreetSpot=parseInt(b.spot)-1;
+                        userDoubleStreetSpot[b.playerId] = (userDoubleStreetSpot[b.playerId] || '') + b.spot + ',';
+                        break;
+
                     case 'Low':
                         let realLowSpot=parseInt(b.spot)-1;
                         userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + b.spot + ',';
@@ -455,16 +479,34 @@ socket.on('OnChipMoveRoullate', function (data) {
             const userDataContainer = document.querySelector('#userData tbody');
             userDataContainer.innerHTML = ''; // Clear existing data
             let count = 0;
+            let name;
             uniqueUsers.forEach(userId => {
                 count++;
-               
+                fetch(`/get_id?userId=${userId}`, { // Corrected the URL interpolation
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                })
+                .then(response => response.json())
+                .then(response => {
+                    console.log(response);
+                    name=response.name
+                // const title = response.status == 1 ? "Success" : "Error";
+                })
+                .catch((error) => {
+                console.log(error);
+                });
+
                 const userData = `
                     <tr>
                         <td><p>${count}</p></td>
                         <td><p>${userId}</p></td>
                         <td><p>${userStraightSpot[userId] || '0'}</p></td>
                         <td><p>${userSplitSpot[userId] || '0'}</p></td>
+                        <td><p>${userStreetSpot[userId] || '0'}</p></td>
                         <td><p>${userCornerSpot[userId] || '0'}</p></td>
+                        <td><p>${userDoubleStreetSpot[userId] || '0'}</p></td>
                         <td><p>${userThreeSpot[userId] || '0'}</p></td>
                         <td><p>${userLowSpot[userId] || '0'}</p></td>
                         <td><p>${userHighSpot[userId] || '0'}</p></td>
