@@ -532,6 +532,22 @@ console.log(req.params);
       manual:true
     });
   },
+  liveStaticsAvaitor: async (req, res) => {
+    let role="State"
+    let adminData=req.admin
+    const users = await AdminController.liveAvaitorProfit();
+    res.render("admin/avaitorLiveStatics", {
+      title: "Live Statics of Avaitor",
+      type: "statics",
+      sub: "statics",
+      sub2: "avaitor",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users,
+      // total: users.count,
+      manual:true
+    });
+  },
   roulleteStatics: async (req, res) => {
     let gameId=1
     let adminData=req.admin

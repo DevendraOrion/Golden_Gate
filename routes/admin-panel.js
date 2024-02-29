@@ -414,6 +414,7 @@ router.get("/chang-pin", AdminPagesController.changePin);
 // Bet Statics
 router.get("/roullete-statics", AdminPagesController.roulleteStatics);
 router.get("/card-roullete-statics", AdminPagesController.liveStaticsCardRoullete);
+router.get("/avaitor-statics", AdminPagesController.liveStaticsAvaitor);
 router.get("/get_id", paymentController.userName);
 
 //Commission Report

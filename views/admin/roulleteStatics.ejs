@@ -363,7 +363,12 @@ const rouletteRate = {
     Red: 2,
     Black: 2,
 };
+socket.emit('sendtimeAdmin', {  msg:"hi" });
 
+socket.on('sendtimeAdmin', function (data) {
+    console.log(data,"kjshfdkash");
+
+});
 socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
     let totalChips = 0;
@@ -396,7 +401,6 @@ socket.on('OnChipMoveRoullate', function (data) {
         });
         
         startCountdown(59, document.getElementById('countdown')); 
-        updateUserTable();
     } else {
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {

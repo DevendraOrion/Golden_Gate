@@ -1,0 +1,150 @@
+<%- include header %>
+<!-- Content Wrapper. Contains page content -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <%= title %>
+        </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content container-fluid">
+        <div class="timerIds" style="display: flex; justify-content: space-between;">
+      
+      
+            <div >
+                <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span class="zero" id="totalUser">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;">Profit:<span class="zero" id="totalProfit">0</span></h3>
+            </div>
+        </div>
+
+        <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div>
+                    <h2 style="    display: flex;
+                    justify-content: center;
+                    font-size: 21px;">Current Game User List</h2>
+                </div>
+                <div class="box">
+                    <div class="box-body table-responsive">
+                        <table class="table table-bordered table-striped" id="userData">
+                            <thead>
+                                <tr>
+                                    <th>S. No</th>
+                                    <td>User Id</td>
+                                    <td>Total User Bet</td>
+                                    <td>Profit Amount</td>
+                                    <td>Profit %</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- <tr>
+                                    <th><p id="sno">0</p></th>
+                                    <td><p id="user">0</p></td>
+                                    <td><p id="userTotalBet">0</p></td>
+                                    <td><p id="profitAmount">0</p></td>
+                                    <td><p id="profitPercent">0</p></td>
+                                    
+                                </tr> -->
+                            </tbody>
+                          
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include footer %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script>
+const socket = io('http://103.175.163.97:3070');
+let gamePercent=document.getElementById('gamePercent').value;
+
+
+socket.on('OnCashoutforWeb', function (data) {
+    console.log(data);
+})
+
+const SendName=(playerId)=>{
+    fetch(`/get_id?userId=${playerId}`, { 
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    })
+    .then(response => response.json())
+    .then(response => {
+        console.log(response);
+        return response.name;
+    })
+    .catch((error) => {
+    console.log(error);
+    });
+}
+
+socket.on('OnChipMoveAvaitor', function (data) {
+    console.log(data);
+
+    document.querySelector('#userData tbody').innerHTML = '';
+
+    let totalChipAmount = 0;
+    let uniqueUserIds = new Set();
+
+    Object.values(data.bets).forEach(async(bet, index) => {
+        const { playerId, chip } = bet;
+      
+        totalChipAmount += chip;
+       let name= await SendName(playerId);
+        uniqueUserIds.add(playerId);
+
+        const newRow = `
+            <tr>
+                <td><p>${index + 1}</p></td>
+                <td><p>${name}</p></td>
+                <td><p>${chip}</p></td>
+                <td><p>${chip * gamePercent / 100}</p></td>
+                <td><p>${gamePercent} %</p></td>
+            </tr>`;
+
+        document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);
+    });
+
+    document.getElementById('totalBet').innerText = totalChipAmount;
+
+    document.getElementById('totalUser').innerText = uniqueUserIds.size;
+
+    document.getElementById('totalProfit').innerText=totalChipAmount*gamePercent/100
+});
+
+
+
+function startCountdown(durationInSeconds, display) {
+    let timer = durationInSeconds;
+
+    const countdownInterval = setInterval(function () {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+
+        const displayMinutes = String(minutes).padStart(2, '0');
+        const displaySeconds = String(seconds).padStart(2, '0');
+
+        display.textContent = displayMinutes + ':' + displaySeconds;
+
+        if (timer <= 0) {
+            clearInterval(countdownInterval);
+        } else {
+            timer--;
+        }
+    }, 1000);
+}
+
+</script>
+

@@ -340,6 +340,12 @@ let updateData=await findOldData.map(async (a)=>{
     // console.log(profitPercent);
     return {profitPercent:profitPercent.gamePercent}
   },
+  liveAvaitorProfit: async (role,adminData) => {
+
+    let profitPercent=await ProfitPercent.findOne({gameType:"Avaitor"})
+    // console.log(profitPercent);
+    return {profitPercent:profitPercent.gamePercent}
+  },
   getAgentList: async (role,adminData) => {
 if(adminData.role==="Company"){
 // console.log("User",user)
