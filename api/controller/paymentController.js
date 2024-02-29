@@ -663,12 +663,14 @@ if(GameId==2){
 }
 
 aggregation_obj.push({
+
     $lookup: {
         from: "join_games",
         localField: "room_id",
         foreignField: "room_id",
         as: "joinData"
-    }
+    },
+
 });
 
 if (!_.isEmpty(matchObj)) {
@@ -684,7 +686,7 @@ aggregation_obj.push({
 }, {
     $limit: pageSize
 });
-// console.log(aggregation_obj);
+console.log(aggregation_obj);
 let list;
 if (GameId == "1") {
     list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
@@ -733,11 +735,13 @@ if (totalCountAggregate.length > 0) {
 // console.log(totalAggregateResult);
 let downLine=await Service.DownLine(req.admin._id)
 
-console.log(downLine);
+// console.log(downLine);
 list = await Promise.all(list.map(async (u, index) => {
+  // console.log(u);
     let totalPlayer = 0;
     let totalBetAmt = 0;
     let totalWinAmt = 0;
+    let commission=0
     let status ;
     if(GameId == "1"){
     status=  u.spots !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
@@ -747,12 +751,32 @@ list = await Promise.all(list.map(async (u, index) => {
       status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
     }
     if (u.joinData) {
-        totalPlayer = u.joinData.length;
-        u.joinData.map((a) => {
-            totalBetAmt += a.amount;
-            totalWinAmt += a.win_amount;
-        });
-    }
+      totalPlayer = u.joinData.length;
+      
+      // Using Promise.all to await all promises generated inside the map function
+      await Promise.all(u.joinData.map(async (a) => {
+          totalBetAmt += a.amount;
+          totalWinAmt += a.win_amount;
+          if (u.room_id) {
+              let findData = await Transaction.aggregate([
+                  {
+                      $match: {
+                          room_id: Number(u.room_id),
+                          txn_mode: "C"
+                      }
+                  },
+                  {
+                      $group: {
+                          _id: u.room_id,
+                          commission: { $sum: "$txn_amount" }
+                      }
+                  }
+              ]);
+              commission += findData[0] ? findData[0].commission : 0; // Adding commission if data is found
+              console.log(findData, u.room_id, commission, "-------------");
+          }
+      }));
+  }
     let spot;
     if (GameId == "1") {
       let parseData;
@@ -783,15 +807,16 @@ list = await Promise.all(list.map(async (u, index) => {
     } else {
         spot = u.distance;
     }
-    let adminComm = u.admin_commission ? u.admin_commission : 0;
+    // let adminComm = u.admin_commission ? u.admin_commission : 0;
+    // console.log(commission);
     return [
         ++index,
         u.room_id,
         Service.formateDateandTime(u.room_id),
-        totalBetAmt,
-        totalWinAmt,
-        adminComm,
-        totalBetAmt - totalWinAmt,
+        totalBetAmt.toFixed(2),
+        totalWinAmt.toFixed(2),
+        commission.toFixed(2),
+        (totalBetAmt - totalWinAmt).toFixed(2),
         totalPlayer,
         spot,
         status,

@@ -12,7 +12,15 @@
     <section class="content container-fluid">
         <div class="timerIds" style="display: flex; justify-content: space-between;">
             <div>
-                <p style="font-weight: bold;">Control Type</p>
+                <div style="    display: flex;
+                justify-content: center;">
+                    <h3 style="font-weight: bold; font-size: 13px;">Control Type</h3>
+                </div>
+                <div style="display: flex;">
+                    <h3 style="font-weight: bold; margin-left: 17px;font-size: 13px;">Command Mode</h3>
+                    <h3 style="font-weight:  bold; margin-left: 17px; font-size: 13px;">Random Mode</h3>
+                    <h3 style="font-weight: bold;margin-left: 17px;font-size: 13px;">Mannual Mode</h3>
+                </div>
             </div>
             <div>
                 <!-- <h3>CountDown</h3> -->
@@ -262,7 +270,7 @@
                                     <td><p id="profitPercentEven">0</p></td>
                                     <td><p id="profitPercentRed">0</p></td>
                                     <td><p id="profitPercentBlack">0</p></td>
-                                 
+                                
                                 </tr>
                             </tbody>
                           
@@ -369,8 +377,9 @@ socket.on('OnChipMoveRoullate', function (data) {
         document.querySelectorAll('p').forEach(p => {
             p.innerText = '0';
         });
-
+        
         startCountdown(59, document.getElementById('countdown')); 
+        updateUserTable();
     } else {
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
@@ -392,11 +401,11 @@ socket.on('OnChipMoveRoullate', function (data) {
                         break;
                     case 'Split':
                         let realSplitSpot=parseInt(b.spot)-1;
-                        userSplitSpot[b.playerId] = (userSplitSpot[b.playerId] || '') + realSplitSpot + ',';
+                        userSplitSpot[b.playerId] = (userSplitSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     case 'Corner':
                         let realCornerSpot=parseInt(b.spot)-1;
-                        userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + realCornerSpot + ',';
+                        userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     // case 'Three':
                     //     let realThreeSpot=parseInt(b.spot)-1;
@@ -404,19 +413,19 @@ socket.on('OnChipMoveRoullate', function (data) {
                     //     break;
                     case 'Low':
                         let realLowSpot=parseInt(b.spot)-1;
-                        userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + realLowSpot + ',';
+                        userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     case 'High':
                         let realHighSpot=parseInt(b.spot)-1;
-                        userHighSpot[b.playerId] = (userHighSpot[b.playerId] || '') + realHighSpot + ',';
+                        userHighSpot[b.playerId] = (userHighSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     case 'Odd':
                         let realOddSpot=parseInt(b.spot)-1;
-                        userOddSpot[b.playerId] = (userOddSpot[b.playerId] || '') + realOddSpot + ',';
+                        userOddSpot[b.playerId] = (userOddSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     case 'Even':
                         let realEvenSpot=parseInt(b.spot)-1;
-                        userEvenSpot[b.playerId] = (userEvenSpot[b.playerId] || '') + realEvenSpot + ',';
+                        userEvenSpot[b.playerId] = (userEvenSpot[b.playerId] || '') + b.spot + ',';
                         break;
                     case 'Red':
                         userRedSpot[b.playerId] = (userRedSpot[b.playerId] || '') + b.spot + ',';
@@ -448,21 +457,22 @@ socket.on('OnChipMoveRoullate', function (data) {
             let count = 0;
             uniqueUsers.forEach(userId => {
                 count++;
+               
                 const userData = `
                     <tr>
-                        <td>${count}</td>
-                        <td>${userId}</td>
-                        <td>${userStraightSpot[userId] || '0'}</td>
-                        <td>${userSplitSpot[userId] || '0'}</td>
-                        <td>${userCornerSpot[userId] || '0'}</td>
-                        <td>${userThreeSpot[userId] || '0'}</td>
-                        <td>${userLowSpot[userId] || '0'}</td>
-                        <td>${userHighSpot[userId] || '0'}</td>
-                        <td>${userOddSpot[userId] || '0'}</td>
-                        <td>${userEvenSpot[userId] || '0'}</td>
-                        <td>${userRedSpot[userId] || '0'}</td>
-                        <td>${userBlackSpot[userId] || '0'}</td>
-                        <td>${userTotalBet[userId] || '0'}</td>
+                        <td><p>${count}</p></td>
+                        <td><p>${userId}</p></td>
+                        <td><p>${userStraightSpot[userId] || '0'}</p></td>
+                        <td><p>${userSplitSpot[userId] || '0'}</p></td>
+                        <td><p>${userCornerSpot[userId] || '0'}</p></td>
+                        <td><p>${userThreeSpot[userId] || '0'}</p></td>
+                        <td><p>${userLowSpot[userId] || '0'}</p></td>
+                        <td><p>${userHighSpot[userId] || '0'}</p></td>
+                        <td><p>${userOddSpot[userId] || '0'}</p></td>
+                        <td><p>${userEvenSpot[userId] || '0'}</p></td>
+                        <td><p>${userRedSpot[userId] || '0'}</p></td>
+                        <td><p>${userBlackSpot[userId] || '0'}</p></td>
+                        <td><p>${userTotalBet[userId] || '0'}</p></td>
                     </tr>
                 `;
                 userDataContainer.insertAdjacentHTML('beforeend', userData);
@@ -519,6 +529,7 @@ socket.on('OnChipMoveRoullate', function (data) {
         });
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
+    document.getElementById("totalProfit").innerHTML = totalChips*gamePercent/100;
 });
 
 function startCountdown(durationInSeconds, display) {

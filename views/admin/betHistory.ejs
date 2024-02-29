@@ -313,9 +313,14 @@
  const socket = io('http://103.175.163.97:3070');
 if(GameId==1){
     const roomDataMap = new Map();
-socket.on('OnChipMoveRoullate', function (data) {
-    if (data.room_id !== undefined) { // Check if room_id is present
+    socket.on('OnChipMoveRoullate', function (data) {
         console.log(data);
+
+        if (Object.keys(data.bets).length === 0) {
+            $('#example1').DataTable().ajax.reload(); 
+            return; 
+        }
+
         $('#example1').DataTable().ajax.reload(function() {
             var currentDateTime = getCurrentDateTime();
 
@@ -355,7 +360,6 @@ socket.on('OnChipMoveRoullate', function (data) {
                 $('#example1 tbody').prepend(newRow);
             }
         });
-    }
 });
 
 

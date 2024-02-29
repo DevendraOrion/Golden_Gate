@@ -22,7 +22,7 @@
                 </div> -->
                 <div>
                     <span> <input type="checkbox" id="manualCheckbox" value="Manual">Manual</span>
-                    <span> <input type="checkbox" id="automaticCheckbox" value="Automatic">Automatic</span>
+                    <span> <input type="checkbox" id="automaticCheckbox" value="Automatic" checked>Automatic</span>
                     
                 </div>
             </div>
@@ -39,7 +39,7 @@
                                         <th>Spot</th>
                                         <th>Bet Amount</th>
                                         <th>Number Of User</th>
-                                        <th>Payable Amount</th>
+                                        <th>Profit Amount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -160,7 +160,7 @@
 // console.log(1 + gamePercent / 100);
     document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
     document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
-    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * (1 + gamePercent / 100);
+    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * ( gamePercent / 100);
 
     document.getElementById('KingBet').innerHTML = data.SpotOneUser;
     document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
