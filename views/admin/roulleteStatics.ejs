@@ -339,6 +339,20 @@
 <%- include footer %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
+
+const SendName=async(playerId)=>{
+        let name
+     const response = await fetch(`/get_id?userId=${playerId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+
+        return data;
+}
+
 const socket = io('http://103.175.163.97:3070');
 let gamePercent=document.getElementById('gamePercent').value;
 const rouletteRate = {
@@ -366,8 +380,8 @@ const rouletteRate = {
 socket.emit('sendtimeAdmin', {  msg:"hi" });
 
 socket.on('sendtimeAdmin', function (data) {
-    console.log(data,"kjshfdkash");
-
+    // console.log(data,"kjshfdkash");
+    startCountdown(data, document.getElementById('countdown')); 
 });
 socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
@@ -411,7 +425,7 @@ socket.on('OnChipMoveRoullate', function (data) {
 
                 typeData[b.type]=(typeData[b.type] || 0) + 1;
                 if (rouletteRate[b.type] == 3) {
-                console.log("===============");
+                // console.log("===============");
                       let realThreeSpot=parseInt(b.spot)-1;
                     userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + b.spot + ',';
             }
@@ -479,12 +493,12 @@ socket.on('OnChipMoveRoullate', function (data) {
         updateUserTable();
 
         // Function to update the table with user data
-        function updateUserTable() {
+        async function updateUserTable () {
             const userDataContainer = document.querySelector('#userData tbody');
             userDataContainer.innerHTML = ''; // Clear existing data
             let count = 0;
             let name;
-            uniqueUsers.forEach(userId => {
+            uniqueUsers.forEach(async userId => {
                 count++;
                 fetch(`/get_id?userId=${userId}`, { // Corrected the URL interpolation
                 method: "GET",
@@ -501,11 +515,14 @@ socket.on('OnChipMoveRoullate', function (data) {
                 .catch((error) => {
                 console.log(error);
                 });
-
+                let name;
+       let realName= await SendName(userId).then(data => {
+        name=data.data
+    });
                 const userData = `
                     <tr>
                         <td><p>${count}</p></td>
-                        <td><p>${userId}</p></td>
+                        <td><p>${name}</p></td>
                         <td><p>${userStraightSpot[userId] || '0'}</p></td>
                         <td><p>${userSplitSpot[userId] || '0'}</p></td>
                         <td><p>${userStreetSpot[userId] || '0'}</p></td>
