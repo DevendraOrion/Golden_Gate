@@ -434,47 +434,60 @@ socket.on('OnChipMoveRoullate', function (data) {
                         let realStraightSpot=parseInt(b.spot)-1;
                         userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realStraightSpot + ',';
                         break;
-                    case 'Split':
-                        let realSplitSpot=parseInt(b.spot)-1;
-                        userSplitSpot[b.playerId] = (userSplitSpot[b.playerId] || '') + b.spot + ',';
-                        break;
+                        case 'Split':
+                            console.log(b.spot);
+                            let splitSpot = b.spot.replace(/,$/, ''); 
+                            let numbersArray = splitSpot.split(',').map(num => parseInt(num) - 1); 
+                            userSplitSpot[b.playerId] = numbersArray.join(','); 
+                            break;
+
                     case 'Corner':
-                        let realCornerSpot=parseInt(b.spot)-1;
-                        userCornerSpot[b.playerId] = (userCornerSpot[b.playerId] || '') + b.spot + ',';
+                            let cornerSpot = b.spot.replace(/,$/, ''); 
+                            let numbersArray2 = cornerSpot.split(',').map(num => parseInt(num) - 1); 
+                        userCornerSpot[b.playerId] = numbersArray2.join(','); 
                         break;
 
                     case 'Street':
-                        // let userStreetSpot=parseInt(b.spot)-1;
-                        console.log("dsafdf",b.spot);
-                        userStreetSpot[b.playerId] = (userStreetSpot[b.playerId] || '') + b.spot + ',';
+       
+                        let streetSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray3 = streetSpot.split(',').map(num => parseInt(num) - 1); 
+                        userStreetSpot[b.playerId] = numbersArray3.join(',');
                         break;
                     case 'DoubleStreet':
-                        // let userDoubleStreetSpot=parseInt(b.spot)-1;
-                        userDoubleStreetSpot[b.playerId] = (userDoubleStreetSpot[b.playerId] || '') + b.spot + ',';
+                    let DoubleStreetSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray4 = DoubleStreetSpot.split(',').map(num => parseInt(num) - 1); 
+                        userDoubleStreetSpot[b.playerId] = numbersArray4.join(',');
                         break;
 
                     case 'Low':
-                        let realLowSpot=parseInt(b.spot)-1;
-                        userLowSpot[b.playerId] = (userLowSpot[b.playerId] || '') + b.spot + ',';
+                    let LowSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray5 = LowSpot.split(',').map(num => parseInt(num) - 1); 
+                        userLowSpot[b.playerId] = numbersArray5.join(',');
                         break;
                     case 'High':
-                        let realHighSpot=parseInt(b.spot)-1;
-                        userHighSpot[b.playerId] = (userHighSpot[b.playerId] || '') + b.spot + ',';
+                    let HighSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray6 = HighSpot.split(',').map(num => parseInt(num) - 1); 
+                        userHighSpot[b.playerId] = numbersArray6.join(',');
                         break;
                     case 'Odd':
-                        let realOddSpot=parseInt(b.spot)-1;
-                        userOddSpot[b.playerId] = (userOddSpot[b.playerId] || '') + b.spot + ',';
+                    let OddSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray7 = OddSpot.split(',').map(num => parseInt(num) - 1); 
+                        userOddSpot[b.playerId] = numbersArray7.join(',');
                         break;
                     case 'Even':
-                        let realEvenSpot=parseInt(b.spot)-1;
-                        userEvenSpot[b.playerId] = (userEvenSpot[b.playerId] || '') + b.spot + ',';
+                        let EvenSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray8 = EvenSpot.split(',').map(num => parseInt(num) - 1); 
+                        userEvenSpot[b.playerId] = numbersArray8.join(',');
                         break;
                     case 'Red':
-                        userRedSpot[b.playerId] = (userRedSpot[b.playerId] || '') + b.spot + ',';
+                        let RedSpot = b.spot.replace(/,$/, ''); 
+                        let numbersArray9 = RedSpot.split(',').map(num => parseInt(num) - 1); 
+                        userRedSpot[b.playerId] = numbersArray9.join(',');
                         break;
                     case 'Black':
-                        let realBlackSpot=parseInt(b.spot)-1;
-                        userBlackSpot[b.playerId] = (userBlackSpot[b.playerId] || '') + b.spot + ',';
+                        let BlackSpot = b.spot.replace(/,$/, '');
+                        let numbersArray10 = BlackSpot.split(',').map(num => parseInt(num) - 1);
+                        userBlackSpot[b.playerId] = numbersArray10.join(',');
                         break;
                 }
 
@@ -489,18 +502,16 @@ socket.on('OnChipMoveRoullate', function (data) {
             });
         });
 
-        // Update the table with user data
         updateUserTable();
 
-        // Function to update the table with user data
         async function updateUserTable () {
             const userDataContainer = document.querySelector('#userData tbody');
-            userDataContainer.innerHTML = ''; // Clear existing data
+            userDataContainer.innerHTML = ''; 
             let count = 0;
             let name;
             uniqueUsers.forEach(async userId => {
                 count++;
-                fetch(`/get_id?userId=${userId}`, { // Corrected the URL interpolation
+                fetch(`/get_id?userId=${userId}`, { 
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -510,15 +521,14 @@ socket.on('OnChipMoveRoullate', function (data) {
                 .then(response => {
                     console.log(response);
                     name=response.name
-                // const title = response.status == 1 ? "Success" : "Error";
                 })
                 .catch((error) => {
                 console.log(error);
                 });
                 let name;
-       let realName= await SendName(userId).then(data => {
-        name=data.data
-    });
+                let realName= await SendName(userId).then(data => {
+                    name=data.data
+                });
                 const userData = `
                     <tr>
                         <td><p>${count}</p></td>
