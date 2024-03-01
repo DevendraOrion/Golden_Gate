@@ -396,6 +396,7 @@ socket.on('SENDWIN', function (data) {
 socket.on('sendtimeAdmin', function (data) {
     startCountdown(data, document.getElementById('countdown')); 
 });
+let profit=0;
 socket.on('OnChipMoveRoullate', function (data) {
     console.log(data);
     let totalChips = 0;
@@ -426,7 +427,7 @@ socket.on('OnChipMoveRoullate', function (data) {
         document.querySelectorAll('zero').forEach(p => {
             p.innerText = '0';
         });
-        
+        profit=0
         startCountdown(59, document.getElementById('countdown')); 
     } else {
         Object.values(data.bets).forEach(bet => {
@@ -511,7 +512,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                 let spots = Array.isArray(b.spot) ? b.spot : b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
-                    // console.log(spot);
+                    console.log(spot);
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
@@ -522,6 +523,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+
                     profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                     }
                    
@@ -582,16 +584,19 @@ socket.on('OnChipMoveRoullate', function (data) {
 
             const id = "profit" + spot;
             const percentId = "profitPercent" + spot;
-            console.log("-----------",spot);
+            // console.log("-----------",spot);
             const rate = rouletteRate[spot] / 100;
             const betAmount = typeData[spot];
             const returnAmount = typeData[spot] * rate;
+            profit+=returnAmount;
             if (rouletteRate[spot] == 3) {
                 console.log("===============");
                 three += betAmount;
+
                 const element = document.getElementById("Three").innerText = three;
-                const datas = document.getElementById("profitThree").innerText = three * 3;
+                const datas = document.getElementById("profitThree").innerText = (three * 3)/100;
                 const profitThreePercient = document.getElementById("profitPercentThree").innerText = 3 + "%";
+                // profit+= datas
             }
             const element = document.getElementById(spot);
             if (element) {
@@ -613,9 +618,7 @@ socket.on('OnChipMoveRoullate', function (data) {
             let returnId = "return" + (parseInt(spot) );
             let percentData = "percent" + (parseInt(spot) );
             if(spot== -1){
-                // console.log(spot);
                 spot="00"
-                // Number(spot)
                 returnId = "return00" ;
                 percentData = "percent00" ;
             }
@@ -627,7 +630,7 @@ socket.on('OnChipMoveRoullate', function (data) {
         });
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
-    document.getElementById("totalProfit").innerHTML = totalChips*gamePercent/100;
+    document.getElementById("totalProfit").innerHTML = (profit).toFixed(2);
 });
 
 function startCountdown(durationInSeconds, display) {
