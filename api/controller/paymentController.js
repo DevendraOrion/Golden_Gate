@@ -789,7 +789,7 @@ list = await Promise.all(list.map(async (u, index) => {
       } else {
           parseData = null; 
       }
-      spot = parseData?.["0"] ?? " ";
+      spot = parseData?.["0"]-1 ?? " ";
 
     } else if (GameId == "2") {
       if(u.spot==0){

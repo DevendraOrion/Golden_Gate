@@ -18,6 +18,13 @@
                 <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
                 <h3 style="font-size: 13px; font-weight: bold;">Profit:<span class="zero" id="totalProfit">0</span></h3>
             </div>
+            <div >
+                <h3 style="font-size: 13px; font-weight: bold;"  >Height:<span class="zero" id="height">0</span>x</h3>
+               
+            </div>
+            <div>
+                
+            </div>
         </div>
 
         <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
@@ -80,7 +87,12 @@
 const socket = io('http://103.175.163.97:3070');
 let gamePercent=document.getElementById('gamePercent').value;
 
-
+socket.emit('OnCashoutforWeb', {  msg:"hi" });
+socket.emit('distance', {msg:"hi"})
+socket.on('distance', function (data) {
+    console.log(data);
+    document.getElementById("height").innerText=data.flydistance
+})
 socket.on('OnCashoutforWeb', function (data) {
     console.log(data);
 })

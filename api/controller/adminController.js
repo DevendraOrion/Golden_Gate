@@ -477,7 +477,7 @@ const list=await parentData
 getSlotDetails: async (roomId,gameId,admin) => {
   let downline = await Service.DownLine(admin._id);
   downline.push(admin._id);
-  console.log(downline)
+  // console.log(downline)
   let game;
   if (gameId == 1) {
       game = "game_record_roulettes";

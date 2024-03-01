@@ -379,6 +379,20 @@ const rouletteRate = {
 };
 socket.emit('sendtimeAdmin', {  msg:"hi" });
 
+socket.on('SENDWIN', function (data) {
+    // console.log(data,"kjshfdkash");
+    if(data.winNumber==0){
+        data.winNumber="00"
+    }else{
+        data.winNumber=data.winNumber-1
+    }
+    setTimeout(function () {
+        swal({
+            icon:  "success" ,
+            title: `Win Number Is ${data.winNumber}`
+        });
+    }, 13000);
+});
 socket.on('sendtimeAdmin', function (data) {
     // console.log(data,"kjshfdkash");
     startCountdown(data, document.getElementById('countdown')); 
@@ -425,17 +439,18 @@ socket.on('OnChipMoveRoullate', function (data) {
 
                 typeData[b.type]=(typeData[b.type] || 0) + 1;
                 if (rouletteRate[b.type] == 3) {
-                // console.log("===============");
                       let realThreeSpot=parseInt(b.spot)-1;
                     userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + b.spot + ',';
             }
                 switch (b.type) {
                     case 'Straight':
                         let realStraightSpot=parseInt(b.spot)-1;
+                       
+
                         userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realStraightSpot + ',';
                         break;
                         case 'Split':
-                            console.log(b.spot);
+                            // console.log(b.spot);
                             let splitSpot = b.spot.replace(/,$/, ''); 
                             let numbersArray = splitSpot.split(',').map(num => parseInt(num) - 1); 
                             userSplitSpot[b.playerId] = numbersArray.join(','); 
@@ -498,6 +513,14 @@ socket.on('OnChipMoveRoullate', function (data) {
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                     profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+                    if(spot==-1){
+                        spot="00"
+                        chipValues[spot] = (chipValues[spot] || 0) + b.chip;
+                    const rate = gamePercent/100; 
+                    returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+                    profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+                    }
+                   
                 });
             });
         });
@@ -511,20 +534,7 @@ socket.on('OnChipMoveRoullate', function (data) {
             let name;
             uniqueUsers.forEach(async userId => {
                 count++;
-                fetch(`/get_id?userId=${userId}`, { 
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                })
-                .then(response => response.json())
-                .then(response => {
-                    console.log(response);
-                    name=response.name
-                })
-                .catch((error) => {
-                console.log(error);
-                });
+               
                 let name;
                 let realName= await SendName(userId).then(data => {
                     name=data.data
@@ -594,8 +604,17 @@ socket.on('OnChipMoveRoullate', function (data) {
         });
 
         Object.keys(chipValues).forEach(spot => {
-            const returnId = "return" + (parseInt(spot) );
-            const percentData = "percent" + (parseInt(spot) );
+            let returnId = "return" + (parseInt(spot) );
+            let percentData = "percent" + (parseInt(spot) );
+            if(spot== -1){
+                // console.log(spot);
+                spot="00"
+                // Number(spot)
+                returnId = "return00" ;
+                percentData = "percent00" ;
+            }
+         
+            // console.log(spot,returnId,percentData);
             document.getElementById(spot).innerText = chipValues[spot];
             document.getElementById(returnId).innerText = returnAmount[spot];
             document.getElementById(percentData).innerText =`${(returnAmount[spot]/chipValues[spot])*100}%`;
