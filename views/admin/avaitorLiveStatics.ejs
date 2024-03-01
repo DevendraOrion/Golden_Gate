@@ -65,6 +65,18 @@
 <%- include footer %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
+    const SendName=async(playerId)=>{
+        let name
+     const response = await fetch(`/get_id?userId=${playerId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+
+        return data;
+}
 const socket = io('http://103.175.163.97:3070');
 let gamePercent=document.getElementById('gamePercent').value;
 
@@ -73,22 +85,7 @@ socket.on('OnCashoutforWeb', function (data) {
     console.log(data);
 })
 
-const SendName=(playerId)=>{
-    fetch(`/get_id?userId=${playerId}`, { 
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-    })
-    .then(response => response.json())
-    .then(response => {
-        console.log(response);
-        return response.name;
-    })
-    .catch((error) => {
-    console.log(error);
-    });
-}
+
 
 socket.on('OnChipMoveAvaitor', function (data) {
     console.log(data);
@@ -101,10 +98,12 @@ socket.on('OnChipMoveAvaitor', function (data) {
     Object.values(data.bets).forEach(async(bet, index) => {
         const { playerId, chip } = bet;
       
-        totalChipAmount += chip;
-       let name= await SendName(playerId);
         uniqueUserIds.add(playerId);
-
+        totalChipAmount += chip;
+        let name;
+       let realName= await SendName(playerId).then(data => {
+        name=data.data
+    });
         const newRow = `
             <tr>
                 <td><p>${index + 1}</p></td>

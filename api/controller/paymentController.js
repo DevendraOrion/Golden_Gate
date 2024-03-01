@@ -760,13 +760,14 @@ list = await Promise.all(list.map(async (u, index) => {
             totalBetAmt += a.amount;
             totalWinAmt += a.win_amount;
             totalPlayer++
-          // console.log("================",findUser);
+          console.log("================",req.admin._id);
           if (u.room_id) {
               let findData = await Transaction.aggregate([
                   {
                       $match: {
                           room_id: Number(u.room_id),
-                          txn_mode: "C"
+                          txn_mode: "C",
+                          user_id:req.admin._id
                       }
                   },
                   {
@@ -1247,8 +1248,9 @@ return res.status(200).send({
     let UserId=req.query.userId
 
     let FindData=await User.findOne({numeric_id:UserId})
-    // console.log(FindData.search_id);
-    return {name:FindData.search_id}
+    console.log(FindData.search_id);
+    return res.send({status:200,data:FindData.search_id})
+    // return {name:FindData.search_id}
   },
   getCommissionAjax: async function (req, res) {
     var startTime = new Date();
