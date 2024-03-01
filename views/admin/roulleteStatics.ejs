@@ -354,7 +354,7 @@ const SendName=async(playerId)=>{
 }
 
 const socket = io('http://103.175.163.97:3070');
-let gamePercent=document.getElementById('gamePercent').value;
+// let gamePercent=document.getElementById('gamePercent').value;
 const rouletteRate = {
     Straight: 36,
     Split: 18,
@@ -394,7 +394,6 @@ socket.on('SENDWIN', function (data) {
     }, 13000);
 });
 socket.on('sendtimeAdmin', function (data) {
-    // console.log(data,"kjshfdkash");
     startCountdown(data, document.getElementById('countdown')); 
 });
 socket.on('OnChipMoveRoullate', function (data) {
@@ -432,6 +431,9 @@ socket.on('OnChipMoveRoullate', function (data) {
     } else {
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {
+                let gamePercent= rouletteRate[b.type]
+                // console.log(gamePercent);
+
                 totalChips += b.chip;
                 uniqueUsers.add(b.playerId); 
                 
@@ -441,7 +443,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                 if (rouletteRate[b.type] == 3) {
                       let realThreeSpot=parseInt(b.spot)-1;
                     userThreeSpot[b.playerId] = (userThreeSpot[b.playerId] || '') + b.spot + ',';
-            }
+                }
                 switch (b.type) {
                     case 'Straight':
                         let realStraightSpot=parseInt(b.spot)-1;
@@ -509,13 +511,15 @@ socket.on('OnChipMoveRoullate', function (data) {
                 let spots = Array.isArray(b.spot) ? b.spot : b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
+                    // console.log(spot);
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                     profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
+                    
                     if(spot==-1){
-                        spot="00"
-                        chipValues[spot] = (chipValues[spot] || 0) + b.chip;
+                    spot="00"
+                    chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
                     profitPercent[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
@@ -575,17 +579,19 @@ socket.on('OnChipMoveRoullate', function (data) {
 
         let three = 0;
         Object.keys(typeData).forEach(spot => {
+
             const id = "profit" + spot;
             const percentId = "profitPercent" + spot;
-            const rate = gamePercent / 100;
+            console.log("-----------",spot);
+            const rate = rouletteRate[spot] / 100;
             const betAmount = typeData[spot];
             const returnAmount = typeData[spot] * rate;
             if (rouletteRate[spot] == 3) {
                 console.log("===============");
                 three += betAmount;
                 const element = document.getElementById("Three").innerText = three;
-                const datas = document.getElementById("profitThree").innerText = three * rate;
-                const profitThreePercient = document.getElementById("profitPercentThree").innerText = gamePercent + "%";
+                const datas = document.getElementById("profitThree").innerText = three * 3;
+                const profitThreePercient = document.getElementById("profitPercentThree").innerText = 3 + "%";
             }
             const element = document.getElementById(spot);
             if (element) {
