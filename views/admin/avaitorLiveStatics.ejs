@@ -14,12 +14,38 @@
       
       
             <div >
-                <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span class="zero" id="totalUser">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;">Profit:<span class="zero" id="totalProfit">0</span></h3>
+                <h3  style="font-size: 13px;   font-weight: bold;     background-color: cornflowerblue;
+                padding: 5px;
+                padding-left: 32px;
+                border-radius: 18px;
+            ">Total User:<span class="zero" id="totalUser">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;     background-color: #ff95c4;
+                padding: 5px;
+                padding-left: 32px;
+                border-radius: 18px;
+            ">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;   
+                background-color: cadetblue;
+                padding: 5px;
+                padding-left: 27px;
+                padding-right: 20px;
+                border-radius: 18px;
+                color: white;
+            ">Total Cashout Amount:<span class="zero" id="totalCashout">0</span></h3>
+                <h3 style="font-size: 13px; font-weight: bold;    
+                   background-color: grey;
+    padding: 5px;
+    padding-left: 30px;
+    border-radius: 18px;
+    color: white;
+            ">Profit:<span class="zero" id="totalProfit">0</span></h3>
             </div>
             <div >
-                <h3 style="font-size: 13px; font-weight: bold;"  >Height:<span class="zero" id="height">0</span>x</h3>
+                <h3 style="font-size: 13px; font-weight: bold;     width: 145px;
+                padding-left: 35px;
+                padding-top: 10px;
+                padding-bottom: 12px;
+                border-radius: 20px;"  >Height:<span class="zero" id="height">0</span>x</h3>
                
             </div>
             <div>
@@ -90,7 +116,7 @@ let gamePercent=document.getElementById('gamePercent').value;
 socket.emit('OnCashoutforWeb', {  msg:"hi" });
 socket.emit('distance', {msg:"hi"})
 socket.on('distance', function (data) {
-    console.log(data);
+    // console.log(data);
     document.getElementById("height").innerText=data.flydistance
 })
 socket.on('OnCashoutforWeb', function (data) {
@@ -109,13 +135,15 @@ socket.on('OnChipMoveAvaitor', function (data) {
 
     Object.values(data.bets).forEach(async(bet, index) => {
         const { playerId, chip } = bet;
-      
+    //   console.log(playerId,chip);
         uniqueUserIds.add(playerId);
+        console.log(uniqueUserIds);;
         totalChipAmount += chip;
         let name;
        let realName= await SendName(playerId).then(data => {
         name=data.data
     });
+    if(uniqueUserIds.has(playerId)){
         const newRow = `
             <tr>
                 <td><p>${index + 1}</p></td>
@@ -125,7 +153,7 @@ socket.on('OnChipMoveAvaitor', function (data) {
                 <td><p>${gamePercent} %</p></td>
             </tr>`;
 
-        document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);
+        document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);}
     });
 
     document.getElementById('totalBet').innerText = totalChipAmount;

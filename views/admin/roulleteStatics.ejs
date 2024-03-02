@@ -14,17 +14,41 @@
             <div>
                 <div style="    display: flex;
                 justify-content: center;">
-                    <h3 style="font-weight: bold; font-size: 13px;">Control Type</h3>
+                    <h3 style="font-weight: bold;
+                    font-size: 13px;
+                    background-color: green;
+                    width: 93px;
+                    padding: 7px;
+                    color: white;
+                    border-radius: 31px;">Control Type</h3>
                 </div>
                 <div style="display: flex;">
-                    <h3 style="font-weight: bold; margin-left: 17px;font-size: 13px;">Command Mode</h3>
-                    <h3 style="font-weight:  bold; margin-left: 17px; font-size: 13px;">Random Mode</h3>
-                    <h3 style="font-weight: bold;margin-left: 17px;font-size: 13px;">Mannual Mode</h3>
+                    <h3 style="font-weight: bold;
+                    font-size: 13px;
+                    background-color: cornflowerblue;
+                    width: 123px;
+                    padding: 13px;
+                    color: white;
+                    border-radius: 31px;">Command Mode</h3>
+                    <h3 style="font-weight: bold;
+                    font-size: 13px;
+                    background-color: cornflowerblue;
+                    width: 123px;
+                    padding: 13px;
+                    color: white;
+                    border-radius: 31px; margin-left: 3px;">Random Mode</h3>
+                    <h3 style="font-weight: bold;
+                    font-size: 13px;
+                    background-color: cornflowerblue;
+                    width: 123px;
+                    padding: 13px;
+                    color: white;
+                    border-radius: 31px;margin-left: 3px;">Mannual Mode</h3>
                 </div>
             </div>
             <div>
                 <!-- <h3>CountDown</h3> -->
-                <span id="countdown" style="font-size: 18px;">00.00</span>
+                <span id="countdown" style="font-size: 18px;     margin-right: 116px;">00.00</span>
             </div>
             <div >
                 <h3  style="font-size: 13px;   font-weight: bold;">Total User:<span class="zero" id="totalUser">0</span></h3>
@@ -623,10 +647,19 @@ socket.on('OnChipMoveRoullate', function (data) {
                 percentData = "percent00" ;
             }
          
-            // console.log(spot,returnId,percentData);
-            document.getElementById(spot).innerText = chipValues[spot];
-            document.getElementById(returnId).innerText = returnAmount[spot];
-            document.getElementById(percentData).innerText =`${(returnAmount[spot]/chipValues[spot])*100}%`;
+            let returnChip=totalChips-returnAmount[spot]*100
+            if(returnChip<0){
+                returnProfit=0;
+            }else{
+                // returnProfit=((totalChips/returnAmount[spot])/10).toFixed(2)
+              let a=  totalChips-returnChip
+              console.log(a,totalChips,returnAmount[spot],"DemoData");
+              returnProfit= ((a/totalChips)*100).toFixed(2)
+            }
+            // console.log(totalChips,returnAmount[spot],returnProfit,"demoag");
+            document.getElementById(spot).innerText = (chipValues[spot]).toFixed(2);
+            document.getElementById(returnId).innerText = (returnChip).toFixed(2);
+            document.getElementById(percentData).innerText =(returnProfit)+"%";
         });
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
