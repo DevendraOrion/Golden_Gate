@@ -174,7 +174,7 @@ module.exports = {
     let TxnMode="T"
     let admin=req.admin
     const transactions = await paymentController.transferPoint(admin,TxnMode);
-    console.log(transactions.list.length);
+    // console.log(transactions.list.length);
       res.render("admin/transferReport", {
       title: "Chip Transfer History",
       type: "pointTransfer",

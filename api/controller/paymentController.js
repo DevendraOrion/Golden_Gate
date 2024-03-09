@@ -334,7 +334,7 @@ module.exports = {
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
-          console.log(u);
+          // console.log(u);
           return {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
@@ -790,6 +790,9 @@ list = await Promise.all(list.map(async (u, index) => {
           parseData = null; 
       }
       spot = parseData?.["0"]-1 ?? " ";
+      if(spot==-1){
+        spot="00";
+      }
 
     } else if (GameId == "2") {
       if(u.spot==0){
@@ -963,13 +966,14 @@ return res.status(200).send({
     aggregation_obj.push({
       $match: matchObj,
     });
+    
+    aggregation_obj.push({
+      $match: {
+        is_status: {$ne: "P"} 
+      }
+    });
+    
     aggregation_obj.push(
-      {
-        $match: {
-             is_status: {$ne:"P"} 
-        }
-      },
-      
       {
         $lookup: {
           from: "users",
@@ -978,9 +982,6 @@ return res.status(200).send({
           as: "users",
         },
       },
-      // {
-      //   $unwind: "$users",
-      // },
       {
         $lookup: {
           from: "users",
@@ -988,62 +989,55 @@ return res.status(200).send({
           foreignField: "_id",
           as: "refUser",
         },
-      },
-      // {
-      //   $unwind: "$refUser",
-      // },
-
+      }
     );
-
-
-    aggregation_obj.push(
-      {
-        $sort: sortObj,
-      },
-      {
-        $skip: params.start == "All" ? 0 : parseInt(params.start),
-      },
-      
-    );
-
-    if (params.length != -1) {
-      aggregation_obj.push({
-        $limit: parseInt(params.length),
-      });
+    
+    aggregation_obj.push({
+      $facet: {
+        checkRefUser: [
+          {
+            $match: {
+              refUser: {$exists: true, $not: {$size: 0}}
+            }
+          },
+          {
+            $sort: sortObj,
+          },
+          {
+            $skip: params.start == "All" ? 0 : parseInt(params.start),
+          },
+          {
+            $limit: params.length != -1 ? parseInt(params.length) : null,
+          }
+        ],
+        noRefUser: [
+          {
+            $match: {
+              refUser: {$exists: false} 
+            }
+          },
+          {
+            $group:{
+              _id:"$user_id",
+              // totalBet:
+            }
+          }
+        ]
+      }
+    });
+    
+    let list;
+    if (aggregation_obj.length > 0) {
+      list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
+    } else {
+      list = await Transaction.find(matchObj)
+        .sort(sortObj)
+        .skip(params.start == "All" ? 0 : parseInt(params.start))
+        .limit(params.length != -1 ? parseInt(params.length) : null);
     }
-
-
-      // aggregation_obj.push(
-      //     {
-      //     $project: {
-      //       _id: 1,
-      //       username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
-      //       refusername: { $concat: ["$refUser.first_name", " ", "$refUser.last_name"] },
-      //       transaction_type: 1,
-      //       created_at: 1,
-      //       resp_msg: 1,
-      //       txn_amount: 1,
-      //       current_balance:1,
-      //       payment_mode: 1,
-      //       refSearch_id: "$refUser.search_id",
-      //       search_id: "$users.search_id",
-      //       user_id: "$users._id",
-      //       role: "$users.role",
-      //       refUserRole: "$refUser.role",
-      //       is_status: 1,
-      //       txn_mode: 1,
-      //     },
-      //   },
-      //   {
-      //     $match: matchObj2,
-      //   }
-      //   );
-      
     
-
     
-        console.log(aggregation_obj);
-    let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
+      // console.log(list);
     list = list.map((a) => {
       console.log(a);
       let username = a.users[0].first_name + " " + a.users[0].last_name;
@@ -1211,6 +1205,11 @@ return res.status(200).send({
             BeforeBalance=u.current_balance;
             current_balance= u.current_balance+u.txn_amount;
             // console.log("===========",BeforeBalance,current_balance);
+          }
+          else if(u.role=="User"||u.role=="Agent" ||u.role=="Zone"||u.role=="District"||u.role=="State"){
+            Debit_credit = '<span class="label label-success">Credit</span>';
+            BeforeBalance=u.current_balance-u.txn_amount;
+            current_balance= u.current_balance;
           }
           else{
             Debit_credit = '<span class="label label-success">Credit</span>';
@@ -1653,10 +1652,16 @@ console.log(aggregation_obj);
       );
     }else{
       aggregation_obj.push(
-        {$match:{
+        {
+          $match:{
           txn_mode:"T",
-          user_id:req.admin._id
-        }},
+          // user_id:req.admin._id,
+          $or: [
+            { user_id:req.admin._id },
+            { refUser:req.admin._id }
+          ]
+        }
+      },
         {
           $lookup: {
             from: "users",
@@ -1715,6 +1720,7 @@ console.log(aggregation_obj);
     },
     );
 
+    // console.log(aggregation_obj);
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     let aggregate_rf = [];
@@ -1742,7 +1748,6 @@ console.log(aggregation_obj);
       },
     });
     
-    // console.log(aggregation_obj,aggregate_rf,matchObj);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
     let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
@@ -1750,8 +1755,7 @@ console.log(aggregation_obj);
 
     list = await Promise.all(
       list.map(async (u,index) => {
-    // console.log("u");
-    // console.log(u);
+    // console.log(u.role,u.transaction_type);
         let txn_amount = u.txn_amount;
 
         if (u.txn_amount > 0) {
@@ -1772,7 +1776,7 @@ console.log(aggregation_obj);
 
         let current_balance= u.current_balance
         let status_ = u.is_status;
-
+        // console.log(status_);
         if (status_ == "P") {
           status_ = '<span class="label label-warning">Pending</span>';
         } else if (status_ == "S") {
@@ -1796,10 +1800,40 @@ console.log(aggregation_obj);
         }
         let created=await Service.formateDateandTime(u.created_at)
         let BeforeBalance;
-        if (txn_mode == "D") {
-          BeforeBalance=u.current_balance+u.txn_amount
+
+        if (u.transaction_type == "D") {
+
+          if(req.admin.role=="Company"){
+            // console.log("admin");
+            if(u.role=="Company"){
+              BeforeBalance=u.current_balance;
+              current_balance= u.current_balance-u.txn_amount;
+              
+            }else{
+            // console.log("hi");
+            BeforeBalance=u.current_balance;
+            current_balance= u.current_balance-u.txn_amount;
+          }
+
+          }else{
+            BeforeBalance=u.current_balance+u.txn_amount;
+
+          }
         }  else {
-          BeforeBalance=u.current_balance-u.txn_amount
+         
+          if(req.admin.role=="Company"){
+            if(u.role=="Company"){
+              BeforeBalance=u.current_balance;
+              current_balance= u.current_balance+u.txn_amount;
+              console.log(BeforeBalance,current_balance,"emasdof");
+            }else{
+              current_balance= u.current_balance+u.txn_amount;
+              BeforeBalance=u.current_balance;
+            }
+          }else{
+            BeforeBalance=u.current_balance-u.txn_amount
+          }
+
         }
         return [
           ++index,

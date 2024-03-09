@@ -7309,7 +7309,7 @@ acceptRequest: async (req, res) => {
         created_at: new Date().getTime(),
         transaction_type: "C",
         resp_msg:  `Deposit by ${adminData.name} `,
-        current_balance: userData.cash_balance,
+        current_balance: userData.cash_balance+Number(findData.txn_amount),
         is_status: "S",
         txn_mode: "T",
         txn_id:transcId+1
@@ -7938,29 +7938,29 @@ saveTransferPoint: async (req, res) => {
           const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:-point}})
   
           var userTxnHistry = new Transaction({
-            user_id: user._id,
-            refUser:req.admin._id,
+            user_id: req.admin._id,
+            refUser:user._id,
             txn_amount: point,
-            current_balance:user.cash_balance-point,
+            current_balance:user.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "D",
             resp_msg:  "Debited by Company",
             is_status: "S",
-            txn_mode: "A",
+            txn_mode: "T",
             txn_id:transcId
           });
               let txnres = await userTxnHistry.save();
   
           var adminTxnHistory = new Transaction({
-            user_id: req.admin._id,
-            refUser: user._id,
+            user_id: user._id,
+            refUser: req.admin._id,
             txn_amount: point,
             current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "C",
             resp_msg: `Credit To ${user.first_name} ${user.last_name}`,
             is_status: "S",
-            txn_mode: "A",
+            txn_mode: "T",
             txn_id:transcId+1
           });
               let txnresadmin = await adminTxnHistory.save();
@@ -7987,8 +7987,8 @@ saveTransferPoint: async (req, res) => {
           const updateUser=await User.updateOne({_id:user._id},{$inc:{cash_balance:point}})
   
           var userTxnHistry = new Transaction({
-            user_id: user._id,
-            refUser: req.admin._id,
+            user_id: req.admin._id,
+            refUser: user._id,
             txn_amount: point,
             current_balance:user.cash_balance,
             created_at: new Date().getTime(),
@@ -8001,8 +8001,8 @@ saveTransferPoint: async (req, res) => {
               let txnres = await userTxnHistry.save();
   
           var adminTxnHistory = new Transaction({
-            user_id: req.admin._id,
-            refUser: user._id,
+            user_id: user._id,
+            refUser: req.admin._id,
             txn_amount: point,
             current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),

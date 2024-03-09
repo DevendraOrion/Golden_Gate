@@ -23,6 +23,7 @@
                 </div>
                 <div class="col-md-8">
                     <div class="pull-right">
+                        <%if(admin.role=="Company"){%>
                         <select class="col select-rank" name="rank" style="width:152px;">
                             <option></option>
                             <option value="State">State</option>
@@ -31,6 +32,8 @@
                             <option value="Agent">Agent</option>
                             <option value="User">User</option>
                         </select>
+                        <%}%>
+
                         <select class="col search-user" name="state" style="width:152px;"></select>
     
                         <!-- <select class="col select-type" name="type" style="width:152px;">

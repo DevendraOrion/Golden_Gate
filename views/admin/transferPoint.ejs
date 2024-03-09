@@ -98,9 +98,10 @@
               
                 <tr>
                   <td>
-                    <button type="button" class="btn btn-success" onclick="saveSettings()">
+                    <button type="button" id="transferButton" class="btn btn-success" onclick="saveSettings()">
                       Transfer
                     </button>
+                    
                   </td>
                   <td></td>
                 </tr>
@@ -123,6 +124,7 @@
         const debitCredit = document.getElementById("debitCredit").value;
         const adminBalance = document.getElementById("adminBalance").value;
         const UpperLevel=false
+        document.getElementById('transferButton').disabled = true;
         fetch("/admin/saveTransferPoint", {
           method: "POST",
           body: JSON.stringify({ role , userSearchId, securityPin, balance, debitCredit,adminBalance,UpperLevel}),
@@ -140,6 +142,7 @@
               if(response.status == 1){
                 window.location.reload();
               }
+              document.getElementById('transferButton').disabled = false;
             });
           })
           .catch((error) => {
@@ -147,6 +150,7 @@
             swal({ icon: "error", title: "An error occurred" }).then(() => {
               window.location.reload();
             });
+            document.getElementById('transferButton').disabled = false;
           });
       };
     </script>

@@ -603,8 +603,7 @@ const config = function () {
             '/profile',
             '/admin/logout',
             '/admin/adminpass',
-            '/admin/genprofile',
-            '/admin/genprofile',
+            '/admin/genprofile'
         ],
         USER_MANAGEMENT: [
             '/',

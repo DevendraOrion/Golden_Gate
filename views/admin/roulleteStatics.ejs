@@ -472,16 +472,25 @@ socket.on('OnChipMoveRoullate', function (data) {
                 switch (b.type) {
                     case 'Straight':
                         let realStraightSpot=parseInt(b.spot)-1;
-                       
-
+                       console.log(b.spot);
+                       if(realStraightSpot==-1){
+                        realStraightSpot="00"
+                       }
                         userStraightSpot[b.playerId] = (userStraightSpot[b.playerId] || '') + realStraightSpot + ',';
                         break;
                         case 'Split':
                             // console.log(b.spot);
-                            let splitSpot = b.spot.replace(/,$/, ''); 
-                            let numbersArray = splitSpot.split(',').map(num => parseInt(num) - 1); 
+                            let splitSpot;
+                            let numbersArray;
+                            if (typeof b.spot === 'string') {
+                                splitSpot = b.spot.replace(/,$/, ''); 
+                                numbersArray = splitSpot.split(',').map(num => parseInt(num) - 1); 
+                            } else if (Array.isArray(b.spot)) {
+                                numbersArray = b.spot.map(num => parseInt(num) - 1); 
+                            }
                             userSplitSpot[b.playerId] = numbersArray.join(','); 
                             break;
+
 
                     case 'Corner':
                             let cornerSpot = b.spot.replace(/,$/, ''); 
@@ -536,7 +545,7 @@ socket.on('OnChipMoveRoullate', function (data) {
                 let spots = Array.isArray(b.spot) ? b.spot : b.spot.split(',').filter(spot => spot !== '');
                 spots.forEach(spot => {
                     spot = spot - 1; 
-                    console.log(spot);
+                    // console.log(spot);
                     chipValues[spot] = (chipValues[spot] || 0) + b.chip;
                     const rate = gamePercent/100; 
                     returnAmount[spot] = (returnAmount[spot] || 0) + (b.chip * rate);
@@ -608,19 +617,27 @@ socket.on('OnChipMoveRoullate', function (data) {
 
             const id = "profit" + spot;
             const percentId = "profitPercent" + spot;
-            // console.log("-----------",spot);
             const rate = rouletteRate[spot] / 100;
             const betAmount = typeData[spot];
             const returnAmount = typeData[spot] * rate;
-            profit+=returnAmount;
-            if (rouletteRate[spot] == 3) {
-                console.log("===============");
-                three += betAmount;
+            
+            
+            let returnProfit=0
+            let returnChip=totalChips-returnAmount;
+            profit+=Number(returnChip);
+            if(returnChip>0){
+                let a=  returnChip
+                returnProfit= ((a/totalChips)*100).toFixed(2)
+                console.log(returnProfit);
+            }
 
+            if (rouletteRate[spot] == 3) {
+                // console.log("===============");
+                three += betAmount;
+                three=betAmount-three;
                 const element = document.getElementById("Three").innerText = three;
                 const datas = document.getElementById("profitThree").innerText = (three * 3)/100;
                 const profitThreePercient = document.getElementById("profitPercentThree").innerText = 3 + "%";
-                // profit+= datas
             }
             const element = document.getElementById(spot);
             if (element) {
@@ -629,12 +646,12 @@ socket.on('OnChipMoveRoullate', function (data) {
 
             const profitElement = document.getElementById(id);
             if (profitElement) {
-                profitElement.innerText = (typeData[spot] * rate);
+                profitElement.innerText = (returnChip).toFixed(2);
             }
 
             const percentElement = document.getElementById(percentId);
             if (percentElement) {
-                percentElement.innerText = `${(returnAmount / betAmount) * 100}%`;
+                percentElement.innerText = returnProfit+"%";
             }
         });
 
@@ -646,24 +663,20 @@ socket.on('OnChipMoveRoullate', function (data) {
                 returnId = "return00" ;
                 percentData = "percent00" ;
             }
-         
+            let returnProfit=0
             let returnChip=totalChips-returnAmount[spot]*100
-            if(returnChip<0){
-                returnProfit=0;
-            }else{
-                // returnProfit=((totalChips/returnAmount[spot])/10).toFixed(2)
-              let a=  totalChips-returnChip
-              console.log(a,totalChips,returnAmount[spot],"DemoData");
+            if(returnChip>0){
+                let a=  totalChips-returnChip
               returnProfit= ((a/totalChips)*100).toFixed(2)
             }
-            // console.log(totalChips,returnAmount[spot],returnProfit,"demoag");
             document.getElementById(spot).innerText = (chipValues[spot]).toFixed(2);
             document.getElementById(returnId).innerText = (returnChip).toFixed(2);
             document.getElementById(percentData).innerText =(returnProfit)+"%";
         });
     document.getElementById("totalUser").innerHTML = uniqueUsers.size;
     document.getElementById("totalBet").innerHTML = totalChips;
-    document.getElementById("totalProfit").innerHTML = (profit).toFixed(2);
+    document.getElementById("totalProfit").innerHTML = profit;
+    console.log(profit);
 });
 
 function startCountdown(durationInSeconds, display) {

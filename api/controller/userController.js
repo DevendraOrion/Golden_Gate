@@ -1627,7 +1627,7 @@ module.exports = {
     let condition = {
         is_deleted: false,
         _id:{$in:downline},        
-        role:req.query.role,
+        // role:req.query.role,
     };
     if (params.search) {
         if (params.search.trim() != '') {
