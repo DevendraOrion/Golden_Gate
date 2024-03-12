@@ -441,8 +441,8 @@ module.exports = {
         }
       })
     );
+    let count  = await Transaction.aggregate([{"$match":{"user_id":admin._id}},{"$match":{"is_status":{"$ne":"P"}}},{"$lookup":{"from":"users","localField":"user_id","foreignField":"_id","as":"users"}},{"$lookup":{"from":"users","localField":"refUser","foreignField":"_id","as":"refUser"}}]);
 
-    let count = await Transaction.countDocuments();
     return {
       list: list.filter((d) => d),
       count: count,
@@ -951,11 +951,16 @@ return res.status(200).send({
           $lt: timestampsend.toString()
       };
     }
-    
-   
-    let incData=await Service.DownLine(req.admin._id)
-    let a=incData.push(req.admin._id)
-    matchObj.user_id = {$in:incData};
+    let total = 0
+   if(req.admin.role!=="Company" && Object.keys(matchObj).length == 0){
+    matchObj.user_id = req.admin._id
+    total =  await Transaction.countDocuments({user_id : req.admin._id ,is_status: {$ne: "P"} });
+   }else{
+     let incData=await Service.DownLine(req.admin._id)
+     let a=incData.push(req.admin._id)
+     matchObj.user_id = {$in:incData};
+     total =  await Transaction.countDocuments({user_id : {$in:incData} ,is_status: {$ne: "P"} });
+   }
     // if (req.admin.role==="Company") {
     //   matchObj.user_id = {$in:incData};
     // }else {
@@ -972,7 +977,7 @@ return res.status(200).send({
         is_status: {$ne: "P"} 
       }
     });
-    
+
     aggregation_obj.push(
       {
         $lookup: {
@@ -1037,9 +1042,9 @@ return res.status(200).send({
     }
     
     
-      // console.log(list);
-    list = list.map((a) => {
-      console.log(a);
+      // console.log(list[0].checkRefUser,"list");
+      // console.log(list[0].checkRefUser,"list");
+    list = list[0].checkRefUser.map((a) => {
       let username = a.users[0].first_name + " " + a.users[0].last_name;
       let refusername;
       if (a.refUser[0]) {
@@ -1115,7 +1120,7 @@ return res.status(200).send({
     // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 // console.log(rF);
-    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    let recordsFiltered = total
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
@@ -1327,7 +1332,7 @@ console.log("+============");
     }else{
 let today = new Date();
 
-let daysToSubtract = today.getDay() - 1;
+let daysToSubtract = today.getDay() ;
 if (daysToSubtract < 0) {
   daysToSubtract = 6;
 }
@@ -1336,7 +1341,8 @@ let mondayDate = new Date(today.getTime() - (daysToSubtract * 24 * 60 * 60 * 100
 
 mondayDate.setHours(0, 0, 0, 0);
 
-let mondayTimestamp = mondayDate.getTime() / 1000; 
+// let mondayTimestamp = mondayDate.getTime() / 1000; // before 
+let mondayTimestamp = mondayDate.getTime() ; 
 
 console.log(mondayDate);
 

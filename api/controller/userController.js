@@ -1621,6 +1621,17 @@ module.exports = {
     return res.send({ results: users });
    }else{
     const params = _.pick(req.query, ['search']);
+    if(!params.search){
+        if (req.admin.role == "State" ) {
+            params.search = "di"
+        }else if(req.admin.role == "Dstrict" ){
+            params.search = "Zo"
+        }else if(req.admin.role == "Zone" ){
+            params.search = "ag"
+        }else if(req.admin.role == "Agent" ){
+            params.search = "GG"
+        }
+    }
     let aggregate_obj = [];
     let downline=await Service.DownLine(req.admin._id);
 // console.log(downline);
