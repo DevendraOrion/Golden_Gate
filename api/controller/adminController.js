@@ -1311,8 +1311,11 @@ let userData=await User.aggregate([
     }
   }
 ])
-console.log(distributerData,userData);
-   return {distributerData:distributerData[0]?.balance ??0 ,userData:userData[0]?.balance ??0}
+  distributerData = distributerData[0]?.balance
+  distributerData = distributerData.toFixed(2)
+  userData  =userData[0]?.balance ??0
+  userData = userData.toFixed(2)
+   return {distributerData :Number(distributerData) ,userData:Number(userData)}
   },
   getReferralList: async () => {
     var users = await User.aggregate([
@@ -7945,8 +7948,8 @@ saveTransferPoint: async (req, res) => {
             current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "C",
-            // resp_msg:  "Debited by Company",
-            resp_msg:  `Credit To ${user.first_name} ${user.last_name}`,
+            resp_msg:  "Debited by Company",
+            // resp_msg:  `Credit To ${user.first_name} ${user.last_name}`,
             is_status: "S",
             txn_mode: "T",
             txn_id:transcId
@@ -7998,8 +8001,8 @@ saveTransferPoint: async (req, res) => {
             current_balance:req.admin.cash_balance,
             created_at: new Date().getTime(),
             transaction_type: "D",
-            // resp_msg:  "Deposit by Company",
-            resp_msg: `Deposit To ${user.first_name} ${user.last_name}`,
+            resp_msg:  "Deposit by Company",
+            // resp_msg: `Deposit To ${user.first_name} ${user.last_name}`,
             is_status: "S",
             txn_mode: "T",
             txn_id:transcId

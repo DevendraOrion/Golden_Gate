@@ -188,6 +188,26 @@ module.exports = {
     });
   
   },
+
+  chipcurlation: async (req, res) => {
+    console.log("-=--=-=");
+    let admin=req.admin
+    const transactions = await paymentController.transferPoint(admin);
+    // console.log(transactions.list.length);
+      res.render("admin/chipcurlation", {
+      title: "Chip Transfer History",
+      type: "pointTransfer",
+      sub: "transferReport",
+      sub2: "transferReport",
+      total: 12,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: [1,2],
+      chip:"report"
+    });
+  
+  },
+
   generateHistory: async (req, res) => {
     let TxnMode="U"
     let admin=req.admin

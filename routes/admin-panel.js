@@ -346,6 +346,10 @@ router.get("/chang-pin", AdminPagesController.changePin);
   router.get("/transferReport", AdminPagesController.transferReport);
   router.get("/ajax_transferPoint", paymentController.getTransferAjax);
 
+  // chip curculation 
+  router.get("/chipcurculation", AdminPagesController.chipcurlation);
+  router.get("/ajax_chipcurculation", paymentController.chipcurculation);
+
   // ADDING
   router.get("/Distributer", AdminPagesController.Distributer);
   router.get("/PlayerManagementSystem", AdminPagesController.PlayerManagementSystem);

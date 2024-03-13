@@ -885,6 +885,11 @@ return res.status(200).send({
         // { refUser: ObjectId(user_id) },
         { user_id: ObjectId(user_id) }
     ]}
+    }else{
+      matchObj = { $or: [
+        // { refUser: ObjectId(user_id) },
+        { user_id: ObjectId(req.admin._id) }
+    ]}
     }
 
     if (!_.isEmpty(params.status)&& params.status !== " ") {
@@ -959,7 +964,7 @@ return res.status(200).send({
      let incData=await Service.DownLine(req.admin._id)
      let a=incData.push(req.admin._id)
      matchObj.user_id = {$in:incData};
-     total =  await Transaction.countDocuments({user_id : {$in:incData} ,is_status: {$ne: "P"} });
+     total =  await Transaction.countDocuments({...matchObj ,is_status: {$ne: "P"} });
    }
     // if (req.admin.role==="Company") {
     //   matchObj.user_id = {$in:incData};
@@ -1223,11 +1228,27 @@ return res.status(200).send({
           }
         }
         let created=await Service.formateDateandTime(u.created_at)
+        
+        if(req.admin.role=="Company" ){
+          return [
+            ++index,
+            // u?.request_id ?? '',
+            ` ${u.username}(${u.search_id})`,
+            u.refusername,
+            Debit_credit,
+            u.resp_msg,
+            created,
+            BeforeBalance.toFixed(2),
+            txn_amount,
+            current_balance.toFixed(2),
+            status_,
+          ];
+        }
         return [
           ++index,
           // u?.request_id ?? '',
-          ` ${u.username}(${u.search_id})`,
           u.refusername,
+          ` ${u.username}(${u.search_id})`,
           Debit_credit,
           u.resp_msg,
           created,
@@ -1862,6 +1883,134 @@ console.log(aggregation_obj);
       recordsTotal: recordsTotal,
       recordsFiltered: recordsFiltered,
     });
+  },
+
+  chipcurculation: async function (req, res) {
+    console.log("ajax calll")
+//     console.log(req.admin._id ," ---=")
+//     var startTime = new Date();
+
+//     const params = req.query;
+//     let chip=params.chip
+//     // console.log(chip);
+//     let matchObj = {};
+//     var sortObj = {created_at: -1};
+
+//     const user_id = params.id || "";
+
+//     if (Service.validateObjectId(user_id)) {
+//       matchObj.user_id = ObjectId(user_id);
+//     }
+
+//     if (!_.isEmpty(params.rank)) {
+//       matchObj["users.role"] = params.rank;
+//     }
+//     let incData=await Service.DownLine(req.admin._id)
+// // console.log(req.admin._id)
+
+//     list = await Promise.all(
+//       list.map(async (u,index) => {
+//     // console.log(u.role,u.transaction_type);
+//         let txn_amount = u.txn_amount;
+
+//         if (u.txn_amount > 0) {
+//           txn_amount =
+//             '<span class="label label-success">' + u.txn_amount + "</span>";
+//         } else {
+//           txn_amount =
+//             '<span class="label label-danger">' + u.txn_amount + "</span>";
+//         }
+//         let txn_mode = u.transaction_type;
+//         // console.log(u.transaction_type === "C");
+//         if (u.transaction_type === "C") {
+//           txn_mode = '<span class="label label-success">Credit</span>'
+//         } 
+//         if(u.transaction_type === "D"){
+//           txn_mode = '<span class="label label-danger">Debit</span>'
+//         }
+
+//         let current_balance= u.current_balance
+//         let status_ = u.is_status;
+//         // console.log(status_);
+//         if (status_ == "P") {
+//           status_ = '<span class="label label-warning">Pending</span>';
+//         } else if (status_ == "S") {
+//           status_ = '<span class="label label-success">Success</span>';
+//         } else {
+//           status_ = '<span class="label label-danger">Cancled</span>';
+//         }
+
+//         let roles=u.role
+//         if (roles == "State") {
+//           roles = 'State';
+//         } 
+//         else if (roles == "Zone") {
+//           roles = 'Zone';
+//         }
+//         else if (roles == "District") {
+//           roles = 'District';
+//         }
+//         else if (roles == "Agent") {
+//           roles = 'Agent';
+//         }
+//         let created=await Service.formateDateandTime(u.created_at)
+//         let BeforeBalance;
+
+//         if (u.transaction_type == "D") {
+
+//           if(req.admin.role=="Company"){
+//             // console.log("admin");
+//             if(u.role=="Company"){
+//               BeforeBalance=u.current_balance;
+//               current_balance= u.current_balance-u.txn_amount;
+              
+//             }else{
+//             // console.log("hi");
+//             BeforeBalance=u.current_balance;
+//             current_balance= u.current_balance-u.txn_amount;
+//           }
+
+//           }else{
+//             BeforeBalance=u.current_balance+u.txn_amount;
+
+//           }
+//         }  else {
+         
+//           if(req.admin.role=="Company"){
+//             if(u.role=="Company"){
+//               BeforeBalance=u.current_balance;
+//               current_balance= u.current_balance+u.txn_amount;
+//               console.log(BeforeBalance,current_balance,"emasdof");
+//             }else{
+//               current_balance= u.current_balance+u.txn_amount;
+//               BeforeBalance=u.current_balance;
+//             }
+//           }else{
+//             BeforeBalance=u.current_balance-u.txn_amount
+//           }
+
+//         }
+//         return [
+//           ++index,
+//           ` <p><span style="color: #788ca8;">Unique Id</span>: ${u.numeric_id}</p>
+//             <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${u.username}</p>`,
+//             BeforeBalance,
+//           txn_amount,
+//           current_balance,
+//           created,
+//           txn_mode,
+//           u.resp_msg ? u.resp_msg : "No Data Found",
+//           status_,
+//         ];
+//       })
+//     );
+
+//     return res.status(200).send({
+//       data: await list,
+//       draw: new Date().getTime(),
+//       recordsTotal: recordsTotal,
+//       recordsFiltered: recordsFiltered,
+//     });
   },
 
   withdrawRequest: async (req, res) => {
