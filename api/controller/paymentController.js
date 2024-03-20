@@ -2013,6 +2013,14 @@ console.log(aggregation_obj);
 //     });
   },
 
+  chipcalclution : async (admin) => {
+    // console.log(admin)
+    let parentId = String(admin._id);
+    let users = await User.find({ parent:parentId })
+    .populate({ path: "parent", select: "_id  name  cash_balance search_id role" })
+    .select("_id name  cash_balance search_id role");
+    return users
+  },
   withdrawRequest: async (req, res) => {
     var startTime = new Date();
 

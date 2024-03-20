@@ -11,9 +11,20 @@
     <!-- Main content -->
     <section class="content container-fluid">
         <div class="timerIds" style="display: flex; justify-content: space-between;">
-            <div>
-                <h3>CountDown</h3>
-                <span id="countdown"></span>
+            <div style="display: flex;">
+                <h3>CountDown : </h3>&nbsp;&nbsp;
+                <h3 id="countdown"></h3>
+                <!-- <span id="countdown"></span> -->
+            </div>
+            <div style="display: flex;">
+                <h3>Slote No : </h3>&nbsp;&nbsp;
+                <h3 id="sloteno"></h3>
+                <!-- <span id="countdown"></span> -->
+            </div>
+            <div style="display: flex;">
+                <h3>Total User : </h3>&nbsp;&nbsp;
+                <h3 id="totaluser"></h3>
+                <!-- <span id="countdown"></span> -->
             </div>
         </div>
         <input type="hidden" value="<%= data.profitPercent%>" id="gamePercent">
@@ -26,40 +37,52 @@
                             <thead>
                                 <tr>
                                     <th>Spot</th>
-                                    <th>Bet Amount</th>
                                     <th>Number Of User</th>
-                                    <th>Payable Amount</th>
+                                    <th>Bet Amount</th>
+                                    <th>Total bet</th>
+                                    <th>100% winning</th>
+                                    <th>After Dduct winning</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr id="spot-0" class="gradeX">
-                                    <td>Ace</td>
-                                    <td><p id="aceBet">0</p></td>
+                                    <td>A</td>
                                     <td><p id="aceUser">0</p></td>
+                                    <td><p id="aceBet">0</p></td>
+                                    <td><p id="acetotal">0</p></td>
+                                    <td><p id="ace">0</p></td>
                                     <td><p id="acePayable">0</p></td>
                                 </tr>
                                 <tr id="spot-1" class="gradeX">
-                                    <td>King</td>
-                                    <td><p id="KingBet">0</p></td>
+                                    <td>K</td>
                                     <td><p id="KingUser">0</p></td>
+                                    <td><p id="KingBet">0</p></td>
+                                    <td><p id="kingtotal">0</p></td>
+                                    <td><p id="king">0</p></td>
                                     <td><p id="kingPayable">0</p></td>
                                 </tr>
                                 <tr id="spot-2" class="gradeX">
-                                    <td>Queen</td>
-                                    <td><p id="QueenBet">0</p></td>
+                                    <td>Q</td>
                                     <td><p id="QueenUser">0</p></td>
+                                    <td><p id="QueenBet">0</p></td>
+                                    <td><p id="queentotal">0</p></td>
+                                    <td><p id="queen">0</p></td>
                                     <td><p id="queenPayable">0</p></td>
                                 </tr>
                                 <tr id="spot-3" class="gradeX">
-                                    <td>Jake</td>
-                                    <td><p id="JakeBet">0</p></td>
+                                    <td>J</td>
                                     <td><p id="JakeUser">0</p></td>
+                                    <td><p id="JakeBet">0</p></td>
+                                    <td><p id="jaketotal">0</p></td>
+                                    <td><p id="jake">0</p></td>
                                     <td><p id="jakePayable">0</p></td>
                                 </tr>
                                 <tr id="spot-4" class="gradeX">
                                     <td>10</td>
-                                    <td><p id="10Bet">0</p></td>
                                     <td><p id="10User">0</p></td>
+                                    <td><p id="10Bet">0</p></td>
+                                    <td><p id="10total">0</p></td>
+                                    <td><p id="10Pay">0</p></td>
                                     <td><p id="10Payable">0</p></td>
                                 </tr>
                             </tbody>
@@ -77,41 +100,135 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
      document.addEventListener("DOMContentLoaded", function () {
-        const socket = io('http://103.175.163.97:3070');
+        const socket = io('http://43.205.200.32:3070');
         let gamePercent = document.getElementById("gamePercent").value;
         console.log(gamePercent);
         socket.emit("livebets", { hii: "hii" });
-        socket.emit("adminspot", { adminspot: 2 });
+        // socket.emit("adminspot", { adminspot: 2 });
 
 
             socket.on('livebets', function (data) {
+    
+         const tableBody = document.querySelector('#example1 tbody');
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+        const sortedRows = rows.sort((a, b) => {
+            const spotA = a.querySelector('td').textContent;
+            const spotB = b.querySelector('td').textContent;
+            const sequence = ['A', 'K', 'Q', 'J', '10'];
+            return sequence.indexOf(spotA) - sequence.indexOf(spotB);
+        });
+
+        sortedRows.forEach(row => tableBody.appendChild(row));
+
+
     const gamePercent = parseFloat(document.getElementById("gamePercent").value);
 // console.log(1 + gamePercent / 100);
-    document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
+    let SpotZeroAmt = data.SpotZeroAmt.filter(element => element !== 0);
+    let SpotOneAmt = data.SpotOneAmt.filter(element => element !== 0);
+    let SpotTwoAmt = data.SpotTwoAmt.filter(element => element !== 0);
+    let SpotThreeAmt = data.SpotThreeAmt.filter(element => element !== 0);
+    let SpotFourAmt = data.SpotFourAmt.filter(element => element !== 0);
+
+    let totalZero =  SpotZeroAmt.reduce((acc, currentValue) => acc + currentValue, 0)
+    let totalOne =  SpotOneAmt.reduce((acc, currentValue) => acc + currentValue, 0)
+    let totalTwo =  SpotTwoAmt.reduce((acc, currentValue) => acc + currentValue, 0)
+    let totalThree =  SpotThreeAmt.reduce((acc, currentValue) => acc + currentValue, 0)
+    let totalFour =  SpotFourAmt.reduce((acc, currentValue) => acc + currentValue, 0)
+    let allbettotal = totalZero + totalOne + totalTwo + totalThree + totalFour
+    
+    let ace=[] , king= [] , queen= [] , jake= [] , ten = [];
+    let Payableamount_0 = SpotZeroAmt.map(element => {
+        let percent = ( parseFloat(element)/ totalZero) * 100;
+        let win = (allbettotal/100)*percent;
+        ace.push(win.toFixed(2))
+        let deductpercent = 20;
+        set3= win - (win * deductpercent) / 100;
+        console.log(parseFloat(element) , totalZero ,percent , win,set3,"Payableamount_0")
+        return set3.toFixed(2)
+    });
+
+    let Payableamount_1 = SpotOneAmt.map(element => {
+        let percent = ( parseFloat(element)/ totalOne) * 100;
+        let win = (allbettotal/100)*percent;
+        king.push(win.toFixed(2))
+        let deductpercent = 20;
+        set3= win - (win * deductpercent) / 100;
+        console.log(parseFloat(element) , totalOne ,percent , win,set3,"Payableamount_1")
+        return set3.toFixed(2)
+    });
+
+    let Payableamount_2 = SpotTwoAmt.map(element => {
+        let percent = ( parseFloat(element)/ totalTwo) * 100;
+        let win = (allbettotal/100)*percent;
+        queen.push(win.toFixed(2))
+        let deductpercent = 20;
+        set3= win - (win * deductpercent) / 100;
+        console.log(parseFloat(element) , totalTwo ,percent , win,set3,"Payableamount_2")
+        return set3.toFixed(2)
+    });
+
+    let Payableamount_3 = SpotThreeAmt.map(element => {
+        let percent = ( parseFloat(element)/ totalThree) * 100;
+        let win = (allbettotal/100)*percent;
+        jake.push(win.toFixed(2))
+        let deductpercent = 20;
+        set3= win - (win * deductpercent) / 100;
+        console.log(parseFloat(element) , totalThree ,percent , win,set3 ,"Payableamount_3")
+        return set3.toFixed(2)
+    });
+
+    let Payableamount_4 = SpotFourAmt.map(element => {
+        let percent = ( parseFloat(element)/ totalFour) * 100;
+        let win = (allbettotal/100)*percent;
+        ten.push(win.toFixed(2))
+        let deductpercent = 20.;
+        set3= win - (win * deductpercent) / 100;
+        console.log(parseFloat(element) , totalFour ,percent , win,set3,"Payableamount_4")
+        return set3.toFixed(2)
+    });
+
+    
+
+    document.getElementById('aceBet').innerHTML = SpotZeroAmt.length > 0 ? SpotZeroAmt : 0;
     document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
-    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * (1 + gamePercent / 100);
+    document.getElementById('acePayable').innerHTML = Payableamount_0.length > 0 ? Payableamount_0 : 0;
+    document.getElementById('acetotal').innerHTML = totalZero;
+    document.getElementById('ace').innerHTML = ace.length > 0 ? ace : 0;;
 
-    document.getElementById('KingBet').innerHTML = data.SpotOneUser;
-    document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
-    document.getElementById('kingPayable').innerHTML = parseFloat(data.SpotOneAmt) * (1 + gamePercent / 100);
 
-    document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
+    document.getElementById('KingBet').innerHTML =  SpotOneAmt.length > 0 ? SpotOneAmt : 0;;
+    document.getElementById('KingUser').innerHTML = data.SpotOneUser;
+    document.getElementById('kingPayable').innerHTML =Payableamount_1.length > 0 ? Payableamount_1 : 0;
+    document.getElementById('kingtotal').innerHTML = totalOne;
+    document.getElementById('king').innerHTML = king.length > 0 ? king : 0;;
+
+    document.getElementById('QueenBet').innerHTML = SpotTwoAmt.length > 0 ? SpotTwoAmt : 0;;
     document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
-    document.getElementById('queenPayable').innerHTML = parseFloat(data.SpotTwoAmt) * (1 + gamePercent / 100);
+    document.getElementById('queenPayable').innerHTML = Payableamount_2.length > 0 ? Payableamount_2 : 0;
+    document.getElementById('queentotal').innerHTML = totalTwo;
+    document.getElementById('queen').innerHTML = queen.length > 0 ? queen : 0;;
 
-    document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
+    document.getElementById('JakeBet').innerHTML = SpotThreeAmt.length > 0 ? SpotThreeAmt : 0;;
     document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
-    document.getElementById('jakePayable').innerHTML = parseFloat(data.SpotThreeAmt) * (1 + gamePercent / 100);
+    document.getElementById('jakePayable').innerHTML = Payableamount_3.length > 0 ? Payableamount_3 : 0;
+    document.getElementById('jaketotal').innerHTML = totalThree;
+    document.getElementById('jake').innerHTML = jake.length > 0 ? jake : 0;;
 
-    document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
+    document.getElementById('10Bet').innerHTML = SpotFourAmt.length > 0 ? SpotFourAmt : 0;;
     document.getElementById('10User').innerHTML = data.SpotFourUser;
-    document.getElementById('10Payable').innerHTML = parseFloat(data.SpotFourAmt) * (1 + gamePercent / 100);
+    document.getElementById('10Payable').innerHTML = Payableamount_4.length > 0 ? Payableamount_4 : 0;
+    document.getElementById('10total').innerHTML = totalFour;
+    document.getElementById('10Pay').innerHTML = ten.length > 0 ? ten : 0;;
 
-    console.log('Received response from socket server:', data);
+    const slote = document.querySelector('#sloteno');
+            slote.textContent  = data.room_id;
+            const totaluser = document.querySelector('#totaluser');
+            totaluser.textContent  = data.totalplayer;
+    console.log('Received response from socket server livebets:', data);
     const timerInSeconds = data.changespottime; 
     const countdownDisplay = document.querySelector('#countdown');
 
-    startCountdown(timerInSeconds, countdownDisplay);
+    startCountdown(timerInSeconds, countdownDisplay , data.room_id , data.totalplayer);
 });
 document.getElementById('manualCheckbox').addEventListener('change', function() {
         if (this.checked) {
@@ -138,14 +255,14 @@ document.getElementById('manualCheckbox').addEventListener('change', function() 
         }
     }
 
-    function startCountdown(durationInSeconds, display) {
+    function startCountdown(durationInSeconds, display , room , user) {
         let timer = durationInSeconds;
         const countdownInterval = setInterval(function () {
             const minutes = Math.floor(timer / 60);
             const seconds = timer % 60;
             const displayMinutes = String(minutes).padStart(2, '0');
             const displaySeconds = String(seconds).padStart(2, '0');
-            display.textContent = displayMinutes + ':' + displaySeconds;
+            display.textContent = ' '+ displayMinutes + ': ' + displaySeconds;
             if (timer <= 0) {
                 clearInterval(countdownInterval);
             } else {
@@ -160,7 +277,7 @@ document.getElementById('manualCheckbox').addEventListener('change', function() 
         const manualCheckbox = document.getElementById('manualCheckbox');
         const automaticCheckbox = document.getElementById('automaticCheckbox');
         let selectedSpot;
-        const socket = io('http://103.175.163.97:3070');
+        const socket = io('http://43.205.200.32:3070');
 
         if (manualCheckbox.checked) {
             selectedSpot = Number(checkboxes[0].value);

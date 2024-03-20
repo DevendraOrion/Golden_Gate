@@ -132,16 +132,16 @@ var UserModel = new Schema({
         type: Number,
         default: 1
     },
-    tokens: {
-        access: {
-            type: String,
-            default: ''
-        },
-        token: {
-            type: String,
-            default: ''
-        }
-    },
+    // tokens: {
+    //     access: {
+    //         type: String,
+    //         default: ''
+    //     },
+    //     token: {
+    //         type: String,
+    //         default: ''
+    //     }
+    // },
 
     gender: {
         type: String,

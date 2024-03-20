@@ -23,7 +23,7 @@
                     border-radius: 31px;">Control Type</h3>
                 </div>
                 <div style="display: flex;">
-                    <h3 style="font-weight: bold;
+                    <h3 id="cammandMode" style="font-weight: bold;
                     font-size: 13px;
                     background-color: cornflowerblue;
                     width: 123px;
@@ -37,13 +37,21 @@
                     padding: 13px;
                     color: white;
                     border-radius: 31px; margin-left: 3px;">Random Mode</h3>
-                    <h3 style="font-weight: bold;
+                    <h3 id="manualMode" style="font-weight: bold;
                     font-size: 13px;
                     background-color: cornflowerblue;
                     width: 123px;
                     padding: 13px;
                     color: white;
                     border-radius: 31px;margin-left: 3px;">Mannual Mode</h3>
+
+                </div>
+                
+                <div id="manualModeForm" style="display: none ; margin-left: 255px ;">
+                    <form id="manualForm">
+                      <input type="number" id="manualInput" placeholder="Enter text">
+                      <button type="submit">Submit</button>
+                    </form>
                 </div>
             </div>
             <div>
@@ -377,7 +385,32 @@ const SendName=async(playerId)=>{
         return data;
 }
 
-const socket = io('http://103.175.163.97:3070');
+const socket = io('http://43.205.200.32:3070');
+let manualModeForm 
+document.addEventListener('DOMContentLoaded', function() {
+  const manualMode = document.getElementById('manualMode');
+  
+  const cammandMode = document.getElementById('cammandMode');
+   manualModeForm = document.getElementById('manualModeForm');
+  manualMode.addEventListener('click', function() {
+    manualModeForm.style.display = 'block'; 
+  });
+  manualModeForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const userInput = document.getElementById('manualInput').value; 
+    document.getElementById('manualInput').value = '';
+    manualModeForm.style.display = 'none'; 
+    console.log(userInput); 
+
+    socket.emit('manualMode', { winnobyadmin:userInput});
+  });
+  cammandMode.addEventListener('click', function() {
+    console.log('cammandMode');
+    socket.emit('manualMode', { winnobyadmin:undefined});
+  });
+});
+
+
 // let gamePercent=document.getElementById('gamePercent').value;
 const rouletteRate = {
     Straight: 36,
@@ -453,6 +486,7 @@ socket.on('OnChipMoveRoullate', function (data) {
         });
         profit=0
         startCountdown(59, document.getElementById('countdown')); 
+        // manualModeForm.style.display = 'none'; 
     } else {
         Object.values(data.bets).forEach(bet => {
             bet.forEach(b => {

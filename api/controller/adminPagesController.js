@@ -192,17 +192,17 @@ module.exports = {
   chipcurlation: async (req, res) => {
     console.log("-=--=-=");
     let admin=req.admin
-    const transactions = await paymentController.transferPoint(admin);
+    const data = await paymentController.chipcalclution(admin);
     // console.log(transactions.list.length);
       res.render("admin/chipcurlation", {
-      title: "Chip Transfer History",
+      title: "Chip curlation",
       type: "pointTransfer",
       sub: "transferReport",
       sub2: "transferReport",
-      total: 12,
+      total: data.length,
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: [1,2],
+      data: data,
       chip:"report"
     });
   

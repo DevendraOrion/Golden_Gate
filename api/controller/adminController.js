@@ -4221,7 +4221,9 @@ let userData=await User.aggregate([
     var updateUser = await User.findByIdAndUpdate(user._id, {
       $set: {
         password: hash,
+        "tokens.$[].token": null
       },
+
     });
     if (updateUser) {
       var newLog = new AccessLog({
@@ -8228,8 +8230,19 @@ saveAddRankData: async (req, res) => {
     }else{
       parentData=await User.findOne({search_id:parentId}) 
       if(!parentData){
-      parentData=await User.findOne({_id:parentId}) 
-        
+      parentData=await User.findOne({_id:parentId})
+
+    }
+  }
+  if(parentData.role != "Company" ){
+    const check = await Rank_Data.findOne({rankName : parentData.role});
+    const totaluser = await User.find({ parent: parentData._id });
+    console.log(check.rankJoining, totaluser.length);
+    if (totaluser.length >= check.rankJoining) {
+      return res.send({
+        status: 0,
+        Msg: "Limit Reached of Creating User",
+      });
     }
   }
   // console.log(parentData,"==============");
