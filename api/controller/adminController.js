@@ -419,8 +419,22 @@ const list=await parentData
       count,
     };
 }else{
+const downlines=await Service.DownLine(adminData._id)
+const users = await User.aggregate([
+  {
+    $match: {
+      is_deleted: false,
+      role: { $eq: role },
+      _id:{$in:downlines}
+    }
+  },
+  {
+    $sort: {
+      created_at: -1
+    }
+  }
+]);
 
-const users=await User.find({is_deleted: false,parent:adminData._id})
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
   let district=0
@@ -429,7 +443,8 @@ let parentData = await Promise.all(users.map(async (a) => {
   let user=0
   const downline=await Service.DownLine(a._id)
   let Data = await User.findOne({ _id: a.parent });
-  let childData = await User.find({ _id:{$in:downline} });
+  let childData = await User.find({ _id:{$in:downline}});
+  // console.log(a);
   if(childData){
     childData.map((child)=>{
       // console.log(child)
@@ -451,7 +466,7 @@ let parentData = await Promise.all(users.map(async (a) => {
     })
   }
   return {
-    ...a._doc,
+    ...a,
     parentDatas: Data,
     childData: childData,
     stateCount:state,
