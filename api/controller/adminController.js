@@ -323,6 +323,58 @@ let updateData=await findOldData.map(async (a)=>{
     // console.log(list)
     const count = depositRequest.length;
  
+  //   console.log(admin,"-")
+  // let  FIND = [
+  //   { $match: { is_status: "P" } },
+  //   {
+  //     $lookup: {
+  //       from: "users",
+  //       localField: "fromUser",
+  //       foreignField: "_id",
+  //       as: "user"
+  //     }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "users",
+  //       localField: "toUser",
+  //       foreignField: "_id",
+  //       as: "child"
+  //     }
+  //   },
+  //   { $unwind: "$user" },
+  //   { $unwind: "$child" },
+  //   {
+  //     $project: {
+  //       user_id: 1,
+  //       showDate: 1,
+  //       txn_amount: 1,
+  //       current_balance: 1,
+  //       txn_id: 1,
+  //       created_at: 1,
+  //       transaction_type: 1,
+  //       userId: "$user.search_id",
+  //       userRank: "$user.role",
+  //       username: { $concat: ["$user.first_name", " ", "$user.last_name"] },
+  //       userNo: "$user.phone",
+  //       userRole: "$user.role",
+  //       childIds: "$child.search_id",
+  //       childRank: "$child.role",
+  //       childName: { $concat: ["$child.first_name", " ", "$child.last_name"] },
+  //       childNo: "$child.phone",
+  //       childRole: "$child.role"
+  //     }
+  //   },
+  // ];
+  //   if(admin.role != "Company") {
+  //     FIND.push(    {
+  //       $match: {
+  //         "childIds": admin.search_id // Filter based on the new field childRole
+  //       }
+  //     })
+  //   }
+  // const depositRequest = await DepositRequests.aggregate(FIND);
+  //   const list = depositRequest;
     return {
       list,
       count
@@ -8080,9 +8132,39 @@ saveTransferPoint: async (req, res) => {
               showDate:formattedDate
             });
             let txnres = await newTxn.save();
-      }
 
-      else{
+
+              let newTxnUser =new Transaction({
+                  user_id: user._id,
+                  refUser:admin._id,
+                  txn_amount: Number(point),
+                  current_balance: user.cash_balance + Number(point),
+                  created_at: new Date().getTime(),
+                  transaction_type: "C",
+                  resp_msg:  `Deposit by ${admin.first_name}`,
+                  is_status: "P",
+                  txn_mode: "T",
+                  txn_id: transcId + 41
+                })
+                let txnAdmin = await newTxnUser.save();
+  
+  
+            console.log("transdtion",newTxnUser)
+                var newTxnChild = new Transaction({
+                  user_id: admin._id,
+                  refUser:user._id,
+                  txn_amount: Number(point),
+                  created_at: new Date().getTime(),
+                  current_balance: admin.cash_balance - Number(point),
+                  transaction_type: "D",
+                  resp_msg:  `Deposit by ${admin.first_name}`,
+                  is_status: "P",
+                  txn_mode: "T",
+                  txn_id:transcId +41
+                });
+                let txnres2 = await newTxnChild.save();
+                        
+      }else{
         let point = Number(balance)
         console.log(req.admin.cash_balance,point);
         if(req.admin.cash_balance < point){

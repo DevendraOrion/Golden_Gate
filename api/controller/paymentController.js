@@ -959,12 +959,12 @@ return res.status(200).send({
     let total = 0
    if(req.admin.role!=="Company" && Object.keys(matchObj).length == 0){
     matchObj.user_id = req.admin._id
-    total =  await Transaction.countDocuments({user_id : req.admin._id ,is_status: {$ne: "P"} });
+    total =  await Transaction.countDocuments({user_id : req.admin._id  });
    }else{
      let incData=await Service.DownLine(req.admin._id)
      let a=incData.push(req.admin._id)
      matchObj.user_id = {$in:incData};
-     total =  await Transaction.countDocuments({...matchObj ,is_status: {$ne: "P"} });
+     total =  await Transaction.countDocuments({...matchObj  });
    }
     // if (req.admin.role==="Company") {
     //   matchObj.user_id = {$in:incData};
@@ -979,7 +979,7 @@ return res.status(200).send({
     
     aggregation_obj.push({
       $match: {
-        is_status: {$ne: "P"} 
+        // is_status: {$ne: "P"} 
       }
     });
 
@@ -999,42 +999,55 @@ return res.status(200).send({
           foreignField: "_id",
           as: "refUser",
         },
+      },
+      
+      {
+        $sort: sortObj,
+      },
+      {
+        $skip: params.start == "All" ? 0 : parseInt(params.start),
+      },
+      {
+        $limit: params.length != -1 ? parseInt(params.length) : null,
       }
     );
     
-    aggregation_obj.push({
-      $facet: {
-        checkRefUser: [
-          {
-            $match: {
-              refUser: {$exists: true, $not: {$size: 0}}
-            }
-          },
-          {
-            $sort: sortObj,
-          },
-          {
-            $skip: params.start == "All" ? 0 : parseInt(params.start),
-          },
-          {
-            $limit: params.length != -1 ? parseInt(params.length) : null,
-          }
-        ],
-        noRefUser: [
-          {
-            $match: {
-              refUser: {$exists: false} 
-            }
-          },
-          {
-            $group:{
-              _id:"$user_id",
-              // totalBet:
-            }
-          }
-        ]
-      }
-    });
+    // aggregation_obj.push({
+    //   $facet: {
+    //     checkRefUser: [
+    //       {
+    //         $match: {
+    //           refUser: {$exists: true, $not: {$size: 0}}
+    //         }
+    //       },
+    //       {
+    //         $sort: sortObj,
+    //       },
+    //       // {
+    //       //   $skip: params.start == "All" ? 0 : parseInt(params.start),
+    //       // },
+    //       // {
+    //       //   $limit: params.length != -1 ? parseInt(params.length) : null,
+    //       // }
+    //     ],
+    //     noRefUser: [
+    //       {
+    //         $match: {
+    //           $expr: { $gt: [{ $size: "$refUser" }, 0] }
+    //         }
+    //       },
+    //       {
+    //         $group:{
+    //           _id:"$user_id",
+    //           txn_amount_total: { $sum: "$txn_amount" }, // Calculate total txn_amount
+    //           data: { $push: "$$ROOT" }
+    //         }
+    //       }
+    //     ]
+    //   }
+    // },
+
+    // );
     
     let list;
     if (aggregation_obj.length > 0) {
@@ -1045,11 +1058,9 @@ return res.status(200).send({
         .skip(params.start == "All" ? 0 : parseInt(params.start))
         .limit(params.length != -1 ? parseInt(params.length) : null);
     }
-    
-    
       // console.log(list[0].checkRefUser,"list");
       // console.log(list[0].checkRefUser,"list");
-    list = list[0].checkRefUser.map((a) => {
+    list = list.map((a) => {
       let username = a.users[0].first_name + " " + a.users[0].last_name;
       let refusername;
       if (a.refUser[0]) {
