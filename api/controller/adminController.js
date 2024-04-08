@@ -472,20 +472,63 @@ const list=await parentData
     };
 }else{
 const downlines=await Service.DownLine(adminData._id)
-const users = await User.aggregate([
-  {
-    $match: {
-      is_deleted: false,
-      role: { $eq: role },
-      _id:{$in:downlines}
+downlines.push(adminData._id)
+async function getNextRankByRankName(rankName) {
+  let rolesBelow
+  const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+  const roles = {};
+  rolesData.forEach(role => {
+    roles[parseInt(role.rankId, 10)] = role.rankName;
+  });
+  const data = rankName;
+  const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+  const lowData = Object.keys(roles)
+  .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+  .map((key) => roles[key])
+  // .filter((role) => role !== 'User');
+  rolesBelow=lowData[0]
+return rolesBelow
+// console.log(rolesBelow);
+}
+let BelowRank=await getNextRankByRankName(adminData.role)
+let users
+console.log(role,BelowRank);
+if(role===BelowRank){
+   users = await User.aggregate([
+    {
+      $match: {
+        is_deleted: false,
+        role: { $eq: role },
+        _id:{$in:downlines},  
+        parent:adminData._id.toString(),
+      }
+    },
+    {
+      $sort: {
+        created_at: -1
+      }
     }
-  },
-  {
-    $sort: {
-      created_at: -1
+  ]);
+}else{
+   users = await User.aggregate([
+    {
+      $match: {
+        is_deleted: false,
+        role: { $eq: role },
+        _id:{$in:downlines},  
+        // parent:adminData._id.toString(),
+      }
+    },
+    {
+      $sort: {
+        created_at: -1
+      }
     }
-  }
-]);
+  ]);
+}
+
+
+
 
 let parentData = await Promise.all(users.map(async (a) => {
   let state=0
@@ -496,7 +539,6 @@ let parentData = await Promise.all(users.map(async (a) => {
   const downline=await Service.DownLine(a._id)
   let Data = await User.findOne({ _id: a.parent });
   let childData = await User.find({ _id:{$in:downline}});
-  // console.log(a);
   if(childData){
     childData.map((child)=>{
       // console.log(child)
@@ -871,7 +913,24 @@ var c = await User.countDocuments({
   },
 //get all guest users
   getAllGuestUserCount: async (data) => {
-
+    async function getNextRankByRankName(rankName) {
+      let rolesBelow
+      const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+      const roles = {};
+      rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+      });
+      const data = rankName;
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const lowData = Object.keys(roles)
+      .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+      .map((key) => roles[key])
+      // .filter((role) => role !== 'User');
+      rolesBelow=lowData[0]
+    return rolesBelow
+    // console.log(rolesBelow);
+    }
+    let BelowRank=await getNextRankByRankName(data.role)
 if(data.role==="Company"){
 
     const downline = await Service.DownLine(data._id);
@@ -890,10 +949,26 @@ if(data.role==="Company"){
     const downline = await Service.DownLine(data._id);
     let main = 0;
     let Down = downline.map(async (a) => {
+    
+
         let find = await User.findOne({ _id: a });
-        if (find.role === "Zone") {
-            main++;
-        }
+        console.log(BelowRank);
+        if(find.role===BelowRank){
+        
+
+            find = await User.findOne({ _id: a ,parent:data._id.toString()});
+            if(find!==null){
+              if (find.role === "Zone") {
+                // console.log(find)
+                main++;
+              }
+              }
+          }else{
+            if (find.role === "Zone") {
+              // console.log(find)
+              main++;
+            }
+          }
     });
     await Promise.all(Down);
     return main;
@@ -902,10 +977,13 @@ if(data.role==="Company"){
     const downline = await Service.DownLine(data._id);
     let main = 0;
     let Down = downline.map(async (a) => {
-        let find = await User.findOne({ _id: a });
-        if (find.role === "Zone") {
+        let find = await User.findOne({ _id: a ,parent:data._id.toString()});
+        if(find !==null){
+          if (find.role === "Zone") {
             main++;
         }
+        }
+       
     });
     await Promise.all(Down);
     return main;
@@ -916,11 +994,14 @@ if(data.role==="Company"){
     const downline = await Service.DownLine(data._id);
     let main = 0;
     let Down = downline.map(async (a) => {
-        let find = await User.findOne({ _id: a });
+      let find = await User.findOne({ _id: a ,parent:data._id.toString()});
+      if(find!==null){
         if (find.role === "State") {
           // console.log(find)
             main++;
         }
+      }
+
     });
     await Promise.all(Down);
     return main;
@@ -958,6 +1039,25 @@ if(data.role==="Company"){
   }
   },
   getTotal_agent: async (data) => {
+    async function getNextRankByRankName(rankName) {
+      let rolesBelow
+      const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+      const roles = {};
+      rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+      });
+      const data = rankName;
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const lowData = Object.keys(roles)
+      .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+      .map((key) => roles[key])
+      // .filter((role) => role !== 'User');
+      rolesBelow=lowData[0]
+    return rolesBelow
+    // console.log(rolesBelow);
+    }
+    let BelowRank=await getNextRankByRankName(data.role)
+    
   if(data.role==="Company"){  
 
     const downline = await Service.DownLine(data._id);
@@ -976,10 +1076,24 @@ if(data.role==="Company"){
       const downline = await Service.DownLine(data._id);
       let main = 0;
       let Down = downline.map(async (a) => {
-          let find = await User.findOne({ _id: a });
-          if (find.role === "Agent") {
-            // console.log(find)
+       
+        let find = await User.findOne({ _id: a });
+        console.log(BelowRank);
+        if(find.role===BelowRank){
+        
+
+            find = await User.findOne({ _id: a ,parent:data._id.toString()});
+            if(find!==null){
+              if (find.role === "Agent") {
+                // console.log(find)
+                main++;
+              }
+              }
+          }else{
+            if (find.role === "Agent") {
+              // console.log(find)
               main++;
+            }
           }
       });
       await Promise.all(Down);
@@ -1000,6 +1114,24 @@ if(data.role==="Company"){
   // }
   },
   getTotal_user: async (data) => {
+    async function getNextRankByRankName(rankName) {
+      let rolesBelow
+      const rolesData = await Rank_Data.find({}, { rankName: 1, rankId: 1, _id: 0 });
+      const roles = {};
+      rolesData.forEach(role => {
+        roles[parseInt(role.rankId, 10)] = role.rankName;
+      });
+      const data = rankName;
+      const currentRoleKey = Object.keys(roles).find((key) => roles[key] === data);
+      const lowData = Object.keys(roles)
+      .filter((key) => parseInt(key) > parseInt(currentRoleKey))
+      .map((key) => roles[key])
+      // .filter((role) => role !== 'User');
+      rolesBelow=lowData[0]
+    return rolesBelow
+    // console.log(rolesBelow);
+    }
+    let BelowRank=await getNextRankByRankName(data.role)
  if(data.role==="Company"){  
    var c = await User.countDocuments({
       is_deleted: false,
@@ -1011,10 +1143,23 @@ if(data.role==="Company"){
       const downline = await Service.DownLine(data._id);
       let main = 0;
       let Down = downline.map(async (a) => {
-          let find = await User.findOne({ _id: a });
-          if (find.role === "User") {
-            // console.log(find)
+        let find = await User.findOne({ _id: a });
+        console.log(BelowRank);
+        if(find.role===BelowRank){
+        
+
+            find = await User.findOne({ _id: a ,parent:data._id.toString()});
+            if(find!==null){
+              if (find.role === "User") {
+                // console.log(find)
+                main++;
+              }
+              }
+          }else{
+            if (find.role === "User") {
+              // console.log(find)
               main++;
+            }
           }
       });
       await Promise.all(Down);

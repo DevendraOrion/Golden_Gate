@@ -23,28 +23,34 @@
                     border-radius: 31px;">Control Type</h3>
                 </div>
                 <div style="display: flex;">
-                    <h3 id="cammandMode" style="font-weight: bold;
+                    
+                    <button id="cammandMode" style="font-weight: bold;
                     font-size: 13px;
                     background-color: cornflowerblue;
                     width: 123px;
                     padding: 13px;
                     color: white;
-                    border-radius: 31px;">Command Mode</h3>
-                    <h3 style="font-weight: bold;
+                    border-radius: 31px;
+                    border: none;">Command Mode
+                     </button>                 
+                     
+                   
+                    <button style="font-weight: bold;
                     font-size: 13px;
                     background-color: cornflowerblue;
                     width: 123px;
                     padding: 13px;
                     color: white;
-                    border-radius: 31px; margin-left: 3px;">Random Mode</h3>
-                    <h3 id="manualMode" style="font-weight: bold;
+                    border-radius: 31px; margin-left: 3px;border: none;">Random Mode
+                    </button>
+                    <button id="manualMode" style="font-weight: bold;
                     font-size: 13px;
                     background-color: cornflowerblue;
                     width: 123px;
                     padding: 13px;
                     color: white;
-                    border-radius: 31px;margin-left: 3px;">Mannual Mode</h3>
-
+                    border-radius: 31px;margin-left: 3px;border: none;">Mannual Mode
+                    </button>
                 </div>
                 
                 <div id="manualModeForm" style="display: none ; margin-left: 255px ;">
@@ -398,14 +404,16 @@ document.addEventListener('DOMContentLoaded', function() {
   manualModeForm.addEventListener('submit', function(event) {
     event.preventDefault();
     const userInput = document.getElementById('manualInput').value; 
-    document.getElementById('manualInput').value = '';
-    manualModeForm.style.display = 'none'; 
+    // document.getElementById('manualInput').value = '';
+    // manualModeForm.style.display = 'none'; 
     console.log(userInput); 
 
     socket.emit('manualMode', { winnobyadmin:userInput});
   });
   cammandMode.addEventListener('click', function() {
     console.log('cammandMode');
+    document.getElementById('manualInput').value = '';
+    manualModeForm.style.display = 'none'; 
     socket.emit('manualMode', { winnobyadmin:undefined});
   });
 });
@@ -726,6 +734,7 @@ function startCountdown(durationInSeconds, display) {
         display.textContent = displayMinutes + ':' + displaySeconds;
 
         if (timer <= 0) {
+        document.getElementById('manualInput').value = '';
             clearInterval(countdownInterval);
         } else {
             timer--;

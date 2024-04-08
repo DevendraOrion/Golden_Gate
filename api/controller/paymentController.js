@@ -680,7 +680,7 @@ if (!_.isEmpty(matchObj)) {
 }
 
 const pageSize = parseInt(params.length) || 10; 
-const pageNumber = parseInt(params.start) || 0; 
+const pageNumber = parseInt(params.start)/10 || 0; 
 aggregation_obj.push({
     $skip: pageNumber * pageSize
 }, {
@@ -959,12 +959,12 @@ return res.status(200).send({
     let total = 0
    if(req.admin.role!=="Company" && Object.keys(matchObj).length == 0){
     matchObj.user_id = req.admin._id
-    total =  await Transaction.countDocuments({user_id : req.admin._id  });
+    total =  await Transaction.countDocuments({user_id : req.admin._id , txn_mode: {$ne: "C"} });
    }else{
      let incData=await Service.DownLine(req.admin._id)
      let a=incData.push(req.admin._id)
      matchObj.user_id = {$in:incData};
-     total =  await Transaction.countDocuments({...matchObj  });
+     total =  await Transaction.countDocuments({...matchObj , txn_mode: {$ne: "C"}});
    }
     // if (req.admin.role==="Company") {
     //   matchObj.user_id = {$in:incData};
@@ -980,6 +980,7 @@ return res.status(200).send({
     aggregation_obj.push({
       $match: {
         // is_status: {$ne: "P"} 
+        txn_mode: {$ne: "C"}
       }
     });
 

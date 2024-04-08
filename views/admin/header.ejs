@@ -364,6 +364,7 @@
                               class="fa fa-times-circle-o" aria-hidden="true"></i> Game play / Pause</a></li>
                       </ul>
                       </li>
+                      <% } %>
                         <li class="treeview <% if(type=='passPin') {%> active <% } %>">
                           <a href="#"><i class="fa fa-book"></i> <span>Change Password/Pin</span>
                             <span class="pull-right-container">
@@ -378,7 +379,8 @@
         
                           </ul>
                           </li>
-                      </li>
+                      <!-- </li> -->
+                      <% if (admin.role=='Company') { %>
                         <li class="treeview <% if(type=='generateChip') {%> active <% } %>">
                           <a href="#"><i class="fa fa-plus-circle"></i> <span>Genarate Chips</span>
                             <span class="pull-right-container">
