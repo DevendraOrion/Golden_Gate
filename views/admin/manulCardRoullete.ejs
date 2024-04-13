@@ -15,18 +15,16 @@
                     <h3>CountDown</h3>
                     <span id="countdown"></span>
                 </div>
-                <!-- <div>
-                    <p>TimerId:</p>
-                    <input type="text" value="12312312" readonly style="background-color: gainsboro;
-            border: none;">
-                </div> -->
+                <div>
+                    <h3>Slot No</h3>
+                    <span id="slotNo"></span>
+                </div>
                 <div>
                     <span> <input type="checkbox" id="manualCheckbox" value="Manual">Manual</span>
                     <span> <input type="checkbox" id="automaticCheckbox" value="Automatic" checked>Automatic</span>
                     
                 </div>
             </div>
-
 <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
             <div class="row">
                 <div class="col-md-12">
@@ -158,28 +156,29 @@
             socket.on('livebets', function (data) {
     const gamePercent = parseFloat(document.getElementById("gamePercent").value);
 // console.log(1 + gamePercent / 100);
-    document.getElementById('aceBet').innerHTML = data.SpotZeroAmt;
+    document.getElementById('aceBet').innerHTML = data.SpotZeroAmt.length>0?data.SpotZeroAmt:0;
     document.getElementById('aceUser').innerHTML = data.SpotZeroUser;
-    document.getElementById('acePayable').innerHTML = parseFloat(data.SpotZeroAmt) * ( gamePercent / 100);
+    document.getElementById('acePayable').innerHTML = data.SpotZeroAmt.length >0?parseFloat(data.SpotZeroAmt) * ( gamePercent / 10):0;
 
-    document.getElementById('KingBet').innerHTML = data.SpotOneUser;
-    document.getElementById('KingUser').innerHTML = data.SpotOneAmt;
-    document.getElementById('kingPayable').innerHTML = parseFloat(data.SpotOneAmt) * ( gamePercent / 100);
+    document.getElementById('KingBet').innerHTML = data.SpotOneAmt.length>0?data.SpotOneAmt:0;
+    document.getElementById('KingUser').innerHTML = data.SpotOneUser;
+    document.getElementById('kingPayable').innerHTML = data.SpotOneAmt.length>0? parseFloat(data.SpotOneAmt) * ( gamePercent / 10):0;
 
-    document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt;
+    document.getElementById('QueenBet').innerHTML = data.SpotTwoAmt.length>0?data.SpotTwoAmt:0;
     document.getElementById('QueenUser').innerHTML = data.SpotTwoUser;
-    document.getElementById('queenPayable').innerHTML = parseFloat(data.SpotTwoAmt) * ( gamePercent / 100);
+    document.getElementById('queenPayable').innerHTML =data.SpotTwoAmt.length>0? parseFloat(data.SpotTwoAmt) * ( gamePercent / 10):0;
 
-    document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt;
+    document.getElementById('JakeBet').innerHTML = data.SpotThreeAmt.length>0?data.SpotThreeAmt:0;
     document.getElementById('JakeUser').innerHTML = data.SpotThreeUser;
-    document.getElementById('jakePayable').innerHTML = parseFloat(data.SpotThreeAmt) * ( gamePercent / 100);
+    document.getElementById('jakePayable').innerHTML =data.SpotThreeAmt.length>0? parseFloat(data.SpotThreeAmt) * ( gamePercent / 10):0;
 
-    document.getElementById('10Bet').innerHTML = data.SpotFourAmt;
+    document.getElementById('10Bet').innerHTML = data.SpotFourAmt.length>0?data.SpotFourAmt:0;
     document.getElementById('10User').innerHTML = data.SpotFourUser;
-    document.getElementById('10Payable').innerHTML = parseFloat(data.SpotFourAmt) * ( gamePercent / 100);
+    document.getElementById('10Payable').innerHTML =data.SpotFourAmt.length? parseFloat(data.SpotFourAmt) * ( gamePercent / 10):0;
 
     console.log('Received response from socket server:', data);
-    const timerInSeconds = data.changespottime; 
+    document.getElementById("slotNo").innerHTML=data.room_id
+    const timerInSeconds = data.timer; 
     const countdownDisplay = document.querySelector('#countdown');
 
     startCountdown(timerInSeconds, countdownDisplay);

@@ -1123,7 +1123,29 @@ role="User"
       admin: req.admin,
       data: users,
       total: users.length,
-      child:true
+      child:true,
+      gameId:gameId,
+      roomId:roomId
+    });
+  },
+  showDetailOfBet: async (req, res) => {
+    // console.log(req.params,req.query);
+    let roomId= req.params.id
+    let gameId= req.params.gameId
+    let admin=req.admin
+    const users = await AdminController.getSlotBetDetails(roomId,gameId,admin);
+    // console.log(users);
+    res.render("admin/betDetail", {
+      title: "Slot Bet Details",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "child",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users,
+      total: users.length,
+      child:true,
+      gameId:gameId,
     });
   },
   kycRequests: async (req, res) => {

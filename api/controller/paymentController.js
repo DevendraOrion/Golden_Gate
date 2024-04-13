@@ -695,7 +695,7 @@ if (GameId == "1") {
 } else {
     list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
 }
-// console.log(list);
+console.log(list);
 
 
 

@@ -19,10 +19,8 @@
                                         <th>S No</th>
                                         <th>Slot No</th>
                                         <th>User Detail</th>
-                                        <%if(gameId != 3){%>                                            
-                                            <th>Bet On</th>
-                                            <th>Quantity</th>
-                                        <%}%>
+                                        <th>Bet On</th>
+                                        <!-- <th>Quantity</th> -->
                                         <!-- <th>Per Item</th> -->
                                         <th>Bet Amount</th>
                                         <th>Result Status</th>
@@ -33,7 +31,7 @@
                                 <tbody>
 
                                     <% var i=1; for (d of data) {%>
-                                    <% console.log(gameId)%>
+                                    
                                
                                         <tr class="gradeX">
                                             <td>
@@ -49,31 +47,58 @@
                                            
                                             <%if(gameId==1){%>
                                                 <td>
-                                                    <a href="<%= host%>/user/showBetDetail/<%= roomId%>/<%=gameId%>"  class="on-editing save-row">
-                                                        <span class="label label-success">Details</span>
-                                                    </a>
+                                                    <% if (typeof d.spots === 'object') { %>
+                                                        <% Object.keys(d.spots).forEach(key => { %>
+                                                            <% if (Array.isArray(d.spots[key])) { %>
+                                                                <% d.spots[key].forEach((value, index) => { %>
+                                                                    
+                                                                    <% if(key==="Split"){%>
+                                                                    <% key="Two Box"%>     
+                                                                    <% }else if(key=="Street"){%>
+                                                                        <% key="Three Box"%>     
+                                                                    <% }else if(key=="Corner"){%>
+                                                                        <% key="Four Box"%>     
+                                                                    <% }else if(key=="DoubleStreet"){%>
+                                                                        <% key="Five Box"%>     
+                                                                       
+                                                                    <% }%>
+
+                                                                    <p><%= key %> = <%= value %></p>
+                                                                <% }); %>
+                                                            <% } else { %>
+                                                                <p><%= key %> = <%= d.spots[key] %></p>
+                                                            <% } %>
+                                                        <% }); %>
+                                                    <% } else { %>
+                                                        <% console.log(d.spots) %>
+                                                        <% if(d.spots=="Low") {%>
+                                                            <% d.spots="1 to 18"%>
+                                                            <% }else if(d.spots=="High"){ %>
+                                                                <%  d.spots="19 to 36"%>
+
+                                                        <% } %>
+                                                        
+                                                        <p><%= d.spots %></p>
+                                                    <% } %>
                                                 </td>
                                                 
                                                 
+                                                
+                                                
                                             <%}else{%>
-                                                <%if(gameId !=3){%>
                                                 <td>
                                                     <p><%= d.spot %></p>
                                                 </td>
                                             <%}%>
-                                            <%}%>
-                                            <%if(gameId !=3){%>
-                                            <td>
+                                            <!-- <td>
                                                 <p><%= d.Quantity %></p>
                                                
-                                            </td>
-                                            <%}%>
-
+                                            </td> -->
                                             <!-- <td>
                                                 <p><%= d.totalAmount %></p>
                                             </td> -->
                                             <td>
-                                                <p><%= d.totalAmount %></p>
+                                                <p><%= d.betAmount %></p>
                                             </td>
                                                                                    
                                             <%if(d.is_updated=="1"){%>
@@ -83,7 +108,7 @@
                                                 <td><span class="label label-warning">Pending</span></td>
                                             <%}%>
                                             <td>
-                                                <p><%= d.totalWinAmount %></p>
+                                                <p><%= d.WinAmount %></p>
                                             </td>
                                             <td>
                                                 <p><%= d.created %></p>

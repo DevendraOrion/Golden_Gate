@@ -4,6 +4,7 @@ var path = require("path");
 const dotenv = require("dotenv");
 var SuperAdmin = require("./../models/superAdmin"),
   Distributor = require("./../models/distributor"),
+GameRecoredsRoullete = require("./../models/game_record_roullete"),
   UserCommission = require("./../models/userCommission"),
   Agent = require("./../models/agent"),
   Service = require("./../service"),
@@ -389,7 +390,7 @@ let updateData=await findOldData.map(async (a)=>{
   manualCardRoullete: async (role,adminData) => {
 
     let profitPercent=await ProfitPercent.findOne({gameType:"Card Roullete"})
-    // console.log(profitPercent);
+    console.log(profitPercent);
     return {profitPercent:profitPercent.gamePercent}
   },
   liveAvaitorProfit: async (role,adminData) => {
@@ -583,10 +584,37 @@ const list=await parentData
     };
 }
 },
-getSlotDetails: async (roomId,gameId,admin) => {
+getSlotDetails: async (roomId, gameId, admin) => {
+  const rouletteCoverNumbers = {
+    Straight: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+    Split: [[2, 5], [2, 3], [3, 4], [3, 6], [4, 7], [5, 6], [5, 8], [6, 7], [6, 9], [7, 10], [8, 9], [8, 11], [9, 10], [9, 12], [10, 13], [11, 12], [11, 14], [12, 13], [12, 15], [13, 16], [14, 15], [14, 17], [15, 16], [15, 18], [16, 19], [17, 18], [17, 20], [18, 19], [18, 21], [19, 22], [20, 21], [20, 23], [21, 22], [21, 24], [22, 25], [23, 24], [23, 26], [24, 25], [24, 27], [25, 28], [26, 27], [26, 29], [27, 28], [27, 30], [28, 31], [29, 30], [29, 32], [30, 31], [30, 33], [31, 34], [32, 33], [32, 35], [33, 34], [33, 36], [34, 37], [35, 36], [36, 37]],
+    Street: [[2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16], [17, 18, 19], [20, 21, 22], [23, 24, 25], [26, 27, 28], [29, 30, 31], [32, 33, 34], [35, 36, 37],],
+    Corner: [[2, 3, 5, 6], [3, 4, 6, 7], [5, 6, 8, 9], [6, 7, 9, 10], [8, 9, 11, 12], [9, 10, 12, 13], [11, 12, 14, 15], [12, 13, 15, 16], [14, 15, 17, 18], [15, 16, 18, 19], [17, 18, 20, 21], [18, 19, 21, 22], [20, 21, 23, 24], [21, 22, 24, 25], [23, 24, 26, 27], [24, 25, 27, 28], [26, 27, 29, 30], [27, 28, 30, 31], [29, 30, 32, 33], [30, 31, 33, 34], [32, 33, 35, 36], [33, 34, 36, 37],],
+    DoubleStreet: [[2, 3, 4, 5, 6, 7], [5, 6, 7, 8, 9, 10], [8, 9, 10, 11, 12, 13], [11, 12, 13, 14, 15, 16], [14, 15, 16, 17, 18, 19], [17, 18, 19, 20, 21, 22], [20, 21, 22, 23, 24, 25], [23, 24, 25, 26, 27, 28], [26, 27, 28, 29, 30, 31], [29, 30, 31, 32, 33, 34], [32, 33, 34, 35, 36, 37]],
+    Basket: [[0, 3, 4], [1, 2, 3]],
+    FiveBet: [[0, 1, 2, 3, 4]],
+    Column: [[2, 3, 4], [5, 6, 7], [8, 9, 10], [11, 12, 13], [14, 15, 16], [17, 18, 19], [20, 21, 22], [23, 24, 25], [26, 27, 28], [29, 30, 31], [32, 33, 34], [35, 36, 37]],
+    /* Row wise */
+    FirstRow: [4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37],
+    SecondRow: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
+    ThirdRow: [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
+    /* Dozen wise */
+    FirstDozen: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    SecondDozen: [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+    ThirdDozen: [26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+    /* size wise */
+    Low: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    High: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37],
+    /* type wise */
+    Even: [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37],
+    Odd: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36],
+    /* color wise */
+    Red: [2, 4, 6, 8, 10, 13, 15, 17, 19, 20, 22, 24, 26, 28, 31, 33, 35, 37],
+    Black: [3, 5, 7, 9, 11, 12, 14, 16, 18, 21, 23, 25, 27, 29, 30, 32, 34, 36],
+}
   let downline = await Service.DownLine(admin._id);
   downline.push(admin._id);
-  // console.log(downline)
+
   let game;
   if (gameId == 1) {
       game = "game_record_roulettes";
@@ -595,11 +623,10 @@ getSlotDetails: async (roomId,gameId,admin) => {
   } else {
       game = "game_record_aviators";
   }
-  // console.log(game)
+
   let findData = await JoinGame.aggregate([
       {
           $match: {
-              // room_id: "1707461299239"
               room_id: roomId
           }
       },
@@ -616,13 +643,13 @@ getSlotDetails: async (roomId,gameId,admin) => {
       },
       {
           $addFields: {
-              user_id_numeric: { $toDecimal: "$user_id" } 
+              user_id_numeric: { $toDecimal: "$user_id" }
           }
       },
       {
           $lookup: {
               from: "users",
-              localField: "user_id_numeric", 
+              localField: "user_id_numeric",
               foreignField: "numeric_id",
               as: "users"
           }
@@ -630,7 +657,6 @@ getSlotDetails: async (roomId,gameId,admin) => {
       {
           $unwind: "$users"
       },
-     
       {
           $group: {
               _id: { user_id: "$user_id", spot: "$spot" },
@@ -649,14 +675,259 @@ getSlotDetails: async (roomId,gameId,admin) => {
           }
       },
       {
-        $match: {
-            "IDS": { $in: downline.map(id => ObjectId(id)) } 
-        }
-    }
+          $match: {
+              "IDS": { $in: downline.map(id => ObjectId(id)) }
+          }
+      }
   ]);
-// console.log(findData);
+
+  let Quantity=0
+  if (gameId == 1) {
+    findData = findData.map(item => {
+      const parsedSpot = JSON.parse(item.spot);
+      const mappedSpots = {};
+      Object.keys(parsedSpot).forEach(key => {
+        const spotValue = parsedSpot[key];
+        if(Array.isArray(spotValue)){
+          spotValue.map((a)=>{
+            if(a>0){
+              console.log(a);
+              Quantity++
+            }
+          })
+        }
+         
+          if (Array.isArray(spotValue) && spotValue.includes(1)) {
+            let value=[]
+          
+              const indicesWithValueOne = spotValue.reduce((acc, num, index) => {
+                  if (num > 0) {
+                      acc.push(index);
+                      // Quantity++
+                  }
+                  return acc;
+              }, []);
+              let roulleteData=rouletteCoverNumbers[key]
+              
+              indicesWithValueOne.map((a)=>{
+
+                value.push(roulleteData[a])
+              })
+              mappedSpots[key] = value;
+            } else if (!Array.isArray(spotValue) && spotValue > 0) {
+              // console.log(key,"==========");
+                mappedSpots[key] = rouletteCoverNumbers[key];
+                Quantity+=spotValue
+            } 
+        });
+        return {
+            ...item,
+            spots: mappedSpots,
+            Quantity:Quantity,
+            spot: undefined ,
+        };
+    });
+}
+
+
+  // console.log(findData[0]);
   return findData;
 },
+getSlotBetDetails: async (roomId, gameId, admin) => {
+  const rouletteCoverNumbers = {
+    Straight: ["00",0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    Split: [[1, 4], [1, 2], [2, 3], [2, 5], [3, 6], [4, 5], [4, 7], [5, 6], [5, 8], [6, 9], [7, 8], [7, 10], [8, 9], [8, 11], [9, 12], [10, 11], [10, 13], [11, 12], [11, 14], [12, 15], [13, 14], [13, 16], [14, 15], [14, 17], [15, 18], [16, 17], [16, 19], [17, 18], [17, 20], [18, 19], [18, 21], [19, 22], [20, 21], [20, 23], [21, 22], [21, 24], [22, 25], [23, 24], [23, 26], [24, 25], [24, 27], [25, 28], [26, 27], [26, 29], [27, 28], [27, 30], [28, 31], [29, 30], [29, 32], [30, 31], [30, 33], [31, 34], [32, 33], [32, 35], [33, 34], [33, 36], [34, 37], [35, 36], [36, 37]],
+    Street: [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14, 15], [16, 17, 18], [19, 20, 21], [22, 23, 24], [25, 26, 27], [28, 29, 30], [31, 32, 33], [34, 35, 36]],
+    Corner: [[1, 2, 4, 5], [2, 3, 5, 6], [4, 5, 7, 8], [5, 6, 8, 9], [7, 8, 10, 11], [8, 9, 11, 12], [10, 11, 13, 14], [11, 12, 14, 15], [13, 14, 16, 17], [14, 15, 17, 18], [16, 17, 19, 20], [17, 18, 20, 21], [19, 20, 22, 23], [20, 21, 23, 24], [22, 23, 25, 26], [23, 24, 26, 27], [25, 26, 28, 29], [26, 27, 29, 30], [28, 29, 31, 32], [29, 30, 32, 33], [31, 32, 34, 35], [32, 33, 35, 36], [34, 35, 37, 38], [35, 36, 38, 39]],
+    DoubleStreet: [[1, 2, 3, 4, 5, 6], [4, 5, 6, 7, 8, 9], [7, 8, 9, 10, 11, 12], [10, 11, 12, 13, 14, 15], [13, 14, 15, 16, 17, 18], [16, 17, 18, 19, 20, 21], [19, 20, 21, 22, 23, 24], [22, 23, 24, 25, 26, 27], [25, 26, 27, 28, 29, 30], [28, 29, 30, 31, 32, 33], [31, 32, 33, 34, 35, 36]],
+    Basket: [[-1, 2, 3], [0, 1, 2]],
+    FiveBet: [[-1, 0, 1, 2, 3]],
+    Column: [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12], [13, 14, 15], [16, 17, 18], [19, 20, 21], [22, 23, 24], [25, 26, 27], [28, 29, 30], [31, 32, 33], [34, 35, 36]],
+    FirstRow: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
+    SecondRow: [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35],
+    ThirdRow: [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34],
+    FirstDozen: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    SecondDozen: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+    ThirdDozen: [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    Low: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    High: [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
+    Even: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36],
+    Odd: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35],
+    /* color wise */
+    Red: [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36],
+    Black: [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35],
+}
+
+
+  let downline = await Service.DownLine(admin._id);
+  downline.push(admin._id);
+
+  let game;
+  if (gameId == 1) {
+      game = "game_record_roulettes";
+  } else if (gameId == 2) {
+      game = "gamerecords";
+  } else {
+      game = "game_record_aviators";
+  }
+
+  let findData = await JoinGame.aggregate([
+      {
+          $match: {
+              room_id: roomId
+          }
+      },
+      {
+          $lookup: {
+              from: game,
+              localField: "room_id",
+              foreignField: "room_id",
+              as: "finishGameRecord"
+          }
+      },
+      {
+          $unwind: "$finishGameRecord"
+      },
+      {
+          $addFields: {
+              user_id_numeric: { $toDecimal: "$user_id" }
+          }
+      },
+      {
+          $lookup: {
+              from: "users",
+              localField: "user_id_numeric",
+              foreignField: "numeric_id",
+              as: "users"
+          }
+      },
+      {
+          $unwind: "$users"
+      },
+      {
+          $group: {
+              _id: { user_id: "$user_id", spot: "$spot" },
+              totalAmount: { $sum: "$amount" },
+              totalWinAmount: { $sum: "$win_amount" },
+              count: { $sum: 1 },
+              user_id: { $first: "$user_id" },
+              IDS: { $first: "$users._id" },
+              room_id: { $first: "$room_id" },
+              spot: { $first: "$spot" },
+              game_id: { $first: "$game_id" },
+              is_updated: { $first: "$is_updated" },
+              created: { $first: { $dateToString: { format: "%Y-%m-%d %H:%M:%S", date: "$created" } } },
+              username: { $first: { $concat: ["$users.first_name", " ", "$users.last_name"] } },
+              search_id: { $first: "$users.search_id" }
+          }
+      },
+      {
+          $match: {
+              "IDS": { $in: downline.map(id => ObjectId(id)) }
+          }
+      }
+  ]);
+
+
+  if (gameId == 1) {
+    let WinNo=0
+    let ParseWinNo=0
+    if(findData[0].is_updated==1){
+       WinNo=await GameRecoredsRoullete.findOne({room_id:roomId},{spots:1})
+       ParseWinNo=JSON.parse(WinNo.spots)
+       ParseWinNo=ParseWinNo["0"]-1
+       if(ParseWinNo<0){
+        ParseWinNo=00;
+       }
+    }
+    // console.log(ParseWinNo,"0000");
+    findData = findData.flatMap(item => {
+      const parsedSpot = JSON.parse(item.spot);
+      const entries = [];
+      // console.log(parsedSpot);
+      Object.keys(parsedSpot).forEach(key => {
+        const spotValue = parsedSpot[key];
+        if (Array.isArray(spotValue)) {
+          spotValue.forEach((value,no) => {
+            let WinAmount=0
+            let Quantity = 0
+            let betAmount = 0
+            if (value > 0) {
+              // console.log(no);
+              const mappedSpots = {};
+              Quantity++
+              betAmount = value
+              const indicesWithValueOne = [];
+              // console.log(spotValue);
+              spotValue.forEach((num, index) => {
+                if (num > 0) {
+                  indicesWithValueOne.push(index);
+                  // spotValue[index]=0
+                  
+                }
+              });
+              // console.log(indicesWithValueOne);
+
+              let roulleteData = rouletteCoverNumbers[key]
+              
+              console.log(ParseWinNo);
+              indicesWithValueOne.map((a) => {
+                let valuess = []
+                if(ParseWinNo==roulleteData[no]){
+                  WinAmount=item.totalWinAmount;
+                }
+                valuess.push(roulleteData[a])
+// console.log(valuess);
+                mappedSpots[key] = roulleteData[no];
+          
+
+              })
+              entries.push({
+                ...item,
+                Quantity: Quantity,
+                spots: mappedSpots,
+                WinAmount:WinAmount,
+                betAmount: betAmount,
+                spot: undefined
+              });
+            }
+          });
+        } else if (spotValue > 0) {
+          // console.log(spotValue);
+          let WinAmount=0
+          const mappedSpots = key;
+          let quantity = +1
+          let betAmount = spotValue;
+          let roulleteData = rouletteCoverNumbers[key];
+          console.log(spotValue);
+          roulleteData.map((a)=>{
+            if(ParseWinNo==a){
+              WinAmount=item.totalWinAmount
+            }
+          })
+          // mappedSpots[key] = roulleteData;
+          entries.push({
+            ...item,
+            Quantity: quantity,
+            spots: mappedSpots,
+            WinAmount:WinAmount,
+            betAmount: betAmount,
+            spot: undefined
+          });
+        }
+      });
+      return entries;
+    });
+}
+
+
+  // findData.map((a)=>{
+  // console.log(a);
+  // })
+  return findData;
+},
+
+
 getChildList: async (id,role) => {
 
     //   const users = await User.aggregate([
