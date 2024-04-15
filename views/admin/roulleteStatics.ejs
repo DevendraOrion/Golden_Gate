@@ -31,7 +31,7 @@
                     padding: 13px;
                     color: white;
                     border-radius: 31px;
-                    border: none;">Command Mode
+                    border: none;" onclick="saveSettings('command')">Command Mode
                      </button>                 
                      
                    
@@ -41,7 +41,7 @@
                     width: 123px;
                     padding: 13px;
                     color: white;
-                    border-radius: 31px; margin-left: 3px;border: none;">Random Mode
+                    border-radius: 31px; margin-left: 3px;border: none;" onclick="saveSettings('random')">Random Mode
                     </button>
                     <button id="manualMode" style="font-weight: bold;
                     font-size: 13px;
@@ -741,6 +741,31 @@ function startCountdown(durationInSeconds, display) {
         }
     }, 1000);
 }
-
+const saveSettings = (status) => {
+        console.log(status)
+        fetch("/admin/chargestatus", {
+          method: "POST",
+          body: JSON.stringify({ status:status }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then(response => response.json())
+          .then(response => {
+            const title = response.status == 1 ? "Success" : "Error";
+            swal({
+              icon: response.status == 1 ? "success" : "error",
+              title: response.Msg
+            }).then(() => {
+              window.location.reload();
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+            swal({ icon: "error", title: "An error occurred" }).then(() => {
+              window.location.reload();
+            });
+          });
+      };
 </script>
 

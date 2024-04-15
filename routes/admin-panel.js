@@ -150,7 +150,8 @@ module.exports = function (router, io) {
   router.post("/admin/adminSP", AdminController.updateAdminSP);
   router.post("/admin/userSP", AdminController.updateUserSP);
   router.get("/admin/logout", AdminController.logout);
-
+  
+  router.post("/admin/chargestatus", AdminController.changeStatus);
   // USER MANAGEMENT
   router.get("/user", AdminPagesController.users);
   router.get("/agentsMGT", AdminPagesController.agentsMGT);

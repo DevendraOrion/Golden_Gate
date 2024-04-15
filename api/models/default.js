@@ -153,6 +153,10 @@ var DefaultModel = new Schema({
     type:Number,
     default:1
   },
+  gamemoderoullate : {
+    type :String,
+    default : "Y"
+  }
 });
 
 var Default = mongoose.model("Setting", DefaultModel);

@@ -122,6 +122,28 @@ module.exports = {
       return res.send(Service.response(0, localization.ServerError, err));
     }
   },
+  changeStatus: async (req, res) => {
+    console.log("req.body" , req.body);
+    const {status } = req.body;
+    try {
+      let data = await Default.findOne( {
+        key: "app_version",
+      })
+      data.gamemoderoullate = status
+      await data.save()
+      console.log("data", data);
+      return res.send({
+        status: 1,
+        Msg: localization.success,
+      });
+    } catch (err) {
+      console.error("Error saving notice:", err);
+      return res.send({
+        status: 0,
+        Msg: localization.ServerError,
+      });
+    }
+  },
   withdrawalRequest: async () => {
     const wr = await WithdrawalRequest.find({
       is_status: "P",
@@ -4630,7 +4652,7 @@ let userData=await User.aggregate([
       });
     }
     var hash = bcrypt.hashSync(params.pass_confirmation);
-    var updateAdmin = await Admin.findByIdAndUpdate(req.admin._id, {
+    var updateAdmin = await User.findByIdAndUpdate(req.admin._id, {
       $set: {
         password: hash,
       },
@@ -7764,90 +7786,106 @@ acceptRequest: async (req, res) => {
     if(type==1){
       const adminData=await User.findOne({_id:findData.fromUser})
       const userData=await User.findOne({_id:findData.toUser})
-      const saveData=await User.updateOne({_id:findData.child_id},{
-        $inc:{cash_balance:findData.txn_amount}
-      })
-      let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
-        if(transcId.length==0){
-            transcId=0
-        }
-        else{
-            transcId=transcId[0].txn_id
-        }
-        transcId=Number(transcId)+1
-        console.log(adminData.cash_balance,userData.cash_balance,Number(findData.txn_amount));
-      let newTxnAdmin = new Transaction({
-        user_id: findData.fromUser,
-        refUser: findData.toUser,
-        txn_amount: Number(findData.txn_amount),
-        created_at: new Date().getTime(),
-        transaction_type: "D",
-        resp_msg:  `Deposit to ${userData.name}` ,
-        current_balance: adminData.cash_balance,
-        is_status: "S",
-        txn_mode: "T",
-        txn_id:transcId
-      })
-      let txnAdmin = await newTxnAdmin.save();
+      // const saveData=await User.updateOne({_id:findData.child_id},{
+      //   $inc:{cash_balance:findData.txn_amount}
+      // })
+      // let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
+      //   if(transcId.length==0){
+      //       transcId=0
+      //   }
+      //   else{
+      //       transcId=transcId[0].txn_id
+      //   }
+      //   transcId=Number(transcId)+1
+      //   console.log(adminData.cash_balance,userData.cash_balance,Number(findData.txn_amount));
+      // let newTxnAdmin = new Transaction({
+      //   user_id: findData.fromUser,
+      //   refUser: findData.toUser,
+      //   txn_amount: Number(findData.txn_amount),
+      //   created_at: new Date().getTime(),
+      //   transaction_type: "D",
+      //   resp_msg:  `Deposit to ${userData.name}` ,
+      //   current_balance: adminData.cash_balance,
+      //   is_status: "S",
+      //   txn_mode: "T",
+      //   txn_id:transcId
+      // })
+      // let txnAdmin = await newTxnAdmin.save();
   
-      var newTxn = new Transaction({
-        user_id: userData._id,
-        refUser: findData.fromUser,
-        txn_amount: Number(findData.txn_amount),
-        created_at: new Date().getTime(),
-        transaction_type: "C",
-        resp_msg:  `Deposit by ${adminData.name} `,
-        current_balance: userData.cash_balance+Number(findData.txn_amount),
-        is_status: "S",
-        txn_mode: "T",
-        txn_id:transcId+1
-      });
-      let txnres = await newTxn.save();
+      // var newTxn = new Transaction({
+      //   user_id: userData._id,
+      //   refUser: findData.fromUser,
+      //   txn_amount: Number(findData.txn_amount),
+      //   created_at: new Date().getTime(),
+      //   transaction_type: "C",
+      //   resp_msg:  `Deposit by ${adminData.name} `,
+      //   current_balance: userData.cash_balance+Number(findData.txn_amount),
+      //   is_status: "S",
+      //   txn_mode: "T",
+      //   txn_id:transcId+1
+      // });
+      // let txnres = await newTxn.save();
 
-      const updateAmount=await User.updateOne({_id:userData._id},{$inc:{cash_balance:Number(findData.txn_amount)}})
-      const updateStatus=await DepositRequests.updateOne({txn_id:id},{$set:{is_status:"S"}})
+      // const updateAmount=await User.updateOne({_id:userData._id},{$inc:{cash_balance:Number(findData.txn_amount)}})
+      // const updateStatus=await DepositRequests.updateOne({txn_id:id},{$set:{is_status:"S"}})
+      //
+            const updateChild=await User.findByIdAndUpdate({_id:userData._id},{$inc:{cash_balance:Number(findData.txn_amount)}},{new:true})
+            // let find1 = { txn_id: Number(id) +41 ,  user_id :adminData._id ,refUser :userData._id }
+            // let find2 = { txn_id: Number(id) +41 ,user_id :userData._id ,refUser :adminData._id}
+            // console.log(find1,find2);
+            let updatt = await Transaction.findOneAndUpdate({ txn_id: Number(id) +41 ,  user_id :adminData._id ,refUser :userData._id }, { $set: { is_status: "S" } });
+            let update2 =  await Transaction.findOneAndUpdate({ txn_id: Number(id) +41 ,user_id :userData._id ,refUser :adminData._id}, { $set: { is_status: "S" }});
+            const changeStatus=await DepositRequests.updateOne({txn_id:id},{$set:{is_status:"S"}})
+            // console.log(id ,updatt,update2,updateChild , "changeStatus",changeStatus);
+      // 
     }else{
       const saveData=await User.updateOne({_id:findData.fromUser},{
         $inc:{cash_balance:findData.txn_amount}
       })
       const adminData=await User.findOne({_id:findData.fromUser})
       const userData=await User.findOne({_id:findData.toUser})
-      let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
-      if(transcId.length==0){
-          transcId=0
-      }
-      else{
-          transcId=transcId[0].txn_id
-      }
-      transcId=Number(transcId)+1
-    let newTxnAdmin = new Transaction({
-      user_id: findData.fromUser,
-      refUser: findData.toUser,
-      txn_amount: Number(findData.txn_amount),
-      created_at: new Date().getTime(),
-      transaction_type: "D",
-      resp_msg:  `Deposit Cancelled By ${userData.name}` ,
-      current_balance: adminData.cash_balance,
-      is_status: "C",
-      txn_mode: "T",
-      txn_id:transcId
-    })
-    let txnAdmin = await newTxnAdmin.save();
 
-    var newTxn = new Transaction({
-      user_id: userData._id,
-      refUser: findData.fromUser,
-      txn_amount: Number(findData.txn_amount),
-      created_at: new Date().getTime(),
-      transaction_type: "C",
-      resp_msg:  `Deposit Cancelled By ${userData.name} `,
-      current_balance: userData.cash_balance,
-      is_status: "C",
-      txn_mode: "T",
-      txn_id:transcId+1
-    });
-    let txnres = await newTxn.save();
-      const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"C"})
+      const changeStatus=await DepositRequests.findOneAndUpdate({txn_id:Number(id)},{$set:{is_status:"C"}})
+      let updatt = await Transaction.findOneAndUpdate({ txn_id: Number(id) +41 ,  user_id :adminData._id ,refUser :userData._id }, { $set: { is_status: "C" } });
+      let update2 =  await Transaction.findOneAndUpdate({ txn_id: Number(id) +41 ,user_id :userData._id ,refUser :adminData._id}, { $set: { is_status: "C" }});
+      
+      
+    //   let transcId=await Transaction.find({}).sort({created_at:-1}).limit(1)
+    //   if(transcId.length==0){
+    //       transcId=0
+    //   }
+    //   else{
+    //       transcId=transcId[0].txn_id
+    //   }
+    //   transcId=Number(transcId)+1
+    // let newTxnAdmin = new Transaction({
+    //   user_id: findData.fromUser,
+    //   refUser: findData.toUser,
+    //   txn_amount: Number(findData.txn_amount),
+    //   created_at: new Date().getTime(),
+    //   transaction_type: "D",
+    //   resp_msg:  `Deposit Cancelled By ${userData.name}` ,
+    //   current_balance: adminData.cash_balance,
+    //   is_status: "C",
+    //   txn_mode: "T",
+    //   txn_id:transcId
+    // })
+    // let txnAdmin = await newTxnAdmin.save();
+
+    // var newTxn = new Transaction({
+    //   user_id: userData._id,
+    //   refUser: findData.fromUser,
+    //   txn_amount: Number(findData.txn_amount),
+    //   created_at: new Date().getTime(),
+    //   transaction_type: "C",
+    //   resp_msg:  `Deposit Cancelled By ${userData.name} `,
+    //   current_balance: userData.cash_balance,
+    //   is_status: "C",
+    //   txn_mode: "T",
+    //   txn_id:transcId+1
+    // });
+    // let txnres = await newTxn.save();
+    //   const updateStatus=await DepositRequests.updateOne({txn_id:id},{is_status:"C"})
     }
 
     return res.send({
