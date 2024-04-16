@@ -31,6 +31,7 @@
                 <%- console.log(data.MainData[0].avaitor) %>
                 <tr>
                   <th>Card Roullete</th>
+                  <td><input type="text" name="" id="cro" value="<%- data.MainData[0].cardRoulleteM %>"  class="form-control"></td>
                   <input type="hidden" id="undermaintenance" value="<%- data.MainData[0].cardRoullete %>">
                   <td id="undermaintenanceTd" style="width: 87px;">
                     <% if (data.MainData[0].cardRoullete=='1' ) { %>
@@ -46,6 +47,7 @@
                 </tr>
                 <tr>
                   <th>Avaitor</th>
+                  <td><input type="text" name="" id="av" class="form-control"></td>
                   <input type="hidden" id="avaitorData" value="<%- data.MainData[0].avaitor %>">
                   <td id="avaitorDataTd">
                     <% if (data.MainData[0].avaitor=='1' ) { %>
@@ -61,6 +63,7 @@
                 </tr>
                 <tr>
                   <th>Roullete:</th>
+                  <td><input type="text" name="" id="ro" class="form-control"></td>
                   <input type="hidden" id="Roullete" value="<%- data.MainData[0].roullete %>">
                   <td id="RoulleteTd">
                     <% if (data.MainData[0].roullete=='1' ) { %>
@@ -92,7 +95,12 @@
 <%- include footer %>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/he@1.2.0/he.js"></script>
 <script>
+  let data = "<%= JSON.stringify(data.MainData[0]) %>";
+  const decodedData = he.decode(data);
+  const jsonData = JSON.parse(decodedData);
+  data = jsonData;
   function changeGameMode(type) {
     // console.log(type);
     $("#undermaintenance").val(type);
@@ -113,45 +121,94 @@
 
   const updateGameSetting = (value) => {
   const cardRoullete = document.getElementById("undermaintenance").value;
+  const cardRoulleteMassage = document.getElementById("cro").value;
   const avaitorData = document.getElementById("avaitorData").value;
+  const avaitorDataMassage = document.getElementById("av").value;
   const Roullete = document.getElementById("Roullete").value;
-  const socket = io('http://43.205.200.32:3070');
+  const RoulleteMassage = document.getElementById("ro").value;
+  
+  const socket = io('http://localhost:3070');
 
       let eventEmitted = false;
-
-      function emitEventOnce() {
-        if (!eventEmitted) { 
-              socket.emit('gameStatus', {  avaitor: avaitorData, roullete: Roullete, cardRoullete: cardRoullete });
-              eventEmitted = true;
-          }
+      let eventdata = {}
+      // function emitEventOnce() {
+      //   if (!eventEmitted) { 
+      //         socket.emit('gameStatus', {  avaitor: avaitorData, roullete: Roullete, cardRoullete: cardRoullete });
+      //         eventEmitted = true;
+      //     }
+      // }
+      // emitEventOnce();  
+  console.log(cardRoullete, avaitorData,Roullete, avaitorDataMassage , cardRoulleteMassage , RoulleteMassage);
+    if(cardRoullete ==0 || avaitorData == 0|| Roullete ==0){
+      console.log("please fill input")
+      if(avaitorData ==0 && avaitorDataMassage == "" ){
+        swal({ icon: "error", title: "Please fill input" }).then(() => {
+          window.location.reload();
+        });
+        return
       }
-      emitEventOnce();  
-  console.log(cardRoullete, avaitorData,Roullete);
+      if(cardRoullete ==0 && cardRoulleteMassage == "" ){
+        swal({ icon: "error", title: "Please fill input" }).then(() => {
+          window.location.reload();
+        })
+        return
+      }
+      if(Roullete ==0 && RoulleteMassage == "" ){
+        swal({ icon: "error", title: "Please fill input" }).then(() => {
+          window.location.reload();
+        })
+        return
+      }
+    }
+
     fetch("/admin/upadte-game-setting", {
       method: "POST",
-      body: JSON.stringify({ cardRoullete, avaitorData,Roullete }),
+      body: JSON.stringify({ cardRoullete, avaitorData,Roullete ,cardRoulleteMassage,avaitorDataMassage,RoulleteMassage}),
       headers: {
         "Content-Type": "application/json",
       },
     })
     .then(response => response.json())
       .then(response => {
+        let details = response.data
+        console.log(details.roullete , Roullete)
+        if (details.roullete != Roullete) {
+          eventdata.roullete = Roullete
+          eventdata.roulleteMassage = RoulleteMassage
+        }
+        if(details.cardRoullete != cardRoullete){
+          eventdata.cardRoullete = cardRoullete
+          eventdata.cardRoulleteMassage = cardRoulleteMassage
+        }
+        if(details.avaitor != avaitorData){
+          eventdata.avaitor = avaitorData
+          eventdata.avaitorMassage = avaitorDataMassage
+        }
         const title = response.status == 1 ? "Success" : "Error";
         swal({
           icon: response.status == 1 ? "success" : "error",
           title: response.Msg
         }).then(() => {
+          function emitEventOnce() {
+          if (!eventEmitted) { 
+              console.log("eventdata",eventdata)
+              socket.emit('gameStatus', eventdata );
+              eventEmitted = true;
+          }
+          }
+         emitEventOnce(); 
           window.location.reload();
         });
       })
       .catch((error) => {
         console.log(error);
-        swal({ icon: "error", title: "An error occurred" }).then(() => {
+        swal({ icon: "error", title: "An Error Occurred" }).then(() => {
           window.location.reload();
         });
       });
   };
 </script>
+
 <script>
    document.addEventListener("DOMContentLoaded", function () {
     const socket = io('http://localhost:3070');
@@ -169,6 +226,24 @@
     }
 
     emitEventOnce();
+
+
+    let avaitorDataValue = "<%- data.MainData[0].avaitor %>";
+  let roulleteDataValue = "<%- data.MainData[0].roullete %>";
+  let cardRoulleteDataValue = "<%- data.MainData[0].cardRoullete %>";
+  console.log(avaitorDataValue)
+  if(avaitorDataValue=='0'){
+    document.getElementById("av").value =  data.avaitorM;
+    document.getElementById("av").disabled = true;
+  }
+  if (roulleteDataValue == '0') {
+    document.getElementById("ro").value = data.roulleteM 
+    document.getElementById("ro").disabled = true;
+  }
+  if (cardRoulleteDataValue == '0') {
+    document.getElementById("cro").value = data.cardRoulleteM 
+    document.getElementById("cro").disabled = true;
+  }
 });
 
 </script>

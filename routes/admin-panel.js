@@ -154,6 +154,7 @@ module.exports = function (router, io) {
   router.post("/admin/chargestatus", AdminController.changeStatus);
   // USER MANAGEMENT
   router.get("/user", AdminPagesController.users);
+  router.get("/onlineusers", AdminPagesController.onlineusers);
   router.get("/agentsMGT", AdminPagesController.agentsMGT);
   router.get("/zoneMGT", AdminPagesController.zoneMGT);
   router.get("/districtMGT", AdminPagesController.districtMGT);

@@ -268,6 +268,46 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
       count,
     };
   },
+  getUsersListonline: async (admin,ids) => {
+    //logger.info('ADMIN USER LIST REQUEST >> ');
+    let downLine=await Service.DownLine(admin._id)
+    // downLine.push(admin._id)
+    // console.log(downLine);
+    const users = await User.aggregate([
+      {
+        $match: {
+          // _id: { $in: downLine },
+          numeric_id :{$in:ids},
+          is_deleted: false,
+          role: "User",
+        }
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
+      }
+    ]);
+    
+    let parentData = await Promise.all(users.map(async (a) => {
+      let Data = await User.findOne({ _id: a.parent });
+      return {
+        ...a,
+        parentDatas: Data
+      };
+    }));
+    // console.log(await parentData);
+    const list=await parentData
+ 
+    let count = await User.find({
+      is_deleted: false,
+    }).countDocuments();
+    console.log(list)
+    return {
+      list,
+      count,
+    };
+  },
   getDepositRequest: async (admin) => {
 
     const currentDate = new Date();
@@ -9012,11 +9052,32 @@ if(!atype || !ctype || !cardRoullete || !avaitor){
 },
 updateGameSetting: async (req, res) => {
 try {
-  let {cardRoullete, avaitorData,Roullete}=req.body
-  const UpdateData=await Default.update({key: "app_version"},{$set:{avaitor:avaitorData,roullete:Roullete,cardRoullete}}, { upsert: true })
+  let {cardRoullete, avaitorData,Roullete,cardRoulleteMassage,avaitorDataMassage,RoulleteMassage}=req.body
+  console.log(cardRoullete, avaitorData,Roullete,cardRoulleteMassage,avaitorDataMassage,RoulleteMassage);
+  let update = {}
+  if(cardRoullete==true){
+    update.cardRoulleteM = ""
+  }else{
+    update.cardRoulleteM = cardRoulleteMassage
+  }
+  if(avaitorData==true){
+    update.avaitorM = ""
+  }else{
+    update.avaitorM = avaitorDataMassage
+  }
+  if (Roullete==true) {
+    update.roulleteM = ""
+  }else{
+    update.roulleteM = RoulleteMassage
+  }
+  let obj = {avaitor:avaitorData,roullete:Roullete,cardRoullete,...update}
+  console.log(obj)
+  const UpdateData=await Default.findOneAndUpdate({key: "app_version"},{ $set: obj })
+  console.log(UpdateData)
   return res.send({
     status: 1,
     Msg: localization.success,
+    data : UpdateData
   }); 
 } catch (error) {
   console.log(error);

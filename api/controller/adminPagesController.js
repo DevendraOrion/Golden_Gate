@@ -1012,6 +1012,21 @@ role="User"
       total: users.count,
     });
   },
+  onlineusers: async (req, res) => {
+    // console.log(req.admin)
+    let ids = req.query.userIds.split(",").map(Number)
+    const users = await AdminController.getUsersListonline(req.admin,ids);
+    res.render("admin/user", {
+      title: "Online Users list",
+      type: "usersMGT",
+      sub: "users",
+      sub2: "user",
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: users.list,
+      total: users.count,
+    });
+  },
   agentsMGT: async (req, res) => {
     let role="Agent"
     let adminData=req.admin

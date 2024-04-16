@@ -145,13 +145,25 @@ var DefaultModel = new Schema({
     type:Number,
     default:1
   },
+  avaitorM:{
+    type:String,
+    default:"dd"
+  },
   roullete:{
     type:Number,
     default:1
   },
+  roulleteM:{
+    type:String,
+    default:""
+  },
   cardRoullete:{
     type:Number,
     default:1
+  },
+  cardRoulleteM:{
+    type:String,
+    default:""
   },
   gamemoderoullate : {
     type :String,
