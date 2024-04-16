@@ -329,6 +329,114 @@
                     <!-- </a> -->
                 </div>
             </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+                    <a href="<%=host%>/onlineuser" style="color: black;">
+                    <div class="info-box-content">
+                        <span class="info-box-text">online Users</span>
+                        <span class="info-box-number">
+                            <p id="updatedata">0</p>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="userUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="userDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                </a>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+
+           
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Roulette online</span>
+                        <span class="info-box-number">
+                            <p id="updatedataR">0</p>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="userUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="userDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Card Roulette online</span>
+                        <span class="info-box-number">
+                            <p id="updatedataC">0</p>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="userUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="userDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Avaitor Users</span>
+                        <span class="info-box-number">
+                            <p id="updatedataA">0</p>
+                            <span class="icon">
+                                <div class="arrowWrap open" id="userUp" style="display:none">
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                    <div class="arrow arrow-green"></div>
+                                </div>
+                                <div class="arrowWrap" id="userDown" style="display:none">
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                    <div class="arrow arrow-red"></div>
+                                </div>
+                            </span>
+                        </span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
             </div>
 <% }%>
 
@@ -953,3 +1061,23 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
             integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
         <!-- <script src="<%= host%>/live-dashboard.js"></script> -->
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"
+            integrity="sha256-bQmrZe4yPnQrLTY+1gYylfNMBuGfnT/HKsCGX+9Xuqo=" crossorigin="anonymous"></script>
+        <!-- <script src="<%= host%>/live-dashboard.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const socket = io('http://43.205.200.32:3070');
+
+            socket.emit("totalplayer",{  playerId: 11112})
+            socket.on('totalplayer', function (data) {
+                console.log("-----------------------------",data)
+                document.getElementById("updatedata").innerHTML = data.online 
+                document.getElementById("updatedataC").innerHTML = data.gamewise.card
+                document.getElementById("updatedataR").innerHTML = data.gamewise.roulette 
+                document.getElementById("updatedataA").innerHTML = data.gamewise.avaitor 
+            });
+        });
+    </script>
