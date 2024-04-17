@@ -127,13 +127,13 @@
   const Roullete = document.getElementById("Roullete").value;
   const RoulleteMassage = document.getElementById("ro").value;
   
-  const socket = io('http://localhost:3070');
+  const socket = io('http://43.205.200.32:3070');
 
       let eventEmitted = false;
       let eventdata = {}
       // function emitEventOnce() {
       //   if (!eventEmitted) { 
-      //         socket.emit('gameStatus', {  avaitor: avaitorData, roullete: Roullete, cardRoullete: cardRoullete });
+      //         socket.emit('gameStatus', {  avaitor: avaitorData, roullete: Roullete, cardRoullete: cardRoullete ,roulleteM :RoulleteMassage ,avaitorM:avaitorDataMassage,cardRoulleteM: cardRoulleteMassage});
       //         eventEmitted = true;
       //     }
       // }
@@ -211,7 +211,7 @@
 
 <script>
    document.addEventListener("DOMContentLoaded", function () {
-    const socket = io('http://localhost:3070');
+    const socket = io('http://43.205.200.32:3070');
 
     let eventEmitted = false;
 
