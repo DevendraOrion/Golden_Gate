@@ -841,6 +841,8 @@ return res.status(200).send({
 
   },
   getTxnAjax: async function (req, res) {
+
+    console.log("-===================================")
     var startTime = new Date();
 
     const params = req.query;
@@ -1143,14 +1145,13 @@ return res.status(200).send({
     list = await Promise.all(
       list.map(async (u,index) => {
     
-        let txn_amount = u.txn_amount;
-
+        let txn_amount = u.txn_amount.toFixed(2);
         if (u.txn_amount > 0) {
           txn_amount =
-            '<span class="label label-success">' + u.txn_amount + "</span>";
+            '<span class="label label-success">' + u.txn_amount.toFixed(2) + "</span>";
         } else {
           txn_amount =
-            '<span class="label label-danger">' + u.txn_amount + "</span>";
+            '<span class="label label-danger">' + u.txn_amount.toFixed(2) + "</span>";
         }
 
         let txn_mode = u.txn_mode;
@@ -1206,7 +1207,7 @@ return res.status(200).send({
           }
           else if(u.gameId==3){
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance-u.txn_amount;
+            BeforeBalance=u.current_balance;
             current_balance= u.current_balance-u.txn_amount;
           }
           else{
@@ -1215,9 +1216,10 @@ return res.status(200).send({
             current_balance= u.current_balance;
 
           }
+          console.log("5")
+
         }  else {
           if(u.refUserRole=="Company"){
-            
             Debit_credit = '<span class="label label-success">Credit</span>';
             BeforeBalance=u.current_balance;
             current_balance= u.current_balance+u.txn_amount;
@@ -1240,7 +1242,7 @@ return res.status(200).send({
           }
         }
         let created=await Service.formateDateandTime(u.created_at)
-        
+        console.log(BeforeBalance,current_balance ,"=--==-=-=-=")
         if(req.admin.role=="Company" ){
           return [
             ++index,
