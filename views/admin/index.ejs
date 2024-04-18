@@ -1073,7 +1073,7 @@
         let carduser ;
         let avaitoruser ;
         document.addEventListener("DOMContentLoaded", function () {
-            const socket = io('http://localhost:3070');
+            const socket = io('http://43.205.200.32:3070');
 
             socket.emit("totalplayer",{  playerId: 11112})
             socket.on('totalplayer', function (data) {

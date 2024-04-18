@@ -327,7 +327,7 @@ let list=await noticeData.find({}).sort({created_at:-1}).limit(limit)
         }
       }
     ]);
-console.log(findOldData)
+console.log(findOldData,"findOldData")
 let updateData=await findOldData.map(async (a)=>{
   let updateAmount = await User.updateOne({ _id: a._id }, { $inc: { cash_balance: a?.amount ?? 0 } });
 
@@ -336,7 +336,7 @@ let updateData=await findOldData.map(async (a)=>{
 
 
     const depositRequest = await DepositRequests.aggregate([
-      { $match: { is_status: "P" } },
+      // { $match: { is_status: "P" } },
       {
         $lookup: {
           from: "users",
@@ -360,6 +360,7 @@ let updateData=await findOldData.map(async (a)=>{
           user_id: 1,
           showDate: 1,
           txn_amount: 1,
+          is_status :1,
           current_balance: 1,
           txn_id: 1,
           created_at: 1,
@@ -380,10 +381,15 @@ let updateData=await findOldData.map(async (a)=>{
         $match: {
           "childIds": admin.search_id // Filter based on the new field childRole
         }
+      },
+      {
+        $sort: {
+          created_at: -1
+        }
       }
     ]);
     const list = depositRequest;
-    // console.log(list)
+    console.log(list)
     const count = depositRequest.length;
  
   //   console.log(admin,"-")
@@ -8591,6 +8597,22 @@ saveTransferPoint: async (req, res) => {
       }
     }else{
       if(debitCredit==="Credit"){
+        let checkrequest = await DepositRequests.findOne({ fromUser: admin._id, toUser: user._id ,is_status:"P"});
+        if(checkrequest){
+          console.log("you have already requested");
+             return res.send({
+              status: 0,
+              Msg: "you have already requested",
+            });
+         }
+         let userpervios_request = await DepositRequests.findOne({fromUser: user._id, toUser: admin._id,is_status:"P"})
+         if(userpervios_request){
+          console.log("Please accept user request");
+               return res.send({
+                 status: 0,
+                 Msg: "Please accept user request",
+               });
+         }
         let point = Number(balance)
         if(req.admin.cash_balance < point){
           return res.send({
@@ -8683,6 +8705,14 @@ saveTransferPoint: async (req, res) => {
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
         const year = currentDate.getFullYear();
         let amountDeduct=await User.updateOne({_id:admin._id},{$inc:{cash_balance:-point}})
+        let checkrequest = await DepositRequests.findOne({ fromUser: admin._id, toUser: user._id ,is_status:"P"});
+        if(checkrequest){
+          console.log("you have already requested");
+             return res.send({
+              status: 0,
+              Msg: "you have already requested",
+            });
+         }
         const formattedDate = `${day}/${month}/${year}`;
             var newTxn = new DepositRequests({
               fromUser: admin._id,
@@ -8698,6 +8728,36 @@ saveTransferPoint: async (req, res) => {
               showDate:formattedDate
             });
             let txnres = await newTxn.save();
+
+            let newTxnUser =new Transaction({
+              user_id: user._id,
+              refUser:admin._id,
+              txn_amount: Number(point),
+              current_balance: user.cash_balance + Number(point),
+              created_at: new Date().getTime(),
+              transaction_type: "C",
+              resp_msg:  `Deposit by ${admin.name}`,
+              is_status: "P",
+              txn_mode: "T",
+              txn_id: transcId + 41
+            })
+            let txnAdmin = await newTxnUser.save();
+
+        console.log("transdtion",newTxnUser)
+            var newTxnChild = new Transaction({
+              user_id: admin._id,
+              refUser:user._id,
+              txn_amount: Number(point),
+              created_at: new Date().getTime(),
+              current_balance: admin.cash_balance - Number(point),
+              transaction_type: "D",
+              resp_msg:  `Deposit by ${admin.name}`,
+              is_status: "P",
+              txn_mode: "T",
+              txn_id:transcId +41
+            });
+            let txnres2 = await newTxnChild.save();
+
       }
     }
 

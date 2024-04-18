@@ -324,12 +324,14 @@ module.exports = {
         .sort({
           created_at: -1,
         })
+        console.log(transaction,"-=-=-==-")
     }else{
        transaction = await Transaction.find({refUser:admin._id,txn_mode:TxnMode})
       .populate("user_id")
       .sort({
         created_at: -1,
       })
+      console.log(transaction,"-=-=-==-((((((((((((((((((())))))))))))))))))))")
     }
     let list = await Promise.all(
       transaction.map(async (u) => {
@@ -842,7 +844,6 @@ return res.status(200).send({
   },
   getTxnAjax: async function (req, res) {
 
-    console.log("-===================================")
     var startTime = new Date();
 
     const params = req.query;
@@ -1169,13 +1170,13 @@ return res.status(200).send({
 
         let current_balance;
         let status_ = u.is_status;
-
+        let status2 = u.is_status;
         if (status_ == "P") {
           status_ = '<span class="label label-warning">Pending</span>';
         } else if (status_ == "S") {
           status_ = '<span class="label label-success">Success</span>';
         } else {
-          status_ = '<span class="label label-danger">Failed</span>';
+          status_ = '<span class="label label-danger">Rejected</span>';
         }
         let Debit_credit = u.transaction_type;
         let BeforeBalance;
@@ -1242,7 +1243,9 @@ return res.status(200).send({
           }
         }
         let created=await Service.formateDateandTime(u.created_at)
-        console.log(BeforeBalance,current_balance ,"=--==-=-=-=")
+        if(status2 != "S" && status2 != "P"){
+          current_balance =  BeforeBalance
+        }
         if(req.admin.role=="Company" ){
           return [
             ++index,
@@ -1706,7 +1709,7 @@ console.log(aggregation_obj);
         {
           $lookup: {
             from: "users",
-            localField: "refUser",
+            localField: "user_id",
             foreignField: "_id",
             as: "users",
           },

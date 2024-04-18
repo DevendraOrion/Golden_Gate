@@ -87,13 +87,28 @@
                                             <td>
                                                 <%= d.showDate%>
                                             </td>
- 
+                                            <%if(d.is_status==="P"){%>
                                                         <td class="actions text-center">
                                                             <button class="col select-rank" onclick="accept('<%= d.txn_id %>',1)" style="background-color: #fff; color: #3c8dbc; border: none;"><i class="fa fa-check"></i></button>
                                                         </td>
                                                         <td class="actions text-center">
                                                             <button class="col select-rank" onclick="accept('<%= d.txn_id %>',0)" style="background-color: #fff; color: #3c8dbc; border: none;"><i class="fa fa-times"></i></button>
                                                         </td>
+                                            <%}else{%>
+                                                <%if(d.is_status==="S"){%>
+                                                    <td class="actions text-center">
+                                                        Accepted
+                                                    </td>
+                                                    <td class="actions text-center">
+                                                    </td>
+                                                    <%}else{%>
+                                                        <td class="actions text-center">
+                                                        </td>
+                                                        <td class="actions text-center">
+                                                            Rejected
+                                                        </td>
+                                                    <%}%>
+                                            <%}%>
                                         </tr>
                                         <% }%>
                                 </tbody>
