@@ -278,10 +278,23 @@
                                 if (column ===7) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
-
-                                if (column === 5) {
-                                    data = formateDateandTime(parseInt(data));
+                                if (column === 3) {
+                                    if(data.toLowerCase().includes('debit')) {
+                                        data = "Debit";
+                                    } else if(data.toLowerCase().includes('credit')) {
+                                        data = "Credit";
+                                    }
                                 }
+                                if (column === 9) {
+                                    if(data.toLowerCase().includes('success')) {
+                                        data = "Success";
+                                    } else if(data.toLowerCase().includes('failed')) {
+                                        data = "Failed";
+                                    }
+                                }
+                                // if (column === 6) {
+                                //     data = formateDateandTime(parseInt(data));
+                                // }
                                 return data;
 
                             }
@@ -308,10 +321,24 @@
                                 if (column === 7) {
                                     data = data.replace(/<.*?>/ig, "");
                                 }
-
-                                if (column === 5) {
-                                    data = formateDateandTime(parseInt(data));
+                                if (column === 3) {
+                                    if(data.toLowerCase().includes('debit')) {
+                                        data = "Debit";
+                                    } else if(data.toLowerCase().includes('credit')) {
+                                        data = "Credit";
+                                    }
                                 }
+                                if (column === 9) {
+                                    if(data.toLowerCase().includes('success')) {
+                                        data = "Success";
+                                    } else if(data.toLowerCase().includes('failed')) {
+                                        data = "Failed";
+                                    }
+                                }
+
+                                // if (column === 6) {
+                                //     data = formateDateandTime(parseInt(data));
+                                // }
                                 return data;
 
                             }
@@ -376,4 +403,41 @@
 
         $('#remark').modal('show');
     }
+
+    function formateDateandTime(date) {
+    // 7/12/2018 12:25PM
+
+    if (!isNaN(date))
+      console.log("DATA", date);
+    var dat = new Date(parseInt(date));
+    console.log("DATA After", dat);
+    var mon =
+      dat.getMonth() + 1 > 9 ?
+      dat.getMonth() + 1 :
+      "0" + parseInt(dat.getMonth() + parseInt(1));
+
+    var hours = dat.getHours() % 12;
+    hours = hours > 9 ? hours : "0" + hours;
+
+    var minutes = dat.getMinutes();
+    minutes = minutes > 9 ? minutes : "0" + minutes;
+
+    var ap = dat.getHours() >= 12 ? "PM" : "AM";
+    var day = dat.getDate() > 9 ? dat.getDate() : "0" + dat.getDate();
+
+    rez =
+      day +
+      "/" +
+      mon +
+      "/" +
+      dat.getFullYear() +
+      " " +
+      hours +
+      ":" +
+      minutes +
+      ap;
+
+    return rez;
+  }
+
 </script>
