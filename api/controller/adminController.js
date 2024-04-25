@@ -1832,7 +1832,7 @@ const timestamp = now.getTime();
   //  }])
   //  let realData = (transferByAdmin[0]?.sum - transferToUser[0]?.sum) ? (transferByAdmin[0]?.sum - transferToUser[0].sum) : 0;
 let DownLine=await Service.DownLine(admin._id)
-DownLine.push(admin._id)
+// DownLine.push(admin._id)
 // console.log(DownLine);
 let distributerData=await User.aggregate([
   {
@@ -1863,10 +1863,12 @@ let userData=await User.aggregate([
   }
 ])
   distributerData = distributerData[0]?.balance
-  distributerData = distributerData.toFixed(2)
+  distributerData = distributerData?.toFixed(2)
   userData  =userData[0]?.balance ??0
-  userData = userData.toFixed(2)
-   return {distributerData :Number(distributerData) ,userData:Number(userData)}
+  userData = userData?.toFixed(2)
+  let total = Number(distributerData) + Number(userData)
+  total = total.toFixed(2)
+   return {distributerData :Number(distributerData) ,userData:Number(userData), total :total }
   },
   getReferralList: async () => {
     var users = await User.aggregate([

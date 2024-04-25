@@ -27,8 +27,9 @@
                                         <%if(admin.role==="Company" || admin.role==="Company"){%>
                                             <th>Change Password/Pin</th>
                                             <%}%>
-                                   
+                                            <th>wallet</th>
                                     </tr>
+                                        
                                 </thead>
                                 <tbody>
                                     <% var i=1; for (d of data) {%>
@@ -127,6 +128,11 @@
                                                                     </a>
                                                                 </td>
                                                                 <%}%>
+                                                            <td>
+                                                                <a href="<%= host%>/transaction?id=<%= d._id%>"  class="on-editing save-row">
+                                                                <button >wallet history</button>
+                                                                </a>
+                                                            </td>
                                                           
                                         </tr>
                                         <% }%>

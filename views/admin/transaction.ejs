@@ -157,6 +157,7 @@
 <%- include footer %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
+    var buttonWallete = "<%= buttonWallete %>"
     $(document).ready(function (e) {
         let rank;
         var THAT_ID = "";
@@ -185,6 +186,7 @@
 
         $('.search-user').on('select2:select', function (e) {
             // Do something
+            buttonWallete = false
             THAT_ID = e.params.data.id;
             table.ajax.reload();
             console.log("THAT_ID", THAT_ID);
@@ -232,6 +234,7 @@
         });
 
         $('.select-rank').on('select2:select', function (e) {
+            buttonWallete = false
             THAT_RANK = e.params.data.id;
             rank=THAT_RANK
             table.ajax.reload();
@@ -358,6 +361,7 @@
     params.rank = THAT_RANK;
     params.startDate = START_DATE;
     params.endDate = END_DATE;
+    params.buttonWallete = buttonWallete;
             return params;
         }
     },

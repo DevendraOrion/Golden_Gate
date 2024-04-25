@@ -1354,6 +1354,12 @@ role="User"
   },
   allTransactions: async (req, res) => {
     let admin=req.admin
+    let type;
+    if(req.query.id){
+      type = req.query.id
+    }else {
+      type = false
+    }
     const transactions = await paymentController.transactionList(10,admin);
     res.render("admin/transaction", {
       title: "Wallet Transfer",
@@ -1364,6 +1370,7 @@ role="User"
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
+      buttonWallete : type
     });
   },
   allCommissionReport: async (req, res) => {

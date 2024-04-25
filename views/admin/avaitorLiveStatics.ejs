@@ -127,6 +127,7 @@ socket.on('OnCashoutforWeb', function (data) {
 
 socket.on('OnChipMoveAvaitor', function (data) {
     console.log(data);
+    document.getElementById("totalCashout").innerText = 0
 
     document.querySelector('#userData tbody').innerHTML = '';
 
@@ -185,5 +186,9 @@ function startCountdown(durationInSeconds, display) {
     }, 1000);
 }
 
+socket.on("totalCashout", function (data) {
+    console.log(data,"=-=-=-=-=-=-=-");
+    document.getElementById("totalCashout").innerText = (data.totalCashout).toFixed(2)
+})
 </script>
 
