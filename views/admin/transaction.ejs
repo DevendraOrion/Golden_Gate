@@ -49,8 +49,8 @@
                             <option></option>
                             <option value=" ">All</option>
                             <option value="D">Debit</option>
-                            <option value="C">Credit</option>
-                          
+                            <option value="C">Credit</option> 
+                            <option value="G" class="col select-statusP" id="statusP" disabled>Play</option>
                         </select>
               
                         <input type="text" class="col select-date" onfocus="(this.type='date')" onblur="(this.type='text')"  placeholder="From Date" id="startdatepicker" name="StartDate" style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray; border: 1px solid gray;">
@@ -165,6 +165,7 @@
         var THAT_STATUS = "";
         var THAT_RANK = "";
         var START_DATE = "";
+        var playshow ;
     var END_DATE = "";
         $('.search-user').select2({
             
@@ -178,18 +179,62 @@
                         type: 'public',
                         role:rank
                     }
+                    console.log(query.role)
+                    if(query.role == "User"){
+                        playshow = true
+                    }else{
+                        playshow = false
+                    }
                     // Query parameters will be ?search=[term]&type=public
                     return query;
                 }
             }
         });
+        function updateSelect2Options(newOptions) {  
+                var selectElement = $('.select-status');
+                var optionToDisable = selectElement.find('option[value="G"]');
+                 optionToDisable.prop('disabled', newOptions);
+                selectElement.trigger('change');
+            }
+
+            function updateSelect2Optionsdis(newOptions) {
+            var selectElement = $('.select-status');
+             selectElement.empty();
+             $.each(newOptions, function(index, option) {
+             selectElement.append('<option value="' + option.value + '">' + option.text + '</option>');
+              });
+             selectElement.trigger('change');
+            }
 
         $('.search-user').on('select2:select', function (e) {
             // Do something
             buttonWallete = false
             THAT_ID = e.params.data.id;
+            if(playshow == true && THAT_ID != ""){
+                var newOptions = [
+                { value: '', text: 'Select an option' },
+                { value: ' ', text: 'All' },
+                { value: 'D', text: 'Debit' },
+                { value: 'C', text: 'Credit' },
+                { value: 'G', text: 'Play' },
+                ];
+            updateSelect2Optionsdis(newOptions);
+            // updateSelect2Options(false);
+            }else{
+                console.log("dev sir")
+                var newOptions = [
+                { value: '', text: 'Select an option' },
+                { value: ' ', text: 'All' },
+                { value: 'D', text: 'Debit' },
+                { value: 'C', text: 'Credit' },
+                { value: 'G', text: 'Play' },
+                ];
+                updateSelect2Optionsdis(newOptions);
+                 updateSelect2Options(true);
+
+            }
             table.ajax.reload();
-            console.log("THAT_ID", THAT_ID);
+           
         });
 
         $(".search-user").on("select2:clearing", function (e) {

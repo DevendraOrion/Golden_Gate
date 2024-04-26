@@ -845,7 +845,7 @@ return res.status(200).send({
   getTxnAjax: async function (req, res) {
 
     var startTime = new Date();
-
+    console.log("ajax calll", req.query);
     const params = req.query;
     if(params.buttonWallete != "false" ){
       params.id = params.buttonWallete
@@ -899,7 +899,11 @@ return res.status(200).send({
     }
 
     if (!_.isEmpty(params.status)&& params.status !== " ") {
-      matchObj.transaction_type = params.status;
+      if(params.status=="G"){
+        // matchObj.txn_mode = "G";
+      }else{
+        matchObj.transaction_type = params.status;
+      }
     }
 
     if (!_.isEmpty(params.type) && params.type !== " ") {
@@ -983,12 +987,23 @@ return res.status(200).send({
       $match: matchObj,
     });
     
-    aggregation_obj.push({
-      $match: {
-        // is_status: {$ne: "P"} 
-        txn_mode: {$ne: "C"}
-      }
-    });
+    if(params.status=="G"){
+      // matchObj.txn_mode = "G";
+      aggregation_obj.push({
+        $match: {
+          // is_status: {$ne: "P"} 
+          txn_mode: {$ne: "C",$eq : "G"}
+        }
+      });
+    }else{
+
+      aggregation_obj.push({
+        $match: {
+          // is_status: {$ne: "P"} 
+          txn_mode: {$ne: "C"}
+        }
+      });
+    }
 
     aggregation_obj.push(
       {
@@ -1057,6 +1072,13 @@ return res.status(200).send({
     // );
     
     let list;
+    function printObject(obj) {
+      for (const [key, value] of Object.entries(obj)) {
+          console.log(`${key}: ${JSON.stringify(value)}`);
+      }
+  }
+  printObject(aggregation_obj);
+  
     if (aggregation_obj.length > 0) {
       list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     } else {
@@ -1250,6 +1272,22 @@ return res.status(200).send({
           current_balance =  BeforeBalance
         }
         if(req.admin.role=="Company" ){
+          // console.log(Debit_credit,"-=-==--=" ,u.transaction_type,u.search_id)
+          if(u.transaction_type== "C"){
+            return [
+              ++index,
+              // u?.request_id ?? '',
+              u.refusername,
+              ` ${u.username}(${u.search_id})`,
+              Debit_credit,
+              u.resp_msg,
+              created,
+              BeforeBalance.toFixed(2),
+              txn_amount,
+              current_balance.toFixed(2),
+              status_,
+            ]; 
+          }
           return [
             ++index,
             // u?.request_id ?? '',
@@ -1263,20 +1301,36 @@ return res.status(200).send({
             current_balance.toFixed(2),
             status_,
           ];
+        }else{
+          if(u.transaction_type== "D"){
+            return [
+              ++index,
+              // u?.request_id ?? '',
+              ` ${u.username}(${u.search_id})`,
+              u.refusername,
+              Debit_credit,
+              u.resp_msg,
+              created,
+              BeforeBalance.toFixed(2),
+              txn_amount,
+              current_balance.toFixed(2),
+              status_,
+            ];
+          }
+          return [
+            ++index,
+            // u?.request_id ?? '',
+            u.refusername,
+            ` ${u.username}(${u.search_id})`,
+            Debit_credit,
+            u.resp_msg,
+            created,
+            BeforeBalance.toFixed(2),
+            txn_amount,
+            current_balance.toFixed(2),
+            status_,
+          ];
         }
-        return [
-          ++index,
-          // u?.request_id ?? '',
-          u.refusername,
-          ` ${u.username}(${u.search_id})`,
-          Debit_credit,
-          u.resp_msg,
-          created,
-          BeforeBalance.toFixed(2),
-          txn_amount,
-          current_balance.toFixed(2),
-          status_,
-        ];
       })
     );
 

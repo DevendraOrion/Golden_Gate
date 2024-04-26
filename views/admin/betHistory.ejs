@@ -59,8 +59,10 @@
                                     <th>Slot Timing</th>
                                     <th>Total Bet Amount</th>
                                     <th>User Profit</th>
-                                    <th>Parent Comm</th>
-                                    <th>Comp Profit</th>
+                                    <%if(admin.role=="Company" || admin.role=="Company"){%>
+                                            <th>Parent Comm</th>
+                                            <th>Comp Profit</th>
+                                     <%}%>
                                     <th>User Played</th>
                                     <th>Result</th>
                                     <th>Game Status</th>
@@ -75,8 +77,10 @@
                                     <td><%= d.created_at %></td>
                                     <td><%= d.totalBetAmt %></td>
                                     <td><%= d.totalWinAmt %></td>
+                                    <%if(admin.role=="Company" || admin.role=="Company"){%>
                                     <td><%= d.adminComm %></td>
                                     <td><%= d.totalBetAmt -d.totalWinAmt %></td>
+                                    <%}%>
                                     <td><%= d.totalPlayer %></td>
                                     
                                     <% if (d.status == 1) { %>
@@ -129,6 +133,8 @@
 <%- include footer %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
 <script>
+    let admin = "<%= admin.role %>";
+    console.log(admin)
     const GameId=document.getElementById("GameId").value
     $(document).ready(function (e) {
         var THAT_ID = "";
