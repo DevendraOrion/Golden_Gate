@@ -40,7 +40,7 @@ module.exports = function (router, io) {
     AdminPagesController.showDetailOfSlot
   );
   router.get(
-    "/user/showBetDetail/:id/:gameId",
+    "/user/showBetDetail/:id/:gameId/:userId",
     Service.authenticateAdmin,
     AdminPagesController.showDetailOfBet
   );
@@ -241,6 +241,9 @@ module.exports = function (router, io) {
   // PAYMENT TRANSACTIONS
   router.get("/transaction", AdminPagesController.allTransactions);
   router.get("/ajax_transaction", paymentController.getTxnAjax);
+
+  router.get("/performance", AdminPagesController.allTransactions);
+  router.get("/ajax_performance", paymentController.getTxnAjax);
 
   // Game Records
   router.get("/game", AdminPagesController.gameRecords);

@@ -49,7 +49,7 @@
                                            
                                             <%if(gameId==1){%>
                                                 <td>
-                                                    <a href="<%= host%>/user/showBetDetail/<%= roomId%>/<%=gameId%>"  class="on-editing save-row">
+                                                    <a href="<%= host%>/user/showBetDetail/<%= roomId%>/<%=gameId%>/<%= d.search_id %>"  class="on-editing save-row">
                                                         <span class="label label-success">Details</span>
                                                     </a>
                                                 </td>
@@ -62,12 +62,7 @@
                                                 </td>
                                             <%}%>
                                             <%}%>
-                                            <%if(gameId !=3){%>
-                                            <td>
-                                                <p><%= d.Quantity %></p>
-                                               
-                                            </td>
-                                            <%}%>
+                                            
 
                                             <!-- <td>
                                                 <p><%= d.totalAmount %></p>

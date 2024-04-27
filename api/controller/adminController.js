@@ -801,7 +801,7 @@ getSlotDetails: async (roomId, gameId, admin) => {
   // console.log(findData[0]);
   return findData;
 },
-getSlotBetDetails: async (roomId, gameId, admin) => {
+getSlotBetDetails: async (roomId, gameId, admin ,userId) => {
   const rouletteCoverNumbers = {
     Straight: ["00",0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36],
     Split: [[1, 4], [1, 2], [2, 3], [2, 5], [3, 6], [4, 5], [4, 7], [5, 6], [5, 8], [6, 9], [7, 8], [7, 10], [8, 9], [8, 11], [9, 12], [10, 11], [10, 13], [11, 12], [11, 14], [12, 15], [13, 14], [13, 16], [14, 15], [14, 17], [15, 18], [16, 17], [16, 19], [17, 18], [17, 20], [18, 19], [18, 21], [19, 22], [20, 21], [20, 23], [21, 22], [21, 24], [22, 25], [23, 24], [23, 26], [24, 25], [24, 27], [25, 28], [26, 27], [26, 29], [27, 28], [27, 30], [28, 31], [29, 30], [29, 32], [30, 31], [30, 33], [31, 34], [32, 33], [32, 35], [33, 34], [33, 36], [34, 37], [35, 36], [36, 37]],
@@ -839,9 +839,11 @@ getSlotBetDetails: async (roomId, gameId, admin) => {
       game = "game_record_aviators";
   }
 
+  let usrid = await User.findOne({ search_id : userId }).select("numeric_id");
   let findData = await JoinGame.aggregate([
       {
           $match: {
+              user_id: String(usrid.numeric_id),
               room_id: roomId
           }
       },
@@ -896,7 +898,7 @@ getSlotBetDetails: async (roomId, gameId, admin) => {
       }
   ]);
 
-
+  // console.log(findData);
   if (gameId == 1) {
     let WinNo=0
     let ParseWinNo=0

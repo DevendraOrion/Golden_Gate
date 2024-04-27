@@ -1148,7 +1148,9 @@ role="User"
     let roomId= req.params.id
     let gameId= req.params.gameId
     let admin=req.admin
-    const users = await AdminController.getSlotBetDetails(roomId,gameId,admin);
+    let userId = req.params.userId
+    console.log( userId );
+    const users = await AdminController.getSlotBetDetails(roomId,gameId,admin,userId);
     // console.log(users);
     res.render("admin/betDetail", {
       title: "Slot Bet Details",
@@ -1373,6 +1375,31 @@ role="User"
       buttonWallete : type
     });
   },
+
+
+
+  performance: async (req, res) => {
+    let admin=req.admin
+    let type;
+    if(req.query.id){
+      type = req.query.id
+    }else {
+      type = false
+    }
+    const transactions = await paymentController.transactionList(10,admin);
+    res.render("admin/transaction", {
+      title: "Performance Report",
+      type: "performance",
+      sub: "all",
+      sub2: "",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+      buttonWallete : type
+    });
+  },
+
   allCommissionReport: async (req, res) => {
     let admin=req.admin
     const transactions = await paymentController.transactionList(10,admin);
