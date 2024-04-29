@@ -1386,9 +1386,9 @@ role="User"
     }else {
       type = false
     }
-    const transactions = await paymentController.transactionList(10,admin);
-    res.render("admin/transaction", {
-      title: "Performance Report",
+    const transactions = await paymentController.performanceList(10,admin);
+    res.render("admin/performance", {
+      title: "Performance Report" ,
       type: "performance",
       sub: "all",
       sub2: "",

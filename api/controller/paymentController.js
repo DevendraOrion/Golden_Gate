@@ -23,6 +23,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 var checksum = require("../../api/service/paytm/checksum");
 
 var utility = require("./utilityController");
+const { array } = require("mongoose/lib/utils");
 
 module.exports = {
   pgredirect: async function (req, res) {
@@ -448,6 +449,16 @@ module.exports = {
     return {
       list: list.filter((d) => d),
       count: count,
+    };
+  },
+  performanceList: async (limit) => {
+    let list = [
+      {
+      }
+    ]
+    return {
+      list: list,
+      count: 1,
     };
   },
   betHistory: async (limit,game) => {
@@ -1072,12 +1083,12 @@ return res.status(200).send({
     // );
     
     let list;
-    function printObject(obj) {
-      for (const [key, value] of Object.entries(obj)) {
-          console.log(`${key}: ${JSON.stringify(value)}`);
-      }
-  }
-  printObject(aggregation_obj);
+  //   function printObject(obj) {
+  //     for (const [key, value] of Object.entries(obj)) {
+  //         console.log(`${key}: ${JSON.stringify(value)}`);
+  //     }
+  // }
+  // printObject(aggregation_obj);
   
     if (aggregation_obj.length > 0) {
       list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
@@ -1343,6 +1354,98 @@ return res.status(200).send({
       recordsFiltered: recordsFiltered,
     });
   },
+  getperformance: async (req, res) => {
+  try {
+    let alluserPlayPoint = 0 ;
+    let alluserWinPoint = 0;
+    let alluserEndsPoint = 0;
+    let params = req.query;
+    let matchObj = {};
+    console.log(req.admin.role)
+    let fristrank ;
+    if(req.admin.role=="Company"){
+      fristrank = "State"
+    }else if(req.admin.role=="State"){
+      fristrank = "District"
+    }else if(req.admin.role=="District"){
+      fristrank = "Zone"
+    }else if(req.admin.role=="Zone"){
+      fristrank = "Agent"
+    }else if(req.admin.role=="Agent"){
+      fristrank = "User"
+    }
+    let role = params.rank || fristrank;
+    matchObj.role = role;
+    if(!_.isEmpty(params.id)){
+      matchObj._id = params.id
+    }
+
+    const stateIds = await User.find(
+      matchObj,
+      { _id: 1, name: 1 }
+    ).select("_id search_id name");
+    const childUserIds = await Promise.all(
+      stateIds.map(async ({ _id }) => await findUserIDs(_id))
+    );
+    async function findUserIDs(parentId) {
+      let userIDs = [parentId];
+      let users = await User.find({ parent: parentId }, { _id: 1 }).lean();
+      while (users.length > 0) {
+        const userIdsArray = users.map(({ _id }) => _id);
+        userIDs.push(...userIdsArray);
+        users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+      }
+      return userIDs;
+    }
+    const start = parseInt(params.start);
+    const end = parseInt(params.length)+start;
+        let i =1
+        let list = []
+      for(let userIds of childUserIds) {
+        if(start >=i){
+          i++
+          continue
+        }
+        const totalPoints = await User.aggregate([
+          { $match: { _id: { $in: userIds }, role: "User" } },
+          {
+            $group: {
+              _id: null,
+              totalPlayPoint: { $sum: "$totalplaypoint" },
+              totalWinningPoint: { $sum: "$totalwinningpoint" },
+            },
+          }
+        ]);
+
+        const {
+          totalPlayPoint = 0,
+          totalWinningPoint = 0,
+        } = totalPoints[0] || {};
+
+        const endPoint = totalPlayPoint - totalWinningPoint;
+        list.push([ i, 1, totalPlayPoint, totalWinningPoint, endPoint, 0, 0])
+        alluserPlayPoint += totalPlayPoint
+        alluserWinPoint += totalWinningPoint
+        alluserEndsPoint += endPoint
+        if(i == end){
+          break
+        }
+        i++
+        }
+        list.push(["","TOTAL",alluserPlayPoint.toFixed(2),alluserWinPoint.toFixed(2),alluserEndsPoint.toFixed(2),0,0,0])
+    return res.status(200).json({
+      data: list,
+      draw: Date.now(),
+      recordsTotal: stateIds.length,
+      recordsFiltered: stateIds.length,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+},
+
+
   userName: async function (req, res) {
     let UserId=req.query.userId
 

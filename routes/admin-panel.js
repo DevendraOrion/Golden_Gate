@@ -242,8 +242,8 @@ module.exports = function (router, io) {
   router.get("/transaction", AdminPagesController.allTransactions);
   router.get("/ajax_transaction", paymentController.getTxnAjax);
 
-  router.get("/performance", AdminPagesController.allTransactions);
-  router.get("/ajax_performance", paymentController.getTxnAjax);
+  router.get("/performance", AdminPagesController.performance);
+  router.get("/ajax_performance", paymentController.getperformance);
 
   // Game Records
   router.get("/game", AdminPagesController.gameRecords);
