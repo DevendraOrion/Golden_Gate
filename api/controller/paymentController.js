@@ -1374,7 +1374,7 @@ return res.status(200).send({
     }else if(req.admin.role=="Agent"){
       fristrank = "User"
     }
-    let role = params.rank || fristrank;
+    let role = params.rank || "User";
     matchObj.role = role;
     if(!_.isEmpty(params.id)){
       matchObj._id = params.id
@@ -1384,6 +1384,7 @@ return res.status(200).send({
       matchObj,
       { _id: 1, name: 1 }
     ).select("_id search_id name");
+    console.log(stateIds)
     const childUserIds = await Promise.all(
       stateIds.map(async ({ _id }) => await findUserIDs(_id))
     );
@@ -1423,7 +1424,8 @@ return res.status(200).send({
         } = totalPoints[0] || {};
 
         const endPoint = totalPlayPoint - totalWinningPoint;
-        list.push([ i, 1, totalPlayPoint, totalWinningPoint, endPoint, 0, 0])
+        
+        list.push([ i, stateIds[i-1].search_id, totalPlayPoint, totalWinningPoint, endPoint, 0, 0])
         alluserPlayPoint += totalPlayPoint
         alluserWinPoint += totalWinningPoint
         alluserEndsPoint += endPoint
