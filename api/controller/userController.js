@@ -1620,8 +1620,10 @@ module.exports = {
 
     return res.send({ results: users });
    }else{
-    const params = _.pick(req.query, ['search']);
+    const params = _.pick(req.query, ['search','role']);
+    let data ;
     if(!params.search){
+         data = true
         if (req.admin.role == "State" ) {
             params.search = "di"
         }else if(req.admin.role == "Dstrict" ){
@@ -1629,6 +1631,19 @@ module.exports = {
         }else if(req.admin.role == "Zone" ){
             params.search = "ag"
         }else if(req.admin.role == "Agent" ){
+            params.search = "GG"
+        }
+    }
+    if(params.role && data == true){
+        if (params.role == "State" ) {
+            params.search = "St"
+        }else if(params.role == "Dstrict" ){
+            params.search = "di"
+        }else if(params.role == "Zone" ){
+            params.search = "Zo"
+        }else if(params.role == "Agent" ){
+            params.search = "ag"
+        }else if(params.role == "User" ){
             params.search = "GG"
         }
     }

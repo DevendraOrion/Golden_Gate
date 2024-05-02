@@ -1384,7 +1384,7 @@ return res.status(200).send({
       matchObj,
       { _id: 1, name: 1 }
     ).select("_id search_id name");
-    console.log(stateIds)
+    // console.log(stateIds)
     const childUserIds = await Promise.all(
       stateIds.map(async ({ _id }) => await findUserIDs(_id))
     );
@@ -1424,7 +1424,7 @@ return res.status(200).send({
         } = totalPoints[0] || {};
 
         const endPoint = totalPlayPoint - totalWinningPoint;
-        
+
         list.push([ i, stateIds[i-1].search_id, totalPlayPoint, totalWinningPoint, endPoint, 0, 0])
         alluserPlayPoint += totalPlayPoint
         alluserWinPoint += totalWinningPoint
