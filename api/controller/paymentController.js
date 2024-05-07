@@ -1355,8 +1355,11 @@ return res.status(200).send({
     });
   },
   getperformance: async (req, res) => {
+    console.log("REQ.para,s.id",req.query)
+    console.log("req.admin.role",req.admin);
   try {
     let alluserPlayPoint = 0 ;
+    let game_id=Number(req.query.THAT_Game)
     let alluserWinPoint = 0;
     let alluserEndsPoint = 0;
     let params = req.query;
@@ -1407,16 +1410,72 @@ return res.status(200).send({
           i++
           continue
         }
-        const totalPoints = await User.aggregate([
-          { $match: { _id: { $in: userIds }, role: "User" } },
-          {
-            $group: {
-              _id: null,
-              totalPlayPoint: { $sum: "$totalplaypoint" },
-              totalWinningPoint: { $sum: "$totalwinningpoint" },
-            },
-          }
-        ]);
+
+console.log(game_id,"game_id------------");
+        let totalPoints =[]
+        switch(game_id) {
+          case 1:
+             totalPoints = await User.aggregate([
+              { $match: { _id: { $in: userIds }, role: "User" } },
+              {
+                $group: {
+                  _id: null,
+                  totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
+                  totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
+                },
+              }
+            ]);
+            break;
+          case 2:
+             totalPoints = await User.aggregate([
+              { $match: { _id: { $in: userIds }, role: "User" } },
+              {
+                $group: {
+                  _id: null,
+                  totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
+                  totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
+                },
+              }
+            ]);
+            break;
+            case 3:
+               totalPoints = await User.aggregate([
+                { $match: { _id: { $in: userIds }, role: "User" } },
+                {
+                  $group: {
+                    _id: null,
+                    totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
+                    totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
+                  },
+                }
+              ]);
+            break;
+          default:
+            totalPoints=await User.aggregate([
+              { $match: { _id: { $in: userIds }, role: "User" } },
+              {
+                $group: {
+                  _id: null,
+                  avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                  carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                  roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                  avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                  carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                  roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+                },
+              }
+            ]);
+            console.log("totalPoints-----------------",totalPoints);
+
+            if(totalPoints.length > 0){
+           
+            let a =totalPoints[0].avaitor_totalplaypoint+totalPoints[0].carRoulette_totalplaypoint+totalPoints[0].roulette_totalplaypoint
+             let b=totalPoints[0].avaitor_totalwinningpoint+totalPoints[0].carRoulette_totalwinningpoint+totalPoints[0].roulette_totalwinningpoint
+             totalPoints[0] = {totalPlayPoint:a,totalWinningPoint:b}
+            } 
+        }
+
 
         const {
           totalPlayPoint = 0,
@@ -1446,6 +1505,7 @@ return res.status(200).send({
     return res.status(500).json({ error: "Internal Server Error" });
   }
 },
+
 
 
   userName: async function (req, res) {
