@@ -28,12 +28,15 @@
                                         <th>Result Status</th>
                                         <th>Win Amount </th>
                                         <th>Created At</th>
+                                        <th>Cashout At</th>
+                                        <th>Cashout Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     <% var i=1; for (d of data) {%>
                                     <% console.log(gameId)%>
+                                    <% console.log("data--------",d)%>
                                
                                         <tr class="gradeX">
                                             <td>
@@ -83,6 +86,20 @@
                                             <td>
                                                 <p><%= d.created %></p>
                                             </td>
+                                            <%if(d.spot=="0"){%>
+                                                <td>1</td>
+                                            <%}else{%>
+
+                                                <td>
+                                                    <p><%= d.spot %></p>
+                                                </td>
+                                            <%}%>
+                                            <%if(d.totalWinAmount>0){%>
+                                                <td>true</td>
+                                            <%}else{%>
+
+                                                <td>false</td>
+                                            <%}%>
                                           
                                    
                                         </tr>

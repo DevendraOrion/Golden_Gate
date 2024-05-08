@@ -1,30 +1,30 @@
 <%- include header %>
-<!-- Content Wrapper. Contains page content -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            <%= title %>
-        </h1>
-    </section>
-    <!-- Main content -->
-    <section class="content container-fluid">
-        <div class="timerIds" style="display: flex; justify-content: space-between;">
-      
-      
-            <div >
-                <h3  style="font-size: 13px;   font-weight: bold;     background-color: cornflowerblue;
+    <!-- Content Wrapper. Contains page content -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                <%= title %>
+            </h1>
+        </section>
+        <!-- Main content -->
+        <section class="content container-fluid">
+            <div class="timerIds" style="display: flex; justify-content: space-between;">
+
+
+                <div>
+                    <h3 style="font-size: 13px;   font-weight: bold;     background-color: cornflowerblue;
                 padding: 5px;
                 padding-left: 32px;
                 border-radius: 18px;
             ">Total User:<span class="zero" id="totalUser">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;     background-color: #ff95c4;
+                    <h3 style="font-size: 13px; font-weight: bold;     background-color: #ff95c4;
                 padding: 5px;
                 padding-left: 32px;
                 border-radius: 18px;
             ">Total Bet Amount:<span class="zero" id="totalBet">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;   
+                    <h3 style="font-size: 13px; font-weight: bold;   
                 background-color: cadetblue;
                 padding: 5px;
                 padding-left: 27px;
@@ -32,50 +32,53 @@
                 border-radius: 18px;
                 color: white;
             ">Total Cashout Amount:<span class="zero" id="totalCashout">0</span></h3>
-                <h3 style="font-size: 13px; font-weight: bold;    
+                    <h3 style="font-size: 13px; font-weight: bold;    
                    background-color: grey;
     padding: 5px;
     padding-left: 30px;
     border-radius: 18px;
     color: white;
             ">Profit:<span class="zero" id="totalProfit">0</span></h3>
-            </div>
-            <div >
-                <h3 style="font-size: 13px; font-weight: bold;     width: 145px;
+                </div>
+                <div>
+                    <h3 style="font-size: 13px; font-weight: bold;     width: 145px;
                 padding-left: 35px;
                 padding-top: 10px;
                 padding-bottom: 12px;
-                border-radius: 20px;"  >Height:<span class="zero" id="height">0</span>x</h3>
-               
-            </div>
-            <div>
-                
-            </div>
-        </div>
+                border-radius: 20px;">Height:<span class="zero" id="height">0</span>x</h3>
 
-        <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
-
-        <div class="row">
-            <div class="col-md-12">
+                </div>
                 <div>
-                    <h2 style="    display: flex;
+
+                </div>
+            </div>
+
+            <input type="hidden" value="<%= data.profitPercent%> " id="gamePercent">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div>
+                        <h2 style="    display: flex;
                     justify-content: center;
                     font-size: 21px;">Current Game User List</h2>
-                </div>
-                <div class="box">
-                    <div class="box-body table-responsive">
-                        <table class="table table-bordered table-striped" id="userData">
-                            <thead>
-                                <tr>
-                                    <th>S. No</th>
-                                    <td>User Id</td>
-                                    <td>Total User Bet</td>
-                                    <td>Profit Amount</td>
-                                    <td>Profit %</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- <tr>
+                    </div>
+                    <div class="box">
+                        <div class="box-body table-responsive">
+                            <table class="table table-bordered table-striped" id="userData">
+                                <thead>
+                                    <tr>
+                                        <th>S. No</th>
+                                        <td>User Id</td>
+                                        <td>Total User Bet</td>
+                                        <td>Probable Winning</td>
+                                        <td>Cashout Status</td>
+                                        <td>Cashout At</td>
+                                        <td>Cashout Amount</td>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- <tr>
                                     <th><p id="sno">0</p></th>
                                     <td><p id="user">0</p></td>
                                     <td><p id="userTotalBet">0</p></td>
@@ -83,112 +86,246 @@
                                     <td><p id="profitPercent">0</p></td>
                                     
                                 </tr> -->
-                            </tbody>
-                          
-                        </table>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
                     </div>
-                    <!-- /.box-body -->
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- /.content -->
-</div>
-<!-- /.content-wrapper -->
-<%- include footer %>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-<script>
-    const SendName=async(playerId)=>{
-        let name
-     const response = await fetch(`/get_id?userId=${playerId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        const data = await response.json();
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <%- include footer %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        <script>
+            const SendName = async (playerId) => {
+                let name
+                const response = await fetch(`/get_id?userId=${playerId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const data = await response.json();
+                // console.log("data------------", data);
 
-        return data;
-}
-const socket = io('http://43.205.200.32:3070');
-let gamePercent=document.getElementById('gamePercent').value;
+                return data;
+            }
+            const socket = io('http://43.205.200.32:3070');
+            let gamePercent = document.getElementById('gamePercent').value;
+            let multiplier = 0
+            let cashout_status = false
+            let cashout_at = 0
+            let cashout_amt = 0
+            let probable_winn = true
+            let probable_win = []
+            socket.emit('OnCashoutforWeb', { msg: "hi" });
+            socket.emit('distance', { msg: "hi" })
+            let cashoutTriggered = {};
 
-socket.emit('OnCashoutforWeb', {  msg:"hi" });
-socket.emit('distance', {msg:"hi"})
-socket.on('distance', function (data) {
-    // console.log(data);
-    document.getElementById("height").innerText=data.flydistance
-})
-socket.on('OnCashoutforWeb', function (data) {
-    console.log(data);
-})
+            socket.on('distance', function (data) {
+                console.log("distance------------");
+                document.getElementById("height").innerText = data.flydistance;
+               // multiplier = data.flydistance;
+
+                if (probable_winn) {
+                    Object.values(newRowData.bets).forEach(bet => {
+                        const probableWinning = bet.chip *  data.flydistance;;
+                        bet.probable_winning = probableWinning;
+                        const cashoutAt =  data.flydistance;
+                        bet.cashout_at = cashoutAt
+                    });
+
+                    const rows = document.querySelectorAll('#userData tbody tr');
+                    rows.forEach((row, index) => {
+                        const bet = Object.values(newRowData.bets)[ index ];
+                        const playerIdCell = row.querySelector('td:nth-child(2) p').textContent;
+                        if (!cashoutTriggered[ playerIdCell ]) {
+                            const cashoutStatusCell = row.querySelector('td:nth-child(6) p');
+                            const probableWinningCell = row.querySelector('td:nth-child(4) p');
+                            probableWinningCell.textContent = bet.probable_winning.toFixed(2);
+                            cashoutStatusCell.textContent = bet.cashout_at.toFixed(2);
+                        }
+                    });
+                }
+            });
+
+            // socket.on('distance', function (data) {
+            //     document.getElementById("height").innerText = data.flydistance;;
+            //     multiplier = data.flydistance;
+            //     if (probable_win.includes(data.playerId)) {
+            //         // Skip updating cashout fields for this player
+            //         return;
+            //     }
+
+            //     // Update the table rows with the new probable winnings
+            //     const rows = document.querySelectorAll('#userData tbody tr');
+            //     rows.forEach((row, index) => {
+            //         const bet = Object.values(newRowData.bets)[ index ];
+            //         const playerIdCell = row.querySelector('td:nth-child(2) p').textContent;
+            //         if (playerIdCell === data.playerId) {
+            //             const cashoutStatusCell = row.querySelector('td:nth-child(6) p');
+            //             const probableWinningCell = row.querySelector('td:nth-child(4) p');
+            //             probableWinningCell.textContent = bet.probable_winning.toFixed(2);
+            //             cashoutStatusCell.textContent = bet.cashout_at.toFixed(2);
+            //         }
+            //     });
+            //     // Update probable winnings for each bet in newRowData
+            // });
+            socket.on('OnCashoutforWeb', function (data) {
+                cashout_status = true
+                cashout_at = true
+                // console.log("onCashoutforWeb-------------", data);
+            })
+
+
+            let newRow = null
+            let newRowData = null
+
+            let existingUserIds = []// Maintain a set of existing user IDs
+
+            socket.on('OnChipMoveAvaitor', function (data) {
+                newRowData = data;
+                // console.log("onChips--------------------", data.bets);
+                document.getElementById("totalCashout").innerText = 0;
+
+                let totalChipAmount = 0;
+
+                Object.values(data.bets).forEach(async (bet, index) => {
+                    const { playerId, chip } = bet;
+
+                    // console.log("exists-----------------------");
+                    if (!existingUserIds.includes(playerId)) { // Check if row for this user already exists
+                        existingUserIds.push(playerId); // Add the user ID to the set
+
+                        totalChipAmount += chip;
+                        let name;
+                        let realName = await SendName(playerId).then(data => {
+                            name = data.data;
+                        });
+
+                        // console.log("CALLED___________________________________++++++++++");
+
+                        newRow = `
+                <tr>
+                    <td><p>${index + 1}</p></td>
+                    <td><p>${name}</p></td>
+                    <td><p>${chip}</p></td>
+                    <td><p>${chip * multiplier}</p></td>
+                    <td><p>${cashout_status}</p></td>
+                    <td><p>${cashout_at}</p></td>
+                    <td><p>${cashout_amt}</p></td>
+                </tr>`;
+
+                        document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);
+                    }
+                });
+
+                document.getElementById('totalBet').innerText = totalChipAmount;
+                document.getElementById('totalUser').innerText = existingUserIds.size;
+                document.getElementById('totalProfit').innerText = totalChipAmount * gamePercent / 100;
+
+                document.querySelector('#userData tbody').innerHTML = '';
+            });
+
+            // socket.on('OnChipMoveAvaitor', function (data) {
+            //     newRowData=data
+            //     console.log("onChips--------------------",data);
+            //     document.getElementById("totalCashout").innerText = 0
+
+            //     document.querySelector('#userData tbody').innerHTML = '';
+
+            //     let totalChipAmount = 0;
+            //     let uniqueUserIds = new Set();
+
+            //     Object.values(data.bets).forEach(async(bet, index) => {
+            //         const { playerId, chip } = bet;
+            //     //   console.log(playerId,chip);
+            //         uniqueUserIds.add(playerId);
+            //         console.log("uniqueId-------------------",uniqueUserIds);;
+            //         totalChipAmount += chip;
+            //         let name;
+            //        let realName= await SendName(playerId).then(data => {
+            //         name=data.data
+            //     });
+            //     if(uniqueUserIds.has(playerId)){
+            //         console.log(multiplier,"multiplier-------------");
+            //         console.log("chi");
+            //          newRow = `
+            //             <tr>
+            //                 <td><p>${index + 1}</p></td>
+            //                 <td><p>${name}</p></td>
+            //                 <td><p>${chip}</p></td>
+            //                 <td><p>${chip * multiplier}</p></td>
+            //                 <td><p>${cashout_status} </p></td>
+            //                 <td><p>${cashout_at} </p></td>
+            //                 <td><p>${cashout_amt} </p></td>
+
+            //             </tr>`;
+
+            //         document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);}
+            //     });
+
+            //     document.getElementById('totalBet').innerText = totalChipAmount;
+
+            //     document.getElementById('totalUser').innerText = uniqueUserIds.size;
+
+            //     document.getElementById('totalProfit').innerText=totalChipAmount*gamePercent/100
+            // });
 
 
 
-socket.on('OnChipMoveAvaitor', function (data) {
-    console.log(data);
-    document.getElementById("totalCashout").innerText = 0
+            function startCountdown(durationInSeconds, display) {
+                let timer = durationInSeconds;
 
-    document.querySelector('#userData tbody').innerHTML = '';
+                const countdownInterval = setInterval(function () {
+                    const minutes = Math.floor(timer / 60);
+                    const seconds = timer % 60;
 
-    let totalChipAmount = 0;
-    let uniqueUserIds = new Set();
+                    const displayMinutes = String(minutes).padStart(2, '0');
+                    const displaySeconds = String(seconds).padStart(2, '0');
 
-    Object.values(data.bets).forEach(async(bet, index) => {
-        const { playerId, chip } = bet;
-    //   console.log(playerId,chip);
-        uniqueUserIds.add(playerId);
-        console.log(uniqueUserIds);;
-        totalChipAmount += chip;
-        let name;
-       let realName= await SendName(playerId).then(data => {
-        name=data.data
-    });
-    if(uniqueUserIds.has(playerId)){
-        const newRow = `
-            <tr>
-                <td><p>${index + 1}</p></td>
-                <td><p>${name}</p></td>
-                <td><p>${chip}</p></td>
-                <td><p>${chip * gamePercent / 100}</p></td>
-                <td><p>${gamePercent} %</p></td>
-            </tr>`;
+                    display.textContent = displayMinutes + ':' + displaySeconds;
 
-        document.querySelector('#userData tbody').insertAdjacentHTML('beforeend', newRow);}
-    });
+                    if (timer <= 0) {
+                        clearInterval(countdownInterval);
+                    } else {
+                        timer--;
+                    }
+                }, 1000);
+            }
 
-    document.getElementById('totalBet').innerText = totalChipAmount;
+            socket.on("totalCashout", function (data) {
+                // console.log("totalCashout-------------", data);
+                const cashout_amt = data.totalCashout;
 
-    document.getElementById('totalUser').innerText = uniqueUserIds.size;
+                // Update cashout amount for each relevant user in newRowData
+                Object.values(newRowData.bets).forEach(bet => {
+                    if (bet.playerId === data.playerId) {
+                        bet.cashout_status = true;
+                        bet.cashout_amt = cashout_amt;
+                        // Mark that the totalCashout event has been triggered for this player
+                        cashoutTriggered[ data.playerId ] = true;
+                    }
+                });
 
-    document.getElementById('totalProfit').innerText=totalChipAmount*gamePercent/100
-});
+                // Update the table rows for the relevant user
+                const rows = document.querySelectorAll('#userData tbody tr');
+                rows.forEach(row => {
+                    const playerId = row.querySelector('td:nth-child(2) p').textContent;
+                    // console.log("playerId-------------", playerId);
+                    if (playerId === data.playerId) {
+                        probable_win.push(data.playerId)
+                        const bet = newRowData.bets[ data.playerId ];
+                        const cashoutStatusCell = row.querySelector('td:nth-child(5) p');
+                        const cashoutAmountCell = row.querySelector('td:last-child p');
 
-
-
-function startCountdown(durationInSeconds, display) {
-    let timer = durationInSeconds;
-
-    const countdownInterval = setInterval(function () {
-        const minutes = Math.floor(timer / 60);
-        const seconds = timer % 60;
-
-        const displayMinutes = String(minutes).padStart(2, '0');
-        const displaySeconds = String(seconds).padStart(2, '0');
-
-        display.textContent = displayMinutes + ':' + displaySeconds;
-
-        if (timer <= 0) {
-            clearInterval(countdownInterval);
-        } else {
-            timer--;
-        }
-    }, 1000);
-}
-
-socket.on("totalCashout", function (data) {
-    console.log(data,"=-=-=-=-=-=-=-");
-    document.getElementById("totalCashout").innerText = (data.totalCashout).toFixed(2)
-})
-</script>
-
+                        cashoutStatusCell.textContent = bet.cashout_status;
+                        cashoutAmountCell.textContent = bet.cashout_amt.toFixed(2);
+                    }
+                });
+            });
+        </script>
