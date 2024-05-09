@@ -127,30 +127,37 @@
             let cashoutTriggered = {};
 
             socket.on('distance', function (data) {
-                console.log("distance------------");
+                // console.log("distance------------");
                 document.getElementById("height").innerText = data.flydistance;
-               // multiplier = data.flydistance;
+                // multiplier = data.flydistance;
 
-                if (probable_winn) {
-                    Object.values(newRowData.bets).forEach(bet => {
-                        const probableWinning = bet.chip *  data.flydistance;;
-                        bet.probable_winning = probableWinning;
-                        const cashoutAt =  data.flydistance;
-                        bet.cashout_at = cashoutAt
-                    });
 
-                    const rows = document.querySelectorAll('#userData tbody tr');
-                    rows.forEach((row, index) => {
-                        const bet = Object.values(newRowData.bets)[ index ];
-                        const playerIdCell = row.querySelector('td:nth-child(2) p').textContent;
-                        if (!cashoutTriggered[ playerIdCell ]) {
-                            const cashoutStatusCell = row.querySelector('td:nth-child(6) p');
-                            const probableWinningCell = row.querySelector('td:nth-child(4) p');
-                            probableWinningCell.textContent = bet.probable_winning.toFixed(2);
-                            cashoutStatusCell.textContent = bet.cashout_at.toFixed(2);
-                        }
-                    });
-                }
+                Object.values(newRowData.bets).forEach(bet => {
+                    let probableWinning = bet.chip * data.flydistance;;
+                    bet.probable_winning = probableWinning;
+                    let cashoutAt = data.flydistance;
+                    bet.cashout_at = cashoutAt
+                });
+
+                const rows = document.querySelectorAll('#userData tbody tr');
+                rows.forEach((row, index) => {
+                    const bet = Object.values(newRowData.bets)[ index ];
+                    let probableWinning = bet.chip * data.flydistance;;
+                    const playerIdCell = row.querySelector('td:nth-child(2) p').textContent;
+
+                    let cashoutAt = 0
+                    let cashoutStatus = row.querySelector('td:nth-child(5) p').textContent;
+
+
+                    const cashoutStatusCell = row.querySelector('td:nth-child(6) p');
+                    console.log(cashoutTriggered[ cashoutStatusCell.parentElement.id ], "trigger---------------");
+                    const probableWinningCell = row.querySelector('td:nth-child(4) p');
+                    if (cashoutStatusCell && !cashoutTriggered[ cashoutStatusCell.parentElement.id ]) {
+                        probableWinningCell.textContent = cashoutStatus ? probableWinning.toFixed(2) : 0;
+                        cashoutStatusCell.textContent = cashoutStatus ? cashoutAt.toFixed(2) : 0
+                    }
+                });
+
             });
 
             // socket.on('distance', function (data) {
@@ -214,9 +221,9 @@
                     <td><p>${index + 1}</p></td>
                     <td><p>${name}</p></td>
                     <td><p>${chip}</p></td>
-                    <td><p>${chip * multiplier}</p></td>
-                    <td><p>${cashout_status}</p></td>
-                    <td><p>${cashout_at}</p></td>
+                    <td id="${playerId}"><p>${chip * multiplier}</p></td>
+                    <td id="${playerId}"><p>${cashout_status}</p></td>
+                    <td id="${playerId}"><p>${cashout_at}</p></td>
                     <td><p>${cashout_amt}</p></td>
                 </tr>`;
 
@@ -225,7 +232,7 @@
                 });
 
                 document.getElementById('totalBet').innerText = totalChipAmount;
-                document.getElementById('totalUser').innerText = existingUserIds.size;
+                document.getElementById('totalUser').innerText = existingUserIds.length;
                 document.getElementById('totalProfit').innerText = totalChipAmount * gamePercent / 100;
 
                 document.querySelector('#userData tbody').innerHTML = '';
@@ -298,34 +305,39 @@
                 }, 1000);
             }
 
-            socket.on("totalCashout", function (data) {
-                // console.log("totalCashout-------------", data);
-                const cashout_amt = data.totalCashout;
+            socket.on("totalCashout", async function (data) {
+                console.log("totalCashout-------------------", data);
+                let cashout_amt = data.totalCashout;
 
                 // Update cashout amount for each relevant user in newRowData
                 Object.values(newRowData.bets).forEach(bet => {
                     if (bet.playerId === data.playerId) {
                         bet.cashout_status = true;
                         bet.cashout_amt = cashout_amt;
-                        // Mark that the totalCashout event has been triggered for this player
-                        cashoutTriggered[ data.playerId ] = true;
+
                     }
                 });
 
                 // Update the table rows for the relevant user
                 const rows = document.querySelectorAll('#userData tbody tr');
                 rows.forEach(row => {
-                    const playerId = row.querySelector('td:nth-child(2) p').textContent;
-                    // console.log("playerId-------------", playerId);
-                    if (playerId === data.playerId) {
-                        probable_win.push(data.playerId)
-                        const bet = newRowData.bets[ data.playerId ];
-                        const cashoutStatusCell = row.querySelector('td:nth-child(5) p');
-                        const cashoutAmountCell = row.querySelector('td:last-child p');
+                    let playerId = row.querySelector('td:nth-child(2) p').textContent;
+                    let cashout_status = row.querySelector('td:nth-child(5) p').textContent;
+                    // console.log("cashout_status-------------------", cashout_status);
 
-                        cashoutStatusCell.textContent = bet.cashout_status;
-                        cashoutAmountCell.textContent = bet.cashout_amt.toFixed(2);
+                    let bet = newRowData.bets[ data.playerId ];
+                    // console.log("bet-------------------", bet);
+
+                    let cashoutStatusCell = row.querySelector('td:nth-child(5) p');
+
+                    let cashoutAmountCell = row.querySelector('td:last-child p');
+                    // console.log("cashoutStatusCell id:", cashoutStatusCell.parentElement.id);
+                    if (cashoutStatusCell.parentElement.id === data.playerId) {
+                        cashoutTriggered[ cashoutStatusCell.parentElement.id ] = true;
+                        cashoutStatusCell.textContent = cashout_status ? 'true' : 'false'; // Set text content accordingly
+                        cashoutAmountCell.textContent = cashout_amt.toFixed(2);
                     }
                 });
             });
+
         </script>

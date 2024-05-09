@@ -4,13 +4,14 @@ var { User } = require("./../models/user"),
   Service = require("./../service"),
   localization = require("./../service/localization");
 var Cryptr = require("cryptr");
+const distributorController = require("./distributorController");
 var { Transaction } = require("./../models/transaction");
-var  JoinGame  = require("./../models/joinGame");
-var  Game_record_aviator  = require("./../models/game_record_avaitor");
-var  Roulette_record  = require("./../models/game_record_roullete");
-var  GameRecord  = require("./../models/game_record_cardRoullte");
+var JoinGame = require("./../models/joinGame");
+var Game_record_aviator = require("./../models/game_record_avaitor");
+var Roulette_record = require("./../models/game_record_roullete");
+var GameRecord = require("./../models/game_record_cardRoullte");
 var Table = require("./../models/table");
- var { Rank_Data } = require("./../models/rankData");
+var { Rank_Data } = require("./../models/rankData");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
 const uniqid = require("uniqid");
 
@@ -316,23 +317,23 @@ module.exports = {
       .json(Service.response(1, localization.TransactionsHistory, userHistory));
   },
 
-  transferPoint: async (admin,TxnMode) => {
+  transferPoint: async (admin, TxnMode) => {
     let transaction;
     console.log(admin._id);
-    if(TxnMode==="generate"){
-       transaction = await Transaction.find({user_id:admin._id,txn_mode:"U"})
+    if (TxnMode === "generate") {
+      transaction = await Transaction.find({ user_id: admin._id, txn_mode: "U" })
         .populate("user_id")
         .sort({
           created_at: -1,
         })
-        console.log(transaction,"-=-=-==-")
-    }else{
-       transaction = await Transaction.find({refUser:admin._id,txn_mode:TxnMode})
-      .populate("user_id")
-      .sort({
-        created_at: -1,
-      })
-      console.log(transaction,"-=-=-==-((((((((((((((((((())))))))))))))))))))")
+      console.log(transaction, "-=-=-==-")
+    } else {
+      transaction = await Transaction.find({ refUser: admin._id, txn_mode: TxnMode })
+        .populate("user_id")
+        .sort({
+          created_at: -1,
+        })
+      console.log(transaction, "-=-=-==-((((((((((((((((((())))))))))))))))))))")
     }
     let list = await Promise.all(
       transaction.map(async (u) => {
@@ -342,7 +343,7 @@ module.exports = {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
             request_id: u?.request_id,
-            username: _.capitalize(u.user_id.first_name)+" "+_.capitalize(u.user_id.last_name),
+            username: _.capitalize(u.user_id.first_name) + " " + _.capitalize(u.user_id.last_name),
             numeric_id: u.user_id.search_id,
             user_id: u.user_id._id,
             userRole: u.user_id.role,
@@ -354,21 +355,21 @@ module.exports = {
             is_status: u.is_status,
             msg: u.resp_msg || "No Data Found",
             txn_mode: u.txn_mode || "G",
-            beforeBalance:u.current_balance-u.txn_amount
+            beforeBalance: u.current_balance - u.txn_amount
           };
         } else {
           return false;
         }
       })
     );
-// console.log(list);
+    // console.log(list);
     let count = list.length
     return {
       list: list.filter((d) => d),
       count: count,
     };
   },
-  transactionList: async (limit,admin) => {
+  transactionList: async (limit, admin) => {
     // const transaction = await Transaction.find({})
     //   .populate("user_id").populate("refUser")
     //   .sort({
@@ -402,8 +403,8 @@ module.exports = {
       {
         '$project': {
           _id: 1,
-          username: [Object],
-          refusername: [Object],
+          username: [ Object ],
+          refusername: [ Object ],
           transaction_type: 1,
           created_at: 1,
           resp_msg: 1,
@@ -419,7 +420,7 @@ module.exports = {
         }
       }
     ])
-// console.log(transaction);
+    // console.log(transaction);
     let list = await Promise.all(
       transaction.map(async (u) => {
         if (u.user_id) {
@@ -427,13 +428,13 @@ module.exports = {
             order_id: u.order_id,
             transaction_type: u.transaction_type,
             request_id: u?.request_id,
-            username:_.capitalize(u.user_id.first_name)+""+ _.capitalize(u.user_id.last_name),
+            username: _.capitalize(u.user_id.first_name) + "" + _.capitalize(u.user_id.last_name),
             search_id: _.capitalize(u.user_id.search_id),
-            refUsername: u.refUser != null ?_.capitalize(u.refUser.first_name)+""+ _.capitalize(u.refUser.last_name):"",
-            refUserSearchId: u.refUser != null?_.capitalize(u.refUser.search_id):"",
+            refUsername: u.refUser != null ? _.capitalize(u.refUser.first_name) + "" + _.capitalize(u.refUser.last_name) : "",
+            refUserSearchId: u.refUser != null ? _.capitalize(u.refUser.search_id) : "",
             user_id: u.user_id._id,
             txn_amount: u.txn_amount,
-            created_at: await Service.formateDateandTime(parseInt(u.created_at)), 
+            created_at: await Service.formateDateandTime(parseInt(u.created_at)),
             is_status: u.is_status,
             current_balance: u.current_balance,
             msg: u.resp_msg || "No Data Found",
@@ -444,7 +445,7 @@ module.exports = {
         }
       })
     );
-    let count  = await Transaction.aggregate([{"$match":{"user_id":admin._id}},{"$match":{"is_status":{"$ne":"P"}}},{"$lookup":{"from":"users","localField":"user_id","foreignField":"_id","as":"users"}},{"$lookup":{"from":"users","localField":"refUser","foreignField":"_id","as":"refUser"}}]);
+    let count = await Transaction.aggregate([ { "$match": { "user_id": admin._id } }, { "$match": { "is_status": { "$ne": "P" } } }, { "$lookup": { "from": "users", "localField": "user_id", "foreignField": "_id", "as": "users" } }, { "$lookup": { "from": "users", "localField": "refUser", "foreignField": "_id", "as": "refUser" } } ]);
 
     return {
       list: list.filter((d) => d),
@@ -461,17 +462,17 @@ module.exports = {
       count: 1,
     };
   },
-  betHistory: async (limit,game) => {
+  betHistory: async (limit, game) => {
 
     const betData = await Game_record_aviator.aggregate([
       {
         $match: {
-          room_id:"1707461299239"
+          room_id: "1707461299239"
         }
       },
       {
         $sort: {
-          created_at: -1 ,
+          created_at: -1,
         }
       },
       {
@@ -486,25 +487,25 @@ module.exports = {
       //   $unwind:"$joinData"
       // },
       {
-        $limit: limit 
+        $limit: limit
       },
 
     ]);
-    
-  // console.log(betData);
-  
+
+    // console.log(betData);
+
     let list = await Promise.all(
       betData.map(async (u) => {
         // console.log(u);
-        let totalPlayer=0
-        let totalBetAmt=0
-        let totalWinAmt=0
-        let status=[]
-        if(u.joinData){
-          totalPlayer=u.joinData.length
-          u.joinData.map((a)=>{
-            totalBetAmt+=a.amount
-            totalWinAmt+=a.win_amount
+        let totalPlayer = 0
+        let totalBetAmt = 0
+        let totalWinAmt = 0
+        let status = []
+        if (u.joinData) {
+          totalPlayer = u.joinData.length
+          u.joinData.map((a) => {
+            totalBetAmt += a.amount
+            totalWinAmt += a.win_amount
             status.push(a.is_updated)
           })
         }
@@ -512,19 +513,19 @@ module.exports = {
           return {
             room_id: u.room_id,
             created_at: Service.formateDateandTime(u.room_id),
-            totalPlayer:totalPlayer,
-            totalBetAmt:totalBetAmt,
-            totalWinAmt:totalWinAmt,
-            adminComm:u.admin_commission,
-            result:u.distance,
-            status:status[0]?status[0]:"Success",
+            totalPlayer: totalPlayer,
+            totalBetAmt: totalBetAmt,
+            totalWinAmt: totalWinAmt,
+            adminComm: u.admin_commission,
+            result: u.distance,
+            status: status[ 0 ] ? status[ 0 ] : "Success",
           };
         } else {
           return false;
         }
       })
     );
-// console.log(list);
+    // console.log(list);
 
     let count = await Transaction.countDocuments();
     return {
@@ -552,10 +553,10 @@ module.exports = {
             username: _.capitalize(u.user_id.name),
             user_id: u.user_id._id,
             txn_amount: u.txn_amount,
-            current_balance:u.current_balance||0,
+            current_balance: u.current_balance || 0,
             win_wallet: u.txn_win_amount || 0,
             main_wallet: u.txn_main_amount || 0,
-            created_at: u.created_at, 
+            created_at: u.created_at,
             is_status: u.is_status,
             msg: u.resp_msg || "No Data Found",
             txn_mode: u.txn_mode || "G",
@@ -575,23 +576,23 @@ module.exports = {
       count: count,
     };
   },
-///////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////
   getBetHistoryTxnAjax: async function (req, res) {
     var startTime = new Date();
-    const GameId=req.query.gameID
-console.log(GameId);
+    const GameId = req.query.gameID
+    console.log(GameId);
     const params = req.query;
-// console.log("params", params);
+    // console.log("params", params);
     let matchObj = {};
 
 
-    var sortObj = { created: -1};
+    var sortObj = { created: -1 };
 
     const user_id = params.id || "";
 
     if (Service.validateObjectId(user_id)) {
       console.log("hi");
-      matchObj["user._id"] = ObjectId(user_id);
+      matchObj[ "user._id" ] = ObjectId(user_id);
     }
 
     if (!_.isEmpty(params.status)) {
@@ -603,233 +604,234 @@ console.log(GameId);
       let timestamp;
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-          timestamp = dateObject.getTime();
-          // console.log(timestamp);
+        timestamp = dateObject.getTime();
+        // console.log(timestamp);
       } else {
-          console.error("Invalid date string");
+        console.error("Invalid date string");
       }
-  
+
       let isoStartDate = new Date(sdate + 'T00:00:00Z');
-  
+
       matchObj.created_at = {
-          $gte: isoStartDate
+        $gte: isoStartDate
       };
-  }
-  
-  if (!_.isEmpty(params.endDate)) {
-    let sdate = params.endDate + 'T23:59:59.999Z';
-    let timestamp;
-    let dateObject = new Date(sdate);
-    if (!isNaN(dateObject.getTime())) {
+    }
+
+    if (!_.isEmpty(params.endDate)) {
+      let sdate = params.endDate + 'T23:59:59.999Z';
+      let timestamp;
+      let dateObject = new Date(sdate);
+      if (!isNaN(dateObject.getTime())) {
         timestamp = dateObject.toISOString();
         console.log(timestamp);
-    } else {
+      } else {
         console.error("Invalid date string");
-    }
-    matchObj.created_at = {
+      }
+      matchObj.created_at = {
         $lt: new Date(timestamp)
-    };
-}
-
-if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
-  let startdate = params.startDate;
-  let endDate = params.endDate + 'T23:59:59.999Z';
-  let timestampstart;
-  let timestampend;
-  let dateObjectstart = new Date(startdate);
-  let dateObjectend = new Date(endDate);
-  
-  if (!isNaN(dateObjectstart.getTime())) {
-      timestampstart = dateObjectstart.toISOString();
-  } else {
-      console.error("Invalid start date string");
-  }
-  
-  if (!isNaN(dateObjectend.getTime())) {
-      timestampend = dateObjectend.toISOString();
-  } else {
-      console.error("Invalid end date string");
-  }
-  
-  matchObj.created_at = {
-      $gte: new Date(timestampstart),
-      $lt: new Date(timestampend)
-  };
-}
-
-
-let aggregation_obj = [];
-
-// Sort stage
-if(GameId==2){
-  aggregation_obj.push({
-    $sort: {
-      room_id: -1,
+      };
     }
-});
-}else{
-  aggregation_obj.push({
-    $sort: {
-      created_at: -1,
+
+    if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
+      let startdate = params.startDate;
+      let endDate = params.endDate + 'T23:59:59.999Z';
+      let timestampstart;
+      let timestampend;
+      let dateObjectstart = new Date(startdate);
+      let dateObjectend = new Date(endDate);
+
+      if (!isNaN(dateObjectstart.getTime())) {
+        timestampstart = dateObjectstart.toISOString();
+      } else {
+        console.error("Invalid start date string");
+      }
+
+      if (!isNaN(dateObjectend.getTime())) {
+        timestampend = dateObjectend.toISOString();
+      } else {
+        console.error("Invalid end date string");
+      }
+
+      matchObj.created_at = {
+        $gte: new Date(timestampstart),
+        $lt: new Date(timestampend)
+      };
     }
-});
-}
 
-aggregation_obj.push({
 
-    $lookup: {
+    let aggregation_obj = [];
+
+    // Sort stage
+    if (GameId == 2) {
+      aggregation_obj.push({
+        $sort: {
+          room_id: -1,
+        }
+      });
+    } else {
+      aggregation_obj.push({
+        $sort: {
+          created_at: -1,
+        }
+      });
+    }
+
+    aggregation_obj.push({
+
+      $lookup: {
         from: "join_games",
         localField: "room_id",
         foreignField: "room_id",
         as: "joinData"
-    },
+      },
 
-});
+    });
 
-if (!_.isEmpty(matchObj)) {
-    aggregation_obj.push({
+    if (!_.isEmpty(matchObj)) {
+      aggregation_obj.push({
         $match: matchObj,
-    });
-}
+      });
+    }
 
-const pageSize = parseInt(params.length) || 10; 
-const pageNumber = parseInt(params.start)/10 || 0; 
-aggregation_obj.push({
-    $skip: pageNumber * pageSize
-}, {
-    $limit: pageSize
-});
-// console.log(aggregation_obj);
-let list;
-if (GameId == "1") {
-    list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
-} else if (GameId == "2") {
-    list = await GameRecord.aggregate(aggregation_obj).allowDiskUse(true);
-} else {
-    list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
-}
-console.log(list);
-
-
-
-let recordsTotal = list.length;
-
-let totalCountAggregate = [];
-if (!_.isEmpty(matchObj)) {
-    totalCountAggregate.push({
-        $match: matchObj
-    });
-}
-if (GameId == "1") {
-    totalCountAggregate.push({
-        $count: "totalCount"
-    });
-} else if (GameId == "2" || GameId == "3") {
-    totalCountAggregate.push({
-        $match: {
-            game_id: GameId
-        }
+    const pageSize = parseInt(params.length) || 10;
+    const pageNumber = parseInt(params.start) / 10 || 0;
+    aggregation_obj.push({
+      $skip: pageNumber * pageSize
     }, {
-        $count: "totalCount"
+      $limit: pageSize
     });
-}
-// console.log(totalCountAggregate);
-let totalAggregateResult;
-if (totalCountAggregate.length > 0) {
+    // console.log(aggregation_obj);
+    let list;
     if (GameId == "1") {
+      list = await Roulette_record.aggregate(aggregation_obj).allowDiskUse(true);
+    } else if (GameId == "2") {
+      list = await GameRecord.aggregate(aggregation_obj).allowDiskUse(true);
+    } else {
+      list = await Game_record_aviator.aggregate(aggregation_obj).allowDiskUse(true);
+    }
+    console.log(list);
+
+
+
+    let recordsTotal = list.length;
+
+    let totalCountAggregate = [];
+    if (!_.isEmpty(matchObj)) {
+      totalCountAggregate.push({
+        $match: matchObj
+      });
+    }
+    if (GameId == "1") {
+      totalCountAggregate.push({
+        $count: "totalCount"
+      });
+    } else if (GameId == "2" || GameId == "3") {
+      totalCountAggregate.push({
+        $match: {
+          game_id: GameId
+        }
+      }, {
+        $count: "totalCount"
+      });
+    }
+    // console.log(totalCountAggregate);
+    let totalAggregateResult;
+    if (totalCountAggregate.length > 0) {
+      if (GameId == "1") {
         totalAggregateResult = await Roulette_record.aggregate(totalCountAggregate).allowDiskUse(true);
-    } else if(GameId == "2") {
+      } else if (GameId == "2") {
         totalAggregateResult = await GameRecord.aggregate(totalCountAggregate).allowDiskUse(true);
-    } else  {
+      } else {
         totalAggregateResult = await Game_record_aviator.aggregate(totalCountAggregate).allowDiskUse(true);
+      }
+      recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[ 0 ].totalCount : 0;
     }
-    recordsTotal = totalAggregateResult.length > 0 ? totalAggregateResult[0].totalCount : 0;
-}
-// console.log(totalAggregateResult);
-let downLine=await Service.DownLine(req.admin._id)
+    // console.log(totalAggregateResult);
+    let downLine = await Service.DownLine(req.admin._id)
 
-// console.log( downLine);
-list = await Promise.all(list.map(async (u, index) => {
-  // console.log(u);
-    let totalPlayer = 0;
-    let totalBetAmt = 0;
-    let totalWinAmt = 0;
-    let commission=0
-    let status ;
-    if(GameId == "1"){
-    status=  u.spots !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
-  }else if(GameId=="2"){
-      status=  u.winNo !== undefined?'<span class="label label-success"> Success</span>':'<span class="label label-danger"> Refund</span>'
-    }else{
-      status=  u.distance != "0"?'<span class="label label-success"> Success</span>':'<span class="label label-warning"> Pending</span>'
-    }
+    // console.log( downLine);
+    list = await Promise.all(list.map(async (u, index) => {
+      // console.log(u);
+      let totalPlayer = 0;
+      let totalBetAmt = 0;
+      let totalWinAmt = 0;
+      let commission = 0
+      let status;
+      if (GameId == "1") {
+        status = u.spots !== undefined ? '<span class="label label-success"> Success</span>' : '<span class="label label-warning"> Pending</span>'
+      } else if (GameId == "2") {
+        status = u.winNo !== undefined ? '<span class="label label-success"> Success</span>' : '<span class="label label-danger"> Refund</span>'
+      } else {
+        status = u.distance != "0" ? '<span class="label label-success"> Success</span>' : '<span class="label label-warning"> Pending</span>'
+      }
 
-    if (u.joinData) {
-      // totalPlayer = u.joinData.length;
-      await Promise.all(u.joinData.map(async (a) => {
-        console.log(a.user_id)
-          let findUser=await User.findOne({numeric_id:a.user_id});
-        if (downLine.map(id => id.toString()).includes(findUser._id.toString())) {
+      if (u.joinData) {
+        // totalPlayer = u.joinData.length;
+        await Promise.all(u.joinData.map(async (a) => {
+          console.log(a.user_id)
+          let findUser = await User.findOne({ numeric_id: a.user_id });
+          if (downLine.map(id => id.toString()).includes(findUser._id.toString())) {
             totalBetAmt += a.amount;
             totalWinAmt += a.win_amount;
             totalPlayer++
-          console.log("================",req.admin._id);
-          if (u.room_id) {
+            console.log("================", req.admin._id);
+            if (u.room_id) {
               let findData = await Transaction.aggregate([
-                  {
-                      $match: {
-                          room_id: Number(u.room_id),
-                          txn_mode: "C",
-                          user_id:req.admin._id
-                      }
-                  },
-                  {
-                      $group: {
-                          _id: u.room_id,
-                          commission: { $sum: "$txn_amount" }
-                      }
+                {
+                  $match: {
+                    room_id: Number(u.room_id),
+                    txn_mode: "C",
+                    user_id: req.admin._id
                   }
+                },
+                {
+                  $group: {
+                    _id: u.room_id,
+                    commission: { $sum: "$txn_amount" }
+                  }
+                }
               ]);
-              commission += findData[0] ? findData[0].commission : 0;
-          } }
-      }));
-  }
-    let spot;
-    if (GameId == "1") {
-      let parseData;
-      if (u?.spots) {
+              commission += findData[ 0 ] ? findData[ 0 ].commission : 0;
+            }
+          }
+        }));
+      }
+      let spot;
+      if (GameId == "1") {
+        let parseData;
+        if (u?.spots) {
           parseData = JSON.parse(u.spots);
-      } else {
-          parseData = null; 
-      }
-      spot = parseData?.["0"]-1 ?? " ";
-      if(spot==-1){
-        spot="00";
-      }
+        } else {
+          parseData = null;
+        }
+        spot = parseData?.[ "0" ] - 1 ?? " ";
+        if (spot == -1) {
+          spot = "00";
+        }
 
-    } else if (GameId == "2") {
-      if(u.spot==0){
+      } else if (GameId == "2") {
+        if (u.spot == 0) {
           spot = "Ace";
         }
-        else if(u.spot==1){
+        else if (u.spot == 1) {
           spot = "King";
         }
-        else if(u.spot==2){
+        else if (u.spot == 2) {
           spot = "Queen";
         }
-        else if(u.spot==3){
+        else if (u.spot == 3) {
           spot = "Jake";
         }
-        else if(u.spot==4){
+        else if (u.spot == 4) {
           spot = "10";
         }
-       
-    } else {
+
+      } else {
         spot = u.distance;
-    }
-    // let adminComm = u.admin_commission ? u.admin_commission : 0;
-    // console.log(commission);
-    return [
+      }
+      // let adminComm = u.admin_commission ? u.admin_commission : 0;
+      // console.log(commission);
+      return [
         ++index,
         u.room_id,
         Service.formateDateandTime(u.room_id),
@@ -842,15 +844,15 @@ list = await Promise.all(list.map(async (u, index) => {
         status,
         `<a  href="${config.pre + req.headers.host
         }/user/showSlotDetail/${u.room_id}/${GameId}"> <i class="fa fa-pencil"></i></a>`
-    ];
-}));
+      ];
+    }));
 
-return res.status(200).send({
-    data: await list,
-    draw: new Date().getTime(),
-    recordsTotal: recordsTotal,
-    recordsFiltered: recordsTotal,
-});
+    return res.status(200).send({
+      data: await list,
+      draw: new Date().getTime(),
+      recordsTotal: recordsTotal,
+      recordsFiltered: recordsTotal,
+    });
 
   },
   getTxnAjax: async function (req, res) {
@@ -858,33 +860,33 @@ return res.status(200).send({
     var startTime = new Date();
     console.log("ajax calll", req.query);
     const params = req.query;
-    if(params.buttonWallete != "false" ){
+    if (params.buttonWallete != "false") {
       params.id = params.buttonWallete
     }
-// console.log("params", params);
+    // console.log("params", params);
     let matchObj = {};
     var sortObj = {};
 
-// console.log(req.admin._id)
+    // console.log(req.admin._id)
     if (params.order) {
-      if (params.order[0]) {
+      if (params.order[ 0 ]) {
         // console.log(params.order[0]);
         // if (params.order[0].column == "0") {
         //   // SORT BY TXN AMOUNT
         //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
         // }
-          if (params.order[0].column == "2") {
+        if (params.order[ 0 ].column == "2") {
           // SORT BY TXN AMOUNT
-          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "3") {
+          sortObj.txn_amount = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "3") {
           // SORT BY WIN WALLET
-          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "4") {
+          sortObj.current_balance = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "4") {
           // SORT BY MAIN WALLET
-          sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "1") {
+          sortObj.created_at = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "1") {
           // SORT BY DATE
-          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
+          sortObj.numeric_id = params.order[ 0 ].dir == "asc" ? 1 : -1;
         } else {
           sortObj = { created_at: -1 };
         }
@@ -898,21 +900,25 @@ return res.status(200).send({
     const user_id = params.id || "";
 
     if (Service.validateObjectId(user_id)) {
-      matchObj = { $or: [
-        // { refUser: ObjectId(user_id) },
-        { user_id: ObjectId(user_id) }
-    ]}
-    }else{
-      matchObj = { $or: [
-        // { refUser: ObjectId(user_id) },
-        { user_id: ObjectId(req.admin._id) }
-    ]}
+      matchObj = {
+        $or: [
+          // { refUser: ObjectId(user_id) },
+          { user_id: ObjectId(user_id) }
+        ]
+      }
+    } else {
+      matchObj = {
+        $or: [
+          // { refUser: ObjectId(user_id) },
+          { user_id: ObjectId(req.admin._id) }
+        ]
+      }
     }
 
-    if (!_.isEmpty(params.status)&& params.status !== " ") {
-      if(params.status=="G"){
+    if (!_.isEmpty(params.status) && params.status !== " ") {
+      if (params.status == "G") {
         // matchObj.txn_mode = "G";
-      }else{
+      } else {
         matchObj.transaction_type = params.status;
       }
     }
@@ -922,41 +928,43 @@ return res.status(200).send({
     }
     let matchObj2 = {}
     if (!_.isEmpty(params.rank)) {
-      matchObj2 = { $or: [
-        { role: params.rank },
-        { refUserRole: params.rank }
-    ]}
+      matchObj2 = {
+        $or: [
+          { role: params.rank },
+          { refUserRole: params.rank }
+        ]
+      }
     }
     if (!_.isEmpty(params.startDate)) {
       let sdate = params.startDate;
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
         console.log(timestamp);
       } else {
         console.error("Invalid date string");
       }
-      
+
       matchObj.created_at = {
-                $gte: timestamp.toString()
-              }
+        $gte: timestamp.toString()
+      }
     }
     if (!_.isEmpty(params.endDate)) {
       let sdate = params.endDate + 'T23:59:59.999Z';
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $lt: timestamp.toString()
+      matchObj.created_at = {
+        $lt: timestamp.toString()
       };
     }
-    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
-      let startdate = params.startDate ;
+    if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
+      let startdate = params.startDate;
       let endDate = params.endDate + 'T23:59:59.999Z';
       let timestampstart
       let timestampsend
@@ -972,21 +980,21 @@ return res.status(200).send({
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $gte: timestampstart.toString(),
-          $lt: timestampsend.toString()
+      matchObj.created_at = {
+        $gte: timestampstart.toString(),
+        $lt: timestampsend.toString()
       };
     }
     let total = 0
-   if(req.admin.role!=="Company" && Object.keys(matchObj).length == 0){
-    matchObj.user_id = req.admin._id
-    total =  await Transaction.countDocuments({user_id : req.admin._id , txn_mode: {$ne: "C"} });
-   }else{
-     let incData=await Service.DownLine(req.admin._id)
-     let a=incData.push(req.admin._id)
-     matchObj.user_id = {$in:incData};
-     total =  await Transaction.countDocuments({...matchObj , txn_mode: {$ne: "C"}});
-   }
+    if (req.admin.role !== "Company" && Object.keys(matchObj).length == 0) {
+      matchObj.user_id = req.admin._id
+      total = await Transaction.countDocuments({ user_id: req.admin._id, txn_mode: { $ne: "C" } });
+    } else {
+      let incData = await Service.DownLine(req.admin._id)
+      let a = incData.push(req.admin._id)
+      matchObj.user_id = { $in: incData };
+      total = await Transaction.countDocuments({ ...matchObj, txn_mode: { $ne: "C" } });
+    }
     // if (req.admin.role==="Company") {
     //   matchObj.user_id = {$in:incData};
     // }else {
@@ -994,24 +1002,24 @@ return res.status(200).send({
     // }
     let aggregation_obj = [];
     if (matchObj != {})
-    aggregation_obj.push({
-      $match: matchObj,
-    });
-    
-    if(params.status=="G"){
+      aggregation_obj.push({
+        $match: matchObj,
+      });
+
+    if (params.status == "G") {
       // matchObj.txn_mode = "G";
       aggregation_obj.push({
         $match: {
           // is_status: {$ne: "P"} 
-          txn_mode: {$ne: "C",$eq : "G"}
+          txn_mode: { $ne: "C", $eq: "G" }
         }
       });
-    }else{
+    } else {
 
       aggregation_obj.push({
         $match: {
           // is_status: {$ne: "P"} 
-          txn_mode: {$ne: "C"}
+          txn_mode: { $ne: "C" }
         }
       });
     }
@@ -1033,7 +1041,7 @@ return res.status(200).send({
           as: "refUser",
         },
       },
-      
+
       {
         $sort: sortObj,
       },
@@ -1044,7 +1052,7 @@ return res.status(200).send({
         $limit: params.length != -1 ? parseInt(params.length) : null,
       }
     );
-    
+
     // aggregation_obj.push({
     //   $facet: {
     //     checkRefUser: [
@@ -1081,15 +1089,15 @@ return res.status(200).send({
     // },
 
     // );
-    
+
     let list;
-  //   function printObject(obj) {
-  //     for (const [key, value] of Object.entries(obj)) {
-  //         console.log(`${key}: ${JSON.stringify(value)}`);
-  //     }
-  // }
-  // printObject(aggregation_obj);
-  
+    //   function printObject(obj) {
+    //     for (const [key, value] of Object.entries(obj)) {
+    //         console.log(`${key}: ${JSON.stringify(value)}`);
+    //     }
+    // }
+    // printObject(aggregation_obj);
+
     if (aggregation_obj.length > 0) {
       list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     } else {
@@ -1098,22 +1106,22 @@ return res.status(200).send({
         .skip(params.start == "All" ? 0 : parseInt(params.start))
         .limit(params.length != -1 ? parseInt(params.length) : null);
     }
-      // console.log(list[0].checkRefUser,"list");
-      // console.log(list[0].checkRefUser,"list");
+    // console.log(list[0].checkRefUser,"list");
+    // console.log(list[0].checkRefUser,"list");
     list = list.map((a) => {
-      let username = a.users[0].first_name + " " + a.users[0].last_name;
+      let username = a.users[ 0 ].first_name + " " + a.users[ 0 ].last_name;
       let refusername;
-      if (a.refUser[0]) {
-        refusername = a.refUser[0].first_name + " " + a.refUser[0].last_name+" ("+a.refUser[0].search_id+")";
-      }else{
-        if(a.gameId==1){
-          refusername=`Roullete(${a.room_id})`
+      if (a.refUser[ 0 ]) {
+        refusername = a.refUser[ 0 ].first_name + " " + a.refUser[ 0 ].last_name + " (" + a.refUser[ 0 ].search_id + ")";
+      } else {
+        if (a.gameId == 1) {
+          refusername = `Roullete(${a.room_id})`
         }
-        else if(a.gameId==2){
-          refusername=`Card Roullete(${a.room_id})`
+        else if (a.gameId == 2) {
+          refusername = `Card Roullete(${a.room_id})`
         }
-        else if(a.gameId==3){
-          refusername=`Avaitor(${a.room_id})`
+        else if (a.gameId == 3) {
+          refusername = `Avaitor(${a.room_id})`
         }
       }
       let transaction_type = a.transaction_type;
@@ -1124,16 +1132,16 @@ return res.status(200).send({
       let payment_mode = a.payment_mode;
       let refSearch_id = " ";
       let refUserRole = " ";
-      if (a.refUser[0]) {
-        refSearch_id = a.refUser[0].search_id;
-        refUserRole = a.refUser[0].role;
+      if (a.refUser[ 0 ]) {
+        refSearch_id = a.refUser[ 0 ].search_id;
+        refUserRole = a.refUser[ 0 ].role;
       }
-      let search_id = a.users[0].search_id;
-      let user_id = a.users[0]._id;
-      let role = a.users[0].role;
+      let search_id = a.users[ 0 ].search_id;
+      let user_id = a.users[ 0 ]._id;
+      let role = a.users[ 0 ].role;
       let txn_mode = a.txn_mode;
       let is_status = a.is_status;
-      let gameId=a?.gameId??0
+      let gameId = a?.gameId ?? 0
       return {
         username,
         refusername,
@@ -1153,9 +1161,9 @@ return res.status(200).send({
         gameId
       };
     });
-    
+
     // console.log(list);
-    
+
     // console.log(list);
 
     let aggregate_rf = [];
@@ -1175,13 +1183,13 @@ return res.status(200).send({
 
     // logger.info("aggregate_rf", aggregate_rf);
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
-// console.log(rF);
+    // console.log(rF);
     let recordsFiltered = total
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
-      list.map(async (u,index) => {
-    
+      list.map(async (u, index) => {
+
         let txn_amount = u.txn_amount.toFixed(2);
         if (u.txn_amount > 0) {
           txn_amount =
@@ -1200,7 +1208,7 @@ return res.status(200).send({
         else if (u.txn_mode == "T") {
           txn_mode = "Transaction";
         }
-        else{
+        else {
           txn_mode = "GAME";
         }
 
@@ -1218,73 +1226,73 @@ return res.status(200).send({
         let BeforeBalance;
 
         if (Debit_credit == "D") {
-      
-          if(u.refUserRole=="Company" ){
+
+          if (u.refUserRole == "Company") {
             // console.log(u.username)
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance+u.txn_amount;
-            current_balance= u.current_balance;
+            BeforeBalance = u.current_balance + u.txn_amount;
+            current_balance = u.current_balance;
             // console.log(BeforeBalance,current_balance);
           }
-           else if(u.role=="Company" ){
+          else if (u.role == "Company") {
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance-u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance - u.txn_amount;
 
           }
-          else if(u.gameId==2){
+          else if (u.gameId == 2) {
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance-u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance - u.txn_amount;
           }
-          else if(u.gameId==1){
+          else if (u.gameId == 1) {
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance-u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance - u.txn_amount;
           }
-          else if(u.gameId==3){
+          else if (u.gameId == 3) {
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance-u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance - u.txn_amount;
           }
-          else{
+          else {
             Debit_credit = '<span class="label label-danger">Debit</span>';
-            BeforeBalance=u.current_balance+u.txn_amount;
-            current_balance= u.current_balance;
+            BeforeBalance = u.current_balance + u.txn_amount;
+            current_balance = u.current_balance;
 
           }
           console.log("5")
 
-        }  else {
-          if(u.refUserRole=="Company"){
+        } else {
+          if (u.refUserRole == "Company") {
             Debit_credit = '<span class="label label-success">Credit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance+u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance + u.txn_amount;
             // console.log("===========",BeforeBalance,current_balance);
-          }else if(u.role=="Company"){
+          } else if (u.role == "Company") {
             Debit_credit = '<span class="label label-success">Credit</span>';
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance+u.txn_amount;
+            BeforeBalance = u.current_balance;
+            current_balance = u.current_balance + u.txn_amount;
             // console.log("===========",BeforeBalance,current_balance);
           }
-          else if(u.role=="User"||u.role=="Agent" ||u.role=="Zone"||u.role=="District"||u.role=="State"){
+          else if (u.role == "User" || u.role == "Agent" || u.role == "Zone" || u.role == "District" || u.role == "State") {
             Debit_credit = '<span class="label label-success">Credit</span>';
-            BeforeBalance=u.current_balance-u.txn_amount;
-            current_balance= u.current_balance;
+            BeforeBalance = u.current_balance - u.txn_amount;
+            current_balance = u.current_balance;
           }
-          else{
+          else {
             Debit_credit = '<span class="label label-success">Credit</span>';
-            BeforeBalance=u.current_balance
-            current_balance= u.current_balance+u.txn_amount
+            BeforeBalance = u.current_balance
+            current_balance = u.current_balance + u.txn_amount
           }
         }
-        let created=await Service.formateDateandTime(u.created_at)
-        if(status2 != "S" && status2 != "P"){
-          current_balance =  BeforeBalance
+        let created = await Service.formateDateandTime(u.created_at)
+        if (status2 != "S" && status2 != "P") {
+          current_balance = BeforeBalance
         }
-        if(req.admin.role=="Company" ){
+        if (req.admin.role == "Company") {
           // console.log(Debit_credit,"-=-==--=" ,u.transaction_type,u.search_id)
-          if(u.transaction_type== "C"){
+          if (u.transaction_type == "C") {
             return [
               ++index,
               // u?.request_id ?? '',
@@ -1297,7 +1305,7 @@ return res.status(200).send({
               txn_amount,
               current_balance.toFixed(2),
               status_,
-            ]; 
+            ];
           }
           return [
             ++index,
@@ -1312,8 +1320,8 @@ return res.status(200).send({
             current_balance.toFixed(2),
             status_,
           ];
-        }else{
-          if(u.transaction_type== "D"){
+        } else {
+          if (u.transaction_type == "D") {
             return [
               ++index,
               // u?.request_id ?? '',
@@ -1355,67 +1363,113 @@ return res.status(200).send({
     });
   },
   getperformance: async (req, res) => {
-    console.log("REQ.para,s.id",req.query)
-    console.log("req.admin.role",req.admin);
-  try {
-    let alluserPlayPoint = 0 ;
-    let game_id=Number(req.query.THAT_Game)
-    let alluserWinPoint = 0;
-    let alluserEndsPoint = 0;
-    let params = req.query;
-    let matchObj = {};
-    console.log(req.admin.role)
-    let fristrank ;
-    if(req.admin.role=="Company"){
-      fristrank = "State"
-    }else if(req.admin.role=="State"){
-      fristrank = "District"
-    }else if(req.admin.role=="District"){
-      fristrank = "Zone"
-    }else if(req.admin.role=="Zone"){
-      fristrank = "Agent"
-    }else if(req.admin.role=="Agent"){
-      fristrank = "User"
-    }
-    let role = params.rank || "User";
-    matchObj.role = role;
-    if(!_.isEmpty(params.id)){
-      matchObj._id = params.id
-    }
+    console.log("REQ.para,s.id", req.query.rank)
+    console.log("req.admin.role", req.query);
+    try {
+      let alluserPlayPoint = 0;
+      let game_id = Number(req.query.THAT_Game)
+      let alluserWinPoint = 0;
+      let alluserEndsPoint = 0;
+      let params = req.query;
+      let matchObj = {};
+      let margin = 0;
+      let net_margin = 0
 
-    const stateIds = await User.find(
-      matchObj,
-      { _id: 1, name: 1 }
-    ).select("_id search_id name");
-    // console.log(stateIds)
-    const childUserIds = await Promise.all(
-      stateIds.map(async ({ _id }) => await findUserIDs(_id))
-    );
-    async function findUserIDs(parentId) {
-      let userIDs = [parentId];
-      let users = await User.find({ parent: parentId }, { _id: 1 }).lean();
-      while (users.length > 0) {
-        const userIdsArray = users.map(({ _id }) => _id);
-        userIDs.push(...userIdsArray);
-        users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+      let avaitor_endPoint = 0
+      let car_roulette_endPoint = 0
+      let roulette_endPoint = 0
+      console.log(req.admin.role)
+      let fristrank;
+      if (req.admin.role == "Company") {
+        fristrank = "State"
+      } else if (req.admin.role == "State") {
+        fristrank = "District"
+      } else if (req.admin.role == "District") {
+        fristrank = "Zone"
+      } else if (req.admin.role == "Zone") {
+        fristrank = "Agent"
+      } else if (req.admin.role == "Agent") {
+        fristrank = "User"
       }
-      return userIDs;
-    }
-    const start = parseInt(params.start);
-    const end = parseInt(params.length)+start;
-        let i =1
-        let list = []
-      for(let userIds of childUserIds) {
-        if(start >=i){
+      let role = params.rank || "User";
+      matchObj.role = role;
+      if (!_.isEmpty(params.id)) {
+        matchObj._id = params.id
+      }
+
+      let data = await distributorController.commission_management(req)
+      // console.log("data", data);
+      console.log(req.query.rank);
+      let commision_rank = '';
+      if (req.query.rank === 'State') {
+        commision_rank = 'District'
+      } else if (req.query.rank === 'District') {
+        commision_rank = 'Zone'
+      } else if (req.query.rank === 'Zone') {
+        commision_rank = 'Agent'
+      } else if (req.query.rank === 'Agent') {
+        commision_rank = 'Agent'
+      }
+      let result = [];
+      async function filterByRankName(data, rankName) {
+
+        for (let key in data) {
+          result = result.concat(data[ key ].filter(obj => obj.rankName === rankName));
+        }
+
+      }
+
+      let c_data = await filterByRankName(data, commision_rank)
+      console.log("c_data", result);
+
+      let commision_result = []
+
+      result.filter(obj => {
+        if (obj.commissionData.gameId === game_id) {
+          commision_result.push(obj)
+        }
+
+      })
+      console.log("commision_result", commision_result);
+
+
+
+
+
+      const stateIds = await User.find(
+        matchObj,
+        { _id: 1, name: 1 }
+      ).select("_id search_id name");
+      // console.log(stateIds)
+      const childUserIds = await Promise.all(
+        stateIds.map(async ({ _id }) => await findUserIDs(_id))
+      );
+      async function findUserIDs(parentId) {
+        let userIDs = [ parentId ];
+        let users = await User.find({ parent: parentId }, { _id: 1 }).lean();
+        while (users.length > 0) {
+          const userIdsArray = users.map(({ _id }) => _id);
+          userIDs.push(...userIdsArray);
+          users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+        }
+        return userIDs;
+      }
+      const start = parseInt(params.start);
+      const end = parseInt(params.length) + start;
+      let i = 1
+      let list = []
+      for (let userIds of childUserIds) {
+        if (start >= i) {
           i++
           continue
         }
+        let commission = 0
 
-console.log(game_id,"game_id------------");
-        let totalPoints =[]
-        switch(game_id) {
+        console.log(game_id, "game_id------------");
+        let totalPoints = []
+        switch (game_id) {
           case 1:
-             totalPoints = await User.aggregate([
+            totalPoints = await User.aggregate([
               { $match: { _id: { $in: userIds }, role: "User" } },
               {
                 $group: {
@@ -1427,7 +1481,7 @@ console.log(game_id,"game_id------------");
             ]);
             break;
           case 2:
-             totalPoints = await User.aggregate([
+            totalPoints = await User.aggregate([
               { $match: { _id: { $in: userIds }, role: "User" } },
               {
                 $group: {
@@ -1438,20 +1492,20 @@ console.log(game_id,"game_id------------");
               }
             ]);
             break;
-            case 3:
-               totalPoints = await User.aggregate([
-                { $match: { _id: { $in: userIds }, role: "User" } },
-                {
-                  $group: {
-                    _id: null,
-                    totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
-                    totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
-                  },
-                }
-              ]);
+          case 3:
+            totalPoints = await User.aggregate([
+              { $match: { _id: { $in: userIds }, role: "User" } },
+              {
+                $group: {
+                  _id: null,
+                  totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
+                  totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
+                },
+              }
+            ]);
             break;
           default:
-            totalPoints=await User.aggregate([
+            totalPoints = await User.aggregate([
               { $match: { _id: { $in: userIds }, role: "User" } },
               {
                 $group: {
@@ -1466,85 +1520,152 @@ console.log(game_id,"game_id------------");
                 },
               }
             ]);
-            console.log("totalPoints-----------------",totalPoints);
+            console.log("totalPoints-----------------", totalPoints);
 
-            if(totalPoints.length > 0){
-           
-            let a =totalPoints[0].avaitor_totalplaypoint+totalPoints[0].carRoulette_totalplaypoint+totalPoints[0].roulette_totalplaypoint
-             let b=totalPoints[0].avaitor_totalwinningpoint+totalPoints[0].carRoulette_totalwinningpoint+totalPoints[0].roulette_totalwinningpoint
-             totalPoints[0] = {totalPlayPoint:a,totalWinningPoint:b}
-            } 
+            if (totalPoints.length > 0) {
+
+              let a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+              let b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+              avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+              car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+              roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+
+              totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+
+
+              console.log("90000000000000000", totalPoints)
+
+            }
+
         }
+
+
+
+        let avaitor_margin = 0
+        let car_roulette_margin = 0
+        let roulette_margin = 0
+
+
 
 
         const {
           totalPlayPoint = 0,
           totalWinningPoint = 0,
-        } = totalPoints[0] || {};
+        } = totalPoints[ 0 ] || {};
 
-        const endPoint = totalPlayPoint - totalWinningPoint;
+        let endPoint = totalPlayPoint - totalWinningPoint;
+        if (commision_result.length > 0) {
+          if (req.query.rank === 'Agent') {
+            margin = commision_result[ 0 ]?.commissionData.availableCommission
+          }
+          else {
 
-        list.push([ i, stateIds[i-1].search_id, totalPlayPoint, totalWinningPoint, endPoint, 0, 0])
+            margin = commision_result[ 0 ]?.commissionData.minCommission
+          }
+
+        }
+        else {
+
+          endPoint = avaitor_endPoint + car_roulette_endPoint + roulette_endPoint
+
+          if (req.query.rank === 'Agent') {
+            avaitor_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+            car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+
+            roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+            margin = (avaitor_margin + car_roulette_margin + roulette_margin) / 3
+          }
+          else {
+
+            console.log("state------------------");
+            if (result.length > 0) {
+
+              let avaitor_margin_data = result.filter(item => item.commissionData.gameId === 3)
+              console.log("avaitor_margin_data", avaitor_margin_data);
+              avaitor_margin = avaitor_margin_data[ 0 ].commissionData.minCommission
+              console.log("avaitor_margin", avaitor_margin);
+              car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.minCommission
+
+              roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.minCommission
+              console.log("endPoint", avaitor_endPoint);
+
+              margin = (avaitor_margin + car_roulette_margin + roulette_margin) / 3
+            }
+
+          }
+
+
+        }
+        if (margin != 0) {
+          net_margin = endPoint - margin
+
+        }
+
+        list.push([ i, stateIds[ i - 1 ].search_id, totalPlayPoint.toFixed(2), totalWinningPoint.toFixed(2), endPoint.toFixed(2), margin.toFixed(2), net_margin.toFixed(2) ])
         alluserPlayPoint += totalPlayPoint
         alluserWinPoint += totalWinningPoint
         alluserEndsPoint += endPoint
-        if(i == end){
+        if (i == end) {
           break
         }
         i++
-        }
-        list.push(["","TOTAL",alluserPlayPoint.toFixed(2),alluserWinPoint.toFixed(2),alluserEndsPoint.toFixed(2),0,0,0])
-    return res.status(200).json({
-      data: list,
-      draw: Date.now(),
-      recordsTotal: stateIds.length,
-      recordsFiltered: stateIds.length,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-},
+      }
+
+      list.push([ "", "TOTAL", alluserPlayPoint.toFixed(2), alluserWinPoint.toFixed(2), alluserEndsPoint.toFixed(2), 0, 0, 0 ])
+
+      return res.status(200).json({
+
+        data: list,
+        draw: Date.now(),
+        recordsTotal: stateIds.length,
+        recordsFiltered: stateIds.length,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
 
 
 
   userName: async function (req, res) {
-    let UserId=req.query.userId
+    let UserId = req.query.userId
 
-    let FindData=await User.findOne({numeric_id:UserId})
+    let FindData = await User.findOne({ numeric_id: UserId })
     console.log(FindData.search_id);
-    return res.send({status:200,data:FindData.search_id})
+    return res.send({ status: 200, data: FindData.search_id })
     // return {name:FindData.search_id}
   },
   getCommissionAjax: async function (req, res) {
     var startTime = new Date();
-console.log("+============");
+    console.log("+============");
     const params = req.query;
-// console.log("params", params);
+    // console.log("params", params);
     let matchObj = {};
     var sortObj = {};
-  matchObj.is_status= {$ne:"P"} ;
-  matchObj.txn_mode="C" ;
+    matchObj.is_status = { $ne: "P" };
+    matchObj.txn_mode = "C";
 
     if (params.order) {
-      if (params.order[0]) {
+      if (params.order[ 0 ]) {
         // console.log(params.order[0]);
         // if (params.order[0].column == "0") {
         //   // SORT BY TXN AMOUNT
         //   sortObj.request_id = params.order[0].dir == "asc" ? 1 : -1;
         // }
-          if (params.order[0].column == "2") {
+        if (params.order[ 0 ].column == "2") {
           // SORT BY TXN AMOUNT
-          sortObj.txn_amount = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "3") {
+          sortObj.txn_amount = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "3") {
           // SORT BY WIN WALLET
-          sortObj.current_balance = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "4") {
+          sortObj.current_balance = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "4") {
           // SORT BY MAIN WALLET
-          sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
-        } else if (params.order[0].column == "1") {
+          sortObj.created_at = params.order[ 0 ].dir == "asc" ? 1 : -1;
+        } else if (params.order[ 0 ].column == "1") {
           // SORT BY DATE
-          sortObj.numeric_id = params.order[0].dir == "asc" ? 1 : -1;
+          sortObj.numeric_id = params.order[ 0 ].dir == "asc" ? 1 : -1;
         } else {
           sortObj = { created_at: -1 };
         }
@@ -1558,13 +1679,15 @@ console.log("+============");
     const user_id = params.id || "";
 
     if (Service.validateObjectId(user_id)) {
-      matchObj = { $or: [
-        // { refUser: ObjectId(user_id) },
-        { user_id: ObjectId(user_id) }
-    ]}
+      matchObj = {
+        $or: [
+          // { refUser: ObjectId(user_id) },
+          { user_id: ObjectId(user_id) }
+        ]
+      }
     }
 
-    if (!_.isEmpty(params.status)&& params.status !== " ") {
+    if (!_.isEmpty(params.status) && params.status !== " ") {
       matchObj.transaction_type = params.status;
     }
 
@@ -1580,36 +1703,36 @@ console.log("+============");
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
         console.log(timestamp);
       } else {
         console.error("Invalid date string");
       }
-      
+
       matchObj.created_at = {
-                $gte: timestamp.toString()
+        $gte: timestamp.toString()
       }
-    }else{
-let today = new Date();
+    } else {
+      let today = new Date();
 
-let daysToSubtract = today.getDay() ;
-if (daysToSubtract < 0) {
-  daysToSubtract = 6;
-}
+      let daysToSubtract = today.getDay();
+      if (daysToSubtract < 0) {
+        daysToSubtract = 6;
+      }
 
-let mondayDate = new Date(today.getTime() - (daysToSubtract * 24 * 60 * 60 * 1000));
+      let mondayDate = new Date(today.getTime() - (daysToSubtract * 24 * 60 * 60 * 1000));
 
-mondayDate.setHours(0, 0, 0, 0);
+      mondayDate.setHours(0, 0, 0, 0);
 
-// let mondayTimestamp = mondayDate.getTime() / 1000; // before 
-let mondayTimestamp = mondayDate.getTime() ; 
+      // let mondayTimestamp = mondayDate.getTime() / 1000; // before 
+      let mondayTimestamp = mondayDate.getTime();
 
-console.log(mondayDate);
+      console.log(mondayDate);
 
-// console.log(previousSundayTimestamp);
+      // console.log(previousSundayTimestamp);
       matchObj.created_at = {
         $gte: mondayTimestamp.toString()
-}
+      }
     }
 
 
@@ -1619,16 +1742,16 @@ console.log(mondayDate);
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $lt: timestamp.toString()
+      matchObj.created_at = {
+        $lt: timestamp.toString()
       };
     }
-    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
-      let startdate = params.startDate ;
+    if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
+      let startdate = params.startDate;
       let endDate = params.endDate + 'T23:59:59.999Z';
       let timestampstart
       let timestampsend
@@ -1644,28 +1767,28 @@ console.log(mondayDate);
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $gte: timestampstart.toString(),
-          $lt: timestampsend.toString()
+      matchObj.created_at = {
+        $gte: timestampstart.toString(),
+        $lt: timestampsend.toString()
       };
     }
-    
-   
-    let incData=await Service.DownLine(req.admin._id)
-    let a=incData.push(req.admin._id)
 
-    if (req.admin.role==="Company") {
-      matchObj.user_id = {$in:incData};
-    }else {
+
+    let incData = await Service.DownLine(req.admin._id)
+    let a = incData.push(req.admin._id)
+
+    if (req.admin.role === "Company") {
+      matchObj.user_id = { $in: incData };
+    } else {
       matchObj.user_id = req.admin._id;
     }
     let aggregation_obj = [];
     if (matchObj != {})
-    aggregation_obj.push({
-      $match: matchObj,
-    });
+      aggregation_obj.push({
+        $match: matchObj,
+      });
     aggregation_obj.push(
-      
+
       {
         $lookup: {
           from: "users",
@@ -1674,25 +1797,25 @@ console.log(mondayDate);
           as: "users",
         },
       },
-    {
-      $unwind: "$users",
-    },
-    {
-      $group:{
-        _id: "$users._id",
-        searchId:{$first:"$users.search_id"},
-        txn_amount:{$sum:"$txn_amount"},
-        created_at:{$first:"$created_at"},
-        txn_mode:{$first:"$txn_mode"},
-        first_name:{$first:"$users.first_name"},       
-        last_name:{$first:"$users.last_name"},   
-        transaction_type:{$first:"$transaction_type"},
-        current_balance:{$first:"$current_balance"},
-        resp_msg:{$first:"$resp_msg"},
-        is_status:{$first:"$is_status"},
-        role:{$first:"$users.role"},    
-      }
-    });
+      {
+        $unwind: "$users",
+      },
+      {
+        $group: {
+          _id: "$users._id",
+          searchId: { $first: "$users.search_id" },
+          txn_amount: { $sum: "$txn_amount" },
+          created_at: { $first: "$created_at" },
+          txn_mode: { $first: "$txn_mode" },
+          first_name: { $first: "$users.first_name" },
+          last_name: { $first: "$users.last_name" },
+          transaction_type: { $first: "$transaction_type" },
+          current_balance: { $first: "$current_balance" },
+          resp_msg: { $first: "$resp_msg" },
+          is_status: { $first: "$is_status" },
+          role: { $first: "$users.role" },
+        }
+      });
 
     aggregation_obj.push({
       $match: matchObj2,
@@ -1705,7 +1828,7 @@ console.log(mondayDate);
       {
         $skip: params.start == "All" ? 0 : parseInt(params.start),
       },
-      
+
     );
 
     if (params.length != -1) {
@@ -1713,17 +1836,17 @@ console.log(mondayDate);
         $limit: parseInt(params.length),
       });
     }
-console.log(aggregation_obj);
+    console.log(aggregation_obj);
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     list = list.map((a) => {
       let username = a.first_name + " " + a.last_name;
-      let creditDebit=a.transaction_type;
-      let subject=a.resp_msg;
-      let txn_amount=a.txn_amount;
-      let status=a.is_status;
-      let search_id= a.searchId;
-      let current_balance=a.current_balance;
-      let resp_msg=a.resp_msg
+      let creditDebit = a.transaction_type;
+      let subject = a.resp_msg;
+      let txn_amount = a.txn_amount;
+      let status = a.is_status;
+      let search_id = a.searchId;
+      let current_balance = a.current_balance;
+      let resp_msg = a.resp_msg
       return {
         username,
         creditDebit,
@@ -1735,14 +1858,14 @@ console.log(aggregation_obj);
         resp_msg
       };
     });
-    
+
     let aggregate_rf = [];
 
     if (matchObj) {
       aggregate_rf.push(
         {
-        $match: matchObj,
-      },  {
+          $match: matchObj,
+        }, {
         $lookup: {
           from: "users",
           localField: "user_id",
@@ -1750,24 +1873,24 @@ console.log(aggregation_obj);
           as: "users",
         },
       },
-    {
-      $unwind: "$users",
-    },
-    {
-      $group:{
-        _id: "$users._id",
-        searchId:{$first:"$users.search_id"},
-        txn_amount:{$sum:"$txn_amount"},
-        created_at:{$first:"$created_at"},
-        txn_mode:{$first:"$txn_mode"},
-        first_name:{$first:"$users.first_name"},       
-        last_name:{$first:"$users.last_name"},   
-        transaction_type:{$first:"$transaction_type"},
-        current_balance:{$first:"$current_balance"},
-        resp_msg:{$first:"$resp_msg"},
-        is_status:{$first:"$is_status"},    
-      }
-    }
+        {
+          $unwind: "$users",
+        },
+        {
+          $group: {
+            _id: "$users._id",
+            searchId: { $first: "$users.search_id" },
+            txn_amount: { $sum: "$txn_amount" },
+            created_at: { $first: "$created_at" },
+            txn_mode: { $first: "$txn_mode" },
+            first_name: { $first: "$users.first_name" },
+            last_name: { $first: "$users.last_name" },
+            transaction_type: { $first: "$transaction_type" },
+            current_balance: { $first: "$current_balance" },
+            resp_msg: { $first: "$resp_msg" },
+            is_status: { $first: "$is_status" },
+          }
+        }
       );
     }
 
@@ -1781,29 +1904,29 @@ console.log(aggregation_obj);
 
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
-    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    let recordsFiltered = rF.length > 0 ? rF[ 0 ].count : 0;
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
-      list.map(async (u,index) => {
-     let debitCreit=u.creditDebit
-     if(debitCreit==="C"){
-      debitCreit = '<span class="label label-success">Credit</span>';
-     }else{
-      debitCreit = '<span class="label label-danger">Debit</span>';
-     }
-     let is_status=a.status
-     if(is_status==="P"){
-      is_status = '<span class="label label-warning">Pending</span>';
-     }else{
-      is_status = '<span class="label label-success">Success</span>';
-     }
+      list.map(async (u, index) => {
+        let debitCreit = u.creditDebit
+        if (debitCreit === "C") {
+          debitCreit = '<span class="label label-success">Credit</span>';
+        } else {
+          debitCreit = '<span class="label label-danger">Debit</span>';
+        }
+        let is_status = a.status
+        if (is_status === "P") {
+          is_status = '<span class="label label-warning">Pending</span>';
+        } else {
+          is_status = '<span class="label label-success">Success</span>';
+        }
         return [
           ++index,
           ` ${u.username}(${u.search_id})`,
           debitCreit,
           u.resp_msg,
-          (u.current_balance-u.txn_amount).toFixed(2),
+          (u.current_balance - u.txn_amount).toFixed(2),
           (u.txn_amount).toFixed(2),
           (u.current_balance).toFixed(2),
           is_status,
@@ -1824,10 +1947,10 @@ console.log(aggregation_obj);
     var startTime = new Date();
 
     const params = req.query;
-    let chip=params.chip
+    let chip = params.chip
     // console.log(chip);
     let matchObj = {};
-    var sortObj = {created_at: -1};
+    var sortObj = { created_at: -1 };
 
     const user_id = params.id || "";
 
@@ -1843,38 +1966,38 @@ console.log(aggregation_obj);
       matchObj.txn_mode = params.type;
     }
     if (!_.isEmpty(params.rank)) {
-      matchObj["users.role"] = params.rank;
+      matchObj[ "users.role" ] = params.rank;
     }
     if (!_.isEmpty(params.startDate)) {
       let sdate = params.startDate;
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
         console.log(timestamp);
       } else {
         console.error("Invalid date string");
       }
-      
+
       matchObj.created_at = {
-                $gte: timestamp.toString()
-              }
+        $gte: timestamp.toString()
+      }
     }
     if (!_.isEmpty(params.endDate)) {
       let sdate = params.endDate + 'T23:59:59.999Z';
       let timestamp
       let dateObject = new Date(sdate);
       if (!isNaN(dateObject.getTime())) {
-         timestamp = dateObject.getTime();
+        timestamp = dateObject.getTime();
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $lt: timestamp.toString()
+      matchObj.created_at = {
+        $lt: timestamp.toString()
       };
     }
-    if (!_.isEmpty(params.endDate)&&!_.isEmpty(params.startDate)) {
-      let startdate = params.startDate ;
+    if (!_.isEmpty(params.endDate) && !_.isEmpty(params.startDate)) {
+      let startdate = params.startDate;
       let endDate = params.endDate + 'T23:59:59.999Z';
       let timestampstart
       let timestampsend
@@ -1890,20 +2013,22 @@ console.log(aggregation_obj);
       } else {
         console.error("Invalid date string");
       }
-        matchObj.created_at = {
-          $gte: timestampstart.toString(),
-          $lt: timestampsend.toString()
+      matchObj.created_at = {
+        $gte: timestampstart.toString(),
+        $lt: timestampsend.toString()
       };
     }
-    let incData=await Service.DownLine(req.admin._id)
-// console.log(req.admin._id)
+    let incData = await Service.DownLine(req.admin._id)
+    // console.log(req.admin._id)
     let aggregation_obj = [];
-    if(chip=="generate"){
+    if (chip == "generate") {
       aggregation_obj.push(
-        {$match:{
-          txn_mode:"U",
-          user_id:req.admin._id
-        }},
+        {
+          $match: {
+            txn_mode: "U",
+            user_id: req.admin._id
+          }
+        },
         {
           $lookup: {
             from: "users",
@@ -1916,18 +2041,18 @@ console.log(aggregation_obj);
           $unwind: "$users",
         }
       );
-    }else{
+    } else {
       aggregation_obj.push(
         {
-          $match:{
-          txn_mode:"T",
-          // user_id:req.admin._id,
-          $or: [
-            { user_id:req.admin._id },
-            { refUser:req.admin._id }
-          ]
-        }
-      },
+          $match: {
+            txn_mode: "T",
+            // user_id:req.admin._id,
+            $or: [
+              { user_id: req.admin._id },
+              { refUser: req.admin._id }
+            ]
+          }
+        },
         {
           $lookup: {
             from: "users",
@@ -1941,8 +2066,8 @@ console.log(aggregation_obj);
         }
       );
     }
-  
-  
+
+
 
     if (matchObj != {})
       aggregation_obj.push({
@@ -1970,11 +2095,11 @@ console.log(aggregation_obj);
       $project: {
         _id: 1,
         created_at: 1,
-        current_balance:1,
+        current_balance: 1,
         txn_amount: 1,
         payment_mode: 1,
-        username: { $concat: ["$users.first_name", " ", "$users.last_name"] },
-        transaction_type:1,
+        username: { $concat: [ "$users.first_name", " ", "$users.last_name" ] },
+        transaction_type: 1,
         numeric_id: "$users.search_id",
         mobileNo: "$users.phone",
         user_id: "$users._id",
@@ -1990,38 +2115,42 @@ console.log(aggregation_obj);
 
     let list = await Transaction.aggregate(aggregation_obj).allowDiskUse(true);
     let aggregate_rf = [];
-    if(chip=="generate"){
+    if (chip == "generate") {
       if (matchObj != {}) {
         aggregate_rf.push({
-          $match: { txn_mode:"U",
-          user_id:req.admin._id},
+          $match: {
+            txn_mode: "U",
+            user_id: req.admin._id
+          },
         });
       }
-    }else{
+    } else {
       if (matchObj != {}) {
         aggregate_rf.push({
-          $match: { txn_mode:"T",
-          user_id:req.admin._id},
+          $match: {
+            txn_mode: "T",
+            user_id: req.admin._id
+          },
         });
       }
     }
-  
-    
+
+
     aggregate_rf.push({
       $group: {
         _id: null,
         count: { $sum: 1 },
       },
     });
-    
+
     let rF = await Transaction.aggregate(aggregate_rf).allowDiskUse(true);
 
-    let recordsFiltered = rF.length > 0 ? rF[0].count : 0;
+    let recordsFiltered = rF.length > 0 ? rF[ 0 ].count : 0;
     var recordsTotal = await Transaction.find({}).countDocuments();
 
     list = await Promise.all(
-      list.map(async (u,index) => {
-    // console.log(u.role,u.transaction_type);
+      list.map(async (u, index) => {
+        // console.log(u.role,u.transaction_type);
         let txn_amount = u.txn_amount;
 
         if (u.txn_amount > 0) {
@@ -2035,12 +2164,12 @@ console.log(aggregation_obj);
         // console.log(u.transaction_type === "C");
         if (u.transaction_type === "C") {
           txn_mode = '<span class="label label-success">Credit</span>'
-        } 
-        if(u.transaction_type === "D"){
+        }
+        if (u.transaction_type === "D") {
           txn_mode = '<span class="label label-danger">Debit</span>'
         }
 
-        let current_balance= u.current_balance
+        let current_balance = u.current_balance
         let status_ = u.is_status;
         // console.log(status_);
         if (status_ == "P") {
@@ -2051,10 +2180,10 @@ console.log(aggregation_obj);
           status_ = '<span class="label label-danger">Cancled</span>';
         }
 
-        let roles=u.role
+        let roles = u.role
         if (roles == "State") {
           roles = 'State';
-        } 
+        }
         else if (roles == "Zone") {
           roles = 'Zone';
         }
@@ -2064,40 +2193,40 @@ console.log(aggregation_obj);
         else if (roles == "Agent") {
           roles = 'Agent';
         }
-        let created=await Service.formateDateandTime(u.created_at)
+        let created = await Service.formateDateandTime(u.created_at)
         let BeforeBalance;
 
         if (u.transaction_type == "D") {
 
-          if(req.admin.role=="Company"){
+          if (req.admin.role == "Company") {
             // console.log("admin");
-            if(u.role=="Company"){
-              BeforeBalance=u.current_balance;
-              current_balance= u.current_balance-u.txn_amount;
-              
-            }else{
-            // console.log("hi");
-            BeforeBalance=u.current_balance;
-            current_balance= u.current_balance-u.txn_amount;
-          }
+            if (u.role == "Company") {
+              BeforeBalance = u.current_balance;
+              current_balance = u.current_balance - u.txn_amount;
 
-          }else{
-            BeforeBalance=u.current_balance+u.txn_amount;
-
-          }
-        }  else {
-         
-          if(req.admin.role=="Company"){
-            if(u.role=="Company"){
-              BeforeBalance=u.current_balance;
-              current_balance= u.current_balance+u.txn_amount;
-              console.log(BeforeBalance,current_balance,"emasdof");
-            }else{
-              current_balance= u.current_balance+u.txn_amount;
-              BeforeBalance=u.current_balance;
+            } else {
+              // console.log("hi");
+              BeforeBalance = u.current_balance;
+              current_balance = u.current_balance - u.txn_amount;
             }
-          }else{
-            BeforeBalance=u.current_balance-u.txn_amount
+
+          } else {
+            BeforeBalance = u.current_balance + u.txn_amount;
+
+          }
+        } else {
+
+          if (req.admin.role == "Company") {
+            if (u.role == "Company") {
+              BeforeBalance = u.current_balance;
+              current_balance = u.current_balance + u.txn_amount;
+              console.log(BeforeBalance, current_balance, "emasdof");
+            } else {
+              current_balance = u.current_balance + u.txn_amount;
+              BeforeBalance = u.current_balance;
+            }
+          } else {
+            BeforeBalance = u.current_balance - u.txn_amount
           }
 
         }
@@ -2105,7 +2234,7 @@ console.log(aggregation_obj);
           ++index,
           ` <p><span style="color: #788ca8;">Unique Id</span>: ${u.numeric_id}</p>
             <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${u.username}</p>`,
-            BeforeBalance,
+          BeforeBalance,
           txn_amount,
           current_balance,
           created,
@@ -2126,138 +2255,138 @@ console.log(aggregation_obj);
 
   chipcurculation: async function (req, res) {
     console.log("ajax calll")
-//     console.log(req.admin._id ," ---=")
-//     var startTime = new Date();
+    //     console.log(req.admin._id ," ---=")
+    //     var startTime = new Date();
 
-//     const params = req.query;
-//     let chip=params.chip
-//     // console.log(chip);
-//     let matchObj = {};
-//     var sortObj = {created_at: -1};
+    //     const params = req.query;
+    //     let chip=params.chip
+    //     // console.log(chip);
+    //     let matchObj = {};
+    //     var sortObj = {created_at: -1};
 
-//     const user_id = params.id || "";
+    //     const user_id = params.id || "";
 
-//     if (Service.validateObjectId(user_id)) {
-//       matchObj.user_id = ObjectId(user_id);
-//     }
+    //     if (Service.validateObjectId(user_id)) {
+    //       matchObj.user_id = ObjectId(user_id);
+    //     }
 
-//     if (!_.isEmpty(params.rank)) {
-//       matchObj["users.role"] = params.rank;
-//     }
-//     let incData=await Service.DownLine(req.admin._id)
-// // console.log(req.admin._id)
+    //     if (!_.isEmpty(params.rank)) {
+    //       matchObj["users.role"] = params.rank;
+    //     }
+    //     let incData=await Service.DownLine(req.admin._id)
+    // // console.log(req.admin._id)
 
-//     list = await Promise.all(
-//       list.map(async (u,index) => {
-//     // console.log(u.role,u.transaction_type);
-//         let txn_amount = u.txn_amount;
+    //     list = await Promise.all(
+    //       list.map(async (u,index) => {
+    //     // console.log(u.role,u.transaction_type);
+    //         let txn_amount = u.txn_amount;
 
-//         if (u.txn_amount > 0) {
-//           txn_amount =
-//             '<span class="label label-success">' + u.txn_amount + "</span>";
-//         } else {
-//           txn_amount =
-//             '<span class="label label-danger">' + u.txn_amount + "</span>";
-//         }
-//         let txn_mode = u.transaction_type;
-//         // console.log(u.transaction_type === "C");
-//         if (u.transaction_type === "C") {
-//           txn_mode = '<span class="label label-success">Credit</span>'
-//         } 
-//         if(u.transaction_type === "D"){
-//           txn_mode = '<span class="label label-danger">Debit</span>'
-//         }
+    //         if (u.txn_amount > 0) {
+    //           txn_amount =
+    //             '<span class="label label-success">' + u.txn_amount + "</span>";
+    //         } else {
+    //           txn_amount =
+    //             '<span class="label label-danger">' + u.txn_amount + "</span>";
+    //         }
+    //         let txn_mode = u.transaction_type;
+    //         // console.log(u.transaction_type === "C");
+    //         if (u.transaction_type === "C") {
+    //           txn_mode = '<span class="label label-success">Credit</span>'
+    //         } 
+    //         if(u.transaction_type === "D"){
+    //           txn_mode = '<span class="label label-danger">Debit</span>'
+    //         }
 
-//         let current_balance= u.current_balance
-//         let status_ = u.is_status;
-//         // console.log(status_);
-//         if (status_ == "P") {
-//           status_ = '<span class="label label-warning">Pending</span>';
-//         } else if (status_ == "S") {
-//           status_ = '<span class="label label-success">Success</span>';
-//         } else {
-//           status_ = '<span class="label label-danger">Cancled</span>';
-//         }
+    //         let current_balance= u.current_balance
+    //         let status_ = u.is_status;
+    //         // console.log(status_);
+    //         if (status_ == "P") {
+    //           status_ = '<span class="label label-warning">Pending</span>';
+    //         } else if (status_ == "S") {
+    //           status_ = '<span class="label label-success">Success</span>';
+    //         } else {
+    //           status_ = '<span class="label label-danger">Cancled</span>';
+    //         }
 
-//         let roles=u.role
-//         if (roles == "State") {
-//           roles = 'State';
-//         } 
-//         else if (roles == "Zone") {
-//           roles = 'Zone';
-//         }
-//         else if (roles == "District") {
-//           roles = 'District';
-//         }
-//         else if (roles == "Agent") {
-//           roles = 'Agent';
-//         }
-//         let created=await Service.formateDateandTime(u.created_at)
-//         let BeforeBalance;
+    //         let roles=u.role
+    //         if (roles == "State") {
+    //           roles = 'State';
+    //         } 
+    //         else if (roles == "Zone") {
+    //           roles = 'Zone';
+    //         }
+    //         else if (roles == "District") {
+    //           roles = 'District';
+    //         }
+    //         else if (roles == "Agent") {
+    //           roles = 'Agent';
+    //         }
+    //         let created=await Service.formateDateandTime(u.created_at)
+    //         let BeforeBalance;
 
-//         if (u.transaction_type == "D") {
+    //         if (u.transaction_type == "D") {
 
-//           if(req.admin.role=="Company"){
-//             // console.log("admin");
-//             if(u.role=="Company"){
-//               BeforeBalance=u.current_balance;
-//               current_balance= u.current_balance-u.txn_amount;
-              
-//             }else{
-//             // console.log("hi");
-//             BeforeBalance=u.current_balance;
-//             current_balance= u.current_balance-u.txn_amount;
-//           }
+    //           if(req.admin.role=="Company"){
+    //             // console.log("admin");
+    //             if(u.role=="Company"){
+    //               BeforeBalance=u.current_balance;
+    //               current_balance= u.current_balance-u.txn_amount;
 
-//           }else{
-//             BeforeBalance=u.current_balance+u.txn_amount;
+    //             }else{
+    //             // console.log("hi");
+    //             BeforeBalance=u.current_balance;
+    //             current_balance= u.current_balance-u.txn_amount;
+    //           }
 
-//           }
-//         }  else {
-         
-//           if(req.admin.role=="Company"){
-//             if(u.role=="Company"){
-//               BeforeBalance=u.current_balance;
-//               current_balance= u.current_balance+u.txn_amount;
-//               console.log(BeforeBalance,current_balance,"emasdof");
-//             }else{
-//               current_balance= u.current_balance+u.txn_amount;
-//               BeforeBalance=u.current_balance;
-//             }
-//           }else{
-//             BeforeBalance=u.current_balance-u.txn_amount
-//           }
+    //           }else{
+    //             BeforeBalance=u.current_balance+u.txn_amount;
 
-//         }
-//         return [
-//           ++index,
-//           ` <p><span style="color: #788ca8;">Unique Id</span>: ${u.numeric_id}</p>
-//             <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${u.username}</p>`,
-//             BeforeBalance,
-//           txn_amount,
-//           current_balance,
-//           created,
-//           txn_mode,
-//           u.resp_msg ? u.resp_msg : "No Data Found",
-//           status_,
-//         ];
-//       })
-//     );
+    //           }
+    //         }  else {
 
-//     return res.status(200).send({
-//       data: await list,
-//       draw: new Date().getTime(),
-//       recordsTotal: recordsTotal,
-//       recordsFiltered: recordsFiltered,
-//     });
+    //           if(req.admin.role=="Company"){
+    //             if(u.role=="Company"){
+    //               BeforeBalance=u.current_balance;
+    //               current_balance= u.current_balance+u.txn_amount;
+    //               console.log(BeforeBalance,current_balance,"emasdof");
+    //             }else{
+    //               current_balance= u.current_balance+u.txn_amount;
+    //               BeforeBalance=u.current_balance;
+    //             }
+    //           }else{
+    //             BeforeBalance=u.current_balance-u.txn_amount
+    //           }
+
+    //         }
+    //         return [
+    //           ++index,
+    //           ` <p><span style="color: #788ca8;">Unique Id</span>: ${u.numeric_id}</p>
+    //             <p><span style="color: rgb(207, 72, 72);">Full Name</span>: ${u.username}</p>`,
+    //             BeforeBalance,
+    //           txn_amount,
+    //           current_balance,
+    //           created,
+    //           txn_mode,
+    //           u.resp_msg ? u.resp_msg : "No Data Found",
+    //           status_,
+    //         ];
+    //       })
+    //     );
+
+    //     return res.status(200).send({
+    //       data: await list,
+    //       draw: new Date().getTime(),
+    //       recordsTotal: recordsTotal,
+    //       recordsFiltered: recordsFiltered,
+    //     });
   },
 
-  chipcalclution : async (admin) => {
+  chipcalclution: async (admin) => {
     // console.log(admin)
     let parentId = String(admin._id);
-    let users = await User.find({ parent:parentId })
-    .populate({ path: "parent", select: "_id  name  cash_balance search_id role" })
-    .select("_id name  cash_balance search_id role");
+    let users = await User.find({ parent: parentId })
+      .populate({ path: "parent", select: "_id  name  cash_balance search_id role" })
+      .select("_id name  cash_balance search_id role");
     return users
   },
   withdrawRequest: async (req, res) => {
@@ -2495,13 +2624,13 @@ console.log(aggregation_obj);
       }
     );
 
-    userHistory = userHistory.filter((d) => d.players[0].fees != 0);
+    userHistory = userHistory.filter((d) => d.players[ 0 ].fees != 0);
 
     userHistory = userHistory.map((d) => {
       return {
         room: d.room,
-        fees: d.players[0].fees,
-        pl: d.players[0].pl,
+        fees: d.players[ 0 ].fees,
+        pl: d.players[ 0 ].pl,
         created_at: d.created_at || 0,
       };
     });
@@ -2564,37 +2693,37 @@ console.log(aggregation_obj);
 
       let matchObj = {
         $expr: {
-          $eq: ["$no_of_players", { $size: "$players" }],
+          $eq: [ "$no_of_players", { $size: "$players" } ],
         },
       };
 
       const user_id = params.id || "";
 
       if (Service.validateObjectId(user_id)) {
-        matchObj["players.id"] = ObjectId(user_id);
+        matchObj[ "players.id" ] = ObjectId(user_id);
       }
 
       if (!_.isEmpty(params.type)) {
-        matchObj["room_type"] = params.type;
+        matchObj[ "room_type" ] = params.type;
       }
 
       if (!_.isEmpty(params.players) && !isNaN(params.players)) {
-        matchObj["no_of_players"] = parseInt(params.players);
+        matchObj[ "no_of_players" ] = parseInt(params.players);
       }
 
       if (!_.isEmpty(params.amount) && !isNaN(params.amount)) {
-        matchObj["room_fee"] = parseInt(params.amount);
+        matchObj[ "room_fee" ] = parseInt(params.amount);
       }
 
       if (params.search.value.trim() != "") {
-        matchObj["$or"] = [{
+        matchObj[ "$or" ] = [ {
           room: {
             $regex: params.search.value,
             $options: "i",
           }
         }, {
           "users.numeric_id": { $regex: params.search.value, $options: "i" }
-        }];
+        } ];
       }
 
       let agg = [
@@ -2605,10 +2734,10 @@ console.log(aggregation_obj);
 
       var sortObj = {};
       if (params.order) {
-        if (params.order[0]) {
-          if (params.order[0].column == "4") {
+        if (params.order[ 0 ]) {
+          if (params.order[ 0 ].column == "4") {
             // SORT BY USERNAME
-            sortObj.created_at = params.order[0].dir == "asc" ? 1 : -1;
+            sortObj.created_at = params.order[ 0 ].dir == "asc" ? 1 : -1;
           } else {
             sortObj = { created_at: -1 };
           }
@@ -2728,9 +2857,9 @@ console.log(aggregation_obj);
           if (u.players.length > 0) {
             for (let ij = 0; ij < u.players.length; ij++) {
               datatoRender += `<tr>
-                        <td><a target="_blank" href="/user/view/${u.players[ij].id}">${u.players[ij].numeric_id}</a></td>
-                        <td>${u.players[ij].rank}</td>
-                        <td>${u.players[ij].pl}</td>
+                        <td><a target="_blank" href="/user/view/${u.players[ ij ].id}">${u.players[ ij ].numeric_id}</a></td>
+                        <td>${u.players[ ij ].rank}</td>
+                        <td>${u.players[ ij ].pl}</td>
                         </tr>`;
             }
           }
@@ -2756,7 +2885,7 @@ console.log(aggregation_obj);
 
       let total = await Table.find({
         $expr: {
-          $eq: ["$no_of_players", { $size: "$players" }],
+          $eq: [ "$no_of_players", { $size: "$players" } ],
         },
       }).countDocuments();
       let total_f = await Table.find(matchObj).countDocuments();
