@@ -145,7 +145,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
      document.addEventListener("DOMContentLoaded",async function () {
-        const socket = io('http://43.205.200.32:3070');
+        const socket = io('http://localhost:3070');
         let gamePercent = document.getElementById("gamePercent").value;
         // console.log(gamePercent);
         socket.emit("livebets", { hii: "hii" });

@@ -907,7 +907,7 @@ getSlotBetDetails: async (roomId, gameId, admin ,userId) => {
        ParseWinNo=JSON.parse(WinNo.spots)
        ParseWinNo=ParseWinNo["0"]-1
        if(ParseWinNo<0){
-        ParseWinNo=00;
+        ParseWinNo="00";
        }
     }
     // console.log(ParseWinNo,"0000");
