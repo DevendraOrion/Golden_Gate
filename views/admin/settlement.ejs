@@ -23,13 +23,13 @@
                     </div>
                     <div class="col-md-8">
                         <div class="pull-right">
-
+<!-- 
                             <select class="col search-game" name="game" style="width:152px">
                                 <option></option>
                                 <option value="3">Aviator</option>
                                 <option value="2">Card Roulette</option>
                                 <option value="1">Roulette</option>
-                            </select>
+                            </select> -->
 
                             <%if(admin.role=="Company"){%>
                                 <select class="col select-rank" name="rank" style="width:152px;">
@@ -38,7 +38,7 @@
                                     <option value="District">District</option>
                                     <option value="Zone">Zone</option>
                                     <option value="Agent">Agent</option>
-                                    <option value="User">User</option>
+                                    <!-- <option value="User">User</option> -->
                                 </select>
                                 <%} else if(admin.role==="State" ){%>
                                     <select class="col select-rank" name="rank" style="width:152px;">
@@ -70,14 +70,14 @@
 
                                                     <select class="col search-user" name="state"
                                                         style="width:152px;"></select>
-                                                    <input type="text" class="col select-date"
+                                                    <!-- <input type="text" class="col select-date"
                                                         onfocus="(this.type='date')" onblur="(this.type='text')"
                                                         placeholder="From Date" id="startdatepicker" name="StartDate"
                                                         style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray; border: 1px solid gray;">
                                                     <input type="text" class="col select-date"
                                                         onfocus="(this.type='date')" onblur="(this.type='text')"
                                                         placeholder="To Date" id="enddatepicker" name="EndDate"
-                                                        style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;">
+                                                        style="width: 152px; height: 34px; border-radius: 4px; border: 1px solid gray;"> -->
 
                         </div>
                     </div>
@@ -101,6 +101,7 @@
                                         <% if (admin.role=='Company' ) { %>
                                             <th>Net Margin</th>
                                             <% } %>
+                                                <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -126,6 +127,9 @@
                                                             <%= d.msg %>
                                                         </td>
 
+                                                        <td>
+                                                            <%=d.created_at %>
+                                                        </td>
                                                         <td>
                                                             <%=d.created_at %>
                                                         </td>
@@ -163,7 +167,7 @@
     <%- include footer %>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
         <script>
-
+            var buttonWallete = "<%= buttonWallete %>"
             $(document).ready(function (e) {
 
 
@@ -176,7 +180,21 @@
                 var END_DATE = "";
                 var THAT_GAME = " "
                 var PARTICULAR_USER = ""
-                var COMMISSION_DATA = 1
+                var SETTLEMENT_USER = 1
+
+
+                $(document).on("click", ".accept-button", function () {
+                    var username = $(this).data("username");
+                    var requestData = {
+                        username: username,
+                        action: "accept"
+                    };
+                    table.ajax.reload(function (json) {
+                        json.data = requestData;
+                    });
+                });
+
+
 
 
                 $('.search-user').select2({
@@ -186,7 +204,6 @@
                     ajax: {
                         url: `/admin/find_userByRole`,
                         data: function (params) {
-                            console.log("params-------", params)
                             var query = {
                                 search: params.term,
                                 type: 'public',
@@ -200,7 +217,7 @@
 
                 $('.search-user').on('select2:select', function (e) {
                     console.log('changed', e);
-                    // buttonWallete = false
+                    buttonWallete = false
                     THAT_ID = e.params.data.id;
                     PARTICULAR_USER = true
                     table.ajax.reload();
@@ -250,12 +267,12 @@
                     placeholder: 'User Type'
                 });
 
-                $('.select-rank').val('User');
+                $('.select-rank').val('Agent');
                 $('.select-rank').trigger('change');
 
                 $('.select-rank').on('select2:select', function (e) {
                     console.log("select_rank------", e.params.data.id);
-                    // buttonWallete = false
+                    buttonWallete = false
                     THAT_RANK = e.params.data.id;
                     rank = THAT_RANK
                     table.ajax.reload();
@@ -273,7 +290,7 @@
 
                 $('.search-game').on('select2:select', function (e) {
                     console.log("select_rank------", e);
-                    // buttonWallete = false
+                    buttonWallete = false
                     THAT_GAME = e.params.data.id;
                     rank = THAT_GAME
                     table.ajax.reload();
@@ -284,40 +301,22 @@
                     table.ajax.reload();
 
                 });
-                $('#enddatepicker').prop('disabled', true);
-
-                // Function to get the date of the Monday of the current week
-                function getMonday(date) {
-                    var day = date.getDay() || 7; // Get current day of week (Sunday is 0, Monday is 1, etc.)
-                    if (day !== 1) {
-                        date.setHours(-24 * (day - 1)); // Set date to Monday of this week
-                    }
-                    return date;
-                }
-
-                // Function to get the date of the upcoming Sunday
-                function getNextSunday(date) {
-                    var day = date.getDay() || 7; // Get current day of week (Sunday is 0, Monday is 1, etc.)
-                    if (day !== 0) {
-                        date.setHours(24 * (7 - day)); // Set date to upcoming Sunday
-                    }
-                    return date;
-                }
-
-                // Initialize current date
-                var currentDate = new Date();
-
-                // Set default start and end dates in the datepicker fields
                 $('#startdatepicker').datepicker({
                     beforeShowDay: function (date) {
                         return [ date.getDay() === 1, '' ];
                     },
                     onSelect: function (selectedDate) {
                         var start = new Date(selectedDate);
-                        var end = getNextSunday(new Date(start.getTime())); // Calculate end date based on selected start date
+                        var end = new Date(start);
+                        end.setDate(start.getDate() + 6 - start.getDay());
+
+
                         $('#enddatepicker').datepicker('setDate', end);
+
+
                         START_DATE = $('#startdatepicker').val();
                         END_DATE = $('#enddatepicker').val();
+
                         table.ajax.reload();
                     }
                 });
@@ -329,6 +328,7 @@
                     onSelect: function (selectedDate) {
                         START_DATE = $('#startdatepicker').val();
                         END_DATE = $('#enddatepicker').val();
+
                         table.ajax.reload();
                     }
                 });
@@ -338,7 +338,6 @@
                     END_DATE = $('#enddatepicker').val();
                     table.ajax.reload();
                 });
-
 
                 $('#example1').DataTable().destroy();
                 var table = $('#example1').DataTable({
@@ -408,17 +407,18 @@
                     "responsive": true,
                     "processing": true,
                     "serverSide": true,
+
                     "ajax": {
-                        'url': '/ajax_performance',
+                        'url': '/settlement_ajax',
                         data: function (params) {
                             params.id = THAT_ID;
                             params.rank = THAT_RANK;
                             params.startDate = START_DATE;
                             params.endDate = END_DATE;
                             params.THAT_Game = THAT_GAME
-                            // params.buttonWallete = buttonWallete;
+                            params.buttonWallete = buttonWallete;
                             params.PARTICULAR_USER = PARTICULAR_USER
-                            params.COMMISSION_DATA = COMMISSION_DATA
+                            params.SETTLEMENT_USER = SETTLEMENT_USER
                             console.log(params)
                             return params;
                         }
@@ -440,6 +440,9 @@
                             '<td>' + data[ 4 ] + '</td>' +
                             '<td>' + data[ 5 ] + '</td>' +
                             '<td>' + data[ 6 ] + '</td>' +
+                            '<td><button class="ajax-button accept-button btn btn-success" data-username="' + row[ 7 ] + '">Process</button></td>' +
+
+
                             $(row).find('td:first').html(dataIndex + 1);
 
 
@@ -451,14 +454,20 @@
                             $(row).find('td:first').html('');
                         }
                     },
-                    columnDefs: [ {
-                        orderable: true,
-                        targets: [ 0, 1, 2, 3, 4, 5 ]
-                    },
-                    {
-                        orderable: false,
-                        targets: '_all'
-                    }
+                    columnDefs: [
+                        { orderable: true, targets: [ 0, 1, 2, 3, 4, 5 ] },
+                        { orderable: false, targets: '_all' },
+                        {
+                            targets: 7, // Index of the "Status" column (zero-based index)
+                            render: function (data, type, row, meta) {
+                                if (type === 'display') {
+                                    // Render buttons for Accept and Reject with appropriate data-attributes
+                                    return '<button class="ajax-button accept-button" data-username="' + row[ 7 ] + '">Accept</button>' +
+                                        '<button class="ajax-button reject-button" data-username="' + row[ 7 ] + '">Reject</button>';
+                                }
+                                return data; // Return data for other types (sorting, filtering, etc.)
+                            }
+                        }
                     ]
                 });
                 $('#example1').DataTable().order([ 5, 'desc' ]).draw();
@@ -468,6 +477,7 @@
                     var data = table.buttons.exportData();
                 });
             });
+
 
             function openModal(d) {
                 if (d == "") {

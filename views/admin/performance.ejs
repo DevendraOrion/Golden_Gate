@@ -196,7 +196,8 @@
                         }
                     }
                 });
-
+                // $('.search-user').val(User); 
+                // $('.search-user').trigger('change'); 
                 $('.search-user').on('select2:select', function (e) {
                     console.log('changed', e);
                     buttonWallete = false
@@ -248,6 +249,8 @@
                     allowClear: true,
                     placeholder: 'User Type'
                 });
+                $('.select-rank').val('User'); 
+                $('.select-rank').trigger('change');
 
                 $('.select-rank').on('select2:select', function (e) {
                     console.log("select_rank------", e.params.data.id);
@@ -280,25 +283,46 @@
                     table.ajax.reload();
 
                 });
+                $('#enddatepicker').prop('disabled', true);
+                // Function to get the date of the Monday of the current week
+                function getMonday(date) {
+                    var day = date.getDay() || 7; // Get current day of week (Sunday is 0, Monday is 1, etc.)
+                    if (day !== 1) {
+                        date.setHours(-24 * (day - 1)); // Set date to Monday of this week
+                    }
+                    return date;
+                }
+
+                // Function to get the date of the upcoming Sunday
+                function getNextSunday(date) {
+                    var day = date.getDay() || 7; // Get current day of week (Sunday is 0, Monday is 1, etc.)
+                    if (day !== 0) {
+                        date.setHours(24 * (7 - day)); // Set date to upcoming Sunday
+                    }
+                    return date;
+                }
+
+                // Initialize current date
+                var currentDate = new Date();
+
+                // Calculate default start and end dates
+                var defaultStartDate = getMonday(currentDate);
+                var defaultEndDate = getNextSunday(new Date(defaultStartDate.getTime())); // Calculate end date based on start date
+
+                // Set default start and end dates in the datepicker fields
                 $('#startdatepicker').datepicker({
                     beforeShowDay: function (date) {
                         return [ date.getDay() === 1, '' ];
                     },
                     onSelect: function (selectedDate) {
                         var start = new Date(selectedDate);
-                        var end = new Date(start);
-                        end.setDate(start.getDate() + 6 - start.getDay());
-
-
+                        var end = getNextSunday(new Date(start.getTime())); // Calculate end date based on selected start date
                         $('#enddatepicker').datepicker('setDate', end);
-
-
                         START_DATE = $('#startdatepicker').val();
                         END_DATE = $('#enddatepicker').val();
-
                         table.ajax.reload();
                     }
-                });
+                }).datepicker('setDate', defaultStartDate); // Set default start date here
 
                 $('#enddatepicker').datepicker({
                     beforeShowDay: function (date) {
@@ -307,16 +331,19 @@
                     onSelect: function (selectedDate) {
                         START_DATE = $('#startdatepicker').val();
                         END_DATE = $('#enddatepicker').val();
-
                         table.ajax.reload();
                     }
-                });
+                }).datepicker('setDate', defaultEndDate); // Set default end date here
 
                 $('.select-date').on('change', function () {
                     START_DATE = $('#startdatepicker').val();
                     END_DATE = $('#enddatepicker').val();
                     table.ajax.reload();
                 });
+
+
+
+
 
                 $('#example1').DataTable().destroy();
                 var table = $('#example1').DataTable({

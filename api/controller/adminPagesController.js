@@ -14,8 +14,10 @@ const noticeData = require("./../models/notice-data");
 const Service = require("./../service");
 const kycController = require("./kycController");
 const blogController = require("./blogController");
-var { User } = require("../models/user"),
-  Table = require("../models/table"),
+var { User } = require("../models/user")
+var { Updated_stats } = require('../models/updatedStats')
+
+Table = require("../models/table"),
   { Blogs } = require("../models/blogs");
 const adminController = require("./adminController");
 
@@ -41,7 +43,7 @@ module.exports = {
     data.total_district = await AdminController.getTotal_district(req.admin);
     data.total_agent = await AdminController.getTotal_agent(req.admin);
     data.total_user = await AdminController.getTotal_user(req.admin);
- 
+
     res.render("admin/index", {
       title: "Dashboard",
       type: "dashboard",
@@ -91,8 +93,8 @@ module.exports = {
       data: data,
     });
   },
-  getnoticelist:async (req,res) =>{
-    let data = await User.find({role:"User"},{search_id:1, _id:0});
+  getnoticelist: async (req, res) => {
+    let data = await User.find({ role: "User" }, { search_id: 1, _id: 0 });
 
     res.render("admin/sendNotification", {
       title: "Send Notification ",
@@ -100,14 +102,14 @@ module.exports = {
       sub: "dashboard",
       sub2: "sendNotification",
       host: config.pre + req.headers.host,
-      admin: req.admin,      
+      admin: req.admin,
       data: data,
     });
 
   },
   changePass: async (req, res) => {
-    const data = await distributorController.addRankssData(req) 
-      res.render("admin/SepratePinPass", {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/SepratePinPass", {
       title: "Change Password",
       type: "passPin",
       sub: "pass",
@@ -115,12 +117,12 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
-      pass:true
+      pass: true
     });
   },
   changePin: async (req, res) => {
-    const data = await distributorController.addRankssData(req) 
-      res.render("admin/SepratePinPass", {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/SepratePinPass", {
       title: "Change Security Pin",
       type: "passPin",
       sub: "pin",
@@ -128,12 +130,12 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
-      pass:false
+      pass: false
     });
   },
   transferPoint: async (req, res) => {
-    const data = await distributorController.addRankssData(req) 
-      res.render("admin/transferPoint", {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/transferPoint", {
       title: "Chip Transfer",
       type: "transfer",
       sub: "transferPoint",
@@ -144,8 +146,8 @@ module.exports = {
     });
   },
   transferPointToUpper: async (req, res) => {
-    const data = await distributorController.addRankssData(req) 
-      res.render("admin/transferPointToUpper", {
+    const data = await distributorController.addRankssData(req)
+    res.render("admin/transferPointToUpper", {
       title: "Chip Transfer To Upper Level",
       type: "transfer",
       sub: "transferPointToUpper",
@@ -156,7 +158,7 @@ module.exports = {
     });
   },
   depositRequest: async (req, res) => {
-    let admin=req.admin
+    let admin = req.admin
     const users = await AdminController.getDepositRequest(admin);
     // console.log(users.list);
     res.render("admin/depostRequest", {
@@ -171,11 +173,11 @@ module.exports = {
     });
   },
   transferReport: async (req, res) => {
-    let TxnMode="T"
-    let admin=req.admin
-    const transactions = await paymentController.transferPoint(admin,TxnMode);
+    let TxnMode = "T"
+    let admin = req.admin
+    const transactions = await paymentController.transferPoint(admin, TxnMode);
     // console.log(transactions.list.length);
-      res.render("admin/transferReport", {
+    res.render("admin/transferReport", {
       title: "Chip Transfer History",
       type: "pointTransfer",
       sub: "transferReport",
@@ -184,17 +186,17 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      chip:"report"
+      chip: "report"
     });
-  
+
   },
 
   chipcurlation: async (req, res) => {
     console.log("-=--=-=");
-    let admin=req.admin
+    let admin = req.admin
     const data = await paymentController.chipcalclution(admin);
     // console.log(transactions.list.length);
-      res.render("admin/chipcurlation", {
+    res.render("admin/chipcurlation", {
       title: "Chip curlation",
       type: "pointTransfer",
       sub: "transferReport",
@@ -203,17 +205,17 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: data,
-      chip:"report"
+      chip: "report"
     });
-  
+
   },
 
   generateHistory: async (req, res) => {
-    let TxnMode="U"
-    let admin=req.admin
-    const transactions = await paymentController.transferPoint(admin,TxnMode);
+    let TxnMode = "U"
+    let admin = req.admin
+    const transactions = await paymentController.transferPoint(admin, TxnMode);
     console.log(transactions.list.length);
-      res.render("admin/transferReport", {
+    res.render("admin/transferReport", {
       title: "Generate Chip History",
       type: "generateChip",
       sub: "generateChipHistory",
@@ -222,16 +224,16 @@ module.exports = {
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      chip:"generate"
+      chip: "generate"
     });
-  
+
   },
   commRoullete: async (req, res) => {
     // let data = await noticeData.findOne({});
-     let comm = "Roullete"
+    let comm = "Roullete"
     // const data = await distributorController.addRankssData(req,role)
     let data = []
-      res.render("admin/carRoullatCommissionreport", {
+    res.render("admin/carRoullatCommissionreport", {
       title: "Rolllatt Report",
       type: "comission",
       sub: "commMaster",
@@ -243,10 +245,10 @@ module.exports = {
   },
   commAvatior: async (req, res) => {
     // let data = await noticeData.findOne({});
-   let comm = "Avatior";
+    let comm = "Avatior";
     // const data = await distributorController.addRankssData(req,role)
     let data = []
-      res.render("admin/carRoullatCommissionreport", {
+    res.render("admin/carRoullatCommissionreport", {
       title: "Avatior",
       type: "comission",
       sub: "commMaster",
@@ -457,8 +459,8 @@ module.exports = {
     });
   },
   createDistributor: async (req, res) => {
- 
-  const data=req.admin
+
+    const data = req.admin
     res.render("admin/createDistributor", {
       title: "Create Distributer",
       type: "distributer",
@@ -470,12 +472,12 @@ module.exports = {
     });
   },
   createRank: async (req, res) => {
-    let rank_id=req.params.rank_id
-    let updated=req.params.updated
-console.log(req.params);
-    const data = await distributorController.showRankData(req,rank_id,updated)
+    let rank_id = req.params.rank_id
+    let updated = req.params.updated
+    console.log(req.params);
+    const data = await distributorController.showRankData(req, rank_id, updated)
     // console.log(data);
-  // const data=req.admin
+    // const data=req.admin
     res.render("admin/createRank", {
       title: "Create Rank",
       type: "distributer",
@@ -487,12 +489,12 @@ console.log(req.params);
     });
   },
   editRank: async (req, res) => {
-    let rank_id=req.params.rank_id
-    let updated=req.params.updated
-// console.log(req.params);
-    const data = await distributorController.editRankData(req,rank_id,updated)
+    let rank_id = req.params.rank_id
+    let updated = req.params.updated
+    // console.log(req.params);
+    const data = await distributorController.editRankData(req, rank_id, updated)
     // console.log(data);
-  // const data=req.admin
+    // const data=req.admin
     res.render("admin/editRank", {
       title: "Edit Rank",
       type: "distributer",
@@ -504,12 +506,12 @@ console.log(req.params);
     });
   },
   editDistributer: async (req, res) => {
-    let rank_id=req.params.rank_id
-    let updated=req.params.updated
-console.log(req.params);
-    const data = await distributorController.editDistributerData(req,rank_id,updated)
+    let rank_id = req.params.rank_id
+    let updated = req.params.updated
+    console.log(req.params);
+    const data = await distributorController.editDistributerData(req, rank_id, updated)
     // console.log(data);
-  // const data=req.admin
+    // const data=req.admin
     res.render("admin/editDistributer", {
       title: "Edit Distributer",
       type: "distributer",
@@ -521,8 +523,8 @@ console.log(req.params);
     });
   },
   manualCardRoullete: async (req, res) => {
-    let role="State"
-    let adminData=req.admin
+    let role = "State"
+    let adminData = req.admin
     const users = await AdminController.manualCardRoullete();
     res.render("admin/manulCardRoullete", {
       title: "Manual Result Card Roulette",
@@ -533,12 +535,12 @@ console.log(req.params);
       admin: req.admin,
       data: users,
       // total: users.count,
-      manual:false
+      manual: false
     });
   },
   liveStaticsCardRoullete: async (req, res) => {
-    let role="State"
-    let adminData=req.admin
+    let role = "State"
+    let adminData = req.admin
     const users = await AdminController.manualCardRoullete();
     res.render("admin/liveCardRoulleteData", {
       title: "Live Statics of Card Roulette",
@@ -549,12 +551,12 @@ console.log(req.params);
       admin: req.admin,
       data: users,
       // total: users.count,
-      manual:true
+      manual: true
     });
   },
   liveStaticsAvaitor: async (req, res) => {
-    let role="State"
-    let adminData=req.admin
+    let role = "State"
+    let adminData = req.admin
     const users = await AdminController.liveAvaitorProfit();
     res.render("admin/avaitorLiveStatics", {
       title: "Live Statics of Avaitor",
@@ -565,13 +567,13 @@ console.log(req.params);
       admin: req.admin,
       data: users,
       // total: users.count,
-      manual:true
+      manual: true
     });
   },
   roulleteStatics: async (req, res) => {
-    let gameId=1
-    let adminData=req.admin
-    const users = await AdminController.liveRoullete(adminData,gameId);
+    let gameId = 1
+    let adminData = req.admin
+    const users = await AdminController.liveRoullete(adminData, gameId);
     res.render("admin/roulleteStatics", {
       title: "Live Statics of Roullete",
       type: "control",
@@ -620,8 +622,8 @@ console.log(req.params);
     });
   },
   addStateRank: async (req, res) => {
-   let role="State"
-    const data = await distributorController.addRankssData(req,role)
+    let role = "State"
+    const data = await distributorController.addRankssData(req, role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
@@ -634,8 +636,8 @@ console.log(req.params);
   },
   addDistrictRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-    let role="District"
-    const data = await distributorController.addRankssData(req,role)
+    let role = "District"
+    const data = await distributorController.addRankssData(req, role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
@@ -648,8 +650,8 @@ console.log(req.params);
   },
   addZoneRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-    let role="Zone"
-    const data = await distributorController.addRankssData(req,role)
+    let role = "Zone"
+    const data = await distributorController.addRankssData(req, role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
@@ -662,8 +664,8 @@ console.log(req.params);
   },
   addAgentRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-    let role="Agent"
-    const data = await distributorController.addRankssData(req,role)
+    let role = "Agent"
+    const data = await distributorController.addRankssData(req, role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
@@ -676,8 +678,8 @@ console.log(req.params);
   },
   adduserRank: async (req, res) => {
     // let data = await noticeData.findOne({});
-    let role="User"
-    const data = await distributorController.addRankssData(req,role)
+    let role = "User"
+    const data = await distributorController.addRankssData(req, role)
     res.render("admin/addRankCompany", {
       title: "Add Rank",
       type: "addRank",
@@ -689,11 +691,11 @@ console.log(req.params);
     });
   },
   editNotice: async (req, res) => {
-   
+
     // console.log(req.query)
     // console.log(req.params)
-    let id=req.params.id
-    const data = await distributorController.editUserData(req,id)
+    let id = req.params.id
+    const data = await distributorController.editUserData(req, id)
 
     res.render("admin/editNotice", {
       title: "Edit User",
@@ -706,9 +708,9 @@ console.log(req.params);
     });
   },
   editUser: async (req, res) => {
-    role="User"
-    let id=req.params.id
-    const data = await distributorController.addRankUserData(req,role,id)
+    role = "User"
+    let id = req.params.id
+    const data = await distributorController.addRankUserData(req, role, id)
 
     res.render("admin/editUser", {
       title: "Edit User",
@@ -721,8 +723,8 @@ console.log(req.params);
     });
   },
   betHistoryAvaitor: async (req, res) => {
-    let game="3"
-    const transactions = await paymentController.betHistory(10,game);
+    let game = "3"
+    const transactions = await paymentController.betHistory(10, game);
     res.render("admin/betHistory", {
       title: "Slot History(Avaitor)",
       type: "bet",
@@ -732,12 +734,12 @@ console.log(req.params);
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      game:game,
+      game: game,
     });
   },
   betHistoryRoullete: async (req, res) => {
-    let game="1"
-    const transactions = await paymentController.betHistory(10,game);
+    let game = "1"
+    const transactions = await paymentController.betHistory(10, game);
     res.render("admin/betHistory", {
       title: "Slot History(Roullete)",
       type: "bet",
@@ -747,12 +749,12 @@ console.log(req.params);
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      game:game,
+      game: game,
     });
   },
   betHistoryCardRoullete: async (req, res) => {
-    let game="2"
-    const transactions = await paymentController.betHistory(10,game);
+    let game = "2"
+    const transactions = await paymentController.betHistory(10, game);
     res.render("admin/betHistory", {
       title: "Slot History (Card Roullete)",
       type: "bet",
@@ -762,7 +764,7 @@ console.log(req.params);
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      game:game,
+      game: game,
     });
   },
   modifyUser: async (req, res) => {
@@ -828,13 +830,13 @@ console.log(req.params);
       data: data,
       total: data.count,
     });
-  
+
   },
   createUser: async (req, res) => {
     // let data = await noticeData.findOne({});
-role="User"
-    const data = await distributorController.addRankUserData(req,role)
-    
+    role = "User"
+    const data = await distributorController.addRankUserData(req, role)
+
     res.render("admin/createUserRank", {
       title: "Add User",
       type: "addRank",
@@ -849,7 +851,7 @@ role="User"
     // let data = await noticeData.findOne({});
 
     const data = await distributorController.addRankssData(req)
-    
+
     res.render("admin/addRankCompany", {
       title: "Add Distributer",
       type: "addRank",
@@ -873,52 +875,55 @@ role="User"
       data: allGameRecords,
       total: allGameRecords.total,
     });
-    
+
   },
   commissionLimit: async (req, res) => {
     // let data = await noticeData.findOne({});
-    if(req.admin.role=="Company"){
-    const data = await distributorController.profitPercent(req)
-    // console.log(req.admin);
-    res.render("admin/profit-management", {
-      title: "Set Game Profit",
-      type: "master",
-      sub: "master",
-      sub2: "profit",
-      host: config.pre + req.headers.host,
-      admin: req.admin,
-      data: data,
-    });}
+    if (req.admin.role == "Company") {
+      const data = await distributorController.profitPercent(req)
+      // console.log(req.admin);
+      res.render("admin/profit-management", {
+        title: "Set Game Profit",
+        type: "master",
+        sub: "master",
+        sub2: "profit",
+        host: config.pre + req.headers.host,
+        admin: req.admin,
+        data: data,
+      });
+    }
   },
   gameMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
-    if(req.admin.role=="Company"){
-    const data = await distributorController.gameMgt(req)
-    // console.log(req.admin);
-    res.render("admin/gameMgt", {
-      title: "Game Play/Pause",
-      type: "master",
-      sub: "master",
-      sub2: "game-mgt",
-      host: config.pre + req.headers.host,
-      admin: req.admin,
-      data: data,
-    });}
+    if (req.admin.role == "Company") {
+      const data = await distributorController.gameMgt(req)
+      // console.log(req.admin);
+      res.render("admin/gameMgt", {
+        title: "Game Play/Pause",
+        type: "master",
+        sub: "master",
+        sub2: "game-mgt",
+        host: config.pre + req.headers.host,
+        admin: req.admin,
+        data: data,
+      });
+    }
   },
   commissionMgt: async (req, res) => {
     // let data = await noticeData.findOne({});
-    if(req.admin.role=="Company"){
-    const data = await distributorController.commission_management(req)
-    // console.log(req.admin);
-    res.render("admin/commission-mgt", {
-      title: "Set Game Commission",
-      type: "master",
-      sub: "master",
-      sub2: "commission-mgt",
-      host: config.pre + req.headers.host,
-      admin: req.admin,
-      data: data,
-    });}
+    if (req.admin.role == "Company") {
+      const data = await distributorController.commission_management(req)
+      // console.log(req.admin);
+      res.render("admin/commission-mgt", {
+        title: "Set Game Commission",
+        type: "master",
+        sub: "master",
+        sub2: "commission-mgt",
+        host: config.pre + req.headers.host,
+        admin: req.admin,
+        data: data,
+      });
+    }
   },
 
   sendNotice: async (req, res) => {
@@ -930,7 +935,7 @@ role="User"
       res.status(500).send("Error retrieving notice data");
     }
   },
-  distributors: async (req,res) => {
+  distributors: async (req, res) => {
     const distributors = await distributorController.getDistributorsList(
       req,
       10
@@ -1015,7 +1020,7 @@ role="User"
   onlineusers: async (req, res) => {
     // console.log(req.admin)
     let ids = req.query.userIds.split(",").map(Number)
-    const users = await AdminController.getUsersListonline(req.admin,ids);
+    const users = await AdminController.getUsersListonline(req.admin, ids);
     res.render("admin/user", {
       title: "Online Users list",
       type: "usersMGT",
@@ -1028,12 +1033,12 @@ role="User"
     });
   },
   agentsMGT: async (req, res) => {
-    let role="Agent"
-    let adminData=req.admin
-    const users = await AdminController.getAgentList(role,adminData);
-    let Child=true
-    if(req.admin.role =="Zone" ||req.admin.role =="Company"){
-      Child=false
+    let role = "Agent"
+    let adminData = req.admin
+    const users = await AdminController.getAgentList(role, adminData);
+    let Child = true
+    if (req.admin.role == "Zone" || req.admin.role == "Company") {
+      Child = false
     }
     res.render("admin/agentsMGT", {
       title: "Agents List",
@@ -1044,16 +1049,16 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:Child
+      child: Child
     });
   },
   zoneMGT: async (req, res) => {
-    let role="Zone"
-    let adminData=req.admin
-    const users = await AdminController.getAgentList(role,adminData);
-    let Child=true
-    if(req.admin.role=="District" ||req.admin.role=="Company"){
-      Child=false
+    let role = "Zone"
+    let adminData = req.admin
+    const users = await AdminController.getAgentList(role, adminData);
+    let Child = true
+    if (req.admin.role == "District" || req.admin.role == "Company") {
+      Child = false
     }
     res.render("admin/agentsMGT", {
       title: "Zone List",
@@ -1064,16 +1069,16 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:Child
+      child: Child
     });
   },
   districtMGT: async (req, res) => {
-    let role="District"
-    let adminData=req.admin
-    const users = await AdminController.getAgentList(role,adminData);
-    let Child=true
-    if(req.admin.role=="State"||req.admin.role=="Company"){
-      Child=false
+    let role = "District"
+    let adminData = req.admin
+    const users = await AdminController.getAgentList(role, adminData);
+    let Child = true
+    if (req.admin.role == "State" || req.admin.role == "Company") {
+      Child = false
       console.log(Child);
     }
     res.render("admin/agentsMGT", {
@@ -1085,13 +1090,13 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:Child
+      child: Child
     });
   },
   stateMGT: async (req, res) => {
-    let role="State"
-    let adminData=req.admin
-    const users = await AdminController.getAgentList(role,adminData);
+    let role = "State"
+    let adminData = req.admin
+    const users = await AdminController.getAgentList(role, adminData);
     // console.log(users.list);
     res.render("admin/agentsMGT", {
       title: "State List",
@@ -1102,14 +1107,14 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:false
+      child: false
     });
   },
   showChild: async (req, res) => {
-    console.log(req.params,req.query);
-    let role=req.query.role
-    let id= req.params.id
-    const users = await AdminController.getChildList(id,role);
+    console.log(req.params, req.query);
+    let role = req.query.role
+    let id = req.params.id
+    const users = await AdminController.getChildList(id, role);
     res.render("admin/agentsMGT", {
       title: "Child List",
       type: "usersMGT",
@@ -1119,15 +1124,15 @@ role="User"
       admin: req.admin,
       data: users.list,
       total: users.count,
-      child:true
+      child: true
     });
   },
   showDetailOfSlot: async (req, res) => {
     // console.log(req.params,req.query);
-    let roomId= req.params.id
-    let gameId= req.params.gameId
-    let admin=req.admin
-    const users = await AdminController.getSlotDetails(roomId,gameId,admin);
+    let roomId = req.params.id
+    let gameId = req.params.gameId
+    let admin = req.admin
+    const users = await AdminController.getSlotDetails(roomId, gameId, admin);
     // console.log(users);
     res.render("admin/slotDetail", {
       title: "Slot Details",
@@ -1138,19 +1143,19 @@ role="User"
       admin: req.admin,
       data: users,
       total: users.length,
-      child:true,
-      gameId:gameId,
-      roomId:roomId
+      child: true,
+      gameId: gameId,
+      roomId: roomId
     });
   },
   showDetailOfBet: async (req, res) => {
     // console.log(req.params,req.query);
-    let roomId= req.params.id
-    let gameId= req.params.gameId
-    let admin=req.admin
+    let roomId = req.params.id
+    let gameId = req.params.gameId
+    let admin = req.admin
     let userId = req.params.userId
-    console.log( userId );
-    const users = await AdminController.getSlotBetDetails(roomId,gameId,admin,userId);
+    console.log(userId);
+    const users = await AdminController.getSlotBetDetails(roomId, gameId, admin, userId);
     // console.log(users);
     res.render("admin/betDetail", {
       title: "Slot Bet Details",
@@ -1161,8 +1166,8 @@ role="User"
       admin: req.admin,
       data: users,
       total: users.length,
-      child:true,
-      gameId:gameId,
+      child: true,
+      gameId: gameId,
     });
   },
   kycRequests: async (req, res) => {
@@ -1355,14 +1360,14 @@ role="User"
     }
   },
   allTransactions: async (req, res) => {
-    let admin=req.admin
+    let admin = req.admin
     let type;
-    if(req.query.id){
+    if (req.query.id) {
       type = req.query.id
-    }else {
+    } else {
       type = false
     }
-    const transactions = await paymentController.transactionList(10,admin);
+    const transactions = await paymentController.transactionList(10, admin);
     res.render("admin/transaction", {
       title: "Wallet Transfer",
       type: "transaction",
@@ -1372,23 +1377,26 @@ role="User"
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      buttonWallete : type
+      buttonWallete: type
     });
   },
 
 
 
   performance: async (req, res) => {
-    let admin=req.admin
+    let admin = req.admin
     let type;
-    if(req.query.id){
+    if (req.query.id) {
       type = req.query.id
-    }else {
+    } else {
       type = false
     }
-    const transactions = await paymentController.performanceList(10,admin);
+
+    const transactions = await paymentController.performanceList(10, admin);
+    console.log("trancationnnnn000001-----------", transactions.count, transactions.list);
+
     res.render("admin/performance", {
-      title: "Performance Report" ,
+      title: "Performance Report",
       type: "performance",
       sub: "all",
       sub2: "",
@@ -1396,22 +1404,45 @@ role="User"
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: transactions.list,
-      buttonWallete : type
+      buttonWallete: type
+    });
+  },
+
+  settlement: async (req, res) => {
+    let admin = req.admin
+    let type;
+    if (req.query.id) {
+      type = req.query.id
+    } else {
+      type = false
+    }
+    const transactions = await paymentController.settlementList(10, admin);
+    console.log("trancationnnnn00000-----------", transactions.count, transactions.list);
+    res.render("admin/settlement", {
+      title: "Settlement Report",
+      type: "settlement",
+      sub: "all",
+      sub2: "",
+      total: transactions.count,
+      host: config.pre + req.headers.host,
+      admin: req.admin,
+      data: transactions.list,
+      buttonWallete: type
     });
   },
 
   allCommissionReport: async (req, res) => {
-    let admin=req.admin
-    const transactions = await paymentController.transactionList(10,admin);
+    let admin = req.admin
+    // const transactions = await paymentController.transactionList(1, admin);
     res.render("admin/commissionData", {
       title: "Commission Report",
       type: "commrep",
       sub: "commrep",
       sub2: "report",
-      total: transactions.count,
+      total: 0,
       host: config.pre + req.headers.host,
       admin: req.admin,
-      data: transactions.list,
+      data: [],
     });
   },
   gameRecords: async (req, res) => {
@@ -1626,7 +1657,7 @@ role="User"
       host: config.pre + req.headers.host,
       admin: req.admin,
       data: banner.list,
-      total : banner.count,
+      total: banner.count,
     });
   },
   addBannerPage: async (req, res, next) => {
@@ -1639,4 +1670,568 @@ role="User"
       admin: req.admin,
     });
   },
-};
+  getAllData: async function (req, res) {
+    console.time()
+    let a = null
+    let b = null
+    let state_data = [];
+    let district_data = [];
+    let Zone_data = [];
+    let agent_data = [];
+    let user_data = [];
+    let _ids = []
+    let data = await distributorController.commission_management(req)
+    let result = []
+
+    let avaitor_margin = 0
+    let car_roulette_margin = 0
+    let roulette_margin = 0
+    let aviator_marginend = 0
+    let car_roulette_marginend = 0
+    let roulette_marginend = 0
+    let margin = 0
+
+    let avaitor_endPoint = 0
+    let car_roulette_endPoint = 0
+    let roulette_endPoint = 0
+
+
+    // console.log("req---------------");
+    let company_data = await User.aggregate([ {
+      $match: {
+        role: "Company"
+      }
+    },
+    {
+      $project: {
+        _id: 1
+      }
+    } ]
+
+    )
+
+
+    for (var i = 0; i < company_data.length; i++) {
+      let userIDs = [ company_data[ i ]._id ];
+      let users = await User.find({ parent: company_data[ i ]._id }, { _id: 1 }).lean();
+      while (users.length > 0) {
+        const userIdsArray = users.map(({ _id }) => _id);
+        userIDs.push(...userIdsArray);
+        users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+      }
+
+      state_data = await User.find({ parent: company_data[ i ]._id })
+      for (var j = 0; j < state_data.length; j++) {
+        let userIDs = [ state_data[ j ]._id ];
+        let users = await User.find({ parent: state_data[ j ]._id }, { _id: 1 }).lean();
+        while (users.length > 0) {
+          const userIdsArray = users.map(({ _id }) => _id);
+          userIDs.push(...userIdsArray);
+          users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+        }
+
+        district_data = await User.find({ parent: state_data[ j ]._id })
+
+        for (let k = 0; k < district_data.length; k++) {
+
+
+
+          Zone_data = await User.find({ parent: district_data[ k ]._id })
+          let userIDs = [ district_data[ k ]._id ];
+          let users = await User.find({ parent: district_data[ k ]._id }, { _id: 1 }).lean();
+          while (users.length > 0) {
+            const userIdsArray = users.map(({ _id }) => _id);
+            userIDs.push(...userIdsArray);
+            users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+          }
+
+          for (let l = 0; l < Zone_data.length; l++) {
+
+            let userIDs = [ Zone_data[ l ]._id ];
+            let users = await User.find({ parent: Zone_data[ l ]._id }, { _id: 1 }).lean();
+            while (users.length > 0) {
+              const userIdsArray = users.map(({ _id }) => _id);
+              userIDs.push(...userIdsArray);
+              users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+            }
+
+            agent_data = await User.find({ parent: Zone_data[ l ]._id })
+
+
+            for (let m = 0; m < agent_data.length; m++) {
+
+              let userIDs = [ agent_data[ m ]._id ];
+              let users = await User.find({ parent: agent_data[ m ]._id }, { _id: 1 }).lean();
+              while (users.length > 0) {
+                const userIdsArray = users.map(({ _id }) => _id);
+                userIDs.push(...userIdsArray);
+                users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+              }
+
+              user_data = await User.find({ parent: agent_data[ m ]._id })
+
+
+
+              for (let n = 0; n < user_data.length; n++) {
+
+                totalPoints = await User.aggregate([ {
+                  $match: {
+                    _id: user_data[ n ]._id,
+                    role: "User"
+                  }
+                },
+                {
+                  $group: {
+                    _id: null,
+                    avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                    carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                    roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                    avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                    carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                    roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+                  },
+                } ]);
+
+                if (totalPoints.length > 0) {
+
+                  a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+                  b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+                  totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+                }
+
+                const {
+                  totalPlayPoint = 0,
+                  totalWinningPoint = 0,
+                } = totalPoints[ 0 ] || {};
+
+                const endPoint = totalPlayPoint - totalWinningPoint;
+
+
+                let saveData = new Updated_stats({
+                  role: "User",
+                  user_id: user_data[ n ]._id,
+                  total_play_point: totalPlayPoint,
+                  total_win_point: totalWinningPoint,
+                  total_end_point: endPoint,
+                  search_id: user_data[ i ]?.search_id
+
+                });
+
+                let res = await saveData.save()
+                _ids.push(user_data[ n ]._id)
+
+              }
+              totalPoints = await User.aggregate([ {
+                $match: {
+                  _id: { $in: userIDs },
+                  role: "User",
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  avaitor_totalplaypoint: {
+                    $sum: "$avaitor_totalplaypoint",
+                  },
+                  carRoulette_totalplaypoint: {
+                    $sum: "$carRoulette_totalplaypoint",
+                  },
+                  roulette_totalplaypoint: {
+                    $sum: "$roulette_totalplaypoint",
+                  },
+                  avaitor_totalwinningpoint: {
+                    $sum: "$avaitor_totalwinningpoint",
+                  },
+                  carRoulette_totalwinningpoint: {
+                    $sum: "$carRoulette_totalwinningpoint",
+                  },
+                  roulette_totalwinningpoint: {
+                    $sum: "$roulette_totalwinningpoint",
+                  },
+                },
+              }, ]);
+
+              if (totalPoints.length > 0) {
+
+                a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+                b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+                avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+                car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+                roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+                totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+              }
+
+              const {
+                totalPlayPoint = 0,
+                totalWinningPoint = 0,
+              } = totalPoints[ 0 ] || {};
+
+              const endPoint = totalPlayPoint - totalWinningPoint;
+              let result = []
+              for (let key in data) {
+                result = result.concat(data[ key ].filter(obj => obj.rankName == 'Agent'));
+              }
+
+
+              avaitor_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+              car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+              roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+              aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+              car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+              roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+              margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+
+
+
+              let saveData = new Updated_stats({
+                role: "Agent",
+                user_id: agent_data[ m ]._id.toString(),
+                total_play_point: totalPlayPoint,
+                total_win_point: totalWinningPoint,
+                total_end_point: endPoint,
+                total_margin: margin,
+                total_net_margin: endPoint - margin,
+                search_id: agent_data[ m ].search_id
+
+              });
+              let res = await saveData.save()
+              _ids.push(agent_data[ m ]._id.toString())
+
+
+            }
+            totalPoints = await User.aggregate([ {
+              $match: {
+                _id: { $in: userIDs }
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+              },
+            } ]);
+
+            if (totalPoints.length > 0) {
+
+              a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+              b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+              avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+              car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+              roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+              totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+            }
+
+            const {
+              totalPlayPoint = 0,
+              totalWinningPoint = 0,
+            } = totalPoints[ 0 ] || {};
+
+            const endPoint = totalPlayPoint - totalWinningPoint;
+            let result = []
+            for (let key in data) {
+              result = result.concat(data[ key ].filter(obj => obj.rankName == 'Agent'));
+            }
+            let own_commission = [];
+            for (let key in data) {
+              own_commission = own_commission.concat(data[ key ].filter(obj => obj.rankName === 'Zone'));
+            }
+
+            avaitor_margin = own_commission.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+            car_roulette_margin = own_commission.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+            roulette_margin = own_commission.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+            aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+            car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+            roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+            margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+
+            avaitor_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+            car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+            roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+            aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+            car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+            roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+            let child_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+            let child_net_margin = endPoint - child_margin
+            let net_margin = child_net_margin - margin
+
+
+            let saveData = new Updated_stats({
+              role: "Zone",
+              user_id: Zone_data[ l ]._id,
+              total_play_point: totalPlayPoint,
+              total_win_point: totalWinningPoint,
+              total_end_point: endPoint,
+              total_margin: margin,
+              total_net_margin: net_margin,
+              search_id: Zone_data[ l ].search_id
+
+            });
+
+            let res = await saveData.save()
+            _ids.push(Zone_data[ l ]._id.toString())
+
+
+          }
+          totalPoints = await User.aggregate([ {
+            $match: {
+              _id: { $in: userIDs },
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+              carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+              roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+              avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+              carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+              roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+            },
+          } ]);
+
+          if (totalPoints.length > 0) {
+
+            a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+            b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+            avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+            car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+            roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+            totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+          }
+
+          const {
+            totalPlayPoint = 0,
+            totalWinningPoint = 0,
+          } = totalPoints[ 0 ] || {};
+
+          const endPoint = totalPlayPoint - totalWinningPoint;
+
+          let result = []
+          for (let key in data) {
+            result = result.concat(data[ key ].filter(obj => obj.rankName == 'Zone'));
+          }
+          let own_commission = [];
+          for (let key in data) {
+            own_commission = own_commission.concat(data[ key ].filter(obj => obj.rankName === 'District'));
+          }
+
+          let child_result = []
+          for (let key in data) {
+            child_result = own_commission.concat(data[ key ].filter(obj => obj.rankName === 'Agent'));
+          }
+
+
+          avaitor_margin = own_commission.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+          car_roulette_margin = own_commission.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+          roulette_margin = own_commission.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+
+          aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+          car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+          roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+          margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+
+          avaitor_margin = child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+          car_roulette_margin = child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+          roulette_margin = child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+          aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+          car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+          roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+          let agent_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+          let agent_net_margin = endPoint - agent_margin
+          let avaitor_child_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+          let car_child_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+          let roulette_child_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+
+          aviator_marginend = (avaitor_endPoint * avaitor_child_margin) / 100
+          car_roulette_marginend = (car_roulette_endPoint * car_child_roulette_margin) / 100
+          roulette_marginend = (roulette_endPoint * roulette_child_margin) / 100
+          child_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+          let zone_net_margin = agent_net_margin - child_margin
+          let net_margin = zone_net_margin - margin
+          let saveData = new Updated_stats({
+            role: "District",
+            user_id: district_data[ k ]._id,
+            total_play_point: totalPlayPoint,
+            total_win_point: totalWinningPoint,
+            total_end_point: endPoint,
+            total_margin: margin,
+            total_net_margin: net_margin,
+            search_id: district_data[ k ].search_id
+
+
+          });
+
+          let res = await saveData.save()
+          _ids.push(district_data[ k ]._id.toString())
+          // console.log("res--------------", res);
+        }
+        totalPoints = await User.aggregate([ {
+          $match: {
+            _id: { $in: userIDs }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+            carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+            roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+            avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+            carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+            roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+          },
+        } ]);
+
+        if (totalPoints.length > 0) {
+
+          a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+          b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+          avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+          car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+          roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+          totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+        }
+
+        const {
+          totalPlayPoint = 0,
+          totalWinningPoint = 0,
+        } = totalPoints[ 0 ] || {};
+
+        const endPoint = totalPlayPoint - totalWinningPoint;
+
+        let result = []
+        for (let key in data) {
+          result = result.concat(data[ key ].filter(obj => obj.rankName == 'District'));
+        }
+        let own_commission = [];
+        for (let key in data) {
+          own_commission = own_commission.concat(data[ key ].filter(obj => obj.rankName == 'State'));
+        }
+
+        let child_result = []
+        for (let key in data) {
+          child_result = child_result.concat(data[ key ].filter(obj => obj.rankName === 'Agent'));
+        }
+
+
+        avaitor_margin = own_commission.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+        car_roulette_margin = own_commission.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+        roulette_margin = own_commission.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+        aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+        car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+        roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+        margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+        avaitor_margin = child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+        car_roulette_margin = child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+        roulette_margin = child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+        aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+        car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+        roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+        let agent_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+        let agent_net_margin = endPoint - agent_margin
+        let avaitor_child_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+        let car_child_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+        let roulette_child_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+
+        aviator_marginend = (avaitor_endPoint * avaitor_child_margin) / 100
+        car_roulette_marginend = (car_roulette_endPoint * car_child_roulette_margin) / 100
+        roulette_marginend = (roulette_endPoint * roulette_child_margin) / 100
+        child_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+        let zone_net_margin = agent_net_margin - child_margin
+        let net_margin = zone_net_margin - margin
+
+
+        let saveData = new Updated_stats({
+          role: "State",
+          user_id: state_data[ j ]._id,
+          total_play_point: totalPlayPoint,
+          total_win_point: totalWinningPoint,
+          total_end_point: endPoint,
+          total_margin: margin,
+          total_net_margin: net_margin,
+          search_id: state_data[ j ].search_id
+
+
+        });
+
+        let res = await saveData.save()
+
+      }
+
+      totalPoints = await User.aggregate([ {
+        $match: {
+          _id: { $in: userIDs },
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+          carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+          roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+          avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+          carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+          roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+        },
+      } ]);
+
+      if (totalPoints.length > 0) {
+
+        a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+        b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+        totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+      }
+
+      const {
+        totalPlayPoint = 0,
+        totalWinningPoint = 0,
+      } = totalPoints[ 0 ] || {};
+
+      const endPoint = totalPlayPoint - totalWinningPoint;
+
+
+      // let saveData = new Updated_stats({
+      //   role: "Company",
+      //   user_id: company_data[ i ]._id,
+      //   total_play_point: totalPlayPoint,
+      //   total_win_point: totalWinningPoint,
+      //   total_end_point: endPoint,
+      //   search_id: company_data[ i ].search_id
+
+
+      // });
+
+      // let res = await saveData.save()
+    }
+    console.timeEnd()
+
+
+
+
+  }
+}

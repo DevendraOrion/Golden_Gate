@@ -243,7 +243,9 @@ module.exports = function (router, io) {
   router.get("/ajax_transaction", paymentController.getTxnAjax);
 
   router.get("/performance", AdminPagesController.performance);
+  router.get("/settlement", AdminPagesController.settlement);
   router.get("/ajax_performance", paymentController.getperformance);
+  router.get("/settlement_ajax", paymentController.settlementAjax);
 
   // Game Records
   router.get("/game", AdminPagesController.gameRecords);
@@ -400,7 +402,7 @@ router.get("/chang-pin", AdminPagesController.changePin);
   router.get("/user/accept-request", AdminController.acceptRequest);
   router.get("/user/delete-distributor", AdminController.deleteDistributor);
   router.get("/commission-mgt", AdminPagesController.commissionMgt);
-  router.get("/game-mgt", AdminPagesController.gameMgt);
+  router.get("/game-mgt", AdminPagesController.gameMgt);  
   router.get("/profit-management", AdminPagesController.commissionLimit);
   router.post("/admin/saveCommission-mgt", AdminController.saveCommissionMgt);
   router.post("/admin/save-profit-percent", AdminController.saveCommissionLimit);
@@ -434,6 +436,9 @@ router.get("/get_id", paymentController.userName);
 //Commission Report
 router.get("/commission-report", AdminPagesController.allCommissionReport);
 router.get("/commission_ajax_transaction", paymentController.getCommissionAjax);
+
+//Get all data
+router.get("/get_data", AdminPagesController.getAllData);
 
 
 };

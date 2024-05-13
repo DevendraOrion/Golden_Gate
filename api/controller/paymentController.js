@@ -14,6 +14,8 @@ var Table = require("./../models/table");
 var { Rank_Data } = require("./../models/rankData");
 var { WithdrawalRequest } = require("./../models/WithdrawalRequest");
 const uniqid = require("uniqid");
+var { Updated_stats } = require('../models/updatedStats')
+
 
 var logger = require("./../service/logger");
 
@@ -455,6 +457,16 @@ module.exports = {
     };
   },
   performanceList: async (limit) => {
+    let list = [
+      {
+      }
+    ]
+    return {
+      list: list,
+      count: 1,
+    };
+  },
+  settlementList: async (limit) => {
     let list = [
       {
       }
@@ -1398,8 +1410,16 @@ module.exports = {
       let car_roulette_endPoint = 0
       let roulette_endPoint = 0
       let endPoint = 0
+
+      let a = 0
+      let b = 0
       let start_date = (req.query.startDate);
       let end_date = (req.query.endDate);
+      if (req.query.rank === '') {
+
+        req.query.rank = 'User'
+      }
+
 
       if (start_date != '' && end_date != '') {
         function convertToISODate(dateString) {
@@ -1410,25 +1430,41 @@ module.exports = {
         start_date = convertToISODate(start_date);
         end_date = convertToISODate(end_date);
       }
+      else if (req.query?.SETTLEMENT_USER == '1') {
+        let today = new Date();
+
+        let lastWeek = new Date(today);
+        lastWeek.setDate(today.getDate() - 7);
+
+        let dayOfWeek = lastWeek.getDay();
+
+        let daysUntilLastMonday = (7 + dayOfWeek - 1) % 7;
+        let lastMonday = new Date(lastWeek);
+        lastMonday.setDate(lastWeek.getDate() - daysUntilLastMonday);
+
+        let daysUntilLastSunday = 7 - dayOfWeek;
+        let lastSunday = new Date(lastWeek);
+        lastSunday.setDate(lastWeek.getDate() + daysUntilLastSunday);
+
+        start_date = lastMonday.toDateString();
+        end_date = lastSunday.toDateString();
+      }
+
       else {
         let today = new Date();
 
-        // Get the day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
         let dayOfWeek = today.getDay();
 
-        // Calculate the difference between today and the previous Sunday
-        let daysUntilLastSunday = dayOfWeek === 0 ? 7 : dayOfWeek;
-        let lastSunday = new Date(today);
-        lastSunday.setDate(today.getDate() - daysUntilLastSunday);
+        let daysUntilMonday = (7 - dayOfWeek) % 7;
+        let mondayThisWeek = new Date(today);
+        mondayThisWeek.setDate(today.getDate() - dayOfWeek + 1);
 
-        // Calculate the difference between today and the next Sunday
-        let daysUntilNextSunday = 7 - dayOfWeek;
-        let nextSunday = new Date(today);
-        nextSunday.setDate(today.getDate() + daysUntilNextSunday);
+        let daysUntilSunday = 7 - dayOfWeek;
+        let sundayThisWeek = new Date(today);
+        sundayThisWeek.setDate(today.getDate() + daysUntilSunday);
 
-        // Format the dates as strings
-        start_date = lastSunday.toDateString();
-        end_date = nextSunday.toDateString();
+        start_date = mondayThisWeek.toDateString();
+        end_date = sundayThisWeek.toDateString();
       }
 
       console.log("start_date,end_date", start_date, end_date);
@@ -1612,119 +1648,225 @@ module.exports = {
             continue
           }
 
-          switch (game_id) {
-            case 1:
-              totalPoints = await User.aggregate([
-                {
-                  $match: {
-                    $and: [
-                      { _id: { $in: userIds } },
-                      { role: "User" },
-                      { updated_at: { $gte: new Date(start_date) } },
-                      { updated_at: { $lte: new Date(end_date) } }
-                      
-                    ]
-                  }
-
-                },
-                {
-                  $group: {
-                    _id: null,
-                    totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
-                    totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
-                  },
-                }
-              ]);
-              break;
-            case 2:
-              totalPoints = await User.aggregate([
-                {
-                  $match: {
-                    $and: [
-                      { _id: { $in: userIds } },
-                      { role: "User" },
-                      { updated_at: { $gte: new Date(start_date) } },
-                      { updated_at: { $lte: new Date(end_date) } }
-                      
-                    ]
-                  }
-
-                },
-                {
-                  $group: {
-                    _id: null,
-                    totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
-                    totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
-                  },
-                }
-              ]);
-              break;
-            case 3:
-              totalPoints = await User.aggregate([
-                {
-                  $match: {
-                    $and: [
-                      { _id: { $in: userIds } },
-                      { role: "User" },
-                      { updated_at: { $gte: new Date(start_date) } },
-                      { updated_at: { $lte: new Date(end_date) } }
-                    
-                    ]
-                  }
-
-                },
-                {
-                  $group: {
-                    _id: null,
-                    totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
-                    totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
-                  },
-                }
-              ]);
-              break;
-            default:
-              totalPoints = await User.aggregate([
-                {
-                  $match: {
-                    $and: [
-                      { _id: { $in: userIds } },
-                      { role: "User" },
-                      { updated_at: { $gte: new Date(start_date) } },
-                      { updated_at: { $lte: new Date(end_date) } }
-                     
-                    ]
-                  }
-
-                },
-                {
-                  $group: {
-                    _id: null,
-                    avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
-                    carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
-                    roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
-                    avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
-                    carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
-                    roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+          if (req.query?.COMMISSION_DATA === '1' && req.query.startDate == '' && req.query.endDate == '') {
+            switch (game_id) {
+              case 1:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" }
+                      ]
+                    }
 
                   },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              case 2:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" }
+                      ]
+                    }
+
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              case 3:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" }
+                      ]
+                    }
+
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              default:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" }
+                      ]
+                    }
+
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                      carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                      roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                      avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                      carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                      roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+                    },
+                  }
+                ]);
+
+                // console.log("totalPoints---------1111", totalPoints);
+
+                if (totalPoints.length > 0) {
+
+                  a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+                  b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+                  avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+                  car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+                  roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+
+                  totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+
                 }
-              ]);
 
-              console.log("totalPoints---------", totalPoints);
+            }
+          }
+          else {
+            switch (game_id) {
+              case 1:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" },
+                        { updated_at: { $gte: new Date(start_date) } },
+                        { updated_at: { $lte: new Date(end_date) } }
 
-              if (totalPoints.length > 0) {
+                      ]
+                    }
 
-                let a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
-                let b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
-                avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
-                car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
-                roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              case 2:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" },
+                        { updated_at: { $gte: new Date(start_date) } },
+                        { updated_at: { $lte: new Date(end_date) } }
 
-                totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+                      ]
+                    }
 
-              }
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              case 3:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" },
+                        { updated_at: { $gte: new Date(start_date) } },
+                        { updated_at: { $lte: new Date(end_date) } }
+
+                      ]
+                    }
+
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
+                      totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
+                    },
+                  }
+                ]);
+                break;
+              default:
+                totalPoints = await User.aggregate([
+                  {
+                    $match: {
+                      $and: [
+                        { _id: { $in: userIds } },
+                        { role: "User" },
+                        { updated_at: { $gte: new Date(start_date) } },
+                        { updated_at: { $lte: new Date(end_date) } }
+
+                      ]
+                    }
+
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                      carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                      roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                      avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                      carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                      roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+                    },
+                  }
+                ]);
+
+
+                if (totalPoints.length > 0) {
+
+                  a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+                  b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+                  avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+                  car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+                  roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+
+                  totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+
+                }
+
+            }
 
           }
+
 
           const {
             totalPlayPoint = 0,
@@ -1862,7 +2004,7 @@ module.exports = {
               endPoint = totalPlayPoint - totalWinningPoint
             }
           }
-          list.push([ i, stateIds[ i - 1 ].search_id, totalPlayPoint.toFixed(2), totalWinningPoint.toFixed(2), endPoint.toFixed(2), margin.toFixed(2), net_margin.toFixed(2) ])
+          list.push([ i, stateIds[ i - 1 ].search_id, totalPlayPoint.toFixed(2), totalWinningPoint.toFixed(2), endPoint.toFixed(2), margin.toFixed(2), net_margin.toFixed(2), 0 ])
           alluserPlayPoint += totalPlayPoint
           alluserWinPoint += totalWinningPoint
           alluserEndsPoint += endPoint
@@ -1892,6 +2034,69 @@ module.exports = {
       console.error(error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
+  },
+
+  settlementAjax: async (req, res) => {
+
+    let list = []
+    let start_date = 0
+    let end_date = 0
+    console.log(req.query);
+    if (req.query.rank === '') {
+      req.query.rank = "Agent"
+    }
+
+    let today = new Date();
+
+    let lastSaturday = new Date(today);
+    lastSaturday.setDate(today.getDate() - (today.getDay() + 1) % 7); // 
+    lastSaturday.setHours(12, 0, 0, 0);
+
+    let lastSunday = new Date(today);
+    lastSunday.setHours(12, 0, 0, 0);
+
+    start_date = lastSaturday.toISOString();
+    end_date = lastSunday.toISOString();
+    console.log(start_date, end_date);
+
+    console.log("Start date------------------", start_date, end_date);
+
+    async function findUserIDs(parentId) {
+      let userIDs = [ parentId ];
+      let users = await User.find({ parent: parentId }, { _id: 1 }).lean();
+      while (users.length > 0) {
+        const userIdsArray = users.map(({ _id }) => _id);
+        userIDs.push(...userIdsArray);
+        users = await User.find({ parent: { $in: userIdsArray } }, { _id: 1 }).lean();
+      }
+      return userIDs;
+    }
+
+    let userIDs = await findUserIDs(req.admin.id)
+    let data = await Updated_stats.find({
+      user_id: { $in: userIDs }, role: req.query.rank, created_at: {
+        $gte: new Date(start_date),
+        $lte: new Date(end_date),
+      }
+    })
+    console.log("data---------", data);
+
+
+    for (let i = 0; i < data.length; i++) {
+      console.log("data", data[ i ]);
+      list.push([ i + 1, data[ i ].search_id, Number(data[ i ].total_play_point).toFixed(2), Number(data[ i ].total_win_point).toFixed(2), Number(data[ i ].total_end_point).toFixed(2), Number(data[ i ].total_margin).toFixed(2), Number(data[ i ].total_net_margin).toFixed(2), 0 ])
+
+    }
+
+    return res.status(200).json({
+
+      data: list,
+      draw: Date.now(),
+      recordsTotal: data.length,
+      recordsFiltered: data.length
+
+    });
+
   },
 
 
@@ -1996,7 +2201,6 @@ module.exports = {
 
       console.log(mondayDate);
 
-      // console.log(previousSundayTimestamp);
       matchObj.created_at = {
         $gte: mondayTimestamp.toString()
       }
