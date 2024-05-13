@@ -105,6 +105,8 @@
                                 </thead>
                                 <tbody>
                                     <% var i=1; for (d of data) {%>
+
+
                                         <tr class="gradeX">
                                             <td>
                                                 <%= i++%>
@@ -163,7 +165,7 @@
         <script>
             var buttonWallete = "<%= buttonWallete %>"
             $(document).ready(function (e) {
-             
+
 
                 let rank;
                 var THAT_ID = "";
@@ -172,7 +174,10 @@
                 var THAT_RANK = "";
                 var START_DATE = "";
                 var END_DATE = "";
-                var THAT_GAME= " "
+                var THAT_GAME = " "
+                var PARTICULAR_USER = ""
+
+
                 $('.search-user').select2({
 
                     allowClear: true,
@@ -180,7 +185,7 @@
                     ajax: {
                         url: `/admin/find_userByRole`,
                         data: function (params) {
-                            console.log("params-------",params)
+                            console.log("params-------", params)
                             var query = {
                                 search: params.term,
                                 type: 'public',
@@ -193,10 +198,10 @@
                 });
 
                 $('.search-user').on('select2:select', function (e) {
-                    console.log('changed',e);
-                    // Do something
+                    console.log('changed', e);
                     buttonWallete = false
                     THAT_ID = e.params.data.id;
+                    PARTICULAR_USER = true
                     table.ajax.reload();
 
                 });
@@ -204,6 +209,7 @@
                 $(".search-user").on("select2:clearing", function (e) {
                     console.log('cleared');
                     THAT_ID = "";
+                    PARTICULAR_USER = "";
                     table.ajax.reload();
                 });
 
@@ -237,14 +243,14 @@
                     THAT_STATUS = "";
                     table.ajax.reload();
                 });
-                
+
                 $('.select-rank').select2({
                     allowClear: true,
                     placeholder: 'User Type'
                 });
 
                 $('.select-rank').on('select2:select', function (e) {
-                    console.log("select_rank------",e.params.data.id);
+                    console.log("select_rank------", e.params.data.id);
                     buttonWallete = false
                     THAT_RANK = e.params.data.id;
                     rank = THAT_RANK
@@ -255,13 +261,14 @@
                     THAT_RANK = "";
                     table.ajax.reload();
                 });
+
                 $('.search-game').select2({
                     allowClear: true,
                     placeholder: 'Game',
                 });
 
                 $('.search-game').on('select2:select', function (e) {
-                    console.log("select_rank------",e);
+                    console.log("select_rank------", e);
                     buttonWallete = false
                     THAT_GAME = e.params.data.id;
                     rank = THAT_GAME
@@ -271,14 +278,45 @@
                 $(".search-game").on("select2:clearing", function (e) {
                     THAT_GAME = "";
                     table.ajax.reload();
-                   
+
                 });
+                $('#startdatepicker').datepicker({
+                    beforeShowDay: function (date) {
+                        return [ date.getDay() === 1, '' ];
+                    },
+                    onSelect: function (selectedDate) {
+                        var start = new Date(selectedDate);
+                        var end = new Date(start);
+                        end.setDate(start.getDate() + 6 - start.getDay());
+
+
+                        $('#enddatepicker').datepicker('setDate', end);
+
+
+                        START_DATE = $('#startdatepicker').val();
+                        END_DATE = $('#enddatepicker').val();
+
+                        table.ajax.reload();
+                    }
+                });
+
+                $('#enddatepicker').datepicker({
+                    beforeShowDay: function (date) {
+                        return [ date.getDay() === 0, '' ];
+                    },
+                    onSelect: function (selectedDate) {
+                        START_DATE = $('#startdatepicker').val();
+                        END_DATE = $('#enddatepicker').val();
+
+                        table.ajax.reload();
+                    }
+                });
+
                 $('.select-date').on('change', function () {
                     START_DATE = $('#startdatepicker').val();
                     END_DATE = $('#enddatepicker').val();
                     table.ajax.reload();
                 });
-
 
                 $('#example1').DataTable().destroy();
                 var table = $('#example1').DataTable({
@@ -355,22 +393,40 @@
                             params.rank = THAT_RANK;
                             params.startDate = START_DATE;
                             params.endDate = END_DATE;
-                            params.THAT_Game=THAT_GAME
+                            params.THAT_Game = THAT_GAME
                             params.buttonWallete = buttonWallete;
+                            params.PARTICULAR_USER = PARTICULAR_USER
+                            console.log(params)
                             return params;
                         }
+
+
+
                     },
-                   
+
+
+
                     "deferLoading": "<%= total %>",
                     "createdRow": function (row, data, dataIndex) {
-                        var rowData = '<td>' + data[ 0 ] + '</td>' +
+
+                        var rowData =
+                            '<td>' + (dataIndex + 1) + '</td>' +
                             '<td>' + data[ 1 ] + '</td>' +
                             '<td>' + data[ 2 ] + '</td>' +
                             '<td>' + data[ 3 ] + '</td>' +
                             '<td>' + data[ 4 ] + '</td>' +
                             '<td>' + data[ 5 ] + '</td>' +
                             '<td>' + data[ 6 ] + '</td>' +
-                            $(row).html(rowData);
+                            $(row).find('td:first').html(dataIndex + 1);
+
+
+                        $(row).html(rowData);
+                        if (parseFloat(data[ 4 ]) < 0) {
+                            $(row).addClass('negative-row').find('td').css('color', 'red');
+                        }
+                        if (data[ 1 ] == "TOTAL") {
+                            $(row).find('td:first').html('');
+                        }
                     },
                     columnDefs: [ {
                         orderable: true,

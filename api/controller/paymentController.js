@@ -25,6 +25,8 @@ var checksum = require("../../api/service/paytm/checksum");
 
 var utility = require("./utilityController");
 const { array } = require("mongoose/lib/utils");
+const { searchId } = require("./adminController");
+const { ISO_8601 } = require("moment");
 
 module.exports = {
   pgredirect: async function (req, res) {
@@ -1363,34 +1365,75 @@ module.exports = {
     });
   },
   getperformance: async (req, res) => {
-    console.log("REQ.para,s.id", req.query.rank)
-    console.log("req.admin.role", req.query);
     try {
+      console.log("req.query", req.query);
       let alluserPlayPoint = 0;
       let game_id = Number(req.query.THAT_Game)
       let alluserWinPoint = 0;
       let alluserEndsPoint = 0;
+      let alluserMargin = 0;
+      let alluserNetMArgin = 0;
       let params = req.query;
       let matchObj = {};
       let margin = 0;
       let net_margin = 0
-
+      let child_net_margin = 0
+      let child_margin = 0
+      let avaitor_margin = 0
+      let car_roulette_margin = 0
+      let roulette_margin = 0
+      let avaitor_child_margin = 0
+      let car_child_roulette_margin = 0
+      let roulette_child_margin = 0
+      let aviator_marginend = 0
+      let car_roulette_marginend = 0
+      let roulette_marginend = 0
+      let aviator_child_marginend = 0
+      let car_roulette_child_marginend = 0
+      let roulette_child_marginend = 0
+      let agent_net_margin = 0
+      let zone_net_margin = 0
+      let agent_margin = 0
       let avaitor_endPoint = 0
       let car_roulette_endPoint = 0
       let roulette_endPoint = 0
-      console.log(req.admin.role)
-      let fristrank;
-      if (req.admin.role == "Company") {
-        fristrank = "State"
-      } else if (req.admin.role == "State") {
-        fristrank = "District"
-      } else if (req.admin.role == "District") {
-        fristrank = "Zone"
-      } else if (req.admin.role == "Zone") {
-        fristrank = "Agent"
-      } else if (req.admin.role == "Agent") {
-        fristrank = "User"
+      let endPoint = 0
+      let start_date = (req.query.startDate);
+      let end_date = (req.query.endDate);
+
+      if (start_date != '' && end_date != '') {
+        function convertToISODate(dateString) {
+          const [ month, day, year ] = dateString.split('/');
+          const isoDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          return new Date(isoDateString);
+        }
+        start_date = convertToISODate(start_date);
+        end_date = convertToISODate(end_date);
       }
+      else {
+        let today = new Date();
+
+        // Get the day of the week (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+        let dayOfWeek = today.getDay();
+
+        // Calculate the difference between today and the previous Sunday
+        let daysUntilLastSunday = dayOfWeek === 0 ? 7 : dayOfWeek;
+        let lastSunday = new Date(today);
+        lastSunday.setDate(today.getDate() - daysUntilLastSunday);
+
+        // Calculate the difference between today and the next Sunday
+        let daysUntilNextSunday = 7 - dayOfWeek;
+        let nextSunday = new Date(today);
+        nextSunday.setDate(today.getDate() + daysUntilNextSunday);
+
+        // Format the dates as strings
+        start_date = lastSunday.toDateString();
+        end_date = nextSunday.toDateString();
+      }
+
+      console.log("start_date,end_date", start_date, end_date);
+
+
       let role = params.rank || "User";
       matchObj.role = role;
       if (!_.isEmpty(params.id)) {
@@ -1398,8 +1441,6 @@ module.exports = {
       }
 
       let data = await distributorController.commission_management(req)
-      // console.log("data", data);
-      console.log(req.query.rank);
       let commision_rank = '';
       if (req.query.rank === 'State') {
         commision_rank = 'District'
@@ -1410,38 +1451,141 @@ module.exports = {
       } else if (req.query.rank === 'Agent') {
         commision_rank = 'Agent'
       }
+      let commision_child_rank = '';
+      if (commision_rank === 'District') {
+        commision_child_rank = 'Agent'
+      } else if (commision_rank === 'Zone') {
+        commision_child_rank = 'Agent'
+      } else if (commision_rank === 'Agent') {
+        commision_child_rank = 'Agent'
+      }
+
+
       let result = [];
       async function filterByRankName(data, rankName) {
-
         for (let key in data) {
-          result = result.concat(data[ key ].filter(obj => obj.rankName === rankName));
+          result = result.concat(data[ key ].filter(obj => obj.rankName == rankName));
         }
 
       }
 
-      let c_data = await filterByRankName(data, commision_rank)
-      console.log("c_data", result);
+      let own_commission = [];
+      for (let key in data) {
+        own_commission = own_commission.concat(data[ key ].filter(obj => obj.rankName === req.query.rank));
+      }
+      let child_result = []
+      for (let key in data) {
+        child_result = child_result.concat(data[ key ].filter(obj => obj.rankName === commision_child_rank));
+      }
 
+
+
+
+      await filterByRankName(data, commision_rank)
       let commision_result = []
 
-      result.filter(obj => {
+      async function commisionResult(result, game_id) {
+        let data = await result.filter(obj => {
+          console.log("obj", obj);
+          if (obj.commissionData.gameId === Number(game_id)) {
+            commision_result.push(obj)
+          }
+
+        })
+
+        console.log("data", data);
+
+      }
+
+      await commisionResult(result, game_id)
+
+
+
+
+      let commision_child_result = []
+
+
+      own_commission.filter(obj => {
         if (obj.commissionData.gameId === game_id) {
-          commision_result.push(obj)
+          commision_child_result.push(obj)
         }
 
+
       })
-      console.log("commision_result", commision_result);
 
 
+      if (req.admin.role != "Company") {
+        matchObj.parent = req.admin._id
+      }
+      async function fetchUsersUntilRole(parentId, targetRole, parentRole) {
+        let users = [];
+        const usersUnderParent = await User.find({ parent: parentId, role: parentRole }, { _id: 1 }).lean();
+        users.push(...usersUnderParent);
+
+        let childRoles = [];
+        switch (parentRole) {
+          case "Company":
+            childRoles = [ "State" ];
+            break;
+          case "State":
+            childRoles = [ "District", "Zone", "Agent", "User" ];
+            break;
+          case "District":
+            childRoles = [ "Zone", "Agent", "User" ];
+            break;
+          case "Zone":
+            childRoles = [ "Agent", "User" ];
+            break;
+          case "Agent":
+            childRoles = [ "User" ];
+            break;
+          default:
+            childRoles = [];
+            break;
+        }
+
+        const childUsersPromises = childRoles.map(async (role) => {
+          const childUsers = await User.find({ parent: parentId, role }, { _id: 1 }).lean();
+          if (role !== targetRole) {
+            for (const user of childUsers) {
+              users.push(...await fetchUsersUntilRole(user._id, targetRole, role));
+            }
+          } else {
+            users.push(...childUsers);
+          }
+        });
+        await Promise.all(childUsersPromises);
+        return users;
+      }
 
 
+      const targetRole = req.query.rank;
+      const parentId = req.admin.id;
+      const parentRole = req.admin.role;
 
-      const stateIds = await User.find(
-        matchObj,
-        { _id: 1, name: 1 }
-      ).select("_id search_id name");
-      // console.log(stateIds)
-      const childUserIds = await Promise.all(
+      let users = await fetchUsersUntilRole(parentId, targetRole, parentRole);
+
+
+      users = users.map(obj => [ obj._id ]);
+      let stateIds = []
+      if (req.query.PARTICULAR_USER === '') {
+        for (let userIds of users) {
+
+
+          const ids = await User.findOne(
+            { _id: userIds[ 0 ] }, { id: 1, name: 1, search_id: 1 }
+          )
+          stateIds.push(ids)
+
+        }
+      } else {
+
+        const ids = await User.findOne(
+          { _id: req.query.id }, { id: 1, name: 1, search_id: 1 }
+        )
+        stateIds.push(ids)
+      }
+      childUserIds = await Promise.all(
         stateIds.map(async ({ _id }) => await findUserIDs(_id))
       );
       async function findUserIDs(parentId) {
@@ -1458,161 +1602,284 @@ module.exports = {
       const end = parseInt(params.length) + start;
       let i = 1
       let list = []
-      for (let userIds of childUserIds) {
-        if (start >= i) {
-          i++
-          continue
-        }
-        let commission = 0
 
-        console.log(game_id, "game_id------------");
+      for (let userIds of users) {
         let totalPoints = []
-        switch (game_id) {
-          case 1:
-            totalPoints = await User.aggregate([
-              { $match: { _id: { $in: userIds }, role: "User" } },
-              {
-                $group: {
-                  _id: null,
-                  totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
-                  totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
-                },
-              }
-            ]);
-            break;
-          case 2:
-            totalPoints = await User.aggregate([
-              { $match: { _id: { $in: userIds }, role: "User" } },
-              {
-                $group: {
-                  _id: null,
-                  totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
-                  totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
-                },
-              }
-            ]);
-            break;
-          case 3:
-            totalPoints = await User.aggregate([
-              { $match: { _id: { $in: userIds }, role: "User" } },
-              {
-                $group: {
-                  _id: null,
-                  totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
-                  totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
-                },
-              }
-            ]);
-            break;
-          default:
-            totalPoints = await User.aggregate([
-              { $match: { _id: { $in: userIds }, role: "User" } },
-              {
-                $group: {
-                  _id: null,
-                  avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
-                  carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
-                  roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
-                  avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
-                  carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
-                  roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+        for (let userIds of childUserIds) {
+          if (start >= i) {
+            i++
+            continue
+          }
+
+          switch (game_id) {
+            case 1:
+              totalPoints = await User.aggregate([
+                {
+                  $match: {
+                    $and: [
+                      { _id: { $in: userIds } },
+                      { role: "User" },
+                      { updated_at: { $gte: new Date(start_date) } },
+                      { updated_at: { $lte: new Date(end_date) } }
+                      
+                    ]
+                  }
 
                 },
+                {
+                  $group: {
+                    _id: null,
+                    totalPlayPoint: { $sum: "$roulette_totalplaypoint" },
+                    totalWinningPoint: { $sum: "$roulette_totalwinningpoint" },
+                  },
+                }
+              ]);
+              break;
+            case 2:
+              totalPoints = await User.aggregate([
+                {
+                  $match: {
+                    $and: [
+                      { _id: { $in: userIds } },
+                      { role: "User" },
+                      { updated_at: { $gte: new Date(start_date) } },
+                      { updated_at: { $lte: new Date(end_date) } }
+                      
+                    ]
+                  }
+
+                },
+                {
+                  $group: {
+                    _id: null,
+                    totalPlayPoint: { $sum: "$carRoulette_totalplaypoint" },
+                    totalWinningPoint: { $sum: "$carRoulette_totalwinningpoint" },
+                  },
+                }
+              ]);
+              break;
+            case 3:
+              totalPoints = await User.aggregate([
+                {
+                  $match: {
+                    $and: [
+                      { _id: { $in: userIds } },
+                      { role: "User" },
+                      { updated_at: { $gte: new Date(start_date) } },
+                      { updated_at: { $lte: new Date(end_date) } }
+                    
+                    ]
+                  }
+
+                },
+                {
+                  $group: {
+                    _id: null,
+                    totalPlayPoint: { $sum: "$avaitor_totalplaypoint" },
+                    totalWinningPoint: { $sum: "$avaitor_totalwinningpoint" },
+                  },
+                }
+              ]);
+              break;
+            default:
+              totalPoints = await User.aggregate([
+                {
+                  $match: {
+                    $and: [
+                      { _id: { $in: userIds } },
+                      { role: "User" },
+                      { updated_at: { $gte: new Date(start_date) } },
+                      { updated_at: { $lte: new Date(end_date) } }
+                     
+                    ]
+                  }
+
+                },
+                {
+                  $group: {
+                    _id: null,
+                    avaitor_totalplaypoint: { $sum: "$avaitor_totalplaypoint" },
+                    carRoulette_totalplaypoint: { $sum: "$carRoulette_totalplaypoint" },
+                    roulette_totalplaypoint: { $sum: "$roulette_totalplaypoint" },
+                    avaitor_totalwinningpoint: { $sum: "$avaitor_totalwinningpoint" },
+                    carRoulette_totalwinningpoint: { $sum: "$carRoulette_totalwinningpoint" },
+                    roulette_totalwinningpoint: { $sum: "$roulette_totalwinningpoint" },
+
+                  },
+                }
+              ]);
+
+              console.log("totalPoints---------", totalPoints);
+
+              if (totalPoints.length > 0) {
+
+                let a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
+                let b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
+                avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
+                car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
+                roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+
+                totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+
               }
-            ]);
-            console.log("totalPoints-----------------", totalPoints);
 
-            if (totalPoints.length > 0) {
+          }
 
-              let a = totalPoints[ 0 ].avaitor_totalplaypoint + totalPoints[ 0 ].carRoulette_totalplaypoint + totalPoints[ 0 ].roulette_totalplaypoint
-              let b = totalPoints[ 0 ].avaitor_totalwinningpoint + totalPoints[ 0 ].carRoulette_totalwinningpoint + totalPoints[ 0 ].roulette_totalwinningpoint
-              avaitor_endPoint = Number(totalPoints[ 0 ].avaitor_totalplaypoint - totalPoints[ 0 ].avaitor_totalwinningpoint)
-              car_roulette_endPoint = Number(totalPoints[ 0 ].carRoulette_totalplaypoint - totalPoints[ 0 ].carRoulette_totalwinningpoint)
-              roulette_endPoint = Number(totalPoints[ 0 ].roulette_totalplaypoint - totalPoints[ 0 ].roulette_totalwinningpoint)
+          const {
+            totalPlayPoint = 0,
+            totalWinningPoint = 0,
+          } = totalPoints[ 0 ] || {};
 
-              totalPoints[ 0 ] = { totalPlayPoint: a, totalWinningPoint: b }
+          endPoint = totalPlayPoint - totalWinningPoint;
 
 
-              console.log("90000000000000000", totalPoints)
+          if (commision_result.length > 0) {
+
+            if (req.query.rank === 'Agent') {
+              margin = (endPoint * commision_result[ 0 ]?.commissionData.availableCommission / 100)
+            }
+            else {
+
+              margin = (endPoint * (commision_child_result[ 0 ]?.commissionData.availableCommission - commision_result[ 0 ].commissionData.availableCommission) / 100)
+              let res = child_result.filter(item => item.commissionData.gameId == commision_result[ 0 ].commissionData.gameId)
+
+              child_margin = endPoint * res[ 0 ].commissionData.availableCommission / 100
+
+              let agent_endpoint = endPoint - agent_margin
+
+              agent_net_margin = agent_endpoint - child_margin
+
+              avaitor_child_margin = result.filter(item => item.commissionData.gameId === commision_result[ 0 ].commissionData.gameId)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === commision_result[ 0 ].commissionData.gameId)[ 0 ].commissionData.availableCommission
+
+              aviator_marginend = (endPoint * avaitor_child_margin) / 100
+
+              zone_net_margin = agent_net_margin - aviator_marginend
 
             }
 
-        }
-
-
-
-        let avaitor_margin = 0
-        let car_roulette_margin = 0
-        let roulette_margin = 0
-
-
-
-
-        const {
-          totalPlayPoint = 0,
-          totalWinningPoint = 0,
-        } = totalPoints[ 0 ] || {};
-
-        let endPoint = totalPlayPoint - totalWinningPoint;
-        if (commision_result.length > 0) {
-          if (req.query.rank === 'Agent') {
-            margin = commision_result[ 0 ]?.commissionData.availableCommission
           }
           else {
 
-            margin = commision_result[ 0 ]?.commissionData.minCommission
+            endPoint = avaitor_endPoint + car_roulette_endPoint + roulette_endPoint
+
+            if (req.query.rank === 'Agent') {
+
+              avaitor_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+              car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+              roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+              aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+              car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+              roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+              margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+            }
+            else {
+
+              if (result.length > 0) {
+
+                avaitor_margin = own_commission.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+                car_roulette_margin = own_commission.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+                roulette_margin = own_commission.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+
+                aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+                car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+                roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+                margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+                if (req.query.rank === 'Zone') {
+                  avaitor_child_margin = child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+                  car_child_roulette_margin = child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+                  roulette_child_margin = child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+                  aviator_child_marginend = (avaitor_endPoint * avaitor_child_margin) / 100
+                  car_roulette_child_marginend = (car_roulette_endPoint * car_child_roulette_margin) / 100
+                  roulette_child_marginend = (roulette_endPoint * roulette_child_margin) / 100
+
+                  child_margin = aviator_child_marginend + car_roulette_child_marginend + roulette_child_marginend
+                }
+                else {
+                  avaitor_margin = child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+                  car_roulette_margin = child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+                  roulette_margin = child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+                  aviator_marginend = (avaitor_endPoint * avaitor_margin) / 100
+                  car_roulette_marginend = (car_roulette_endPoint * car_roulette_margin) / 100
+                  roulette_marginend = (roulette_endPoint * roulette_margin) / 100
+                  agent_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+
+                  agent_net_margin = endPoint - agent_margin
+                  avaitor_child_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
+                  car_child_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
+                  roulette_child_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission - child_result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
+
+
+                  aviator_marginend = (avaitor_endPoint * avaitor_child_margin) / 100
+                  car_roulette_marginend = (car_roulette_endPoint * car_child_roulette_margin) / 100
+                  roulette_marginend = (roulette_endPoint * roulette_child_margin) / 100
+                  child_margin = aviator_marginend + car_roulette_marginend + roulette_marginend
+                  zone_net_margin = agent_net_margin - child_margin
+
+                }
+
+              }
+
+            }
+
+
           }
+          if (margin != 0) {
+            if (req.query.rank === "Agent") {
+              net_margin = endPoint - margin
+            } else if (req.query.rank === "Zone") {
+              child_net_margin = endPoint - child_margin
+              net_margin = child_net_margin - margin
+            }
+            else if (req.query.rank === "District") {
 
-        }
-        else {
+              child_net_margin = endPoint - child_margin
+              net_margin = zone_net_margin - margin
 
-          endPoint = avaitor_endPoint + car_roulette_endPoint + roulette_endPoint
-
-          if (req.query.rank === 'Agent') {
-            avaitor_margin = result.filter(item => item.commissionData.gameId === 3)[ 0 ].commissionData.availableCommission
-            car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.availableCommission
-
-            roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.availableCommission
-
-            margin = (avaitor_margin + car_roulette_margin + roulette_margin) / 3
-          }
-          else {
-
-            console.log("state------------------");
-            if (result.length > 0) {
-
-              let avaitor_margin_data = result.filter(item => item.commissionData.gameId === 3)
-              console.log("avaitor_margin_data", avaitor_margin_data);
-              avaitor_margin = avaitor_margin_data[ 0 ].commissionData.minCommission
-              console.log("avaitor_margin", avaitor_margin);
-              car_roulette_margin = result.filter(item => item.commissionData.gameId === 2)[ 0 ].commissionData.minCommission
-
-              roulette_margin = result.filter(item => item.commissionData.gameId === 1)[ 0 ].commissionData.minCommission
-              console.log("endPoint", avaitor_endPoint);
-
-              margin = (avaitor_margin + car_roulette_margin + roulette_margin) / 3
+            }
+            else if (req.query.rank === "State") {
+              net_margin = zone_net_margin - margin
             }
 
           }
+          if (i > stateIds.length || i > end) {
+            break
+          }
+          if (req.query.rank === 'User') {
+            if (game_id == '1') {
+              endPoint = totalPlayPoint - totalWinningPoint
+            }
+            else if (game_id == '2') {
+              endPoint = totalPlayPoint - totalWinningPoint
+            }
+            else if (game_id == '3') {
+              endPoint = totalPlayPoint - totalWinningPoint
+            }
+          }
+          list.push([ i, stateIds[ i - 1 ].search_id, totalPlayPoint.toFixed(2), totalWinningPoint.toFixed(2), endPoint.toFixed(2), margin.toFixed(2), net_margin.toFixed(2) ])
+          alluserPlayPoint += totalPlayPoint
+          alluserWinPoint += totalWinningPoint
+          alluserEndsPoint += endPoint
+          alluserMargin += margin
+          alluserNetMArgin += net_margin
+          i++
+          if (i > end) {
+            break
+          }
 
-
-        }
-        if (margin != 0) {
-          net_margin = endPoint - margin
-
-        }
-
-        list.push([ i, stateIds[ i - 1 ].search_id, totalPlayPoint.toFixed(2), totalWinningPoint.toFixed(2), endPoint.toFixed(2), margin.toFixed(2), net_margin.toFixed(2) ])
-        alluserPlayPoint += totalPlayPoint
-        alluserWinPoint += totalWinningPoint
-        alluserEndsPoint += endPoint
-        if (i == end) {
-          break
         }
         i++
       }
 
-      list.push([ "", "TOTAL", alluserPlayPoint.toFixed(2), alluserWinPoint.toFixed(2), alluserEndsPoint.toFixed(2), 0, 0, 0 ])
+      list.sort((a, b) => b[ 2 ] - a[ 2 ]);
+
+      list.push([ "", "TOTAL", alluserPlayPoint.toFixed(2), alluserWinPoint.toFixed(2), alluserEndsPoint.toFixed(2), alluserMargin.toFixed(2), alluserNetMArgin.toFixed(2), 0 ])
 
       return res.status(200).json({
 
