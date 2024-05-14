@@ -145,7 +145,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
      document.addEventListener("DOMContentLoaded",async function () {
-        const socket = io('http://localhost:3070');
+        const socket = io('http://43.205.200.32:3070');
         let gamePercent = document.getElementById("gamePercent").value;
         // console.log(gamePercent);
         socket.emit("livebets", { hii: "hii" });
@@ -209,10 +209,12 @@
         let percent = ( parseFloat(element)/ totalZero) * 100;
         let win = (allbettotal/100)*percent;
         ace.push(win.toFixed(2))
-        let deductpercent = 20;
-        let set3= win - (win * deductpercent) / 100;
+        // let deductpercent = 20;
+        // let set3= win - (win * deductpercent) / 100;
+        let dis =allbettotal - ((allbettotal / 100 )*  gamePercent)
+        let amountA = (dis/totalZero) * element
         // console.log(parseFloat(element) , totalZero ,percent , win,set3,"Payableamount_0")
-        return set3.toFixed(2)
+        return amountA.toFixed(2)
     });
 
 
@@ -220,10 +222,9 @@
         let percent = ( parseFloat(element)/ totalOne) * 100;
         let win = (allbettotal/100)*percent;
         king.push(win.toFixed(2))
-        let deductpercent = 20;
-        let set3= win - (win * deductpercent) / 100;
-        // console.log(parseFloat(element) , totalOne ,percent , win,set3,"Payableamount_1")
-        return set3.toFixed(2)
+        let dis =allbettotal - ((allbettotal / 100 )*  gamePercent)
+        let amountA = (dis/totalOne) * element
+        return amountA.toFixed(2)
     });
     console.log(Payableamount_0,ace,SpotZeroAmt,"Here is data");
 
@@ -231,30 +232,27 @@
         let percent = ( parseFloat(element)/ totalTwo) * 100;
         let win = (allbettotal/100)*percent;
         queen.push(win.toFixed(2))
-        let deductpercent = 20;
-        let set3= win - (win * deductpercent) / 100;
-        // console.log(parseFloat(element) , totalTwo ,percent , win,set3,"Payableamount_2")
-        return set3.toFixed(2)
+        let dis = allbettotal - ((allbettotal / 100 )*  gamePercent)
+        let amountA = (dis/totalTwo) * element
+        return amountA.toFixed(2)
     });
 
     let Payableamount_3 = SpotThreeAmt.map(element => {
         let percent = ( parseFloat(element)/ totalThree) * 100;
         let win = (allbettotal/100)*percent;
         jake.push(win.toFixed(2))
-        let deductpercent = 20;
-        let set3= win - (win * deductpercent) / 100;
-        // console.log(parseFloat(element) , totalThree ,percent , win,set3 ,"Payableamount_3")
-        return set3.toFixed(2)
+        let dis =allbettotal - ( (allbettotal / 100 )*  gamePercent)
+        let amountA = (dis/totalThree) * element
+        return amountA.toFixed(2)
     });
 
     let Payableamount_4 = SpotFourAmt.map(element => {
         let percent = ( parseFloat(element)/ totalFour) * 100;
         let win = (allbettotal/100)*percent;
         ten.push(win.toFixed(2))
-        let deductpercent = 20.;
-        let set3= win - (win * deductpercent) / 100;
-        // console.log(parseFloat(element) , totalFour ,percent , win,set3,"Payableamount_4")
-        return set3.toFixed(2)
+        let dis = allbettotal - ( (allbettotal / 100 )*  gamePercent)
+        let amountA = (dis/totalFour) * element
+        return amountA.toFixed(2)
     });
 
 
